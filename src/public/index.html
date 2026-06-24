@@ -406,7 +406,9 @@
           else { document.getElementById('modal-access').classList.remove('open'); setError(res.error || 'Errore creazione stanza.'); }
         }
       } catch (e) {
-        document.getElementById('access-error').textContent = 'Server non raggiungibile.';
+        const msg = e.name === 'AbortError' ? 'Timeout: server non risponde.' : 'Errore di rete. Riprova.';
+        document.getElementById('access-error').textContent = msg;
+        if (!teamCount || teamCount <= 8) setError(msg);
       } finally {
         setLoading(false);
       }
