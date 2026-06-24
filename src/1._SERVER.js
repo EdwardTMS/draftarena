@@ -105,6 +105,7 @@ function createRoomData(code, adminPin) {
     teams: {},
     playersList: [],
     soldPlayers: [],
+    claimedTeams: {},
     CONFIG: JSON.parse(JSON.stringify(DEFAULT_CONFIG))
   };
 }
@@ -755,6 +756,7 @@ io.on("connection", (socket) => {
     socket.emit("updateSold", room.soldPlayers);
     socket.emit("playersList", room.playersList);
     socket.emit("configUpdate", { CONFIG: room.CONFIG, timerDuration: room.state.timerDuration });
+    socket.emit("takenTeams", Object.keys(room.claimedTeams || {}));
   }
 
   // ─── GESTIONE STANZE ─────────────────────────────────────────────────────
@@ -1091,6 +1093,49 @@ io.on("connection", (socket) => {
   socket.on("getSoldPlayers", () => {
     const room = getRoom(); if (!room) return;
     socket.emit("updateSold", room.soldPlayers);
+  });
+
+  // ─── CLAIM SQUADRA (phone) ───────────────────────────────────────────────
+
+  socket.on("claimTeam", (teamName) => {
+    const room = getRoom(); if (!room) return;
+    const key = String(teamName).toLowerCase().trim();
+    if (!room.teams[key]) {
+      socket.emit("claimTeamResult", { success: false, error: "Squadra non trovata." });
+      return;
+    }
+    const current = room.claimedTeams[key];
+    if (current && current !== socket.id) {
+      socket.emit("claimTeamResult", { success: false, error: "Squadra già selezionata da un altro partecipante." });
+      return;
+    }
+    for (const k in room.claimedTeams) {
+      if (room.claimedTeams[k] === socket.id) delete room.claimedTeams[k];
+    }
+    room.claimedTeams[key] = socket.id;
+    socket.emit("claimTeamResult", { success: true });
+    io.to(socket.roomCode).emit("takenTeams", Object.keys(room.claimedTeams));
+  });
+
+  socket.on("releaseTeam", () => {
+    const room = getRoom(); if (!room) return;
+    for (const k in room.claimedTeams) {
+      if (room.claimedTeams[k] === socket.id) delete room.claimedTeams[k];
+    }
+    io.to(socket.roomCode).emit("takenTeams", Object.keys(room.claimedTeams));
+  });
+
+  socket.on("disconnect", () => {
+    if (socket.roomCode) {
+      const room = rooms.get(socket.roomCode);
+      if (room && room.claimedTeams) {
+        let changed = false;
+        for (const k in room.claimedTeams) {
+          if (room.claimedTeams[k] === socket.id) { delete room.claimedTeams[k]; changed = true; }
+        }
+        if (changed) io.to(socket.roomCode).emit("takenTeams", Object.keys(room.claimedTeams));
+      }
+    }
   });
 
   // ─── RIASSEGNAZIONE ULTIMA ASTA ──────────────────────────────────────────
