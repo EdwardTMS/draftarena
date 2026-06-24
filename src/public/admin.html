@@ -621,6 +621,8 @@
     </div>
   </div>
 
+  <div id="admin-main" style="display:none;">
+
     <!-- Header -->
     <header class="header">
         <div style="display:flex; align-items:center; gap:1rem;">
@@ -1107,6 +1109,8 @@
         <span id="toastMessage"></span>
     </div>
 
+  </div><!-- /admin-main -->
+
     <!-- Socket.IO -->
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -1130,8 +1134,10 @@
         socket.on('adminAuthResult', (data) => {
           if (data.success) {
             document.getElementById('pin-gate').style.display = 'none';
+            document.getElementById('admin-main').style.display = 'block';
           } else {
             sessionStorage.removeItem('adminPin');
+            document.getElementById('admin-main').style.display = 'none';
             showPinGate('PIN errato. Riprova.');
           }
         });
@@ -1163,6 +1169,7 @@
             socket.emit('setHostUrl', { url: window.location.origin });
             const pin = getStoredAdminPin();
             if (pin) socket.emit('adminAuth', { pin });
+            else showPinGate();
             pendingSocketRoomCode = null;
           }
         });
