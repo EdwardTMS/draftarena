@@ -169,17 +169,7 @@ async function validateAccessCode(code) {
 }
 
 async function incrementCodeUses(code) {
-  await supabase
-    .from("access_codes")
-    .update({ uses_count: supabase.rpc ? undefined : undefined })
-    .eq("code", code);
-  // usa rpc per incremento atomico
-  await supabase.rpc("increment_code_uses", { p_code: code }).catch(() => {
-    // fallback manuale se rpc non disponibile
-    supabase.from("access_codes").select("uses_count").eq("code", code).single().then(({ data }) => {
-      if (data) supabase.from("access_codes").update({ uses_count: data.uses_count + 1 }).eq("code", code);
-    });
-  });
+  await supabase.rpc("increment_code_uses", { p_code: code });
 }
 
 async function salvaSessioneDB(room) {
@@ -590,16 +580,15 @@ app.get("/api/room/create", async (req, res) => {
   const teamCount = parseInt(req.query.teamCount) || 0;
   const isFree = teamCount > 0 && teamCount <= FREE_TIER_TEAM_LIMIT;
 
-  let codeType = "free";
-  if (!isFree) {
-    const validation = await validateAccessCode(accessCode);
-    if (!validation.valid) return res.status(403).json({ success: false, error: validation.error });
-    codeType = validation.data.type;
-    // Incrementa usi (non per superadmin)
-    if (codeType !== "superadmin") await incrementCodeUses(accessCode);
-  }
-
   try {
+    let codeType = "free";
+    if (!isFree) {
+      const validation = await validateAccessCode(accessCode);
+      if (!validation.valid) return res.status(403).json({ success: false, error: validation.error });
+      codeType = validation.data.type;
+      if (codeType !== "superadmin") await incrementCodeUses(accessCode);
+    }
+
     let code;
     let attempts = 0;
     do { code = generateRoomCode(); attempts++; } while (rooms.has(code) && attempts < 30);
