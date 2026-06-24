@@ -257,6 +257,28 @@
       </table>
     </div>
 
+    <!-- Cambia Password -->
+    <div class="section-title">Cambia Password SuperAdmin</div>
+    <div style="background:#0b132b;border:1px solid #1c2541;border-radius:12px;padding:20px;max-width:420px;">
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:#64748b;margin-bottom:5px;">Password attuale</label>
+        <input type="password" id="pwd-current" class="gen-card input" placeholder="••••••••"
+          style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid #1c2541;background:#020817;color:#fff;font-size:13px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:#64748b;margin-bottom:5px;">Nuova password (min. 6 caratteri)</label>
+        <input type="password" id="pwd-new" class="gen-card input" placeholder="••••••••"
+          style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid #1c2541;background:#020817;color:#fff;font-size:13px;">
+      </div>
+      <div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;color:#64748b;margin-bottom:5px;">Conferma nuova password</label>
+        <input type="password" id="pwd-confirm" class="gen-card input" placeholder="••••••••"
+          style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid #1c2541;background:#020817;color:#fff;font-size:13px;">
+      </div>
+      <button id="btn-change-pwd" class="btn-gen" style="width:100%;">CAMBIA PASSWORD</button>
+      <div id="pwd-result" style="margin-top:10px;font-size:13px;min-height:18px;"></div>
+    </div>
+
     <!-- Stanze recenti -->
     <div class="section-title">Stanze recenti (ultime 50)</div>
     <div class="rooms-grid" id="rooms-grid">
@@ -419,6 +441,40 @@
     });
     await loadCodes();
   }
+
+  // ── Cambia Password ───────────────────────────────────────────────────────
+  document.getElementById('btn-change-pwd').addEventListener('click', async () => {
+    const current = document.getElementById('pwd-current').value;
+    const newPwd = document.getElementById('pwd-new').value;
+    const confirm = document.getElementById('pwd-confirm').value;
+    const res = document.getElementById('pwd-result');
+    res.style.color = '#ef4444';
+    if (!current || !newPwd || !confirm) { res.textContent = 'Compila tutti i campi.'; return; }
+    if (newPwd !== confirm) { res.textContent = 'Le password non coincidono.'; return; }
+    if (newPwd.length < 6) { res.textContent = 'La nuova password deve avere almeno 6 caratteri.'; return; }
+    res.style.color = '#94a3b8';
+    res.textContent = 'Salvataggio in corso...';
+    try {
+      const r = await fetch('/api/superadmin/change-password', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword: current, newPassword: newPwd })
+      });
+      const data = await r.json();
+      if (data.success) {
+        res.style.color = '#10b981';
+        res.textContent = 'Password aggiornata con successo!';
+        document.getElementById('pwd-current').value = '';
+        document.getElementById('pwd-new').value = '';
+        document.getElementById('pwd-confirm').value = '';
+      } else {
+        res.style.color = '#ef4444';
+        res.textContent = data.error || 'Errore.';
+      }
+    } catch (e) {
+      res.style.color = '#ef4444';
+      res.textContent = 'Errore di rete.';
+    }
+  });
 
   // ── Copia codice ─────────────────────────────────────────────────────────
   function copyCode(code, showToast = true) {
