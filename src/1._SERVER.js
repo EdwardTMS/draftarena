@@ -475,9 +475,22 @@ app.get("/rose.html", (req, res) => res.sendFile(path.join(__dirname, "public", 
 app.get("/superadmin", (req, res) => res.sendFile(path.join(__dirname, "public", "superadmin.html")));
 
 /* ==========================================================================
+   SUPERADMIN PASSWORD (caricata da DB, fallback env)
+   ========================================================================== */
+let SUPERADMIN_PASSWORD = process.env.SUPERADMIN_PASSWORD || "DraftArena2025!";
+
+async function loadSuperadminPassword() {
+  try {
+    const { data } = await supabase.from("platform_settings").select("value").eq("key", "superadmin_password").maybeSingle();
+    if (data) SUPERADMIN_PASSWORD = data.value;
+  } catch (e) {
+    console.warn("[SERVER] Impossibile caricare password superadmin da DB, uso default.");
+  }
+}
+
+/* ==========================================================================
    API CODICI ACCESSO (solo superadmin)
    ========================================================================== */
-const SUPERADMIN_PASSWORD = process.env.SUPERADMIN_PASSWORD || "DraftArena2025!";
 
 app.post("/api/superadmin/login", (req, res) => {
   const { password } = req.body;
@@ -522,6 +535,22 @@ app.patch("/api/superadmin/codes/:id", async (req, res) => {
   res.json({ success: true });
 });
 
+app.post("/api/superadmin/change-password", async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (currentPassword !== SUPERADMIN_PASSWORD) {
+    return res.status(401).json({ success: false, error: "Password corrente errata." });
+  }
+  if (!newPassword || newPassword.length < 6) {
+    return res.status(400).json({ success: false, error: "La nuova password deve avere almeno 6 caratteri." });
+  }
+  SUPERADMIN_PASSWORD = newPassword;
+  await supabase.from("platform_settings").upsert(
+    { key: "superadmin_password", value: newPassword, updated_at: new Date().toISOString() },
+    { onConflict: "key" }
+  );
+  res.json({ success: true });
+});
+
 app.get("/api/superadmin/rooms", async (req, res) => {
   const { data, error } = await supabase.from("rooms").select("*").order("created_at", { ascending: false }).limit(50);
   if (error) return res.status(500).json({ success: false, error: error.message });
@@ -551,13 +580,24 @@ function rateLimit(ip, maxPerMinute = 10) {
   return entry.count > maxPerMinute;
 }
 
+const FREE_TIER_TEAM_LIMIT = 8;
+
 app.get("/api/room/create", async (req, res) => {
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
   if (rateLimit(ip, 5)) return res.status(429).json({ success: false, error: "Troppe richieste. Riprova tra un minuto." });
 
   const accessCode = String(req.query.accessCode || "").trim().toUpperCase();
-  const validation = await validateAccessCode(accessCode);
-  if (!validation.valid) return res.status(403).json({ success: false, error: validation.error });
+  const teamCount = parseInt(req.query.teamCount) || 0;
+  const isFree = teamCount > 0 && teamCount <= FREE_TIER_TEAM_LIMIT;
+
+  let codeType = "free";
+  if (!isFree) {
+    const validation = await validateAccessCode(accessCode);
+    if (!validation.valid) return res.status(403).json({ success: false, error: validation.error });
+    codeType = validation.data.type;
+    // Incrementa usi (non per superadmin)
+    if (codeType !== "superadmin") await incrementCodeUses(accessCode);
+  }
 
   try {
     let code;
@@ -565,15 +605,12 @@ app.get("/api/room/create", async (req, res) => {
     do { code = generateRoomCode(); attempts++; } while (rooms.has(code) && attempts < 30);
 
     const adminPin = generateAdminPin();
-    await creaStanzaDB(code, adminPin, accessCode);
-
-    // Incrementa usi codice (non per superadmin)
-    if (validation.data.type !== "superadmin") await incrementCodeUses(accessCode);
+    await creaStanzaDB(code, adminPin, isFree ? null : accessCode);
 
     const room = createRoomData(code, adminPin);
     rooms.set(code, room);
 
-    console.log(`[SERVER] Stanza creata: ${code} (codice: ${accessCode})`);
+    console.log(`[SERVER] Stanza creata: ${code} (${isFree ? `free, ${teamCount} squadre` : `codice: ${accessCode}`})`);
     res.json({ success: true, roomCode: code, adminPin });
   } catch (e) {
     console.error("[SERVER] createRoom error:", e);
@@ -1282,15 +1319,17 @@ io.on("connection", (socket) => {
    AVVIO SERVER
    ========================================================================== */
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-  console.log("====================================================");
-  console.log(`🚀 SERVER APERTO SU http://localhost:${PORT}`);
-  console.log(`📡 Rete locale: http://${LOCAL_IP}:${PORT}`);
-  console.log(`🗄️  Supabase: ${SUPABASE_URL}`);
-  if (CUSTOM_HOST_URL) {
-    console.log(`🌐 Modalità ONLINE — URL pubblico: ${CUSTOM_HOST_URL}`);
-  } else {
-    console.log("📺 Modalità LAN — QR basato su IP locale");
-  }
-  console.log("====================================================");
+loadSuperadminPassword().then(() => {
+  server.listen(PORT, () => {
+    console.log("====================================================");
+    console.log(`🚀 SERVER APERTO SU http://localhost:${PORT}`);
+    console.log(`📡 Rete locale: http://${LOCAL_IP}:${PORT}`);
+    console.log(`🗄️  Supabase: ${SUPABASE_URL}`);
+    if (CUSTOM_HOST_URL) {
+      console.log(`🌐 Modalità ONLINE — URL pubblico: ${CUSTOM_HOST_URL}`);
+    } else {
+      console.log("📺 Modalità LAN — QR basato su IP locale");
+    }
+    console.log("====================================================");
+  });
 });
