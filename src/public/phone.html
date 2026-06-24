@@ -82,6 +82,11 @@
       </div>
     </div>
 
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button onclick="vaiARose()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;">📋 Le Rose</button>
+      <button onclick="cambiaSquadra()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;">🔄 Cambia Squadra</button>
+    </div>
+
     <div class="player-card">
       <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Calciatore in chiamata</div>
       <h2 id="player-name">IN ATTESA...</h2>
@@ -128,6 +133,7 @@
     let astaAttiva = false;
     let toastTimer = null;
     let currentRoomCode = null;
+    let takenTeamsList = [];
 
     // ── Room join ───────────────────────────────────────────────────────────
     function setRoomError(msg) { document.getElementById('room-error').textContent = msg; }
@@ -209,13 +215,21 @@
       select.innerHTML = '<option value="">-- Scegli la tua Squadra --</option>';
       Object.keys(teams).forEach(k => {
         const opt = document.createElement("option");
+        const isTaken = takenTeamsList.includes(k) && k !== miaSquadraScelta.toLowerCase().trim();
         opt.value = teams[k].name;
-        opt.innerText = teams[k].name;
+        opt.innerText = isTaken ? teams[k].name + " (occupata)" : teams[k].name;
+        opt.disabled = isTaken;
+        opt.style.color = isTaken ? "#64748b" : "";
         select.appendChild(opt);
       });
       if (miaSquadraScelta) select.value = miaSquadraScelta;
       aggiornaDatiBudgetIntestazione();
     }
+
+    socket.on("takenTeams", (list) => {
+      takenTeamsList = list || [];
+      popolaSelectSquadre(oggettoTutteLeSquadre);
+    });
 
     socket.on("updateTeams", popolaSelectSquadre);
     socket.on("teamsUpdate", popolaSelectSquadre);
@@ -224,12 +238,28 @@
       if (!currentRoomCode) { joinRoom(document.getElementById('room-code-input').value); return; }
       const select = document.getElementById("select-my-team");
       if (!select.value) { mostraToast("Seleziona prima la tua squadra!"); return; }
-      miaSquadraScelta = select.value;
-      document.getElementById("lbl-my-team-display").innerText = miaSquadraScelta.toUpperCase();
-      document.getElementById("login-box").style.display = "none";
-      document.getElementById("auction-box").style.display = "block";
-      aggiornaDatiBudgetIntestazione();
-      aggiornaMiaRosaPersonale();
+      const nomeSquadra = select.value;
+      socket.emit("claimTeam", nomeSquadra);
+      socket.once("claimTeamResult", (res) => {
+        if (!res.success) { mostraToast(res.error || "Squadra non disponibile."); return; }
+        miaSquadraScelta = nomeSquadra;
+        document.getElementById("lbl-my-team-display").innerText = miaSquadraScelta.toUpperCase();
+        document.getElementById("login-box").style.display = "none";
+        document.getElementById("auction-box").style.display = "block";
+        aggiornaDatiBudgetIntestazione();
+        aggiornaMiaRosaPersonale();
+      });
+    }
+
+    function cambiaSquadra() {
+      socket.emit("releaseTeam");
+      miaSquadraScelta = "";
+      document.getElementById("auction-box").style.display = "none";
+      document.getElementById("login-box").style.display = "block";
+    }
+
+    function vaiARose() {
+      if (currentRoomCode) window.location.href = '/rose.html?room=' + currentRoomCode;
     }
 
     function aggiornaDatiBudgetIntestazione() {
