@@ -386,6 +386,7 @@
     // ── Cambia stanza ────────────────────────────────────────────────────
     document.getElementById('btn-change-room').addEventListener('click', () => {
       sessionStorage.removeItem('roomCode');
+      sessionStorage.removeItem('adminPin');
       activeRoomCode = null;
       document.getElementById('step-role').classList.add('hidden');
       document.getElementById('step-room').classList.remove('hidden');
@@ -410,10 +411,15 @@
 
     function mostraStanza(code, pin) {
       document.getElementById('display-room-code').textContent = code;
+      const effectivePin = pin || sessionStorage.getItem('adminPin');
       const pinBox = document.getElementById('display-admin-pin');
       if (pinBox) {
-        if (pin) { pinBox.textContent = pin; pinBox.closest('.pin-badge').style.display = 'flex'; }
-        else { pinBox.closest('.pin-badge').style.display = 'none'; }
+        if (effectivePin) {
+          pinBox.textContent = effectivePin;
+          pinBox.closest('.pin-badge').style.display = 'flex';
+        } else {
+          pinBox.closest('.pin-badge').style.display = 'none';
+        }
       }
       document.getElementById('step-room').classList.add('hidden');
       document.getElementById('step-role').classList.remove('hidden');
