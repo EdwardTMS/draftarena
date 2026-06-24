@@ -1,0 +1,19 @@
+{
+  "teams": {},
+  "playersList": [],
+  "soldPlayers": [],
+  "CONFIG": {
+    "STARTING_BUDGET": 1000,
+    "MAX_TOTAL_PLAYERS": 25,
+    "MAX_OFFENSIVE_PLAYERS": 14,
+    "LIMITS": {
+      "P": 3,
+      "D": 0,
+      "C": 0,
+      "A": 0
+    }
+  },
+  "settings": {
+    "timerDuration": 10
+  }
+}

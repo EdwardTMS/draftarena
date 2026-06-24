@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DraftARENA — SuperAdmin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #020817;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Login ── */
+    #login-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+    .login-card {
+      background: #0b132b;
+      border: 1px solid #1c2541;
+      border-radius: 16px;
+      padding: 36px;
+      width: 100%;
+      max-width: 380px;
+    }
+    .login-card img { width: 180px; display: block; margin: 0 auto 24px; }
+    .login-card h1 { font-size: 1.1rem; color: #f59e0b; text-align: center; margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+    .login-card p  { font-size: 12px; color: #475569; text-align: center; margin-bottom: 24px; }
+    .login-input {
+      width: 100%; padding: 12px 14px;
+      border-radius: 8px; border: 1px solid #1c2541;
+      background: #020817; color: #fff; font-size: 15px;
+      margin-bottom: 12px;
+    }
+    .login-input:focus { outline: none; border-color: #f59e0b; }
+    .btn-login {
+      width: 100%; padding: 13px;
+      border-radius: 8px; border: none;
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: white; font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-login:hover { opacity: 0.85; }
+    .login-error { color: #ef4444; font-size: 12px; text-align: center; margin-top: 8px; min-height: 16px; }
+
+    /* ── Dashboard ── */
+    #dashboard { display: none; }
+    .topbar {
+      background: #0b132b;
+      border-bottom: 1px solid #1c2541;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .topbar img { height: 32px; }
+    .topbar-title { font-size: 13px; color: #f59e0b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .btn-sm {
+      padding: 7px 14px; border-radius: 6px; border: none;
+      font-size: 12px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-sm:hover { opacity: 0.85; }
+    .btn-logout { background: #1e293b; color: #94a3b8; }
+
+    .main { padding: 28px 24px; max-width: 960px; margin: 0 auto; }
+
+    .section-title {
+      font-size: 11px; color: #475569; text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 12px; margin-top: 28px;
+      border-bottom: 1px solid #1c2541; padding-bottom: 8px;
+    }
+
+    /* ── Genera codice ── */
+    .gen-card {
+      background: #0b132b;
+      border: 1px solid #1c2541;
+      border-radius: 12px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+    .gen-card label { display: block; font-size: 11px; color: #64748b; margin-bottom: 5px; }
+    .gen-card input, .gen-card select {
+      width: 100%; padding: 9px 12px;
+      border-radius: 7px; border: 1px solid #1c2541;
+      background: #020817; color: #fff; font-size: 13px;
+    }
+    .gen-card input:focus, .gen-card select:focus { outline: none; border-color: #f59e0b; }
+    .btn-gen {
+      padding: 10px 18px; border-radius: 7px; border: none;
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: white; font-size: 13px; font-weight: 700;
+      cursor: pointer; white-space: nowrap; transition: opacity 0.2s;
+    }
+    .btn-gen:hover { opacity: 0.85; }
+
+    /* ── Tabella codici ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th {
+      text-align: left; padding: 9px 12px;
+      font-size: 10px; color: #475569; text-transform: uppercase; letter-spacing: 0.08em;
+      border-bottom: 1px solid #1c2541;
+    }
+    td { padding: 10px 12px; border-bottom: 1px solid #0f172a; vertical-align: middle; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .badge {
+      display: inline-block; padding: 3px 8px; border-radius: 4px;
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .badge-superadmin { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+    .badge-promo      { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-paid       { background: rgba(59,130,246,0.15); color: #3b82f6; border: 1px solid rgba(59,130,246,0.3); }
+    .badge-inactive   { background: rgba(100,116,139,0.15); color: #64748b; border: 1px solid rgba(100,116,139,0.3); }
+
+    .code-text {
+      font-family: monospace; font-size: 13px; color: #38bdf8;
+      letter-spacing: 0.05em; cursor: pointer;
+    }
+    .code-text:hover { color: #7dd3fc; }
+
+    .btn-toggle {
+      padding: 4px 10px; border-radius: 5px; border: none;
+      font-size: 11px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-toggle:hover { opacity: 0.75; }
+    .btn-disable { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+    .btn-enable  { background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.3); }
+
+    .copy-toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1e293b; color: #10b981; padding: 10px 20px;
+      border-radius: 8px; font-size: 13px; font-weight: 700;
+      border: 1px solid rgba(16,185,129,0.3);
+      opacity: 0; transition: opacity 0.2s; pointer-events: none;
+    }
+    .copy-toast.show { opacity: 1; }
+
+    /* ── Stanze ── */
+    .rooms-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px;
+    }
+    .room-item {
+      background: #0b132b; border: 1px solid #1c2541; border-radius: 10px; padding: 14px 16px;
+    }
+    .room-item .rc { font-size: 1.1rem; font-weight: 700; color: #38bdf8; letter-spacing: 3px; }
+    .room-item .rm { font-size: 11px; color: #475569; margin-top: 4px; }
+
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px;
+      margin-bottom: 4px;
+    }
+    .stat-card {
+      background: #0b132b; border: 1px solid #1c2541; border-radius: 10px;
+      padding: 16px; text-align: center;
+    }
+    .stat-card .val { font-size: 2rem; font-weight: 700; color: #f59e0b; }
+    .stat-card .lbl { font-size: 11px; color: #475569; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    @media (max-width: 640px) {
+      .gen-card { grid-template-columns: 1fr 1fr; }
+      .gen-card > *:last-child { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <img src="/DraftARENA.png" alt="DraftARENA">
+    <h1>SuperAdmin Panel</h1>
+    <p>Accesso riservato al proprietario della piattaforma.</p>
+    <input type="password" class="login-input" id="sa-password" placeholder="Password superadmin" autocomplete="current-password">
+    <button class="btn-login" id="btn-login">ACCEDI</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══════════════════════════════════════════════════════════ -->
+<div id="dashboard">
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:14px">
+      <img src="/DraftARENA.png" alt="DraftARENA">
+      <span class="topbar-title">SuperAdmin Panel</span>
+    </div>
+    <button class="btn-sm btn-logout" id="btn-logout">ESCI</button>
+  </div>
+
+  <div class="main">
+
+    <!-- Stats -->
+    <div class="section-title">Statistiche</div>
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card"><div class="val" id="stat-total-codes">—</div><div class="lbl">Codici totali</div></div>
+      <div class="stat-card"><div class="val" id="stat-promo-active">—</div><div class="lbl">Promo attivi</div></div>
+      <div class="stat-card"><div class="val" id="stat-total-uses">—</div><div class="lbl">Usi totali</div></div>
+      <div class="stat-card"><div class="val" id="stat-rooms">—</div><div class="lbl">Stanze create</div></div>
+    </div>
+
+    <!-- Genera nuovo codice -->
+    <div class="section-title">Genera nuovo codice accesso</div>
+    <div class="gen-card">
+      <div>
+        <label>Tipo</label>
+        <select id="gen-type">
+          <option value="promo">Promo (beta tester)</option>
+          <option value="paid">Paid (pagante)</option>
+        </select>
+      </div>
+      <div>
+        <label>Max usi (vuoto = illimitato)</label>
+        <input type="number" id="gen-max-uses" placeholder="es: 5" min="1">
+      </div>
+      <div>
+        <label>Scadenza (vuoto = mai)</label>
+        <input type="date" id="gen-expires">
+      </div>
+      <div>
+        <label>Nota / etichetta</label>
+        <input type="text" id="gen-note" placeholder="es: Gruppo WhatsApp amici">
+      </div>
+      <button class="btn-gen" id="btn-gen-code">+ GENERA</button>
+    </div>
+    <div id="gen-result" style="margin-top:10px;font-size:13px;color:#10b981;min-height:18px;"></div>
+
+    <!-- Lista codici -->
+    <div class="section-title">Tutti i codici accesso</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Codice</th>
+            <th>Tipo</th>
+            <th>Usi</th>
+            <th>Max</th>
+            <th>Scadenza</th>
+            <th>Nota</th>
+            <th>Stato</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="codes-tbody">
+          <tr><td colspan="8" style="color:#475569;text-align:center;padding:24px">Caricamento...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Stanze recenti -->
+    <div class="section-title">Stanze recenti (ultime 50)</div>
+    <div class="rooms-grid" id="rooms-grid">
+      <div style="color:#475569;font-size:13px">Caricamento...</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="copy-toast" id="copy-toast">Codice copiato!</div>
+
+<script>
+  let authenticated = false;
+
+  // ── Login ────────────────────────────────────────────────────────────────
+  async function doLogin() {
+    const pwd = document.getElementById('sa-password').value;
+    const err = document.getElementById('login-error');
+    err.textContent = '';
+    try {
+      const r = await fetch('/api/superadmin/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd })
+      });
+      const data = await r.json();
+      if (data.success) {
+        authenticated = true;
+        sessionStorage.setItem('sa_auth', '1');
+        showDashboard();
+      } else {
+        err.textContent = data.error || 'Password errata.';
+      }
+    } catch (e) {
+      err.textContent = 'Errore di rete.';
+    }
+  }
+
+  document.getElementById('btn-login').addEventListener('click', doLogin);
+  document.getElementById('sa-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  document.getElementById('btn-logout').addEventListener('click', () => {
+    sessionStorage.removeItem('sa_auth');
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+  });
+
+  if (sessionStorage.getItem('sa_auth')) showDashboard();
+
+  function showDashboard() {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadAll();
+  }
+
+  // ── Carica dati ──────────────────────────────────────────────────────────
+  async function loadAll() {
+    await Promise.all([loadCodes(), loadRooms()]);
+  }
+
+  async function loadCodes() {
+    const r = await fetch('/api/superadmin/codes');
+    const data = await r.json();
+    if (!data.success) return;
+    renderCodes(data.codes);
+    renderStats(data.codes);
+  }
+
+  async function loadRooms() {
+    const r = await fetch('/api/superadmin/rooms');
+    const data = await r.json();
+    if (!data.success) return;
+    renderRooms(data.rooms);
+    document.getElementById('stat-rooms').textContent = data.rooms.length;
+  }
+
+  // ── Stats ────────────────────────────────────────────────────────────────
+  function renderStats(codes) {
+    document.getElementById('stat-total-codes').textContent = codes.length;
+    document.getElementById('stat-promo-active').textContent = codes.filter(c => c.type === 'promo' && c.is_active).length;
+    document.getElementById('stat-total-uses').textContent = codes.reduce((s, c) => s + (c.uses_count || 0), 0);
+  }
+
+  // ── Tabella codici ───────────────────────────────────────────────────────
+  function renderCodes(codes) {
+    const tbody = document.getElementById('codes-tbody');
+    if (codes.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="color:#475569;text-align:center;padding:24px">Nessun codice presente.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = codes.map(c => {
+      const badgeClass = c.type === 'superadmin' ? 'badge-superadmin' : c.type === 'paid' ? 'badge-paid' : 'badge-promo';
+      const activeBadge = c.is_active ? '' : '<span class="badge badge-inactive">Disattivo</span>';
+      const scad = c.expires_at ? new Date(c.expires_at).toLocaleDateString('it-IT') : '—';
+      const toggleBtn = c.type !== 'superadmin'
+        ? `<button class="btn-toggle ${c.is_active ? 'btn-disable' : 'btn-enable'}" onclick="toggleCode('${c.id}', ${!c.is_active})">${c.is_active ? 'DISATTIVA' : 'RIATTIVA'}</button>`
+        : '';
+      return `<tr>
+        <td><span class="code-text" onclick="copyCode('${c.code}')">${c.code}</span></td>
+        <td><span class="badge ${badgeClass}">${c.type}</span> ${activeBadge}</td>
+        <td style="color:#f1f5f9;font-weight:600">${c.uses_count}</td>
+        <td style="color:#94a3b8">${c.max_uses ?? '∞'}</td>
+        <td style="color:#94a3b8">${scad}</td>
+        <td style="color:#64748b;font-size:12px">${c.note || '—'}</td>
+        <td style="color:${c.is_active ? '#10b981' : '#475569'};font-size:12px">${c.is_active ? 'Attivo' : 'Disattivo'}</td>
+        <td>${toggleBtn}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Stanze ───────────────────────────────────────────────────────────────
+  function renderRooms(rooms) {
+    const grid = document.getElementById('rooms-grid');
+    if (rooms.length === 0) { grid.innerHTML = '<div style="color:#475569;font-size:13px">Nessuna stanza.</div>'; return; }
+    grid.innerHTML = rooms.map(r => {
+      const d = new Date(r.created_at).toLocaleDateString('it-IT', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+      return `<div class="room-item">
+        <div class="rc">${r.code}</div>
+        <div class="rm">Creata: ${d}</div>
+        ${r.access_code ? `<div class="rm" style="margin-top:3px;color:#475569">Codice: ${r.access_code}</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Genera codice ────────────────────────────────────────────────────────
+  document.getElementById('btn-gen-code').addEventListener('click', async () => {
+    const type = document.getElementById('gen-type').value;
+    const maxUses = document.getElementById('gen-max-uses').value || null;
+    const expiresAt = document.getElementById('gen-expires').value || null;
+    const note = document.getElementById('gen-note').value || null;
+    const res = document.getElementById('gen-result');
+    res.textContent = 'Generazione in corso...';
+
+    try {
+      const r = await fetch('/api/superadmin/codes', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type, maxUses: maxUses ? parseInt(maxUses) : null, expiresAt, note })
+      });
+      const data = await r.json();
+      if (data.success) {
+        res.textContent = `✓ Codice generato: ${data.code.code}`;
+        document.getElementById('gen-max-uses').value = '';
+        document.getElementById('gen-expires').value = '';
+        document.getElementById('gen-note').value = '';
+        await loadCodes();
+        copyCode(data.code.code, false);
+      } else {
+        res.style.color = '#ef4444';
+        res.textContent = data.error;
+      }
+    } catch (e) {
+      res.style.color = '#ef4444';
+      res.textContent = 'Errore di rete.';
+    }
+  });
+
+  // ── Toggle attivo/disattivo ──────────────────────────────────────────────
+  async function toggleCode(id, isActive) {
+    await fetch(`/api/superadmin/codes/${id}`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ is_active: isActive })
+    });
+    await loadCodes();
+  }
+
+  // ── Copia codice ─────────────────────────────────────────────────────────
+  function copyCode(code, showToast = true) {
+    navigator.clipboard.writeText(code).then(() => {
+      if (!showToast) return;
+      const t = document.getElementById('copy-toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    });
+  }
+</script>
+</body>
+</html>

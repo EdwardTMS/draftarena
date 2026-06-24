@@ -1,0 +1,1841 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DraftARENA - Pannello Admin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --success-dark: #059669;
+            --warning: #f59e0b;
+            --warning-dark: #d97706;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #475569;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-card);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .league-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .league-name {
+            background: var(--bg-input);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: bold;
+            color: var(--warning);
+        }
+
+        /* Tabs Navigation */
+        .tabs-nav {
+            display: flex;
+            background: var(--bg-card);
+            padding: 0;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-btn:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--success-dark);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: #1e293b;
+        }
+
+        .btn-warning:hover {
+            background: var(--warning-dark);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-input);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        /* Status Indicators */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-paused {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .status-stopped {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* Auction Control Panel */
+        .auction-control {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-box {
+            background: var(--bg-input);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .control-box .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .control-box .label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-input);
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--success);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Alert Box */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Player List */
+        .player-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .player-item:hover {
+            background: var(--border);
+        }
+
+        .player-item .role {
+            background: var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .player-item .club {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Team Cards */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .team-card {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .team-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-budget {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .team-slots {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .slot-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .slot-P { background: #fbbf24; color: #1e293b; }
+        .slot-D { background: #22c55e; color: white; }
+        .slot-C { background: #3b82f6; color: white; }
+        .slot-A { background: #ef4444; color: white; }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Notification Toast */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        #toast.show {
+            display: block;
+            animation: toastSlide 0.3s ease;
+        }
+
+        @keyframes toastSlide {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Storico offerte */
+        .bid-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.35rem;
+            font-size: 0.9rem;
+        }
+        .bid-row:nth-child(odd)  { background: rgba(37,99,235,0.07); }
+        .bid-row:nth-child(even) { background: rgba(255,255,255,0.03); }
+        .bid-row.bid-winner      { background: rgba(16,185,129,0.12); border-left: 3px solid var(--success); }
+        .bid-row .bid-num        { font-size: 0.72rem; color: var(--text-secondary); min-width: 24px; }
+        .bid-row .bid-team       { font-weight: 600; flex: 1; padding: 0 0.5rem; }
+        .bid-row .bid-price      { font-weight: 700; color: var(--success); }
+
+        /* Pulse animation per il pannello revisione */
+        @keyframes reviewPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+            70%  { box-shadow: 0 0 0 10px rgba(245,158,11,0); }
+            100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+        }
+        #review-panel.pulse { animation: reviewPulse 1s ease 3; }
+    </style>
+</head>
+<body>
+
+  <!-- PIN GATE ──────────────────────────────────────────────────────────── -->
+  <div id="pin-gate" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;flex-direction:column;">
+    <div style="background:#1e293b;border:1px solid #f59e0b;border-radius:14px;padding:32px;width:320px;max-width:90%;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+      <h3 style="color:#f59e0b;margin:0 0 4px 0;">PIN Regia</h3>
+      <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;">Inserisci il PIN che hai ricevuto alla creazione della stanza.</p>
+      <input id="pin-gate-input" type="text" maxlength="4" inputmode="numeric" placeholder="----"
+        style="width:100%;box-sizing:border-box;padding:12px;font-size:1.5rem;text-align:center;letter-spacing:0.3em;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#fff;margin-bottom:8px;">
+      <div class="pin-gate-error" style="color:#ef4444;font-size:12px;min-height:18px;margin-bottom:8px;"></div>
+      <button onclick="submitPinGate()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">ENTRA</button>
+    </div>
+  </div>
+  <!-- ROOM GATE ─────────────────────────────────────────────────────────── -->
+  <div id="room-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0f172a;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;">
+    <div style="background:#1e293b;border:1px solid #334155;border-radius:14px;padding:32px;width:360px;max-width:90%;">
+      <h2 style="color:#38bdf8;margin:0 0 4px 0;font-size:1.4rem;">DraftARENA</h2>
+      <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;">Pannello Amministratore</p>
+
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice (es: ABC123)"
+          style="flex:1;padding:11px 12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:15px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
+        <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;white-space:nowrap;">ENTRA</button>
+      </div>
+      <div id="gate-error" style="color:#ef4444;font-size:12px;margin-top:4px;min-height:16px;"></div>
+      <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:4px;display:none;">Connessione in corso...</div>
+      <div style="border-top:1px solid #1c2541;margin-top:14px;padding-top:12px;text-align:center;">
+        <a href="/" style="color:#475569;font-size:12px;text-decoration:none;">Non hai ancora una stanza? <span style="color:#38bdf8;font-weight:bold;">Creane una dall'Hub →</span></a>
+      </div>
+    </div>
+  </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <a href="/" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border:1px solid var(--border); border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'">← Hub</a>
+            <img src="/DraftARENAws.png" alt="DraftARENA" style="height:34px;">
+        </div>
+        <div class="league-info">
+            <div style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:8px;">
+              <span style="font-size:11px;color:#64748b;">STANZA</span>
+              <span id="room-code-display" style="font-weight:bold;color:#38bdf8;letter-spacing:2px;font-size:1rem;">---</span>
+              <button onclick="copiaCodice()" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-size:11px;padding:0;font-weight:bold;" title="Copia codice">COPIA</button>
+            </div>
+            <span>Lega:</span>
+            <span class="league-name" id="currentLeagueName">default</span>
+        </div>
+    </header>
+
+    <!-- Tabs Navigation -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab-leghe">Gestione Leghe</button>
+        <button class="tab-btn" data-tab="tab-squadre">Squadre</button>
+        <button class="tab-btn" data-tab="tab-giocatori">Lista Giocatori</button>
+        <button class="tab-btn" data-tab="tab-asta">Controlli Asta</button>
+        <button class="tab-btn" data-tab="tab-operazioni">Operazioni Speciali</button>
+        <button class="tab-btn" data-tab="tab-config">Configurazione</button>
+        <button class="tab-btn" data-tab="tab-export">Export</button>
+    </nav>
+
+    <!-- Alert Container -->
+    <div style="padding: 1rem 2rem 0;">
+        <div class="alert alert-success" id="alertSuccess"></div>
+        <div class="alert alert-error" id="alertError"></div>
+        <div class="alert alert-warning" id="alertWarning"></div>
+    </div>
+
+    <!-- TAB 1: Gestione Leghe -->
+    <div class="tab-content active" id="tab-leghe">
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title">Crea Nuova Lega</h3>
+                <div class="form-group">
+                    <label>Nome Lega</label>
+                    <input type="text" id="newLeagueName" placeholder="Es: lega-2024">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="createNewLeague()">Crea Lega</button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Cambia Lega Attiva</h3>
+                <div class="form-group">
+                    <label>Seleziona Lega</label>
+                    <input type="text" id="switchLeagueName" placeholder="Nome lega da caricare">
+                </div>
+                <button class="btn btn-warning btn-block" onclick="switchLeague()">Carica Lega</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Salvataggio & Reset</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <button class="btn btn-success" onclick="saveSession()">Salva Sessione</button>
+                <button class="btn btn-secondary" onclick="loadSession()">Ricarica Sessione</button>
+                <button class="btn btn-danger" onclick="resetAll()">Reset Completo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 2: Squadre -->
+    <div class="tab-content" id="tab-squadre">
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title">Crea Nuova Squadra</h3>
+                <div class="form-group">
+                    <label>Nome Squadra</label>
+                    <input type="text" id="newTeamName" placeholder="Nome della fantasquadra">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="createTeam()">Aggiungi Squadra</button>
+                <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+                    Budget iniziale: <strong id="startingBudgetDisplay">500</strong> crediti
+                </p>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Statistiche Lega</h3>
+                <div class="stats-bar" style="flex-direction: column; gap: 0.5rem;">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statTeams">0</div>
+                        <div class="stat-label">Squadre</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statSold">0</div>
+                        <div class="stat-label">Giocatori Venduti</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statRemaining">0</div>
+                        <div class="stat-label">Giocatori Rimanenti</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Elenco Squadre</h3>
+            <div class="team-grid" id="teamsContainer">
+                <p style="color: var(--text-secondary);">Nessuna squadra creata</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Lista Giocatori -->
+    <div class="tab-content" id="tab-giocatori">
+        <div class="grid-2">
+            <!-- Upload Excel -->
+            <div class="card">
+                <h3 class="card-title">Carica Lista Excel</h3>
+                <div class="form-group">
+                    <label>Soglia Minima Quotazione</label>
+                    <input type="number" id="sogliaMinima" value="0" min="0" placeholder="Filtra giocatori sotto questo valore">
+                </div>
+                <div class="file-upload" onclick="document.getElementById('excelFile').click()">
+                    <div class="upload-icon">📊</div>
+                    <p>Trascina il file Excel o clicca per selezionare</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                        Colonne richieste: Nome, Ruolo, Squadra, Valore
+                    </p>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="uploadExcel()">
+                </div>
+            </div>
+
+            <!-- Aggiunta Manuale -->
+            <div class="card">
+                <h3 class="card-title">Aggiungi Giocatore Manualmente</h3>
+                <div class="form-group">
+                    <label>Nome Giocatore</label>
+                    <input type="text" id="manualPlayerName" placeholder="Nome e cognome">
+                </div>
+                <div class="form-group">
+                    <label>Ruolo Mantra</label>
+                    <select id="manualPlayerRole">
+                        <option value="P">P - Portiere</option>
+                        <option value="DC">DC - Difensore Centrale</option>
+                        <option value="DD">DD - Difensore Destro</option>
+                        <option value="DS">DS - Difensore Sinistro</option>
+                        <option value="B">B - Terzino</option>
+                        <option value="C">C - Centrocampista</option>
+                        <option value="M">M - Mediano</option>
+                        <option value="E">E - Esterno</option>
+                        <option value="T">T - Trequartista</option>
+                        <option value="W">W - Ala</option>
+                        <option value="A">A - Attaccante</option>
+                        <option value="PC">PC - Punta Centrale</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Squadra di Appartenenza</label>
+                    <input type="text" id="manualPlayerClub" placeholder="Serie A team">
+                </div>
+                <button class="btn btn-success btn-block" onclick="addManualPlayer()">Aggiungi al Mazzo</button>
+            </div>
+        </div>
+
+        <!-- Lista Giocatori Rimanenti -->
+        <div class="card">
+            <h3 class="card-title">
+                Giocatori nel Mazzo (<span id="playersCount">0</span>)
+                <button class="btn btn-secondary" style="margin-left: auto; padding: 0.5rem 1rem;" onclick="refreshPlayersList()">Aggiorna</button>
+            </h3>
+            <div class="player-list" id="playersListContainer">
+                <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                    Carica un file Excel per popolare la lista
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: Controlli Asta -->
+    <div class="tab-content" id="tab-asta">
+        <div class="card">
+            <h3 class="card-title">Stato Asta Corrente</h3>
+            <div class="auction-control">
+                <div class="control-box">
+                    <div class="value" id="displayPlayerName">---</div>
+                    <div class="label">Giocatore in Asta</div>
+                </div>
+                <div class="control-box">
+                    <div class="value" id="displayPrice">0</div>
+                    <div class="label">Offerta Attuale</div>
+                </div>
+                <div class="control-box">
+                    <div class="value" id="displayTimer">--</div>
+                    <div class="label">Timer</div>
+                </div>
+                <div class="control-box">
+                    <div class="value" id="displayBidder">---</div>
+                    <div class="label">Miglior Offerente</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title">Avvia Asta</h3>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <button class="btn btn-success btn-block" onclick="startRandomAuction()">
+                        🎲 Estrazione Random
+                    </button>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin:0;">Estrae un giocatore a caso dal mazzo</p>
+                    <label style="color: var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Selezione Manuale</label>
+                    <select id="manualPlayerSelect">
+                        <option value="">Seleziona giocatore...</option>
+                    </select>
+                    <button class="btn btn-primary btn-block" onclick="startManualAuction()">Lancia Giocatore</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Controlli</h3>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <button class="btn btn-danger btn-block" onclick="pauseAuction()">⏸ PAUSA</button>
+                    <button class="btn btn-success btn-block" onclick="resumeAuction()">▶ RIPRENDI</button>
+                    <div class="toggle-container" style="margin-top:0.5rem;">
+                        <span style="font-size:0.85rem;">Flusso Manuale</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoAdvanceToggle" checked onchange="toggleAutoAdvance(this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:0.85rem;">Automatico</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin:0;">
+                        Automatico: estrae il prossimo giocatore dopo ogni vendita
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Storico offerte live -->
+        <div class="card" id="bid-history-card">
+            <h3 class="card-title">
+                📋 Storico Offerte
+                <span id="bid-history-badge" style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);font-weight:normal;">in attesa di asta...</span>
+            </h3>
+            <div id="bid-history-list" style="max-height:220px;overflow-y:auto;">
+                <p style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:1rem 0;">
+                    Nessuna offerta ancora — avvia un'asta per vedere lo storico in tempo reale.
+                </p>
+            </div>
+        </div>
+
+        <!-- Pannello revisione post-asta -->
+        <div class="card" id="review-panel" style="display:none;border:2px solid var(--warning);">
+            <h3 class="card-title" style="color:var(--warning);">
+                ⚡ Revisione Asta — <span id="review-player-name">---</span>
+            </h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+                L'asta si è conclusa. Controlla lo storico e decidi se confermare l'assegnazione o modificarla.
+            </p>
+
+            <div style="background:var(--bg-input);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;">Storico completo offerte</div>
+                <div id="review-history-list" style="max-height:180px;overflow-y:auto;"></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.75rem;align-items:end;">
+                <div class="form-group" style="margin:0;">
+                    <label>Assegna a squadra</label>
+                    <select id="review-team-select">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Prezzo finale (cr)</label>
+                    <input type="number" id="review-price-input" min="0" value="0">
+                </div>
+                <button class="btn btn-warning" onclick="confermaRiassegnazione()" style="height:fit-content;">
+                    ✅ Riassegna
+                </button>
+            </div>
+
+            <div style="margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                <button class="btn btn-success" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;">
+                    ✓ Conferma assegnazione originale
+                </button>
+                <button class="btn btn-secondary" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;">
+                    Chiudi senza modifiche
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: Operazioni Speciali -->
+    <div class="tab-content" id="tab-operazioni">
+        <div class="grid-2">
+            <!-- Assegnazione Forzata -->
+            <div class="card">
+                <h3 class="card-title">Assegnazione Forzata</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                    Assegna il giocatore corrente a una squadra specifica
+                </p>
+                <div class="form-group">
+                    <label>Squadra Destinataria</label>
+                    <select id="forceAssignTeam">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prezzo di Vendita</label>
+                    <input type="number" id="forceAssignPrice" value="1" min="1">
+                </div>
+                <button class="btn btn-warning btn-block" onclick="forceAssignPlayer()">Assegna Forzatamente</button>
+            </div>
+
+            <!-- Giro di Gara -->
+            <div class="card">
+                <h3 class="card-title">Giro di Gara</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                    Riporta i giocatori invenduti nel mazzo per un nuovo giro
+                </p>
+                <button class="btn btn-primary btn-block" onclick="recycleUnsold()">Avvia Giro di Gara</button>
+                <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning);">
+                    Utile quando il mazzo finisce ma ci sono giocatori invenduti
+                </p>
+            </div>
+        </div>
+
+        <!-- Rimozione Giocatore -->
+        <div class="card">
+            <h3 class="card-title">Rimuovi Giocatore da Rosa (con Rimborso)</h3>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>Squadra</label>
+                    <select id="removePlayerTeam">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Giocatore</label>
+                    <select id="removePlayerName">
+                        <option value="">Seleziona giocatore...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Crediti da Restituire</label>
+                    <input type="number" id="removePlayerCredits" value="0" min="0">
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                        Il giocatore torna nel mazzo
+                    </p>
+                </div>
+            </div>
+            <button class="btn btn-danger" onclick="removePlayerFromTeam()">Rimuovi Giocatore</button>
+        </div>
+
+        <!-- Scarta dal Mazzo -->
+        <div class="card">
+            <h3 class="card-title">Scarta Giocatore dal Mazzo</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Giocatore da Scartare</label>
+                    <select id="discardPlayerSelect">
+                        <option value="">Seleziona giocatore...</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button class="btn btn-danger btn-block" onclick="discardPlayer()">Scarta Definitivamente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 6: Configurazione -->
+    <div class="tab-content" id="tab-config">
+        <div class="card">
+            <h3 class="card-title">Impostazioni Timer</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Durata Timer (secondi)</label>
+                    <input type="number" id="configTimerDuration" value="10" min="5" max="60">
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button class="btn btn-primary" onclick="updateTimerConfig()">Aggiorna Timer</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Connessione Telefono (QR Code)</h3>
+            <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 0.5rem 0;">
+                URL usato per il QR: <b id="detectedIpDisplay" style="color: var(--accent);">rilevamento automatico...</b>
+            </p>
+            <p style="color: #f59e0b; font-size: 11px; margin: 0 0 1rem 0; line-height: 1.5;">
+                Il server gira nell'ambiente Bolt, <b>non sul tuo PC</b>. Il telefono si connette tramite l'URL pubblico del browser, non tramite IP locale. L'URL viene rilevato automaticamente quando apri questa pagina.
+            </p>
+            <div class="form-group">
+                <label>URL override (solo se necessario)</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="configHostUrl" placeholder="es. https://3000-xxxx.bolt.new" style="flex: 1;">
+                    <button class="btn btn-primary" style="white-space: nowrap;" onclick="saveHostUrl()">Applica</button>
+                    <button class="btn btn-secondary" style="white-space: nowrap;" onclick="resetHostUrl()">Auto</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Regole Mantra</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Budget Iniziale (crediti)</label>
+                    <input type="number" id="configStartingBudget" value="500" min="100">
+                </div>
+                <div class="form-group">
+                    <label>Max Giocatori Totali</label>
+                    <input type="number" id="configMaxTotalPlayers" value="25" min="11">
+                </div>
+                <div class="form-group">
+                    <label>Max Offensivi Puri</label>
+                    <input type="number" id="configMaxOffensive" value="6" min="1">
+                </div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Limiti per Ruolo</h3>
+            <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 1rem 0;">Inserisci il numero esatto da raggiungere per completare la rosa. <strong style="color: var(--text-primary);">0 = illimitato</strong> (vincolato solo dal totale giocatori).</p>
+            <div class="grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label>Portieri (P)</label>
+                    <input type="number" id="configLimitP" value="3" min="0" placeholder="0 = ∞">
+                </div>
+                <div class="form-group">
+                    <label>Difensori (D)</label>
+                    <input type="number" id="configLimitD" value="10" min="0" placeholder="0 = ∞">
+                </div>
+                <div class="form-group">
+                    <label>Centrocampisti (C)</label>
+                    <input type="number" id="configLimitC" value="8" min="0" placeholder="0 = ∞">
+                </div>
+                <div class="form-group">
+                    <label>Attaccanti (A)</label>
+                    <input type="number" id="configLimitA" value="4" min="0" placeholder="0 = ∞">
+                </div>
+            </div>
+            <button class="btn btn-success" style="margin-top: 1rem;" onclick="saveAllConfig()">Salva Tutte le Configurazioni</button>
+        </div>
+    </div>
+
+    <!-- TAB 7: Export -->
+    <div class="tab-content" id="tab-export">
+        <div class="card">
+            <h3 class="card-title">Esporta Report Excel</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Genera un file Excel completo con tutti i dati dell'asta:
+            </p>
+            <ul style="color: var(--text-secondary); margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                <li>Un foglio per ogni squadra con acquisti ordinati per ruolo</li>
+                <li>Foglio giocatori svincolati (invenduti)</li>
+                <li>Tabellone generale budget e slot</li>
+            </ul>
+            <button class="btn btn-success btn-block" onclick="exportExcel()">Scarica Report Completo</button>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Storico Vendite</h3>
+            <table id="soldPlayersTable">
+                <thead>
+                    <tr>
+                        <th>Giocatore</th>
+                        <th>Ruolo</th>
+                        <th>Squadra</th>
+                        <th>Venduto a</th>
+                        <th>Prezzo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-secondary);">Nessuna vendita registrata</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io({ transports: ["polling"] });
+
+        // Current state
+        let currentTeams = {};
+        let currentPlayersList = [];
+        let currentSoldPlayers = [];
+        let currentAuctionName = 'default';
+        let currentRoomCode = null;
+        let pendingSocketRoomCode = null;
+
+        function getStoredAdminPin() { return sessionStorage.getItem('adminPin') || ''; }
+
+        function doAdminAuth() {
+          const pin = getStoredAdminPin();
+          if (pin) socket.emit('adminAuth', { pin });
+        }
+
+        socket.on('adminAuthResult', (data) => {
+          if (data.success) {
+            document.getElementById('pin-gate').style.display = 'none';
+          } else {
+            sessionStorage.removeItem('adminPin');
+            showPinGate('PIN errato. Riprova.');
+          }
+        });
+
+        function showPinGate(errorMsg) {
+          const gate = document.getElementById('pin-gate');
+          if (gate) {
+            gate.style.display = 'flex';
+            const err = gate.querySelector('.pin-gate-error');
+            if (err) err.textContent = errorMsg || '';
+          }
+        }
+
+        function submitPinGate() {
+          const pin = document.getElementById('pin-gate-input').value.trim();
+          if (!pin) return;
+          sessionStorage.setItem('adminPin', pin);
+          socket.emit('adminAuth', { pin });
+        }
+
+        document.addEventListener('keydown', (e) => {
+          const gate = document.getElementById('pin-gate');
+          if (gate && gate.style.display !== 'none' && e.key === 'Enter') submitPinGate();
+        });
+
+        socket.on('connect', () => {
+          if (pendingSocketRoomCode) {
+            socket.emit('joinRoom', pendingSocketRoomCode);
+            socket.emit('setHostUrl', { url: window.location.origin });
+            const pin = getStoredAdminPin();
+            if (pin) socket.emit('adminAuth', { pin });
+            pendingSocketRoomCode = null;
+          }
+        });
+
+        // ── Room Gate ─────────────────────────────────────────────────────
+        function gateSetLoading(show) {
+          document.getElementById('gate-loading').style.display = show ? 'block' : 'none';
+        }
+        function gateSetError(msg) {
+          document.getElementById('gate-error').textContent = msg;
+        }
+        function hideGate() {
+          document.getElementById('room-gate').style.display = 'none';
+        }
+        function onRoomJoined(code) {
+          currentRoomCode = code;
+          document.getElementById('room-code-display').textContent = code;
+          hideGate();
+          if (socket.connected) {
+            socket.emit('joinRoom', code);
+            socket.emit('setHostUrl', { url: window.location.origin });
+            const pin = getStoredAdminPin();
+            if (pin) {
+              socket.emit('adminAuth', { pin });
+            } else {
+              showPinGate();
+            }
+          } else {
+            pendingSocketRoomCode = code;
+          }
+        }
+
+        async function fetchWithTimeout(url, ms) {
+          const ctrl = new AbortController();
+          const t = setTimeout(() => ctrl.abort(), ms);
+          try {
+            const r = await fetch(url, { signal: ctrl.signal });
+            return r.json();
+          } finally { clearTimeout(t); }
+        }
+
+        // Auto-join on page load if saved code exists
+        (async () => {
+          const saved = sessionStorage.getItem('roomCode') || new URLSearchParams(location.search).get('room');
+          if (saved) {
+            gateSetLoading(true);
+            try {
+              const res = await fetchWithTimeout('/api/room/join/' + saved, 8000);
+              if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
+              else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || 'Stanza non trovata.'); }
+            } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+            finally { gateSetLoading(false); }
+          }
+        })();
+
+        document.getElementById('gate-btn-join').addEventListener('click', gateJoin);
+        document.getElementById('gate-code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') gateJoin(); });
+
+        async function gateJoin() {
+          const code = document.getElementById('gate-code-input').value.trim().toUpperCase();
+          if (!code) return;
+          gateSetLoading(true); gateSetError('');
+          try {
+            const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
+            if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
+            else gateSetError(res.error || 'Stanza non trovata.');
+          } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+          finally { gateSetLoading(false); }
+        }
+
+        function copiaCodice() {
+          if (!currentRoomCode) return;
+          navigator.clipboard.writeText(currentRoomCode);
+        }
+
+        // Initialize tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ============================================================
+        // SOCKET EVENT HANDLERS
+        // ============================================================
+
+        socket.on('connectionData', (data) => {
+            console.log('Connected to server');
+            const detectedEl = document.getElementById('detectedIpDisplay');
+            if (detectedEl && data.url) {
+                try { detectedEl.textContent = new URL(data.url).hostname; } catch { detectedEl.textContent = data.url; }
+            }
+        });
+
+        socket.on('hostUrlUpdate', (data) => {
+            const detectedEl = document.getElementById('detectedIpDisplay');
+            if (detectedEl) detectedEl.textContent = data.hostUrl + (data.isCustom ? ' (override)' : ' (auto)');
+            const input = document.getElementById('configHostUrl');
+            if (input && data.isCustom) input.value = data.hostUrl;
+        });
+
+        socket.on('configUpdate', (data) => {
+            if (data.timerDuration) document.getElementById('configTimerDuration').value = data.timerDuration;
+            if (data.CONFIG) {
+                const c = data.CONFIG;
+                document.getElementById('configStartingBudget').value = c.STARTING_BUDGET || 500;
+                document.getElementById('configMaxTotalPlayers').value = c.MAX_TOTAL_PLAYERS || 25;
+                document.getElementById('configMaxOffensive').value = c.MAX_OFFENSIVE_PLAYERS || 6;
+                if (c.LIMITS) {
+                    document.getElementById('configLimitP').value = c.LIMITS.P || 3;
+                    document.getElementById('configLimitD').value = c.LIMITS.D || 10;
+                    document.getElementById('configLimitC').value = c.LIMITS.C || 8;
+                    document.getElementById('configLimitA').value = c.LIMITS.A || 4;
+                }
+            }
+        });
+
+        socket.on('currentAuctionName', (name) => {
+            currentAuctionName = name;
+            document.getElementById('currentLeagueName').textContent = name;
+        });
+
+        socket.on('update', (state) => {
+            // Update auction display
+            document.getElementById('displayPlayerName').textContent = state.player ? state.player.nome : '---';
+            document.getElementById('displayPrice').textContent = state.currentPrice || 0;
+            document.getElementById('displayTimer').textContent = state.time !== null ? state.time : '--';
+            document.getElementById('displayBidder').textContent = state.highestBidder || '---';
+
+            // Aggiorna storico offerte live
+            renderBidHistory(state.history || [], state.player);
+        });
+
+        socket.on('updateTeams', (teams) => {
+            currentTeams = teams;
+            renderTeams();
+            updateTeamSelects();
+            updateStats();
+        });
+
+        socket.on('teamsUpdate', (teams) => {
+            currentTeams = teams;
+            renderTeams();
+            updateTeamSelects();
+        });
+
+        socket.on('updateSold', (sold) => {
+            currentSoldPlayers = sold;
+            renderSoldPlayers();
+            updateStats();
+        });
+
+        socket.on('playersList', (players) => {
+            currentPlayersList = players;
+            renderPlayersList();
+            updateStats();
+        });
+
+        socket.on('errorNotify', (msg) => {
+            showAlert('error', msg);
+        });
+
+        socket.on('auctionEnded', (data) => {
+            if (data.winner) {
+                apriPannelloRevisione(data);
+            }
+        });
+
+        socket.on('lastAuctionReassigned', (data) => {
+            showAlert('success', `✅ ${data.player} riassegnato a ${data.newWinner} per ${data.newPrice} cr`);
+        });
+
+        socket.on('auctionSwitchedSuccess', (name) => {
+            showAlert('success', `Lega "${name}" caricata con successo!`);
+        });
+
+        // ============================================================
+        // LEAGUE MANAGEMENT
+        // ============================================================
+
+        function createNewLeague() {
+            const name = document.getElementById('newLeagueName').value.trim();
+            if (!name) {
+                showAlert('error', 'Inserisci un nome per la lega');
+                return;
+            }
+            socket.emit('adminSwitchAuction', name);
+            document.getElementById('newLeagueName').value = '';
+        }
+
+        function switchLeague() {
+            const name = document.getElementById('switchLeagueName').value.trim();
+            if (!name) {
+                showAlert('error', 'Inserisci il nome della lega da caricare');
+                return;
+            }
+            socket.emit('adminSwitchAuction', name);
+        }
+
+        function saveSession() {
+            socket.emit('adminTriggerSave');
+        }
+
+        function loadSession() {
+            socket.emit('adminTriggerLoad');
+            showAlert('success', 'Sessione ricaricata!');
+        }
+
+        function resetAll() {
+            if (confirm('Sei sicuro? Questo cancellera tutti i dati dell\'asta corrente!')) {
+                socket.emit('reset');
+                showAlert('warning', 'Reset completato');
+            }
+        }
+
+        // ============================================================
+        // TEAM MANAGEMENT
+        // ============================================================
+
+        function createTeam() {
+            const name = document.getElementById('newTeamName').value.trim();
+            if (!name) {
+                showAlert('error', 'Inserisci un nome per la squadra');
+                return;
+            }
+            socket.emit('adminCreateTeam', name);
+            document.getElementById('newTeamName').value = '';
+            showAlert('success', `Squadra "${name}" creata!`);
+        }
+
+        function eliminaSquadra(key, name) {
+            if (!confirm(`Eliminare la squadra "${name}"? L'operazione non è reversibile.`)) return;
+            socket.emit('adminDeleteTeam', key);
+            showAlert('success', `Squadra "${name}" eliminata.`);
+        }
+
+        function renderTeams() {
+            const container = document.getElementById('teamsContainer');
+            const keys = Object.keys(currentTeams);
+
+            if (keys.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary);">Nessuna squadra creata</p>';
+                return;
+            }
+
+            container.innerHTML = keys.map(key => {
+                const team = currentTeams[key];
+                return `
+                    <div class="team-card">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+                            <h4 style="margin:0;">${team.name}</h4>
+                            <button onclick="eliminaSquadra('${key.replace(/'/g,"\\'")}', '${team.name.replace(/'/g,"\\'")}' )" style="background:none;border:1px solid #ef4444;color:#ef4444;border-radius:4px;padding:2px 7px;font-size:11px;cursor:pointer;flex-shrink:0;" title="Elimina squadra">✕</button>
+                        </div>
+                        <div class="team-budget">${team.budget} cr</div>
+                        <div class="team-slots">
+                            <span class="slot-badge slot-P">P: ${team.slots.P || 0}</span>
+                            <span class="slot-badge slot-D">D: ${team.slots.D || 0}</span>
+                            <span class="slot-badge slot-C">C: ${team.slots.C || 0}</span>
+                            <span class="slot-badge slot-A">A: ${team.slots.A || 0}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('startingBudgetDisplay').textContent =
+                currentTeams[keys[0]]?.budget || '500';
+        }
+
+        function updateStats() {
+            document.getElementById('statTeams').textContent = Object.keys(currentTeams).length;
+            document.getElementById('statSold').textContent = currentSoldPlayers.length;
+            document.getElementById('statRemaining').textContent = currentPlayersList.length;
+        }
+
+        // ============================================================
+        // PLAYERS LIST MANAGEMENT
+        // ============================================================
+
+        function uploadExcel() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const soglia = document.getElementById('sogliaMinima').value || 0;
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch(`/upload?room=${currentRoomCode}&soglia=${soglia}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.text())
+            .then(msg => {
+                showAlert('success', 'File Excel caricato con successo!');
+                socket.emit('getPlayers');
+            })
+            .catch(err => {
+                showAlert('error', 'Errore nel caricamento del file');
+            });
+        }
+
+        function addManualPlayer() {
+            const nome = document.getElementById('manualPlayerName').value.trim();
+            const ruolo = document.getElementById('manualPlayerRole').value;
+            const squadra = document.getElementById('manualPlayerClub').value.trim();
+
+            if (!nome || !ruolo) {
+                showAlert('error', 'Nome e ruolo sono obbligatori');
+                return;
+            }
+
+            socket.emit('adminAddNewPlayer', { nome, ruolo, squadra });
+            document.getElementById('manualPlayerName').value = '';
+            document.getElementById('manualPlayerClub').value = '';
+        }
+
+        function renderPlayersList() {
+            const container = document.getElementById('playersListContainer');
+            document.getElementById('playersCount').textContent = currentPlayersList.length;
+
+            document.getElementById('manualPlayerSelect').innerHTML =
+                '<option value="">Seleziona giocatore...</option>' +
+                currentPlayersList.map(p =>
+                    `<option value='${JSON.stringify(p)}'>${p.nome} (${p.ruolo})</option>`
+                ).join('');
+
+            document.getElementById('discardPlayerSelect').innerHTML =
+                '<option value="">Seleziona giocatore...</option>' +
+                currentPlayersList.map(p =>
+                    `<option value="${p.nome}">${p.nome} (${p.ruolo} - ${p.squadra})</option>`
+                ).join('');
+
+            if (currentPlayersList.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nessun giocatore nel mazzo</p>';
+                return;
+            }
+
+            container.innerHTML = currentPlayersList.map(p => `
+                <div class="player-item">
+                    <div>
+                        <strong>${p.nome}</strong>
+                        <span class="club">${p.squadra}</span>
+                    </div>
+                    <span class="role">${p.ruolo}</span>
+                </div>
+            `).join('');
+        }
+
+        function refreshPlayersList() {
+            socket.emit('getPlayers');
+        }
+
+        function discardPlayer() {
+            const name = document.getElementById('discardPlayerSelect').value;
+            if (!name) {
+                showAlert('error', 'Seleziona un giocatore da scartare');
+                return;
+            }
+            if (confirm(`Scartare definitivamente ${name} dal mazzo?`)) {
+                socket.emit('adminScartaDalMazzo', name);
+            }
+        }
+
+        // ============================================================
+        // AUCTION CONTROLS
+        // ============================================================
+
+        function startRandomAuction() {
+            if (currentPlayersList.length === 0) {
+                showAlert('error', 'Nessun giocatore nel mazzo!');
+                return;
+            }
+            socket.emit('startRandom');
+        }
+
+        function startManualAuction() {
+            const select = document.getElementById('manualPlayerSelect');
+            const value = select.value;
+            if (!value) {
+                showAlert('error', 'Seleziona un giocatore');
+                return;
+            }
+            try {
+                const player = JSON.parse(value);
+                socket.emit('adminStartPlayer', player);
+            } catch (e) {
+                showAlert('error', 'Errore nella selezione');
+            }
+        }
+
+        function pauseAuction() {
+            socket.emit('pauseTimer');
+            showAlert('warning', 'Asta in pausa');
+        }
+
+        function resumeAuction() {
+            socket.emit('resumeTimer');
+            showAlert('success', 'Asta ripresa');
+        }
+
+        function toggleAutoAdvance(checked) {
+            socket.emit('toggleAutoAdvance', checked);
+            showAlert('info', checked ? 'Modalita automatica attivata' : 'Modalita manuale attivata');
+        }
+
+        // ============================================================
+        // SPECIAL OPERATIONS
+        // ============================================================
+
+        function forceAssignPlayer() {
+            const squadra = document.getElementById('forceAssignTeam').value;
+            const prezzo = parseInt(document.getElementById('forceAssignPrice').value) || 1;
+
+            if (!squadra) {
+                showAlert('error', 'Seleziona una squadra');
+                return;
+            }
+
+            socket.emit('adminForceAssign', { squadra, prezzo });
+        }
+
+        function recycleUnsold() {
+            socket.emit('adminRiciclaInvenduti');
+        }
+
+        function removePlayerFromTeam() {
+            const teamName = document.getElementById('removePlayerTeam').value;
+            const playerName = document.getElementById('removePlayerName').value;
+            const credits = parseInt(document.getElementById('removePlayerCredits').value) || 0;
+
+            if (!teamName || !playerName) {
+                showAlert('error', 'Seleziona squadra e giocatore');
+                return;
+            }
+
+            if (confirm(`Rimuovere ${playerName} da ${teamName} e restituire ${credits} crediti?`)) {
+                socket.emit('adminRemovePlayer', { teamName, playerName, creditsToReturn: credits });
+            }
+        }
+
+        function updateTeamSelects() {
+            const teamOptions = Object.keys(currentTeams).map(k =>
+                `<option value="${currentTeams[k].name}">${currentTeams[k].name}</option>`
+            ).join('');
+
+            document.getElementById('forceAssignTeam').innerHTML =
+                '<option value="">Seleziona squadra...</option>' + teamOptions;
+
+            document.getElementById('removePlayerTeam').innerHTML =
+                '<option value="">Seleziona squadra...</option>' + teamOptions;
+        }
+
+        // Handle team selection for player removal
+        document.getElementById('removePlayerTeam').addEventListener('change', function() {
+            const teamName = this.value.toLowerCase().trim();
+            const playersOfTeam = currentSoldPlayers.filter(p =>
+                p.winner.toLowerCase().trim() === teamName
+            );
+
+            document.getElementById('removePlayerName').innerHTML =
+                '<option value="">Seleziona giocatore...</option>' +
+                playersOfTeam.map(p =>
+                    `<option value="${p.player}">${p.player} (${p.ruolo}) - ${p.price}cr</option>`
+                ).join('');
+        });
+
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
+
+        function updateTimerConfig() {
+            const duration = parseInt(document.getElementById('configTimerDuration').value);
+            socket.emit('updateSettings', { timerDuration: duration });
+            showAlert('success', `Timer aggiornato a ${duration} secondi`);
+        }
+
+        function saveHostUrl() {
+            const url = document.getElementById('configHostUrl').value.trim();
+            socket.emit('setHostUrl', { url });
+            showAlert('success', url ? `Host impostato: ${url}` : 'Ripristinato auto-detect');
+        }
+
+        function resetHostUrl() {
+            document.getElementById('configHostUrl').value = '';
+            socket.emit('setHostUrl', { url: window.location.origin });
+            showAlert('success', 'Host ripristinato all\'URL del browser');
+        }
+
+        function saveAllConfig() {
+            const config = {
+                timerDuration: parseInt(document.getElementById('configTimerDuration').value),
+                startingBudget: parseInt(document.getElementById('configStartingBudget').value),
+                maxTotalPlayers: parseInt(document.getElementById('configMaxTotalPlayers').value),
+                maxOffensivePlayers: parseInt(document.getElementById('configMaxOffensive').value),
+                limitP: parseInt(document.getElementById('configLimitP').value),
+                limitD: parseInt(document.getElementById('configLimitD').value),
+                limitC: parseInt(document.getElementById('configLimitC').value),
+                limitA: parseInt(document.getElementById('configLimitA').value)
+            };
+            socket.emit('updateSettings', config);
+            showAlert('success', 'Configurazione salvata!');
+        }
+
+        // ============================================================
+        // EXPORT
+        // ============================================================
+
+        function exportExcel() {
+            window.location.href = `/export?room=${currentRoomCode}`;
+            showAlert('success', 'Download avviato...');
+        }
+
+        function renderSoldPlayers() {
+            const tbody = document.querySelector('#soldPlayersTable tbody');
+
+            if (currentSoldPlayers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary);">Nessuna vendita registrata</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = currentSoldPlayers.map(p => `
+                <tr>
+                    <td>${p.player}</td>
+                    <td><span class="role">${p.ruolo}</span></td>
+                    <td>${p.squadra}</td>
+                    <td>${p.winner}</td>
+                    <td><strong>${p.price} cr</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================================
+        // UTILITY FUNCTIONS
+        // ============================================================
+
+        function showAlert(type, message) {
+            const alertEl = document.getElementById(`alert${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            if (!alertEl) {
+                showToast(message);
+                return;
+            }
+
+            document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
+            alertEl.textContent = message;
+            alertEl.classList.add('show');
+
+            setTimeout(() => {
+                alertEl.classList.remove('show');
+            }, 4000);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ============================================================
+        // STORICO OFFERTE LIVE
+        // ============================================================
+
+        function renderBidHistory(history, player) {
+            const list = document.getElementById('bid-history-list');
+            const badge = document.getElementById('bid-history-badge');
+
+            if (!player) {
+                badge.textContent = 'in attesa di asta...';
+                // Non svuotare la lista — mantieni l'ultima asta visibile finché non parte la prossima
+                return;
+            }
+
+            badge.textContent = player.nome + ' — ' + history.length + ' offerta/e';
+
+            if (history.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:0.5rem 0;">Nessuna offerta ancora.</p>';
+                return;
+            }
+
+            list.innerHTML = history.map((b, i) => `
+                <div class="bid-row ${i === history.length - 1 ? 'bid-winner' : ''}">
+                    <span class="bid-num">#${i + 1}</span>
+                    <span class="bid-team">${escHtml(b.bidder)}</span>
+                    <span class="bid-price">${b.price} cr</span>
+                </div>
+            `).join('');
+
+            // Scrolla all'ultima offerta
+            list.scrollTop = list.scrollHeight;
+        }
+
+        // ============================================================
+        // PANNELLO REVISIONE POST-ASTA
+        // ============================================================
+
+        let lastAuctionData = null;
+
+        function apriPannelloRevisione(data) {
+            lastAuctionData = data;
+
+            document.getElementById('review-player-name').textContent = data.player;
+            document.getElementById('review-price-input').value = data.price;
+
+            // Storico nel pannello revisione
+            const rl = document.getElementById('review-history-list');
+            const history = data.history || [];
+            if (history.length === 0) {
+                rl.innerHTML = '<p style="color:var(--text-secondary);font-size:0.85rem;">Nessuna offerta registrata.</p>';
+            } else {
+                rl.innerHTML = history.map((b, i) => `
+                    <div class="bid-row ${i === history.length - 1 ? 'bid-winner' : ''}">
+                        <span class="bid-num">#${i + 1}</span>
+                        <span class="bid-team">${escHtml(b.bidder)}</span>
+                        <span class="bid-price">${b.price} cr</span>
+                    </div>
+                `).join('');
+            }
+
+            // Popola il select con le squadre
+            const sel = document.getElementById('review-team-select');
+            const winnerTeamLower = data.winner.toLowerCase().trim();
+            sel.innerHTML = Object.keys(currentTeams).map(k => {
+                const t = currentTeams[k];
+                const isWinner = t.name.toLowerCase().trim() === winnerTeamLower;
+                return `<option value="${escAttr(t.name)}" ${isWinner ? 'selected' : ''}>
+                    ${escHtml(t.name)}${isWinner ? ' ✓ (vincitore attuale)' : ''}
+                </option>`;
+            }).join('');
+
+            const panel = document.getElementById('review-panel');
+            panel.style.display = 'block';
+            panel.classList.remove('pulse');
+            void panel.offsetWidth; // force reflow per riavviare animation
+            panel.classList.add('pulse');
+
+            // Vai al tab Asta se non ci sei già
+            const tabBtn = document.querySelector('[data-tab="tab-asta"]');
+            if (tabBtn && !tabBtn.classList.contains('active')) {
+                tabBtn.click();
+            }
+
+            // Scroll al pannello
+            setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+        }
+
+        function chiudiRevisione() {
+            document.getElementById('review-panel').style.display = 'none';
+            lastAuctionData = null;
+        }
+
+        function confermaRiassegnazione() {
+            const newWinner = document.getElementById('review-team-select').value;
+            const newPrice = parseInt(document.getElementById('review-price-input').value);
+
+            if (!newWinner) { showAlert('error', 'Seleziona una squadra'); return; }
+            if (isNaN(newPrice) || newPrice < 0) { showAlert('error', 'Prezzo non valido'); return; }
+
+            socket.emit('adminReassignLastSold', { newWinner, newPrice });
+            chiudiRevisione();
+        }
+
+        function escHtml(str) {
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+        function escAttr(str) {
+            return String(str).replace(/"/g,'&quot;');
+        }
+    </script>
+</body>
+</html>

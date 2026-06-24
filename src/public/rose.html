@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DraftARENA — Rose Live</title>
+  <style>
+    body {
+      background-color: #0b0f19;
+      color: #ffffff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 30px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #1f293d;
+      padding-bottom: 20px;
+      margin-bottom: 30px;
+    }
+    h1 { margin: 0; color: #38bdf8; font-size: 28px; text-transform: uppercase; }
+    .btn-back {
+      background-color: #1e293b;
+      color: #fff;
+      padding: 10px 20px;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    .btn-back:hover { background-color: #334155; }
+    
+    .grid-squadre {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 25px;
+    }
+    .squadra-card {
+      background: #141b2d;
+      border: 1px solid #1f293d;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .squadra-card h3 {
+      margin-top: 0;
+      color: #f43f5e;
+      font-size: 22px;
+      border-bottom: 1px solid #1f293d;
+      padding-bottom: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th {
+      text-align: left;
+      color: #94a3b8;
+      font-size: 13px;
+      text-transform: uppercase;
+      padding-bottom: 8px;
+    }
+    td {
+      padding: 10px 0;
+      border-bottom: 1px solid #1e293d;
+      font-size: 15px;
+    }
+    .badge {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    /* Colore dei ruoli per il calcio italiano, personalizzali se necessario */
+    .P { background-color: #eab308; color: #000; }
+    .D { background-color: #2563eb; color: #fff; }
+    .C { background-color: #16a34a; color: #fff; }
+    .A { background-color: #dc2626; color: #fff; }
+    
+    .btn-elimina {
+      background: none;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      padding: 5px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+    .btn-elimina:hover { background: rgba(239, 68, 68, 0.1); }
+    #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #dc2626; color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; display: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+  </style>
+</head>
+<body>
+
+  <!-- ROOM GATE ──────────────────────────────────────────────────────────── -->
+  <div id="room-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0b0f19;z-index:9999;display:flex;align-items:center;justify-content:center;">
+    <div style="background:#141b2d;border:1px solid #1f293d;border-radius:14px;padding:32px;width:340px;max-width:90%;">
+      <h2 style="color:#38bdf8;margin:0 0 4px 0;">DraftARENA</h2>
+      <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;">Pannello Rose — inserisci il codice stanza</p>
+      <div style="display:flex;gap:8px;">
+        <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice stanza"
+          style="flex:1;padding:12px;border-radius:8px;border:1px solid #1f293d;background:#0b0f19;color:#fff;font-size:16px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
+        <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;">ENTRA</button>
+      </div>
+      <div id="gate-error" style="color:#ef4444;font-size:12px;margin-top:8px;min-height:16px;"></div>
+      <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:6px;display:none;">Connessione...</div>
+      <a href="/" style="display:block;margin-top:14px;color:#475569;text-align:center;font-size:12px;text-decoration:none;">← Torna all'Hub</a>
+    </div>
+  </div>
+
+  <header>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <img src="/DraftARENAws.png" alt="DraftARENA" style="height:34px;">
+      <span style="color:#38bdf8;font-size:16px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Rose Live</span>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <a href="/" class="btn-back">⬅️ Hub</a>
+      <a href="/admin" class="btn-back">⬅️ Torna alla Regia</a>
+    </div>
+  </header>
+
+  <div class="grid-squadre" id="tabellone-rose"></div>
+  <div id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io({ transports: ["polling"] });
+    let toastTimer = null;
+    let currentRoomCode = null;
+    let pendingSocketRoomCode = null;
+
+    socket.on('connect', () => {
+      if (pendingSocketRoomCode) {
+        socket.emit('joinRoom', pendingSocketRoomCode);
+        pendingSocketRoomCode = null;
+      }
+    });
+
+    // ── Room Gate ──────────────────────────────────────────────────────────
+    function hideGate() { document.getElementById('room-gate').style.display = 'none'; }
+    function gateSetError(msg) { document.getElementById('gate-error').textContent = msg; }
+    function gateSetLoading(show) { document.getElementById('gate-loading').style.display = show ? 'block' : 'none'; }
+
+    function onRoomJoined(code) {
+      currentRoomCode = code;
+      hideGate();
+      if (socket.connected) {
+        socket.emit('joinRoom', code);
+      } else {
+        pendingSocketRoomCode = code;
+      }
+    }
+
+    async function fetchWithTimeout(url, ms) {
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), ms);
+      try {
+        const r = await fetch(url, { signal: ctrl.signal });
+        return r.json();
+      } finally { clearTimeout(t); }
+    }
+
+    (async () => {
+      const saved = sessionStorage.getItem('roomCode') || new URLSearchParams(location.search).get('room');
+      if (saved) {
+        gateSetLoading(true);
+        try {
+          const res = await fetchWithTimeout('/api/room/join/' + saved, 8000);
+          if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
+          else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || 'Stanza non trovata.'); }
+        } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+        finally { gateSetLoading(false); }
+      }
+    })();
+
+    document.getElementById('gate-btn-join').addEventListener('click', gateJoin);
+    document.getElementById('gate-code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') gateJoin(); });
+
+    async function gateJoin() {
+      const code = document.getElementById('gate-code-input').value.trim().toUpperCase();
+      if (!code) return;
+      gateSetLoading(true); gateSetError('');
+      try {
+        const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
+        if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
+        else gateSetError(res.error || 'Stanza non trovata.');
+      } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+      finally { gateSetLoading(false); }
+    }
+
+    // ── Game logic ─────────────────────────────────────────────────────────
+    function mostraToast(msg, colore) {
+      const t = document.getElementById("toast");
+      t.innerText = msg;
+      t.style.background = colore || "#dc2626";
+      t.style.display = "block";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { t.style.display = "none"; }, 3500);
+    }
+
+    // Mappa i ruoli Mantra alle 4 classi CSS colore
+    function badgeClass(ruolo) {
+      const r = (ruolo || "").toUpperCase();
+      if (r === "P") return "P";
+      if (r === "DC" || r === "DD" || r === "DS" || r === "B") return "D";
+      if (r === "A" || r === "PC" || r === "W" || r === "T") return "A";
+      return "C"; // C, M, E e altri centrocampisti
+    }
+
+    // Delegazione eventi sul container: evita il problema dei nomi con apostrofo
+    // nei onclick inline (es: "D'Ambrosio" rompeva la sintassi JS)
+    const container = document.getElementById("tabellone-rose");
+    container.addEventListener("click", e => {
+      const btn = e.target.closest(".btn-elimina");
+      if (!btn) return;
+      rimuoviGiocatore(btn.dataset.team, btn.dataset.player, parseInt(btn.dataset.price));
+    });
+
+    socket.on("connect", () => { /* getData is fetched after joinRoom via server push */ });
+
+    function aggiorna() { socket.emit("getSoldPlayers"); }
+    socket.on("updateTeams", aggiorna);
+    socket.on("teamsUpdate", aggiorna);
+
+    socket.on("updateSold", function(soldList) {
+      container.innerHTML = "";
+
+      if (soldList.length === 0) {
+        container.innerHTML = "<p style='color:#64748b; font-style:italic;'>Nessun giocatore acquistato al momento.</p>";
+        return;
+      }
+
+      const rosePerSquadra = {};
+      soldList.forEach(p => {
+        if (!rosePerSquadra[p.winner]) rosePerSquadra[p.winner] = [];
+        rosePerSquadra[p.winner].push(p);
+      });
+
+      Object.keys(rosePerSquadra).forEach(teamName => {
+        const card = document.createElement("div");
+        card.className = "squadra-card";
+
+        let html = `
+          <h3>⚽ ${teamName}</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Giocatore</th>
+                <th>Ruolo</th>
+                <th>Prezzo</th>
+                <th style="text-align:right;">Azione</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+
+        rosePerSquadra[teamName].forEach(p => {
+          const cls = badgeClass(p.ruolo);
+          // Usiamo data-* invece di onclick inline per gestire correttamente
+          // nomi con apostrofo (es: "D'Ambrosio") e caratteri speciali
+          html += `
+            <tr>
+              <td><strong>${p.player}</strong><br><small style="color:#64748b">${p.squadra || ""}</small></td>
+              <td><span class="badge ${cls}">${p.ruolo}</span></td>
+              <td><span style="color:#10b981; font-weight:bold;">${p.price} cr</span></td>
+              <td style="text-align:right;">
+                <button class="btn-elimina"
+                  data-team="${teamName.replace(/"/g, '&quot;')}"
+                  data-player="${p.player.replace(/"/g, '&quot;')}"
+                  data-price="${p.price}">
+                  🗑️ Elimina
+                </button>
+              </td>
+            </tr>
+          `;
+        });
+
+        html += `</tbody></table>`;
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+    });
+
+    function rimuoviGiocatore(team, player, prezzoMax) {
+      let risposta = prompt(
+        `⚠️ Stai eliminando "${player.toUpperCase()}" dalla squadra "${team}".\n\n` +
+        `Spesa originale: ${prezzoMax} cr.\n` +
+        `Quanti crediti vuoi restituire?`,
+        prezzoMax
+      );
+      if (risposta === null) return;
+
+      let crediti = parseInt(risposta.trim());
+      if (isNaN(crediti) || crediti < 0) {
+        mostraToast("Inserisci un numero intero >= 0.");
+        return;
+      }
+      if (crediti > prezzoMax) {
+        if (!confirm(`Stai rimborsando ${crediti} cr, più dei ${prezzoMax} cr spesi. Procedere?`)) return;
+      }
+
+      socket.emit("adminRemovePlayer", { teamName: team, playerName: player, creditsToReturn: crediti });
+    }
+
+    socket.on("errorNotify", msg => { mostraToast(msg); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📱 BUZZER LIVE - CHAMPIONS PITCH</title>
+  <style>
+    body { font-family: sans-serif; background-color: #050914; color: #f8fafc; padding: 15px; margin: 0; text-align: center; box-sizing: border-box; }
+    
+    #login-box { max-width: 400px; margin: 40px auto; padding: 25px; background: #0b132b; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.2); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    h2 { color: #ffcc00; margin-top: 0; text-transform: uppercase; letter-spacing: 0.5px; }
+    select, button { width: 100%; padding: 15px; box-sizing: border-box; margin-bottom: 15px; border-radius: 8px; border: 1px solid #1c2541; font-size: 16px; font-family: inherit; }
+    select { background: #050914; color: #fff; }
+    button { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+    
+    #auction-box { display: none; }
+    .status-header { background: #0b132b; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; border-left: 4px solid #ffcc00; text-align: left; }
+    
+    .player-card { background: linear-gradient(145deg, #0b132b 0%, #050914 100%); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 16px; padding: 25px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.5); }
+    #player-name { font-size: 2.4em; font-weight: bold; color: #fff; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px; }
+    .player-meta { display: flex; justify-content: center; gap: 10px; margin-top: 8px; }
+    .badge-ruolo { background: #10b981; padding: 5px 14px; border-radius: 6px; color: #fff; font-weight: bold; }
+    .badge-squadra { background: #050914; padding: 5px 14px; border-radius: 6px; color: #ffcc00; border: 1px solid #1c2541; font-weight: bold; }
+    
+    .market-info { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .market-stat { background: #0b132b; padding: 12px; border-radius: 10px; border: 1px solid #1c2541; }
+    .market-stat span { display: block; font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
+    .market-stat b { font-size: 2em; }
+    #current-price { color: #10b981; }
+    #highest-bidder { color: #ffcc00; font-size: 1.1em !important; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    
+    #timer-display { font-size: 4em; font-weight: bold; color: #ef4444; margin: 5px 0; text-shadow: 0 0 15px rgba(239,68,68,0.2); }
+    
+    /* STYLE CONTATORE INTERFACCIA SMARTPHONE */
+    .mazzo-phone-info { font-size: 13px; color: #94a3b8; margin: 0 auto 15px auto; font-family: inherit; font-weight: bold; }
+    .mazzo-phone-info span { color: #38bdf8; font-weight: 800; }
+
+    .btn-bid { font-size: 24px; padding: 22px; font-weight: bold; margin-bottom: 15px; border-radius: 12px; transition: transform 0.1s, opacity 0.2s; width: 100%; box-sizing: border-box; border: none; cursor: pointer; text-transform: uppercase; }
+    .btn-bid:active { transform: scale(0.96); }
+    .btn-bid:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+    .btn-plus1 { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+    .btn-plus3 { background: linear-gradient(135deg, #ffcc00 0%, #d4af37 100%); color: black; font-weight: 800; box-shadow: 0 4px 15px rgba(255,204,0,0.2); }
+    #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #dc2626; color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; display: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+    #esito-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5,9,20,0.95); z-index: 998; justify-content: center; align-items: center; flex-direction: column; padding: 20px; box-sizing: border-box; }
+    #esito-overlay h2 { font-size: 2em; text-align: center; line-height: 1.4; }
+    
+    .my-players-card { background: #0b132b; border: 1px solid #1c2541; border-radius: 12px; padding: 15px; margin-top: 20px; text-align: left; }
+    .my-players-card h3 { color: #ffcc00; margin-top: 0; font-size: 15px; border-bottom: 1px solid #1c2541; padding-bottom: 6px; text-transform: uppercase; }
+    .players-list-scroll { max-height: 150px; overflow-y: auto; }
+    .player-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #050914; font-size: 14px; }
+  </style>
+</head>
+<body>
+
+  <div id="login-box">
+    <h2>🏟️ Spogliatoio Asta</h2>
+    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 20px;">Scegli il nome della tua fantasquadra per attivare il controller.</p>
+    <select id="select-my-team"><option value="">Connessione al Wi-Fi...</option></select>
+    <button onclick="connettiSquadra()">ENTRA SUL TERRENO DI GIOCO 🚀</button>
+  </div>
+
+  <div id="auction-box">
+    <div class="status-header" style="display: flex; justify-content: space-between; align-items: center;">
+      <div>🛡️ SQUADRA: <b id="lbl-my-team-display" style="color: #ffcc00;">-</b></div>
+      <div style="text-align: right;">
+        <span id="lbl-my-budget" style="color: #10b981; font-weight: bold; font-size: 16px;">0 cr</span><br>
+        <small id="lbl-my-slots" style="font-size: 11px; color: #94a3b8; display:block;">P:0 D:0 C:0 A:0</small>
+      </div>
+    </div>
+
+    <div class="player-card">
+      <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Calciatore in chiamata</div>
+      <h2 id="player-name">IN ATTESA...</h2>
+      <div id="player-meta-box" style="display:none; justify-content:center; gap:8px;">
+        <span class="badge-ruolo" id="player-ruolo">-</span>
+        <span class="badge-squadra" id="player-squadra">-</span>
+      </div>
+    </div>
+
+    <div class="market-info">
+      <div class="market-stat"><span>Prezzo Attuale</span><b id="current-price">0 cr</b></div>
+      <div class="market-stat"><span>Miglior Offerente</span><b id="highest-bidder">-</b></div>
+    </div>
+
+    <div id="timer-display">10</div>
+
+    <div class="mazzo-phone-info">📦 CALCIATORI RIMASTI NEL MAZZO: <span id="phone-count-disponibili">0</span></div>
+
+    <button id="btn1" class="btn-bid btn-plus1" onclick="inviaRilancio(1)">🔥 RILANCIA + 1 cr</button>
+    <button id="btn3" class="btn-bid btn-plus3" onclick="inviaRilancio(3)">👑 RILANCIA + 3 cr</button>
+
+    <div class="my-players-card">
+      <h3 id="lbl-my-count">📋 Calciatori Acquistati (0)</h3>
+      <div class="players-list-scroll" id="my-purchased-list">
+        <div style="color: #64748b; text-align: center; padding: 10px; font-size: 13px;">Nessun acquisto effettuato finora.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <div id="esito-overlay">
+    <h2 id="esito-testo">-</h2>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    let miaSquadraScelta = ""; let elencoGlobaleSold = []; let oggettoTutteLeSquadre = {};
+    let astaAttiva = false;
+    let toastTimer = null;
+
+    function mostraToast(msg, colore) {
+      const t = document.getElementById("toast");
+      t.innerText = msg;
+      t.style.background = colore || "#dc2626";
+      t.style.display = "block";
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { t.style.display = "none"; }, 3000);
+    }
+
+    function setBotoniAttivi(attivi) {
+      document.getElementById("btn1").disabled = !attivi;
+      document.getElementById("btn3").disabled = !attivi;
+    }
+
+    function popolaSelectSquadre(teams) {
+      oggettoTutteLeSquadre = teams;
+      const select = document.getElementById("select-my-team");
+      select.innerHTML = '<option value="">-- Scegli la tua Squadra --</option>';
+      Object.keys(teams).forEach(k => {
+        const opt = document.createElement("option");
+        opt.value = teams[k].name;
+        opt.innerText = teams[k].name;
+        select.appendChild(opt);
+      });
+      if (miaSquadraScelta) select.value = miaSquadraScelta;
+      aggiornaDatiBudgetIntestazione();
+    }
+
+    socket.on("updateTeams", popolaSelectSquadre);
+    socket.on("teamsUpdate", popolaSelectSquadre);
+
+    function connettiSquadra() {
+      const select = document.getElementById("select-my-team");
+      if (!select.value) { mostraToast("Seleziona prima la tua squadra!"); return; }
+      miaSquadraScelta = select.value;
+      document.getElementById("lbl-my-team-display").innerText = miaSquadraScelta.toUpperCase();
+      document.getElementById("login-box").style.display = "none";
+      document.getElementById("auction-box").style.display = "block";
+      aggiornaDatiBudgetIntestazione();
+      aggiornaMiaRosaPersonale();
+    }
+
+    function aggiornaDatiBudgetIntestazione() {
+      if (!miaSquadraScelta) return;
+      const key = miaSquadraScelta.toLowerCase().trim();
+      if (oggettoTutteLeSquadre[key]) {
+        const data = oggettoTutteLeSquadre[key];
+        document.getElementById("lbl-my-budget").innerText = data.budget + " cr";
+        const sl = data.slots || { P: 0, D: 0, C: 0, A: 0 };
+        document.getElementById("lbl-my-slots").innerText = `P:${sl.P||0} D:${sl.D||0} C:${sl.C||0} A:${sl.A||0}`;
+      }
+    }
+
+    socket.on("updateSold", list => {
+      elencoGlobaleSold = list;
+      if (miaSquadraScelta) aggiornaMiaRosaPersonale();
+    });
+
+    function aggiornaMiaRosaPersonale() {
+      const container = document.getElementById("my-purchased-list");
+      container.innerHTML = "";
+      const miei = elencoGlobaleSold.filter(p => p.winner.toLowerCase().trim() === miaSquadraScelta.toLowerCase().trim());
+      document.getElementById("lbl-my-count").innerText = `📋 Calciatori Acquistati (${miei.length})`;
+      if (miei.length === 0) {
+        container.innerHTML = '<div style="color:#64748b; text-align:center; padding:10px;">Ancora nessun acquisto.</div>';
+        return;
+      }
+      miei.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "player-row";
+        div.innerHTML = `<span><b>${p.player}</b> <small>[${p.ruolo}]</small></span><b style="color:#10b981;">${p.price} cr</b>`;
+        container.appendChild(div);
+      });
+    }
+
+    socket.on("update", s => {
+      const nameEl = document.getElementById("player-name");
+      const metaBox = document.getElementById("player-meta-box");
+      const ruoloEl = document.getElementById("player-ruolo");
+      const squadraEl = document.getElementById("player-squadra");
+
+      document.getElementById("esito-overlay").style.display = "none";
+
+      if (s.player) {
+        astaAttiva = true;
+        nameEl.innerText = s.player.nome;
+        ruoloEl.innerText = s.player.ruolo;
+        squadraEl.innerText = s.player.squadra;
+        metaBox.style.display = "flex";
+
+        const r = (s.player.ruolo || "").toUpperCase();
+        if (r === "P") ruoloEl.style.backgroundColor = "#eab308";
+        else if (r === "DC" || r === "DD" || r === "DS" || r === "B") ruoloEl.style.backgroundColor = "#2563eb";
+        else if (r === "A" || r === "PC" || r === "W" || r === "T") ruoloEl.style.backgroundColor = "#dc2626";
+        else ruoloEl.style.backgroundColor = "#16a34a";
+      } else {
+        astaAttiva = false;
+        nameEl.innerText = "IN ATTESA...";
+        metaBox.style.display = "none";
+      }
+
+      setBotoniAttivi(astaAttiva && !s.isPaused);
+
+      document.getElementById("current-price").innerText = s.currentPrice + " cr";
+      const bEl = document.getElementById("highest-bidder");
+      const tEl = document.getElementById("timer-display");
+      if (s.isPaused) {
+        bEl.innerText = "PAUSA ⏸️";
+        bEl.style.color = "#ffaa00";
+        tEl.style.color = "#ffaa00";
+      } else {
+        bEl.innerText = s.highestBidder ? s.highestBidder : "Nessuno";
+        bEl.style.color = s.highestBidder ? "#ffcc00" : "#fff";
+        tEl.style.color = "#ef4444";
+      }
+      tEl.innerText = s.time;
+    });
+
+    socket.on("auctionEnded", s => {
+      astaAttiva = false;
+      setBotoniAttivi(false);
+      const overlay = document.getElementById("esito-overlay");
+      const testo = document.getElementById("esito-testo");
+      if (s.winner) {
+        const eMio = s.winner.toLowerCase().trim() === miaSquadraScelta.toLowerCase().trim();
+        overlay.style.borderTop = eMio ? "4px solid #10b981" : "4px solid #1c2541";
+        testo.innerHTML = eMio
+          ? `🏅 HAI ACQUISTATO<br><span style="color:#10b981; font-size:1.1em;">${s.player}</span><br><span style="color:#ffcc00;">per ${s.price} cr</span>`
+          : `✅ <span style="color:#10b981;">${s.player}</span><br>acquistato da<br><b style="color:#ffcc00;">${s.winner}</b><br><small style="color:#94a3b8;">per ${s.price} cr</small>`;
+      } else {
+        overlay.style.borderTop = "4px solid #dc2626";
+        testo.innerHTML = `❌ <span style="color:#ef4444;">${s.player}</span><br>rimane INVENDUTO`;
+      }
+      overlay.style.display = "flex";
+    });
+
+    socket.on("playersList", list => {
+      if (list) document.getElementById("phone-count-disponibili").innerText = list.length;
+    });
+
+    socket.on("errorNotify", msg => { mostraToast(msg); });
+
+    function inviaRilancio(valore) {
+      if (!miaSquadraScelta || !astaAttiva) return;
+      socket.emit("bid", { name: miaSquadraScelta, amount: valore });
+    }
+  </script>
+</body>
+</html>

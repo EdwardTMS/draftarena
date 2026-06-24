@@ -1,0 +1,4 @@
+.env
+.gitkeep
+src/stanza_*.json
+src/salvataggio_*.json

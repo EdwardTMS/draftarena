@@ -1,0 +1,30 @@
+{
+  "teams": {
+    "teddy": {
+      "name": "teddy",
+      "budget": 1000,
+      "slots": {
+        "P": 0,
+        "D": 0,
+        "C": 0,
+        "A": 0
+      }
+    }
+  },
+  "playersList": [],
+  "soldPlayers": [],
+  "CONFIG": {
+    "STARTING_BUDGET": 1000,
+    "MAX_TOTAL_PLAYERS": 25,
+    "MAX_OFFENSIVE_PLAYERS": 14,
+    "LIMITS": {
+      "P": 3,
+      "D": 10,
+      "C": 8,
+      "A": 4
+    }
+  },
+  "settings": {
+    "timerDuration": 6
+  }
+}

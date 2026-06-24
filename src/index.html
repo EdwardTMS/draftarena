@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DraftARENA - Hub</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      background: #050914;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2.4em;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      color: #64748b;
+      font-size: 13px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .url-box {
+      background: #0b132b;
+      border: 1px solid #1c2541;
+      border-radius: 10px;
+      padding: 18px;
+      width: 100%;
+      max-width: 380px;
+      margin-bottom: 20px;
+    }
+    .url-box label {
+      display: block;
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .url-row {
+      display: flex;
+      gap: 8px;
+    }
+    input {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #1c2541;
+      background: #050914;
+      color: #fff;
+      font-size: 14px;
+    }
+    .btn-save {
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: none;
+      background: #3b82f6;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+      transition: background 0.2s;
+    }
+    .btn-save:hover { background: #2563eb; }
+
+    #msg {
+      font-size: 12px;
+      margin-top: 8px;
+      min-height: 16px;
+      text-align: center;
+    }
+
+    .nav-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 380px;
+    }
+    .nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 22px 10px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: transform 0.15s, box-shadow 0.15s;
+      gap: 8px;
+    }
+    .nav-btn:active { transform: scale(0.97); }
+    .nav-btn .icon { font-size: 28px; }
+
+    .btn-admin  { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; }
+    .btn-host   { background: linear-gradient(135deg, #1d4ed8, #1e40af); color: #fff; }
+    .btn-phone  { background: linear-gradient(135deg, #10b981, #047857); color: #fff; }
+    .btn-rose   { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
+  </style>
+</head>
+<body>
+
+  <h1>DraftARENA</h1>
+  <p class="subtitle">Scegli il tuo ruolo nell'asta</p>
+
+  <div class="url-box">
+    <label>URL Server (ngrok o IP locale)</label>
+    <div class="url-row">
+      <input type="text" id="ngrokUrl" placeholder="https://xxxx.ngrok-free.app">
+      <button class="btn-save" onclick="salvaUrl()">SALVA</button>
+    </div>
+    <div id="msg"></div>
+  </div>
+
+  <div class="nav-grid">
+    <button class="nav-btn btn-admin" onclick="vaiA('admin.html')">
+      <span class="icon">🎮</span>REGIA
+    </button>
+    <button class="nav-btn btn-host" onclick="vaiA('host.html')">
+      <span class="icon">📺</span>TV HOST
+    </button>
+    <button class="nav-btn btn-phone" onclick="vaiA('phone.html')">
+      <span class="icon">📱</span>BUZZER
+    </button>
+    <button class="nav-btn btn-rose" onclick="vaiA('rose.html')">
+      <span class="icon">📋</span>LE ROSE
+    </button>
+  </div>
+
+  <script>
+    const input = document.getElementById('ngrokUrl');
+    const msgEl = document.getElementById('msg');
+    let msgTimer = null;
+
+    // Pre-popola con URL salvato, o con l'origine corrente se sulla rete locale
+    input.value = localStorage.getItem('draftArenaUrl') || window.location.origin;
+
+    function mostraMsg(testo, colore) {
+      msgEl.innerText = testo;
+      msgEl.style.color = colore || '#10b981';
+      clearTimeout(msgTimer);
+      msgTimer = setTimeout(() => { msgEl.innerText = ''; }, 3000);
+    }
+
+    function salvaUrl() {
+      const url = input.value.trim().replace(/\/$/, "");
+      if (!url) { mostraMsg("Inserisci un URL valido.", "#ef4444"); return; }
+      localStorage.setItem('draftArenaUrl', url);
+      mostraMsg("URL salvato!", "#10b981");
+    }
+
+    function vaiA(pagina) {
+      // Usa sempre l'URL nel campo (già pre-compilato con l'origine locale se non salvato)
+      const base = (input.value.trim() || window.location.origin).replace(/\/$/, "");
+      window.location.href = `${base}/${pagina}`;
+    }
+  </script>
+</body>
+</html>

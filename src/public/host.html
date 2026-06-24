@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>DraftARENA — TV Host</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700;800&display=swap');
+    body { font-family: 'Arial', sans-serif; background: radial-gradient(circle at center, #0b132b 0%, #050914 100%); color: #fff; padding: 20px; margin: 0; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
+    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 12px 20px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(16, 185, 129, 0.2); }
+    .regia-nav span { color: #94a3b8; font-family: 'Urbanist', sans-serif; font-size: 14px; font-weight: bold; }
+    .btn-admin-link { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; text-decoration: none; padding: 8px 16px; font-weight: bold; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 14px; transition: all 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); }
+    .btn-admin-link:hover { box-shadow: 0 0 15px #10b981; }
+    .mazzo-counter-tv { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4); padding: 6px 14px; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 14px; font-weight: bold; color: #38bdf8; text-shadow: 0 0 8px rgba(56,189,248,0.3); }
+    .mazzo-counter-tv span { color: #ffffff; font-weight: 800; }
+    .app-layout { display: flex; flex: 1; width: 100%; gap: 12px; }
+    .main-content { flex: 3; text-align: center; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; }
+    .sidebar { flex: 1; background: #0b132b; padding: 20px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.15); box-sizing: border-box; overflow-y: auto; max-height: 83vh; display: flex; flex-direction: column; justify-content: space-between; }
+    .sidebar h3 { font-family: 'Urbanist', sans-serif; color: #ffcc00; margin-top: 0; border-bottom: 1px solid #1c2541; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    #time { font-family: 'Urbanist', sans-serif; font-size: 8.5em; color: #ef4444; font-weight: 800; margin: 5px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; }
+    #player { font-family: 'Urbanist', sans-serif; font-size: 4.8em; margin: 5px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
+    #info-giocatore { font-size: 1.9em; color: #10b981; margin-bottom: 20px; font-family: 'Urbanist', sans-serif; font-weight: bold; }
+    #bid { font-family: 'Urbanist', sans-serif; font-size: 5.5em; color: #10b981; font-weight: 800; text-shadow: 0 0 25px rgba(16, 185, 129, 0.4); }
+    #winner { font-size: 2.4em; color: #ffcc00; margin-top: 10px; font-family: 'Urbanist', sans-serif; font-weight: bold; text-shadow: 0 0 10px rgba(255,204,0,0.2); }
+    button { padding: 12px 24px; margin: 5px; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px; border: none; transition: all 0.2s; font-family: 'Urbanist', sans-serif; text-transform: uppercase; }
+    button:hover { transform: translateY(-1px); }
+    .btn-rand { background: #ffcc00; color: #000; font-weight: 800; }
+    .btn-reset { background: #dc2626; color: white; }
+    .btn-excel { background: #10b981; color: white; }
+    .search-box { width: 100%; max-width: 600px; padding: 12px; font-size: 16px; border-radius: 8px; border: 1px solid #1c2541; background-color: #050914; color: #fff; margin: 10px auto; display: block; }
+    ul { list-style: none; padding: 0; max-height: 180px; overflow-y: auto; max-width: 600px; margin: 10px auto; text-align: left; background: #050914; padding: 10px; border-radius: 8px; border: 1px solid #1c2541; }
+    li { padding: 10px; border-bottom: 1px solid #1c2541; display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+    .team-card { background: #050914; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.1); }
+    .team-card h4 { margin: 0 0 4px 0; color: #ffcc00; font-size: 18px; font-family: 'Urbanist', sans-serif; }
+    .team-details { font-size: 12px; color: #94a3b8; margin-top: 4px; font-weight: bold; letter-spacing: 0.5px; }
+    #vincitore-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 9, 20, 0.98); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; border: 4px solid #ffcc00; }
+    #vincitore-overlay h1 { font-family: 'Urbanist', sans-serif; font-size: 6em; color: #ffcc00; margin: 0; text-shadow: 0 0 35px rgba(255,204,0,0.4); }
+    #vincitore-overlay h2 { font-family: 'Urbanist', sans-serif; font-size: 3em; color: #fff; text-align: center; line-height: 1.4; }
+  </style>
+</head>
+<body>
+
+<!-- ROOM GATE ──────────────────────────────────────────────────────────── -->
+<div id="room-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#050914;z-index:9999;display:flex;align-items:center;justify-content:center;">
+  <div style="background:#0b132b;border:1px solid rgba(56,189,248,0.2);border-radius:14px;padding:32px;width:340px;max-width:90%;">
+    <h2 style="color:#38bdf8;margin:0 0 4px 0;font-family:'Urbanist',sans-serif;">DraftARENA</h2>
+    <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;">TV Host — inserisci il codice stanza</p>
+    <div style="display:flex;gap:8px;">
+      <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice stanza"
+        style="flex:1;padding:12px;border-radius:8px;border:1px solid #1c2541;background:#050914;color:#fff;font-size:16px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
+      <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;">ENTRA</button>
+    </div>
+    <div id="gate-error" style="color:#ef4444;font-size:12px;margin-top:8px;min-height:16px;"></div>
+    <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:6px;display:none;">Connessione...</div>
+    <a href="/" style="display:block;margin-top:14px;color:#475569;text-align:center;font-size:12px;text-decoration:none;">← Torna all'Hub</a>
+  </div>
+</div>
+
+<!-- PIN GATE TV ─────────────────────────────────────────────────────────── -->
+<div id="pin-gate-tv" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;flex-direction:column;">
+  <div style="background:#0b132b;border:1px solid #f59e0b;border-radius:14px;padding:32px;width:320px;max-width:90%;text-align:center;">
+    <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+    <h3 style="color:#f59e0b;margin:0 0 4px 0;font-family:'Urbanist',sans-serif;">PIN Regia TV</h3>
+    <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;">Inserisci il PIN per abilitare i controlli della TV Host.</p>
+    <input id="pin-gate-tv-input" type="text" maxlength="4" inputmode="numeric" placeholder="----"
+      style="width:100%;box-sizing:border-box;padding:12px;font-size:1.5rem;text-align:center;letter-spacing:0.3em;background:#050914;border:1px solid #334155;border-radius:8px;color:#fff;margin-bottom:8px;">
+    <div class="pin-gate-error" style="color:#ef4444;font-size:12px;min-height:18px;margin-bottom:8px;"></div>
+    <button onclick="submitPinGateTv()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">ENTRA</button>
+  </div>
+</div>
+
+<audio id="snd-start" src="/sounds/start.mp3" preload="auto"></audio>
+<audio id="snd-end" src="/sounds/robotcd.mp3" preload="auto"></audio>
+<audio id="snd-sold" src="/sounds/win.mp3" preload="auto"></audio>
+<audio id="snd-lost" src="/sounds/loose.mp3" preload="auto"></audio>
+
+<div class="regia-nav">
+  <div><a href="/" style="color:#94a3b8; text-decoration:none; font-size:13px; padding:6px 12px; border:1px solid rgba(148,163,184,0.3); border-radius:6px; font-weight:bold; transition:all 0.2s;" onmouseover="this.style.background='rgba(148,163,184,0.1)'" onmouseout="this.style.background='transparent'">← Hub</a></div>
+  <div style="display:flex;align-items:center;gap:8px;"><img src="/DraftARENAws.png" alt="DraftARENA" style="height:30px;"> <span id="nav-room-badge" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:4px;padding:2px 8px;font-size:12px;color:#38bdf8;font-weight:bold;letter-spacing:1px;display:none;"></span></div>
+  <div class="mazzo-counter-tv">🏃 GIOCATORI NEL MAZZO: <span id="tv-count-disponibili">0</span></div>
+  <div><a href="/admin" target="_blank" class="btn-admin-link">🛠️ APRI PANNELLO REGOLE</a></div>
+</div>
+
+<div class="app-layout">
+  <div class="main-content">
+    <div id="vincitore-overlay">
+      <h1 id="overlay-titolo">🏅 AGGIUDICATO!</h1>
+      <h2 id="overlay-dettagli">-</h2>
+    </div>
+
+    <div>
+      <div id="time">10</div>
+      <div id="player">-</div>
+      <div id="info-giocatore">Ruolo: - | Squadra: -</div>
+      <div id="bid">0 €</div>
+      <div id="winner">In attesa di offerte dai telefoni...</div>
+    </div>
+
+    <div>
+      <hr style="border-color: #1c2541; margin: 15px 0;">
+      <button class="btn-rand" onclick="startRandom()">🎲 CHIAMATA CASUALE</button>
+      <button class="btn-reset" onclick="resetLega()">RESET LEGA GLOBAL</button>
+      <button class="btn-excel" onclick="exportExcel()">💾 SCARICA FILE EXCEL</button>
+
+      <input type="text" id="search-player" class="search-box" placeholder="🔍 Cerca calciatore libero..." oninput="filtraGiocatori()">
+      <ul id="list"></ul>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div>
+      <h3>📊 CLASSIFICA CREDITI & ROSE</h3>
+      <div id="teams-box"><p style="color: #64748b; text-align:center;">Nessuna fantasquadra registrata...</p></div>
+    </div>
+
+    <div style="background: #050914; padding: 15px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2); text-align: center;">
+      <h4 style="margin: 0 0 10px 0; color: #ffcc00; font-size: 13px; font-family: 'Urbanist';">📱 APRI SUL TELEFONO</h4>
+      <img id="qr-connect" src="" alt="QR" style="background: white; padding: 5px; display: none; margin: 0 auto 10px auto; width: 110px; height: 110px; border-radius:4px;">
+      <p style="font-size: 11px; color: #64748b; margin: 3px 0 0 0;">Indirizzo Wi-Fi:</p>
+      <b id="link-connect" style="color: #10b981; font-size: 12px; word-break: break-all;">IP...</b>
+    </div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io({ transports: ["polling"] });
+  let listaCompletaGiocatori = [];
+  let ultimoGiocatoreAttivo = null;
+  let currentRoomCode = null;
+  let pendingSocketRoomCode = null;
+
+  function getStoredAdminPin() { return sessionStorage.getItem('adminPin') || ''; }
+
+  socket.on('connect', () => {
+    if (pendingSocketRoomCode) {
+      socket.emit('joinRoom', pendingSocketRoomCode);
+      const pin = getStoredAdminPin();
+      if (pin) socket.emit('adminAuth', { pin });
+      pendingSocketRoomCode = null;
+    }
+  });
+
+  socket.on('adminAuthResult', (data) => {
+    if (!data.success) {
+      sessionStorage.removeItem('adminPin');
+      showPinGate('PIN errato. Riprova.');
+    } else {
+      document.getElementById('pin-gate-tv').style.display = 'none';
+    }
+  });
+
+  function showPinGate(errorMsg) {
+    const gate = document.getElementById('pin-gate-tv');
+    if (gate) {
+      gate.style.display = 'flex';
+      const err = gate.querySelector('.pin-gate-error');
+      if (err) err.textContent = errorMsg || '';
+    }
+  }
+
+  function submitPinGateTv() {
+    const pin = document.getElementById('pin-gate-tv-input').value.trim();
+    if (!pin) return;
+    sessionStorage.setItem('adminPin', pin);
+    socket.emit('adminAuth', { pin });
+  }
+
+  // ── Room Gate ─────────────────────────────────────────────────────────
+  function hideGate() { document.getElementById('room-gate').style.display = 'none'; }
+  function gateSetError(msg) { document.getElementById('gate-error').textContent = msg; }
+  function gateSetLoading(show) { document.getElementById('gate-loading').style.display = show ? 'block' : 'none'; }
+
+  function onRoomJoined(code) {
+    currentRoomCode = code;
+    const badge = document.getElementById('nav-room-badge');
+    badge.textContent = code;
+    badge.style.display = 'inline';
+    hideGate();
+    if (socket.connected) {
+      socket.emit('joinRoom', code);
+      const pin = getStoredAdminPin();
+      if (pin) {
+        socket.emit('adminAuth', { pin });
+      } else {
+        showPinGate();
+      }
+    } else {
+      pendingSocketRoomCode = code;
+    }
+  }
+
+  async function fetchWithTimeout(url, ms) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), ms);
+    try {
+      const r = await fetch(url, { signal: ctrl.signal });
+      return r.json();
+    } finally { clearTimeout(t); }
+  }
+
+  (async () => {
+    const saved = sessionStorage.getItem('roomCode') || new URLSearchParams(location.search).get('room');
+    if (saved) {
+      gateSetLoading(true);
+      try {
+        const res = await fetchWithTimeout('/api/room/join/' + saved, 8000);
+        if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
+        else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || 'Stanza non trovata.'); }
+      } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+      finally { gateSetLoading(false); }
+    }
+  })();
+
+  document.getElementById('gate-btn-join').addEventListener('click', gateJoin);
+  document.getElementById('gate-code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') gateJoin(); });
+  document.addEventListener('keydown', (e) => {
+    const gate = document.getElementById('pin-gate-tv');
+    if (gate && gate.style.display !== 'none' && e.key === 'Enter') submitPinGateTv();
+  });
+
+  async function gateJoin() {
+    const code = document.getElementById('gate-code-input').value.trim().toUpperCase();
+    if (!code) return;
+    gateSetLoading(true); gateSetError('');
+    try {
+      const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
+      if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
+      else gateSetError(res.error || 'Stanza non trovata.');
+    } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+    finally { gateSetLoading(false); }
+  }
+
+  // ── Game logic ────────────────────────────────────────────────────────
+  socket.on('connectionData', (data) => {
+    const qrImg = document.getElementById("qr-connect");
+    if (qrImg) { qrImg.src = data.qr; qrImg.style.display = "block"; }
+    const linkText = document.getElementById("link-connect");
+    if (linkText) linkText.innerText = data.url;
+  });
+
+  // FIX 1: l'overlay viene nascosto SOLO quando arriva un nuovo giocatore,
+  // non ad ogni tick del timer (che sennò lo cancellava immediatamente).
+  socket.on("update", s => {
+    if (s.player) {
+      document.getElementById("vincitore-overlay").style.display = "none";
+
+      if (ultimoGiocatoreAttivo !== s.player.nome) {
+        document.getElementById("snd-start").play().catch(() => {});
+        ultimoGiocatoreAttivo = s.player.nome;
+      }
+      document.getElementById("player").innerText = s.player.nome || "-";
+      document.getElementById("info-giocatore").innerText =
+        "⚔️ Ruolo Mantra: " + (s.player.ruolo || "-") +
+        "   |   🏢 Squadra di A: " + (s.player.squadra || "-");
+    } else {
+      document.getElementById("player").innerText = "-";
+      document.getElementById("info-giocatore").innerText = "Ruolo: - | Squadra: -";
+      ultimoGiocatoreAttivo = null;
+    }
+
+    document.getElementById("bid").innerText = s.currentPrice + " €";
+
+    if (s.isPaused) {
+      document.getElementById("winner").innerText = "⏸️ ASTA IN PAUSA DALLA REGIA...";
+      document.getElementById("winner").style.color = "#ffaa00";
+      document.getElementById("time").style.color = "#ffaa00";
+    } else {
+      document.getElementById("winner").innerText = s.highestBidder
+        ? "🔥 Offerta corrente di: " + s.highestBidder
+        : "In attesa di offerte...";
+      document.getElementById("winner").style.color = "#ffcc00";
+      document.getElementById("time").style.color = "#ef4444";
+    }
+
+    document.getElementById("time").innerText = s.time;
+
+    // FIX 2: il suono countdown parte una sola volta (a 3), non a 3-2-1 sovrapposto.
+    if (s.time === 3 && !s.isPaused && s.player !== null) {
+      document.getElementById("snd-end").play().catch(() => {});
+    }
+  });
+
+  socket.on("auctionEnded", s => {
+    const overlay = document.getElementById("vincitore-overlay");
+    const dettagli = document.getElementById("overlay-dettagli");
+
+    if (s.winner) {
+      document.getElementById("overlay-titolo").innerText = "🏅 AGGIUDICATO!";
+      document.getElementById("snd-sold").play().catch(() => {});
+      dettagli.innerHTML =
+        "🎯 <span style='color:#10b981;'>" + s.player + "</span> acquistato da <br><br>" +
+        "🏅 <span style='color:#ffcc00;'>" + s.winner.toUpperCase() + "</span> per " +
+        "<span style='color:#10b981; font-weight:bold;'>" + s.price + " cr</span>";
+    } else {
+      document.getElementById("overlay-titolo").innerText = "❌ INVENDUTO";
+      document.getElementById("snd-lost").play().catch(() => {});
+      dettagli.innerHTML =
+        "<span style='color:#ef4444;'>" + s.player + "</span> rimane INVENDUTO";
+    }
+    overlay.style.display = "flex";
+  });
+
+  // FIX 3: ascolta entrambi gli eventi teams (il server emette sia updateTeams che teamsUpdate).
+  function renderTeams(allTeams) {
+    const container = document.getElementById("teams-box");
+    container.innerHTML = "";
+    Object.keys(allTeams).forEach(k => {
+      const t = allTeams[k];
+      const slots = t.slots || { P: 0, D: 0, C: 0, A: 0 };
+      const div = document.createElement("div");
+      div.className = "team-card";
+      div.innerHTML =
+        "<h4>" + t.name + "</h4>" +
+        "<div style='font-size:18px; font-weight:bold; color:#10b981;'>" + t.budget + " cr</div>" +
+        "<div class='team-details'>Por: " + (slots.P || 0) + " | Dif: " + (slots.D || 0) +
+        " | Cen: " + (slots.C || 0) + " | Att: " + (slots.A || 0) + "</div>";
+      container.appendChild(div);
+    });
+  }
+
+  socket.on("updateTeams", renderTeams);
+  socket.on("teamsUpdate", renderTeams);
+
+  socket.on("playersList", list => {
+    listaCompletaGiocatori = list;
+    document.getElementById("tv-count-disponibili").innerText = list.length;
+    renderizzaLista(listaCompletaGiocatori);
+  });
+
+  function renderizzaLista(arrayGiocatori) {
+    const ul = document.getElementById("list");
+    ul.innerHTML = "";
+    if (arrayGiocatori.length === 0) {
+      ul.innerHTML = "<li style='color:#64748b; justify-content:center;'>Nessun calciatore trovato...</li>";
+      return;
+    }
+    arrayGiocatori.forEach(p => {
+      const li = document.createElement("li");
+      li.innerHTML =
+        "<span><b>" + p.nome + "</b> [" + p.ruolo + "] - <small>" + p.squadra + "</small></span>" +
+        "<button style='background:#10b981; color:#fff; font-size:12px; padding:6px 12px; border-radius:4px;'>LANCIA</button>";
+      li.onclick = () => {
+        socket.emit("adminStartPlayer", p);
+        document.getElementById("search-player").value = "";
+        renderizzaLista(listaCompletaGiocatori);
+      };
+      ul.appendChild(li);
+    });
+  }
+
+  function filtraGiocatori() {
+    const t = document.getElementById("search-player").value.trim().toLowerCase();
+    if (!t) return renderizzaLista(listaCompletaGiocatori);
+    renderizzaLista(listaCompletaGiocatori.filter(p =>
+      p.nome.toLowerCase().includes(t) || p.ruolo.toLowerCase().includes(t)
+    ));
+  }
+
+  function startRandom() { socket.emit("startRandom"); }
+  function resetLega() {
+    if (confirm("Vuoi azzerare l'intera asta? Questa operazione e' irreversibile.")) {
+      socket.emit("reset");
+    }
+  }
+  function exportExcel() { window.open("/export?room=" + (currentRoomCode || '')); }
+</script>
+</body>
+</html>
