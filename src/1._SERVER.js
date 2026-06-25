@@ -41,13 +41,18 @@ const xlsx = require("xlsx");
    ========================================================================== */
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+const LOCAL_MODE = process.env.LOCAL_MODE === "true";
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error("[SERVER] ERRORE: variabili Supabase mancanti nel .env");
-  process.exit(1);
+  if (!LOCAL_MODE) {
+    console.error("[SERVER] ERRORE: variabili Supabase mancanti nel .env");
+    process.exit(1);
+  } else {
+    console.warn("[SERVER] LOCAL_MODE attivo — nessun Supabase configurato, salvataggio su file locale.");
+  }
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = (SUPABASE_URL && SUPABASE_KEY) ? createClient(SUPABASE_URL, SUPABASE_KEY) : null;
 
 /* ==========================================================================
    CONFIGURAZIONE GLOBALE
@@ -153,7 +158,69 @@ function buildConnectionData(roomCode) {
    SUPABASE — PERSISTENZA
    ========================================================================== */
 
+/* ---------- helpers file locale (usati da LOCAL_MODE e come backup) ------- */
+
+function salvaFileLocale(room) {
+  try {
+    const filePath = getSavePath(room.code, room.auctionName);
+    fs.writeFileSync(filePath, JSON.stringify({
+      adminPin: room.adminPin,
+      auctionName: room.auctionName,
+      teams: room.teams,
+      playersList: room.playersList,
+      soldPlayers: room.soldPlayers,
+      CONFIG: room.CONFIG,
+      settings: { timerDuration: room.state.timerDuration }
+    }, null, 2));
+  } catch (e) {
+    console.error(`[LOCAL] Errore salvataggio file ${room.code}:`, e.message);
+  }
+}
+
+function caricaFileLocale(room) {
+  const filePath = getSavePath(room.code, room.auctionName);
+  if (!fs.existsSync(filePath)) return false;
+  try {
+    const data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    if (data.adminPin) room.adminPin = data.adminPin;
+    room.teams = data.teams || {};
+    room.playersList = data.playersList || [];
+    room.soldPlayers = data.soldPlayers || [];
+    if (data.settings) room.state.timerDuration = parseInt(data.settings.timerDuration) || 10;
+    if (data.CONFIG) room.CONFIG = data.CONFIG;
+    room.state.player = null;
+    room.state.time = room.state.timerDuration;
+    room.state.highestBidder = null;
+    room.state.isPaused = false;
+    console.log(`[LOCAL] File caricato per ${room.code}/${room.auctionName}`);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function trovaStanzaLocale(code) {
+  const defaultPath = getSavePath(code, "default");
+  if (fs.existsSync(defaultPath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(defaultPath, "utf8"));
+      return { code, admin_pin: data.adminPin || generateAdminPin(), host_url: null, auto_advance: true };
+    } catch (e) {}
+  }
+  try {
+    const files = fs.readdirSync(__dirname).filter(f => f.startsWith(`stanza_${code}_`) && f.endsWith(".json"));
+    if (files.length > 0) {
+      const data = JSON.parse(fs.readFileSync(path.join(__dirname, files[0]), "utf8"));
+      return { code, admin_pin: data.adminPin || generateAdminPin(), host_url: null, auto_advance: true };
+    }
+  } catch (e) {}
+  return null;
+}
+
+/* ---------- funzioni principali ------------------------------------------ */
+
 async function validateAccessCode(code) {
+  if (LOCAL_MODE) return { valid: true, data: { type: "local" } };
   if (!code) return { valid: false, error: "Codice di accesso richiesto." };
   const { data, error } = await supabase
     .from("access_codes")
@@ -169,10 +236,12 @@ async function validateAccessCode(code) {
 }
 
 async function incrementCodeUses(code) {
+  if (LOCAL_MODE) return;
   await supabase.rpc("increment_code_uses", { p_code: code });
 }
 
 async function salvaSessioneDB(room) {
+  if (LOCAL_MODE) { salvaFileLocale(room); return; }
   const rc = room.code;
   const an = room.auctionName;
 
@@ -219,6 +288,7 @@ async function salvaSessioneDB(room) {
 }
 
 async function caricaSessioneDB(room) {
+  if (LOCAL_MODE) return caricaFileLocale(room);
   const rc = room.code;
   const an = room.auctionName;
 
@@ -303,6 +373,7 @@ function caricaDaFileSeLegacy(room) {
    CREA STANZA SU DB
    ========================================================================== */
 async function creaStanzaDB(code, adminPin, accessCode) {
+  if (LOCAL_MODE) return;
   const { error } = await supabase.from("rooms").insert({
     code, admin_pin: adminPin, access_code: accessCode || null
   });
@@ -310,6 +381,7 @@ async function creaStanzaDB(code, adminPin, accessCode) {
 }
 
 async function trovaStanzaDB(code) {
+  if (LOCAL_MODE) return trovaStanzaLocale(code);
   const { data, error } = await supabase.from("rooms").select("*").eq("code", code).maybeSingle();
   if (error) return null;
   return data;
@@ -1263,7 +1335,7 @@ io.on("connection", (socket) => {
       const room = getRoom();
       if (room) {
         room.hostUrl = url || null;
-        await supabase.from("rooms").update({ host_url: room.hostUrl }).eq("code", socket.roomCode);
+        if (!LOCAL_MODE) await supabase.from("rooms").update({ host_url: room.hostUrl }).eq("code", socket.roomCode);
         io.to(socket.roomCode).emit("connectionData", buildConnectionData(socket.roomCode));
       }
     }
@@ -1313,7 +1385,11 @@ loadSuperadminPassword().then(() => {
     console.log("====================================================");
     console.log(`🚀 SERVER APERTO SU http://localhost:${PORT}`);
     console.log(`📡 Rete locale: http://${LOCAL_IP}:${PORT}`);
-    console.log(`🗄️  Supabase: ${SUPABASE_URL}`);
+    if (LOCAL_MODE) {
+      console.log("💾 Modalità LOCAL — dati salvati su file JSON locali");
+    } else {
+      console.log(`🗄️  Supabase: ${SUPABASE_URL}`);
+    }
     if (CUSTOM_HOST_URL) {
       console.log(`🌐 Modalità ONLINE — URL pubblico: ${CUSTOM_HOST_URL}`);
     } else {
