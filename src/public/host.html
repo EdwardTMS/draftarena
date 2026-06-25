@@ -6,42 +6,39 @@
   <title>DraftARENA — TV Host</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700;800&display=swap');
-    body { font-family: 'Arial', sans-serif; background: radial-gradient(circle at center, #0b132b 0%, #050914 100%); color: #fff; padding: 12px; margin: 0; display: flex; flex-direction: column; min-height: 100vh; box-sizing: border-box; }
-    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 10px 16px; border-radius: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid rgba(16, 185, 129, 0.2); }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'Arial', sans-serif; background: radial-gradient(circle at center, #0b132b 0%, #050914 100%); color: #fff; padding: 10px; margin: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 8px 14px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid rgba(16, 185, 129, 0.2); flex-shrink: 0; }
     .regia-nav span { color: #94a3b8; font-family: 'Urbanist', sans-serif; font-size: 14px; font-weight: bold; }
     .btn-admin-link { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; text-decoration: none; padding: 7px 13px; font-weight: bold; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; transition: all 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); white-space: nowrap; }
     .btn-admin-link:hover { box-shadow: 0 0 15px #10b981; }
     .mazzo-counter-tv { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4); padding: 5px 12px; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; font-weight: bold; color: #38bdf8; text-shadow: 0 0 8px rgba(56,189,248,0.3); white-space: nowrap; }
     .mazzo-counter-tv span { color: #ffffff; font-weight: 800; }
-    .app-layout { display: flex; flex: 1; width: 100%; gap: 12px; }
-    .main-content { flex: 3; text-align: center; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; }
-    .sidebar { flex: 1; background: #0b132b; padding: 16px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.15); box-sizing: border-box; overflow-y: auto; max-height: 83vh; display: flex; flex-direction: column; justify-content: space-between; }
+    .app-layout { display: flex; flex: 1; width: 100%; gap: 12px; min-height: 0; }
+    .main-content { flex: 3; text-align: center; padding: 6px 10px; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+    .sidebar { flex: 1; background: #0b132b; padding: 14px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.15); box-sizing: border-box; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
     .sidebar h3 { font-family: 'Urbanist', sans-serif; color: #ffcc00; margin-top: 0; border-bottom: 1px solid #1c2541; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
-    #time { font-family: 'Urbanist', sans-serif; font-size: clamp(3rem, 12vw, 8.5em); color: #ef4444; font-weight: 800; margin: 5px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; }
-    #player { font-family: 'Urbanist', sans-serif; font-size: clamp(1.6rem, 6vw, 4.8em); margin: 5px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
-    #info-giocatore { font-size: clamp(0.85rem, 2.2vw, 1.9em); color: #10b981; margin-bottom: 16px; font-family: 'Urbanist', sans-serif; font-weight: bold; }
-    #bid { font-family: 'Urbanist', sans-serif; font-size: clamp(2rem, 8vw, 5.5em); color: #10b981; font-weight: 800; text-shadow: 0 0 25px rgba(16, 185, 129, 0.4); }
-    #winner { font-size: clamp(1rem, 2.8vw, 2.4em); color: #ffcc00; margin-top: 10px; font-family: 'Urbanist', sans-serif; font-weight: bold; text-shadow: 0 0 10px rgba(255,204,0,0.2); }
-    button { padding: 10px 20px; margin: 4px; font-size: clamp(12px, 1.4vw, 16px); font-weight: bold; cursor: pointer; border-radius: 6px; border: none; transition: all 0.2s; font-family: 'Urbanist', sans-serif; text-transform: uppercase; }
+    #time { font-family: 'Urbanist', sans-serif; font-size: clamp(3rem, 11vw, 8em); color: #ef4444; font-weight: 800; margin: 4px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; line-height: 1; }
+    #player { font-family: 'Urbanist', sans-serif; font-size: clamp(1.5rem, 5.5vw, 4.5em); margin: 4px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; line-height: 1.1; }
+    #info-giocatore { font-size: clamp(0.8rem, 2vw, 1.7em); color: #10b981; margin-bottom: 12px; font-family: 'Urbanist', sans-serif; font-weight: bold; }
+    #bid { font-family: 'Urbanist', sans-serif; font-size: clamp(2rem, 7.5vw, 5em); color: #10b981; font-weight: 800; text-shadow: 0 0 25px rgba(16, 185, 129, 0.4); line-height: 1; }
+    #winner { font-size: clamp(0.9rem, 2.5vw, 2.2em); color: #ffcc00; margin-top: 8px; font-family: 'Urbanist', sans-serif; font-weight: bold; text-shadow: 0 0 10px rgba(255,204,0,0.2); }
+    button { padding: 10px 20px; margin: 4px; font-size: clamp(12px, 1.3vw, 15px); font-weight: bold; cursor: pointer; border-radius: 6px; border: none; transition: all 0.2s; font-family: 'Urbanist', sans-serif; text-transform: uppercase; }
     button:hover { transform: translateY(-1px); }
-    .btn-rand { background: #ffcc00; color: #000; font-weight: 800; }
-    .btn-reset { background: #dc2626; color: white; }
-    .btn-excel { background: #10b981; color: white; }
-    .search-box { width: 100%; max-width: 600px; padding: 10px; font-size: 14px; border-radius: 8px; border: 1px solid #1c2541; background-color: #050914; color: #fff; margin: 8px auto; display: block; }
-    ul { list-style: none; padding: 0; max-height: 160px; overflow-y: auto; max-width: 600px; margin: 8px auto; text-align: left; background: #050914; padding: 8px; border-radius: 8px; border: 1px solid #1c2541; }
-    li { padding: 8px; border-bottom: 1px solid #1c2541; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .btn-rose { background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%); color: #000; font-weight: 800; }
     .team-card { background: #050914; padding: 10px; margin-bottom: 8px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.1); }
-    .team-card h4 { margin: 0 0 4px 0; color: #ffcc00; font-size: 16px; font-family: 'Urbanist', sans-serif; }
+    .team-card h4 { margin: 0 0 4px 0; color: #ffcc00; font-size: 15px; font-family: 'Urbanist', sans-serif; }
     .team-details { font-size: 11px; color: #94a3b8; margin-top: 4px; font-weight: bold; letter-spacing: 0.5px; }
+    #teams-box { overflow-y: auto; flex: 1; }
     #vincitore-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 9, 20, 0.98); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; border: 4px solid #ffcc00; padding: 20px; box-sizing: border-box; }
     #vincitore-overlay h1 { font-family: 'Urbanist', sans-serif; font-size: clamp(2.5rem, 8vw, 6em); color: #ffcc00; margin: 0; text-shadow: 0 0 35px rgba(255,204,0,0.4); text-align: center; }
     #vincitore-overlay h2 { font-family: 'Urbanist', sans-serif; font-size: clamp(1.2rem, 3.5vw, 3em); color: #fff; text-align: center; line-height: 1.4; }
 
     /* ── Tablet (≤ 900px) ─────────────────────────────────────── */
     @media (max-width: 900px) {
+      html, body { overflow: auto; height: auto; }
       .app-layout { flex-direction: column; gap: 10px; }
-      .sidebar { max-height: 280px; flex-direction: row; flex-wrap: wrap; gap: 10px; }
-      .sidebar > div { flex: 1; min-width: 200px; }
+      .sidebar { min-height: 200px; }
       .sidebar h3 { font-size: 12px; }
     }
 
@@ -53,10 +50,6 @@
       .btn-admin-link { display: none; }
       .mazzo-counter-tv { font-size: 11px; padding: 4px 9px; }
       .main-content { padding: 6px; }
-      .sidebar { max-height: none; flex-direction: column; }
-      .sidebar > div:last-child { display: none; }
-      button { padding: 8px 14px; margin: 3px; }
-      .search-box { font-size: 13px; }
     }
   </style>
 </head>
@@ -118,28 +111,22 @@
       <div id="winner">In attesa di offerte dai telefoni...</div>
     </div>
 
-    <div>
-      <hr style="border-color: #1c2541; margin: 15px 0;">
-      <button class="btn-rand" onclick="startRandom()">🎲 CHIAMATA CASUALE</button>
-      <button class="btn-reset" onclick="resetLega()">RESET LEGA GLOBAL</button>
-      <button class="btn-excel" onclick="exportExcel()">💾 SCARICA FILE EXCEL</button>
-
-      <input type="text" id="search-player" class="search-box" placeholder="🔍 Cerca calciatore libero..." oninput="filtraGiocatori()">
-      <ul id="list"></ul>
+    <div style="margin-top:16px;">
+      <button class="btn-rose" onclick="vaiARose()">📋 LE ROSE</button>
     </div>
   </div>
 
   <div class="sidebar">
-    <div>
-      <h3>📊 CLASSIFICA CREDITI & ROSE</h3>
-      <div id="teams-box"><p style="color: #64748b; text-align:center;">Nessuna fantasquadra registrata...</p></div>
+    <div style="background: #050914; padding: 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2); text-align: center; flex-shrink: 0;">
+      <h4 style="margin: 0 0 8px 0; color: #ffcc00; font-size: 12px; font-family: 'Urbanist';">📱 APRI SUL TELEFONO</h4>
+      <img id="qr-connect" src="" alt="QR" style="background: white; padding: 5px; display: none; margin: 0 auto 8px auto; width: 100px; height: 100px; border-radius:4px;">
+      <p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;">Indirizzo Wi-Fi:</p>
+      <b id="link-connect" style="color: #10b981; font-size: 11px; word-break: break-all;">IP...</b>
     </div>
 
-    <div style="background: #050914; padding: 15px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2); text-align: center;">
-      <h4 style="margin: 0 0 10px 0; color: #ffcc00; font-size: 13px; font-family: 'Urbanist';">📱 APRI SUL TELEFONO</h4>
-      <img id="qr-connect" src="" alt="QR" style="background: white; padding: 5px; display: none; margin: 0 auto 10px auto; width: 110px; height: 110px; border-radius:4px;">
-      <p style="font-size: 11px; color: #64748b; margin: 3px 0 0 0;">Indirizzo Wi-Fi:</p>
-      <b id="link-connect" style="color: #10b981; font-size: 12px; word-break: break-all;">IP...</b>
+    <div style="flex:1;min-height:0;display:flex;flex-direction:column;">
+      <h3 style="flex-shrink:0;">📊 CLASSIFICA CREDITI & ROSE</h3>
+      <div id="teams-box" style="overflow-y:auto;flex:1;"><p style="color: #64748b; text-align:center;">Nessuna fantasquadra registrata...</p></div>
     </div>
   </div>
 </div>
@@ -347,45 +334,11 @@
   socket.on("playersList", list => {
     listaCompletaGiocatori = list;
     document.getElementById("tv-count-disponibili").innerText = list.length;
-    renderizzaLista(listaCompletaGiocatori);
   });
 
-  function renderizzaLista(arrayGiocatori) {
-    const ul = document.getElementById("list");
-    ul.innerHTML = "";
-    if (arrayGiocatori.length === 0) {
-      ul.innerHTML = "<li style='color:#64748b; justify-content:center;'>Nessun calciatore trovato...</li>";
-      return;
-    }
-    arrayGiocatori.forEach(p => {
-      const li = document.createElement("li");
-      li.innerHTML =
-        "<span><b>" + p.nome + "</b> [" + p.ruolo + "] - <small>" + p.squadra + "</small></span>" +
-        "<button style='background:#10b981; color:#fff; font-size:12px; padding:6px 12px; border-radius:4px;'>LANCIA</button>";
-      li.onclick = () => {
-        socket.emit("adminStartPlayer", p);
-        document.getElementById("search-player").value = "";
-        renderizzaLista(listaCompletaGiocatori);
-      };
-      ul.appendChild(li);
-    });
+  function vaiARose() {
+    if (currentRoomCode) window.location.href = '/rose.html?room=' + currentRoomCode;
   }
-
-  function filtraGiocatori() {
-    const t = document.getElementById("search-player").value.trim().toLowerCase();
-    if (!t) return renderizzaLista(listaCompletaGiocatori);
-    renderizzaLista(listaCompletaGiocatori.filter(p =>
-      p.nome.toLowerCase().includes(t) || p.ruolo.toLowerCase().includes(t)
-    ));
-  }
-
-  function startRandom() { socket.emit("startRandom"); }
-  function resetLega() {
-    if (confirm("Vuoi azzerare l'intera asta? Questa operazione e' irreversibile.")) {
-      socket.emit("reset");
-    }
-  }
-  function exportExcel() { window.open("/export?room=" + (currentRoomCode || '')); }
 </script>
 </body>
 </html>
