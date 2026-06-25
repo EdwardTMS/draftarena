@@ -48,6 +48,25 @@
     .my-players-card h3 { color: #ffcc00; margin-top: 0; font-size: 15px; border-bottom: 1px solid #1c2541; padding-bottom: 6px; text-transform: uppercase; }
     .players-list-scroll { max-height: 150px; overflow-y: auto; }
     .player-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #050914; font-size: 14px; }
+
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      #login-box { max-width: 100%; margin: 20px auto; padding: 18px; }
+      #player-name { font-size: clamp(1.4rem, 6vw, 2.4em); }
+      .market-stat b { font-size: clamp(1.2rem, 5vw, 2em); }
+      #timer-display { font-size: clamp(2.5rem, 10vw, 4em); }
+      .btn-bid { font-size: clamp(16px, 5vw, 24px); padding: 16px; }
+      #highest-bidder { font-size: clamp(0.85rem, 3.5vw, 1.1em) !important; }
+      .player-card { padding: 16px; }
+      .status-header { font-size: 13px; }
+    }
+
+    @media (max-width: 360px) {
+      #player-name { font-size: clamp(1.2rem, 5.5vw, 2rem); }
+      .btn-bid { font-size: 15px; padding: 14px; }
+      .market-info { gap: 6px; }
+      .market-stat { padding: 9px; }
+    }
   </style>
 </head>
 <body>
