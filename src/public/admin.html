@@ -1002,17 +1002,46 @@
                 <button class="btn btn-warning btn-block" onclick="forceAssignPlayer()">Assegna Forzatamente</button>
             </div>
 
-            <!-- Giro di Gara -->
+            <!-- Assegnazione Manuale con Ricerca -->
             <div class="card">
-                <h3 class="card-title">Giro di Gara</h3>
+                <h3 class="card-title">Assegna Giocatore a Squadra</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
-                    Riporta i giocatori invenduti nel mazzo per un nuovo giro
+                    Cerca un giocatore dal mazzo e assegnalo direttamente a una squadra senza passare dall'asta
                 </p>
-                <button class="btn btn-primary btn-block" onclick="recycleUnsold()">Avvia Giro di Gara</button>
-                <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning);">
-                    Utile quando il mazzo finisce ma ci sono giocatori invenduti
-                </p>
+                <div class="form-group">
+                    <label>Cerca Giocatore</label>
+                    <input type="text" id="manualAssignSearch" placeholder="Nome giocatore..." oninput="filtraGiocatoriAssegnazione()">
+                </div>
+                <div id="manualAssignResults" style="max-height:140px;overflow-y:auto;background:var(--bg-input);border-radius:8px;margin-bottom:0.75rem;border:1px solid var(--border);display:none;"></div>
+                <div class="form-group">
+                    <label>Giocatore Selezionato</label>
+                    <input type="text" id="manualAssignPlayerDisplay" placeholder="Nessun giocatore selezionato" readonly style="background:var(--bg-main);color:var(--warning);font-weight:bold;">
+                    <input type="hidden" id="manualAssignPlayerData">
+                </div>
+                <div class="form-group">
+                    <label>Squadra Destinataria</label>
+                    <select id="manualAssignTeam">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prezzo di Vendita (cr)</label>
+                    <input type="number" id="manualAssignPrice" value="1" min="1">
+                </div>
+                <button class="btn btn-success btn-block" onclick="manualAssignPlayer()">Assegna Giocatore</button>
             </div>
+        </div>
+
+        <!-- Giro di Gara -->
+        <div class="card">
+            <h3 class="card-title">Giro di Gara</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                Riporta i giocatori invenduti nel mazzo per un nuovo giro
+            </p>
+            <button class="btn btn-primary btn-block" onclick="recycleUnsold()">Avvia Giro di Gara</button>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning);">
+                Utile quando il mazzo finisce ma ci sono giocatori invenduti
+            </p>
         </div>
 
         <!-- Rimozione Giocatore -->
@@ -1729,8 +1758,57 @@
             document.getElementById('forceAssignTeam').innerHTML =
                 '<option value="">Seleziona squadra...</option>' + teamOptions;
 
+            document.getElementById('manualAssignTeam').innerHTML =
+                '<option value="">Seleziona squadra...</option>' + teamOptions;
+
             document.getElementById('removePlayerTeam').innerHTML =
                 '<option value="">Seleziona squadra...</option>' + teamOptions;
+        }
+
+        function filtraGiocatoriAssegnazione() {
+            const q = document.getElementById('manualAssignSearch').value.trim().toLowerCase();
+            const box = document.getElementById('manualAssignResults');
+            if (!q) { box.style.display = 'none'; box.innerHTML = ''; return; }
+            const matches = currentPlayersList.filter(p =>
+                p.nome.toLowerCase().includes(q) || (p.squadra || '').toLowerCase().includes(q)
+            ).slice(0, 20);
+            if (matches.length === 0) {
+                box.style.display = 'block';
+                box.innerHTML = '<div style="padding:10px;color:var(--text-secondary);font-size:0.85rem;">Nessun risultato.</div>';
+                return;
+            }
+            box.style.display = 'block';
+            box.innerHTML = matches.map(p => `
+                <div onclick="selezionaGiocatoreManuale(${JSON.stringify(p).replace(/"/g,'&quot;')})"
+                     style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);font-size:0.85rem;transition:background 0.15s;"
+                     onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background=''">
+                    <strong>${escHtml(p.nome)}</strong>
+                    <span style="color:var(--text-secondary);margin-left:6px;">[${escHtml(p.ruolo)}]</span>
+                    <span style="color:var(--text-secondary);margin-left:4px;font-size:0.78rem;">${escHtml(p.squadra || '')}</span>
+                </div>
+            `).join('');
+        }
+
+        function selezionaGiocatoreManuale(p) {
+            document.getElementById('manualAssignPlayerDisplay').value = p.nome + ' [' + p.ruolo + '] - ' + (p.squadra || '');
+            document.getElementById('manualAssignPlayerData').value = JSON.stringify(p);
+            document.getElementById('manualAssignSearch').value = '';
+            document.getElementById('manualAssignResults').style.display = 'none';
+        }
+
+        function manualAssignPlayer() {
+            const playerJson = document.getElementById('manualAssignPlayerData').value;
+            const squadra = document.getElementById('manualAssignTeam').value;
+            const prezzo = parseInt(document.getElementById('manualAssignPrice').value) || 1;
+            if (!playerJson) { showAlert('error', 'Seleziona prima un giocatore dalla ricerca'); return; }
+            if (!squadra) { showAlert('error', 'Seleziona una squadra'); return; }
+            const player = JSON.parse(playerJson);
+            socket.emit('adminManualAssign', { player, squadra, prezzo });
+            document.getElementById('manualAssignPlayerDisplay').value = '';
+            document.getElementById('manualAssignPlayerData').value = '';
+            document.getElementById('manualAssignTeam').value = '';
+            document.getElementById('manualAssignPrice').value = 1;
+            showAlert('success', `${player.nome} assegnato a ${squadra} per ${prezzo} cr`);
         }
 
         // Handle team selection for player removal
