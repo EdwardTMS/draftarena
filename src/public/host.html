@@ -16,7 +16,7 @@
     .mazzo-counter-tv span { color: #ffffff; font-weight: 800; }
     .app-layout { display: flex; flex: 1; width: 100%; gap: 12px; min-height: 0; }
     .main-content { flex: 3; text-align: center; padding: 6px 10px; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
-    .sidebar { flex: 1; background: #0b132b; padding: 14px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.15); box-sizing: border-box; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+    .sidebar { flex: 1; background: #0b132b; padding: 14px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.15); box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
     .sidebar h3 { font-family: 'Urbanist', sans-serif; color: #ffcc00; margin-top: 0; border-bottom: 1px solid #1c2541; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
     #time { font-family: 'Urbanist', sans-serif; font-size: clamp(3rem, 11vw, 8em); color: #ef4444; font-weight: 800; margin: 4px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; line-height: 1; }
     #player { font-family: 'Urbanist', sans-serif; font-size: clamp(1.5rem, 5.5vw, 4.5em); margin: 4px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; line-height: 1.1; }
@@ -87,7 +87,7 @@
 <audio id="snd-start" src="/sounds/start.mp3" preload="auto"></audio>
 <audio id="snd-end" src="/sounds/robotcd.mp3" preload="auto"></audio>
 <audio id="snd-sold" src="/sounds/win.mp3" preload="auto"></audio>
-<audio id="snd-lost" src="/sounds/loose.mp3" preload="auto"></audio>
+<audio id="snd-lost" src="/sounds/noone.mp3" preload="auto"></audio>
 
 <div class="regia-nav">
   <div><a href="/" class="nav-hub-btn" style="color:#94a3b8; text-decoration:none; font-size:13px; padding:6px 12px; border:1px solid rgba(148,163,184,0.3); border-radius:6px; font-weight:bold; transition:all 0.2s;" onmouseover="this.style.background='rgba(148,163,184,0.1)'" onmouseout="this.style.background='transparent'">← Hub</a></div>
@@ -126,7 +126,7 @@
 
     <div style="flex:1;min-height:0;display:flex;flex-direction:column;">
       <h3 style="flex-shrink:0;">📊 CLASSIFICA CREDITI & ROSE</h3>
-      <div id="teams-box" style="overflow-y:auto;flex:1;"><p style="color: #64748b; text-align:center;">Nessuna fantasquadra registrata...</p></div>
+      <div id="teams-box" style="overflow-y:auto;flex:1;min-height:80px;"><p style="color: #64748b; text-align:center;">Nessuna fantasquadra registrata...</p></div>
     </div>
   </div>
 </div>
