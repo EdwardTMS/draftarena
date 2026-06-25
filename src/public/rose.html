@@ -35,7 +35,7 @@
     
     .grid-squadre {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));
       gap: 25px;
     }
     .squadra-card {
@@ -94,6 +94,25 @@
     }
     .btn-elimina:hover { background: rgba(239, 68, 68, 0.1); }
     #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #dc2626; color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; display: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+
+    @media (max-width: 768px) {
+      body { padding: 16px; }
+      header { flex-wrap: wrap; gap: 10px; padding-bottom: 14px; margin-bottom: 20px; }
+      h1 { font-size: 20px; }
+      .grid-squadre { grid-template-columns: 1fr; gap: 16px; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 10px; }
+      header { flex-direction: column; align-items: flex-start; gap: 8px; }
+      h1 { font-size: 18px; }
+      .squadra-card { padding: 14px; }
+      .squadra-card h3 { font-size: 18px; }
+      th { font-size: 11px; }
+      td { font-size: 13px; padding: 8px 0; }
+      .btn-back { padding: 7px 12px; font-size: 13px; }
+      .btn-elimina { font-size: 12px; }
+    }
   </style>
 </head>
 <body>
