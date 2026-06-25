@@ -154,6 +154,74 @@
             }
         }
 
+        /* ── Tablet (≤ 768px) ─────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .header { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.5rem; }
+            .header h1 { font-size: 1.1rem; }
+            .league-info { gap: 0.5rem; flex-wrap: wrap; }
+            .league-name { padding: 0.3rem 0.6rem; font-size: 0.85rem; }
+            .tab-btn { padding: 0.75rem 1rem; font-size: 0.82rem; }
+            .tab-content { padding: 1.25rem 1rem; }
+            .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+            .auction-control { gap: 0.6rem; }
+            .control-box { min-width: 140px; padding: 1rem; }
+            .control-box .value { font-size: 1.8rem; }
+            .stats-bar { flex-wrap: wrap; gap: 1rem; }
+            #toast { right: 1rem; left: 1rem; max-width: none; text-align: center; }
+        }
+
+        /* ── Mobile (≤ 480px) ─────────────────────────────────────── */
+        @media (max-width: 480px) {
+            .header { padding: 0.6rem 0.75rem; }
+            .header h1 { display: none; }
+            .league-info > span:first-child { display: none; }
+            .tab-btn { padding: 0.7rem 0.55rem; font-size: 0; white-space: nowrap; }
+            .tab-btn::after { font-size: 0.68rem; font-weight: 600; }
+            .tab-btn[data-tab="tab-leghe"]::after    { content: "Leghe"; }
+            .tab-btn[data-tab="tab-squadre"]::after  { content: "Squadre"; }
+            .tab-btn[data-tab="tab-giocatori"]::after { content: "Gioc."; }
+            .tab-btn[data-tab="tab-asta"]::after     { content: "Asta"; }
+            .tab-btn[data-tab="tab-operazioni"]::after { content: "Op."; }
+            .tab-btn[data-tab="tab-config"]::after   { content: "Config"; }
+            .tab-btn[data-tab="tab-export"]::after   { content: "Export"; }
+            .tab-content { padding: 0.85rem 0.75rem; }
+            .card { padding: 0.9rem; margin-bottom: 1rem; }
+            .card-title { font-size: 0.95rem; margin-bottom: 0.75rem; }
+            .grid-4 { grid-template-columns: 1fr 1fr !important; gap: 0.75rem !important; }
+            .auction-control { flex-direction: column; gap: 0.5rem; }
+            .control-box { min-width: unset; width: 100%; padding: 0.85rem; display: flex; justify-content: space-between; align-items: center; text-align: left; border-radius: 8px; }
+            .control-box .value { font-size: 1.6rem; }
+            .control-box .label { font-size: 0.8rem; }
+            .btn { padding: 0.85rem 1rem; font-size: 0.9rem; min-height: 48px; }
+            .btn-block { width: 100%; }
+            input, select, textarea { font-size: 16px !important; padding: 0.85rem 0.9rem; min-height: 48px; }
+            table { font-size: 0.78rem; }
+            th, td { padding: 0.5rem 0.6rem; }
+            .table-scroll-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .review-grid-override { grid-template-columns: 1fr !important; }
+            .stats-bar { flex-direction: row; flex-wrap: wrap; gap: 0.75rem; padding: 0.75rem 0; }
+            .stat-value { font-size: 1.4rem; }
+            .stats-bar .stat-item { flex: 1; min-width: 80px; }
+            .toggle-container { flex-wrap: wrap; gap: 0.5rem; }
+            #bid-history-list { max-height: 180px; }
+            .header .btn-hub-mobile { font-size: 11px; padding: 0.35rem 0.7rem; }
+        }
+
+        /* Smooth scroll per tab bar su touch */
+        .tabs-nav { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .tabs-nav::-webkit-scrollbar { display: none; }
+
+        /* Tap target minimo garantito per tutti i bottoni su mobile */
+        @media (max-width: 768px) {
+            .btn { min-height: 44px; }
+            input, select { min-height: 44px; font-size: 16px !important; }
+        }
+
+        /* Spazio per quickbar mobile */
+        @media (max-width: 480px) {
+            #admin-main { padding-bottom: 68px; }
+        }
+
         /* Forms */
         .form-group {
             margin-bottom: 1rem;
@@ -626,8 +694,8 @@
     <!-- Header -->
     <header class="header">
         <div style="display:flex; align-items:center; gap:1rem;">
-            <a href="/" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border:1px solid var(--border); border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'">← Hub</a>
-            <img src="/DraftARENAws.png" alt="DraftARENA" style="height:34px;">
+            <a href="/" class="btn-hub-mobile" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border:1px solid var(--border); border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'">← Hub</a>
+            <img src="/DraftARENAws.png" alt="DraftARENA" style="height:30px;max-height:30px;">
         </div>
         <div class="league-info">
             <div style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:8px;">
@@ -885,7 +953,7 @@
                 <div id="review-history-list" style="max-height:180px;overflow-y:auto;"></div>
             </div>
 
-            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.75rem;align-items:end;">
+            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.75rem;align-items:end;" class="review-grid-override">
                 <div class="form-group" style="margin:0;">
                     <label>Assegna a squadra</label>
                     <select id="review-team-select">
@@ -1085,6 +1153,7 @@
 
         <div class="card">
             <h3 class="card-title">Storico Vendite</h3>
+            <div class="table-scroll-wrapper">
             <table id="soldPlayersTable">
                 <thead>
                     <tr>
@@ -1101,12 +1170,21 @@
                     </tr>
                 </tbody>
             </table>
+            </div>
         </div>
     </div>
 
     <!-- Toast Notification -->
     <div id="toast">
         <span id="toastMessage"></span>
+    </div>
+
+    <!-- Barra di accesso rapido mobile (visibile solo su smartphone) -->
+    <div id="mobile-quickbar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);padding:8px 12px;z-index:200;gap:6px;justify-content:space-around;align-items:center;">
+        <button onclick="goTab('tab-asta')" style="flex:1;padding:10px 4px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">ASTA</button>
+        <button onclick="goTab('tab-squadre')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">SQUADRE</button>
+        <button onclick="goTab('tab-operazioni')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">OPERAZ.</button>
+        <button onclick="goTab('tab-giocatori')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">GIOC.</button>
     </div>
 
   </div><!-- /admin-main -->
@@ -1135,6 +1213,7 @@
           if (data.success) {
             document.getElementById('pin-gate').style.display = 'none';
             document.getElementById('admin-main').style.display = 'block';
+            initQuickbar();
           } else {
             sessionStorage.removeItem('adminPin');
             document.getElementById('admin-main').style.display = 'none';
@@ -1252,7 +1331,36 @@
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
                 btn.classList.add('active');
                 document.getElementById(btn.dataset.tab).classList.add('active');
+                updateQuickbar(btn.dataset.tab);
             });
+        });
+
+        function goTab(tabId) {
+            const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+            if (btn) btn.click();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateQuickbar(activeTabId) {
+            const bar = document.getElementById('mobile-quickbar');
+            if (!bar) return;
+            bar.querySelectorAll('button').forEach(b => {
+                const isActive = b.getAttribute('onclick')?.includes(activeTabId);
+                b.style.background = isActive ? 'var(--success)' : 'var(--bg-input)';
+                b.style.color = isActive ? '#fff' : 'var(--text-primary)';
+                b.style.border = isActive ? 'none' : '1px solid var(--border)';
+            });
+        }
+
+        function initQuickbar() {
+            if (window.innerWidth <= 480) {
+                document.getElementById('mobile-quickbar').style.display = 'flex';
+                updateQuickbar('tab-leghe');
+            }
+        }
+        window.addEventListener('resize', () => {
+            const bar = document.getElementById('mobile-quickbar');
+            if (bar) bar.style.display = window.innerWidth <= 480 ? 'flex' : 'none';
         });
 
         // ============================================================
