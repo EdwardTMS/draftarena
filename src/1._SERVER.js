@@ -65,7 +65,7 @@ const DEFAULT_CONFIG = {
 };
 
 const MANTRA_MAP = {
-  "P": "P",
+  "P": "P", "POR": "P",
   "DC": "D", "DD": "D", "DS": "D", "B": "D",
   "M": "C", "C": "C", "E": "C", "T": "C", "W": "C",
   "A": "A", "PC": "A"
@@ -753,9 +753,16 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       if (nome && ruolo) room.playersList.push({ nome, ruolo: ruolo.toUpperCase(), squadra });
     }
 
+    const warnings = [];
+    room.playersList.forEach(p => {
+      const tokens = p.ruolo.split(/[\s,;\-]+/).map(t => t.trim()).filter(Boolean);
+      const unknown = tokens.filter(t => !MANTRA_MAP[t]);
+      if (unknown.length > 0) warnings.push({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, tokensIgnorati: unknown });
+    });
+
     await salvaSessioneDB(room);
     io.to(roomCode).emit("playersList", room.playersList);
-    res.send("OK");
+    res.json({ success: true, count: room.playersList.length, warnings });
   } catch (e) {
     console.error("[SERVER] Errore parsing Excel:", e);
     res.status(500).send("Errore nel parsing del file Excel");
@@ -1097,6 +1104,18 @@ io.on("connection", (socket) => {
     socket.emit("errorNotify", `🎯 Aggiunto: ${newPlayer.nome} (${newPlayer.ruolo})`);
   });
 
+  socket.on("adminFixPlayerRuolo", async (data) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+    const { nome, nuovoRuolo } = data;
+    if (!nome || !nuovoRuolo) return;
+    const player = room.playersList.find(p => p.nome === nome);
+    if (!player) { socket.emit("errorNotify", "Giocatore non trovato!"); return; }
+    player.ruolo = nuovoRuolo.toUpperCase().trim();
+    io.to(socket.roomCode).emit("playersList", room.playersList);
+    await salvaSessioneDB(room);
+  });
+
   socket.on("adminScartaDalMazzo", async (playerName) => {
     const room = getRoom(); if (!room) return;
     if (!requireAdmin()) return;
@@ -1139,6 +1158,35 @@ io.on("connection", (socket) => {
     io.to(rc).emit("updateTeams", room.teams);
     io.to(rc).emit("teamsUpdate", room.teams);
     io.to(rc).emit("playersList", room.playersList);
+    await salvaSessioneDB(room);
+  });
+
+  socket.on("adminManualAssign", async (data) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+    const { player, squadra, prezzo } = data;
+    if (!player || !squadra) { socket.emit("errorNotify", "Dati mancanti!"); return; }
+    const nameKey = squadra.toLowerCase().trim();
+    if (!room.teams[nameKey]) { socket.emit("errorNotify", "Squadra non valida!"); return; }
+    const totali = Object.values(room.teams[nameKey].slots).reduce((a, b) => a + b, 0);
+    if (totali >= room.CONFIG.MAX_TOTAL_PLAYERS) { socket.emit("errorNotify", "Rosa piena!"); return; }
+    const repartiPossibili = ottieniMacroReparti(player.ruolo);
+    let repartoScelto = null;
+    for (let i = 0; i < repartiPossibili.length; i++) {
+      const rep = repartiPossibili[i];
+      if (room.CONFIG.LIMITS[rep] === 0 || (room.teams[nameKey].slots[rep] || 0) < room.CONFIG.LIMITS[rep]) { repartoScelto = rep; break; }
+    }
+    if (!repartoScelto) { socket.emit("errorNotify", "Spazio esaurito nei ruoli!"); return; }
+    const price = parseInt(prezzo) || 1;
+    room.playersList = room.playersList.filter(pl => pl.nome !== player.nome);
+    room.soldPlayers.push({ player: player.nome, ruolo: player.ruolo, squadra: player.squadra, winner: room.teams[nameKey].name, price, repartoAssegnato: repartoScelto });
+    room.teams[nameKey].budget -= price;
+    room.teams[nameKey].slots[repartoScelto] = (room.teams[nameKey].slots[repartoScelto] || 0) + 1;
+    const rc2 = socket.roomCode;
+    io.to(rc2).emit("updateSold", room.soldPlayers);
+    io.to(rc2).emit("updateTeams", room.teams);
+    io.to(rc2).emit("teamsUpdate", room.teams);
+    io.to(rc2).emit("playersList", room.playersList);
     await salvaSessioneDB(room);
   });
 
