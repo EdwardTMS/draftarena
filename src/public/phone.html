@@ -74,9 +74,41 @@
       .market-info { gap: 6px; }
       .market-stat { padding: 9px; }
     }
+    @keyframes _bidFlashAnim {
+      0%   { opacity: 0.55; }
+      100% { opacity: 0; }
+    }
+    #_bid-flash { display:none; position:fixed; inset:0; z-index:997; pointer-events:none;
+                  background:rgba(16,185,129,0.38); }
+    #_bid-flash.active { display:block; animation: _bidFlashAnim 0.45s ease-out forwards; }
+
+    #_ios-banner { display:none; position:fixed; bottom:0; left:0; right:0; z-index:9998;
+                   background:#0b132b; border-top:1px solid rgba(16,185,129,0.35);
+                   padding:14px 16px 20px; align-items:center; gap:12px;
+                   box-shadow:0 -6px 24px rgba(0,0,0,0.5); }
+    #_ios-banner p { margin:0; font-size:13px; line-height:1.5; color:#e2e8f0; flex:1; }
+    #_ios-banner strong { color:#10b981; }
+    #_ios-banner button { background:transparent; border:none; color:#94a3b8;
+                          font-size:22px; cursor:pointer; padding:0; flex-shrink:0; line-height:1; }
   </style>
 </head>
 <body>
+
+  <!-- Flash overlay (vibrazione visiva per iOS) -->
+  <div id="_bid-flash"></div>
+
+  <!-- Banner installazione iOS -->
+  <div id="_ios-banner">
+    <p>
+      <strong>Installa DraftArena</strong><br>
+      Tocca
+      <svg style="width:16px;height:16px;vertical-align:middle;fill:#10b981;" viewBox="0 0 24 24">
+        <path d="M12 2l-4 4h3v9h2V6h3L12 2zm-6 15v3h12v-3h-2v1H8v-1H6z"/>
+      </svg>
+      poi <strong>"Aggiungi a schermata Home"</strong>
+    </p>
+    <button onclick="document.getElementById('_ios-banner').style.display='none'">✕</button>
+  </div>
 
   <div style="text-align:center;padding-top:20px;margin-bottom:4px;">
     <img src="/DraftARENAws.png" alt="DraftARENA" style="height:44px;max-width:85%;">
@@ -346,6 +378,11 @@
         if (s.highestBidder && s.highestBidder !== ultimoBidderPhone) {
           ultimoBidderPhone = s.highestBidder;
           if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+          // Flash visivo (fallback iOS dove vibrate non è supportato)
+          const fl = document.getElementById('_bid-flash');
+          fl.classList.remove('active');
+          void fl.offsetWidth;
+          fl.classList.add('active');
         }
       } else {
         astaAttiva = false;
@@ -400,6 +437,15 @@
       if (!miaSquadraScelta || !astaAttiva) return;
       socket.emit("bid", { name: miaSquadraScelta, amount: valore });
     }
+
+    // Banner installazione iOS: solo su Safari iOS, fuori dalla modalità standalone
+    (function() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const isStandalone = window.navigator.standalone === true;
+      if (isIOS && !isStandalone) {
+        document.getElementById('_ios-banner').style.display = 'flex';
+      }
+    })();
   </script>
 </body>
 </html>
