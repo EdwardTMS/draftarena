@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DraftARENA — TV Host</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#10b981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DraftArena">
+  <link rel="apple-touch-icon" href="/DraftARENAico.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@400;700;800&display=swap');
     html, body { height: 100%; overflow: hidden; }
@@ -248,6 +255,8 @@
     if (linkText) linkText.innerText = data.url;
   });
 
+  let ultimoHighestBidder = null;
+
   // FIX 1: l'overlay viene nascosto SOLO quando arriva un nuovo giocatore,
   // non ad ogni tick del timer (che sennò lo cancellava immediatamente).
   socket.on("update", s => {
@@ -257,6 +266,12 @@
       if (ultimoGiocatoreAttivo !== s.player.nome) {
         document.getElementById("snd-start").play().catch(() => {});
         ultimoGiocatoreAttivo = s.player.nome;
+        ultimoHighestBidder = null;
+      }
+
+      if (s.highestBidder && s.highestBidder !== ultimoHighestBidder) {
+        ultimoHighestBidder = s.highestBidder;
+        document.getElementById("snd-start").play().catch(() => {});
       }
       document.getElementById("player").innerText = s.player.nome || "-";
       document.getElementById("info-giocatore").innerText =
@@ -291,6 +306,7 @@
   });
 
   socket.on("auctionEnded", s => {
+    ultimoHighestBidder = null;
     const overlay = document.getElementById("vincitore-overlay");
     const dettagli = document.getElementById("overlay-dettagli");
 
