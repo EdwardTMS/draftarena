@@ -1595,6 +1595,8 @@
         // PLAYERS LIST MANAGEMENT
         // ============================================================
 
+        let _pendingWarnings = [];
+
         function uploadExcel() {
             const fileInput = document.getElementById('excelFile');
             const file = fileInput.files[0];
@@ -1608,14 +1610,63 @@
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.text())
-            .then(msg => {
-                showAlert('success', 'File Excel caricato con successo!');
+            .then(res => res.json())
+            .then(data => {
                 socket.emit('getPlayers');
+                if (data.warnings && data.warnings.length > 0) {
+                    _mostraWarningRuoli(data.warnings, data.count);
+                } else {
+                    showAlert('success', `${data.count} giocatori caricati con successo!`);
+                }
             })
             .catch(err => {
                 showAlert('error', 'Errore nel caricamento del file');
             });
+        }
+
+        function _mostraWarningRuoli(warnings, count) {
+            _pendingWarnings = warnings;
+            const RUOLI_VALIDI = ['P','POR','DC','DD','DS','B','M','C','E','T','W','A','PC',
+                                  'C;T','C;W','E;W','M;C','T;A','W;A','W;T'];
+            document.getElementById('_warningSubtitle').textContent =
+                `${count} giocatori caricati · ${warnings.length} con ruoli non riconosciuti dal sistema Mantra`;
+            document.getElementById('_warningList').innerHTML = warnings.map((w, i) => `
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;align-items:center;
+                            padding:0.75rem;background:rgba(245,158,11,0.08);border-radius:8px;
+                            margin-bottom:0.5rem;border:1px solid rgba(245,158,11,0.25);">
+                    <div>
+                        <div style="font-weight:600;font-size:0.95rem;">${w.nome}</div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);">${w.squadra}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:3px;">Ruolo nel file:</div>
+                        <code style="background:rgba(239,68,68,0.18);color:#ef4444;padding:2px 6px;border-radius:4px;font-size:0.85rem;">${w.ruolo}</code>
+                        <div style="font-size:0.75rem;color:#f59e0b;margin-top:4px;">Non riconosciuto: <b>${w.tokensIgnorati.join(', ')}</b></div>
+                    </div>
+                    <div>
+                        <select id="_fix_${i}" style="width:100%;padding:0.45rem 0.5rem;
+                                background:var(--bg-card);border:1px solid var(--border);
+                                color:var(--text-primary);border-radius:6px;font-size:0.85rem;">
+                            ${RUOLI_VALIDI.map(r => `<option value="${r}"${r === w.tokensIgnorati[0] ? ' selected' : ''}>${r}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('_warningModal').style.display = 'flex';
+        }
+
+        function _chiudiWarning() {
+            document.getElementById('_warningModal').style.display = 'none';
+            _pendingWarnings = [];
+        }
+
+        function _salvaCorrezioni() {
+            _pendingWarnings.forEach((w, i) => {
+                const nuovoRuolo = document.getElementById(`_fix_${i}`)?.value;
+                if (nuovoRuolo) socket.emit('adminFixPlayerRuolo', { nome: w.nome, nuovoRuolo });
+            });
+            showAlert('success', `${_pendingWarnings.length} ruoli corretti!`);
+            _chiudiWarning();
         }
 
         function addManualPlayer() {
@@ -2037,5 +2088,44 @@
             return String(str).replace(/"/g,'&quot;');
         }
     </script>
+    <!-- Warning Modal: Ruoli non riconosciuti -->
+    <div id="_warningModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);
+         z-index:9999;align-items:center;justify-content:center;padding:1.5rem;">
+        <div style="width:100%;max-width:700px;background:var(--bg-card);border-radius:16px;
+                    padding:2rem;border:1px solid #f59e0b;box-shadow:0 20px 60px rgba(0,0,0,0.5);
+                    max-height:90vh;display:flex;flex-direction:column;">
+            <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem;">
+                <span style="font-size:2rem;line-height:1;">⚠️</span>
+                <div>
+                    <h3 style="color:#f59e0b;margin:0 0 4px;">Ruoli non riconosciuti</h3>
+                    <p id="_warningSubtitle" style="color:var(--text-secondary);margin:0;font-size:0.88rem;"></p>
+                </div>
+            </div>
+            <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:1rem;
+                      padding:0.75rem;background:rgba(245,158,11,0.07);border-radius:8px;border-left:3px solid #f59e0b;">
+                Questi giocatori hanno ruoli che il sistema Mantra non riconosce: durante l'asta il controllo del limite di reparto non funzionerà correttamente.
+                Seleziona il ruolo corretto e clicca <b>Salva correzioni</b>.
+            </p>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;padding:0 0.25rem 0.5rem;
+                        font-size:0.78rem;color:var(--text-secondary);font-weight:600;text-transform:uppercase;">
+                <span>Giocatore</span><span>Ruolo attuale</span><span>Correggi con</span>
+            </div>
+            <div id="_warningList" style="overflow-y:auto;flex:1;"></div>
+            <div style="display:flex;gap:1rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
+                <button onclick="_salvaCorrezioni()"
+                        style="background:#22c55e;color:white;border:none;padding:0.75rem 1.5rem;
+                               border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;">
+                    Salva correzioni
+                </button>
+                <button onclick="_chiudiWarning()"
+                        style="background:transparent;color:var(--text-secondary);
+                               border:1px solid var(--border);padding:0.75rem 1.5rem;
+                               border-radius:8px;cursor:pointer;font-size:0.9rem;">
+                    Ignora e continua
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
