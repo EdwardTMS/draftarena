@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DraftARENA — Buzzer</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#10b981">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DraftArena">
+  <link rel="apple-touch-icon" href="/DraftARENAico.png">
   <style>
     body { font-family: sans-serif; background-color: #050914; color: #f8fafc; padding: 15px; margin: 0; text-align: center; box-sizing: border-box; }
     
@@ -153,6 +160,7 @@
     let toastTimer = null;
     let currentRoomCode = null;
     let takenTeamsList = [];
+    let ultimoBidderPhone = null;
 
     // ── Room join ───────────────────────────────────────────────────────────
     function setRoomError(msg) { document.getElementById('room-error').textContent = msg; }
@@ -334,8 +342,14 @@
         else if (r === "DC" || r === "DD" || r === "DS" || r === "B") ruoloEl.style.backgroundColor = "#2563eb";
         else if (r === "A" || r === "PC" || r === "W" || r === "T") ruoloEl.style.backgroundColor = "#dc2626";
         else ruoloEl.style.backgroundColor = "#16a34a";
+
+        if (s.highestBidder && s.highestBidder !== ultimoBidderPhone) {
+          ultimoBidderPhone = s.highestBidder;
+          if (navigator.vibrate) navigator.vibrate([80, 40, 80]);
+        }
       } else {
         astaAttiva = false;
+        ultimoBidderPhone = null;
         nameEl.innerText = "IN ATTESA...";
         metaBox.style.display = "none";
       }
@@ -359,6 +373,7 @@
 
     socket.on("auctionEnded", s => {
       astaAttiva = false;
+      ultimoBidderPhone = null;
       setBotoniAttivi(false);
       const overlay = document.getElementById("esito-overlay");
       const testo = document.getElementById("esito-testo");
