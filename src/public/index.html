@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DraftARENA</title>
+  <title>DraftARENA — L'asta del fantacalcio in tempo reale</title>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#10b981">
   <meta name="mobile-web-app-capable" content="yes">
@@ -11,115 +11,426 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DraftArena">
   <link rel="apple-touch-icon" href="/DraftARENAico.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-deep:     #020810;
+      --bg-dark:     #060d1e;
+      --bg-card:     #0b1428;
+      --bg-card2:    #0e1a32;
+      --border:      #1c2d4a;
+      --border-glow: rgba(56,189,248,0.25);
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #475569;
+      --blue:       #2563eb;
+      --blue-light: #38bdf8;
+      --green:      #10b981;
+      --green-dark: #047857;
+      --amber:      #f59e0b;
+      --red:        #dc2626;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      background: #050914;
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── NAVBAR ── */
+    .navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      background: rgba(2,8,16,0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    .navbar.scrolled { border-color: var(--border); }
+    .navbar-logo { height: 36px; }
+    .navbar-cta { display: flex; gap: 10px; }
+    .btn-nav-enter {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-nav-enter:hover { border-color: var(--blue-light); color: var(--blue-light); }
+    .btn-nav-create {
+      padding: 8px 20px;
+      border-radius: 8px; border: none;
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
       color: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-nav-create:hover { opacity: 0.85; }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      font-family: sans-serif;
-      padding: 24px;
+      text-align: center;
+      padding: 100px 24px 80px;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      top: -200px; left: 50%;
+      transform: translateX(-50%);
+      width: 800px; height: 800px;
+      background: radial-gradient(ellipse at center, rgba(37,99,235,0.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-glow2 {
+      position: absolute;
+      bottom: -100px; left: 20%;
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse at center, rgba(16,185,129,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-logo {
+      width: 280px; max-width: 80%;
+      margin-bottom: 32px;
+      animation: fadeUp 0.8s ease both;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center; gap: 6px;
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 12px; font-weight: 600;
+      color: var(--green);
+      margin-bottom: 20px;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+    .hero-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    .hero-title {
+      font-size: clamp(2rem, 5.5vw, 3.6rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      max-width: 780px;
+      margin-bottom: 18px;
+      animation: fadeUp 0.8s 0.15s ease both;
+    }
+    .hero-title .accent { color: var(--blue-light); }
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--text-secondary);
+      max-width: 560px;
+      line-height: 1.65;
+      margin-bottom: 40px;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+    .hero-actions {
+      display: flex; flex-wrap: wrap;
+      gap: 14px; justify-content: center;
+      animation: fadeUp 0.8s 0.28s ease both;
+    }
+    .btn-hero-primary {
+      padding: 16px 36px;
+      border-radius: 10px; border: none;
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(37,99,235,0.4);
+    }
+    .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,99,235,0.55); }
+    .btn-hero-secondary {
+      padding: 16px 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-hero-secondary:hover { border-color: var(--blue-light); color: var(--blue-light); }
+    .hero-scroll {
+      position: absolute;
+      bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column;
+      align-items: center; gap: 6px;
+      color: var(--text-muted);
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+    .scroll-arrow {
+      width: 18px; height: 18px;
+      border-right: 2px solid var(--text-muted);
+      border-bottom: 2px solid var(--text-muted);
+      transform: rotate(45deg);
+      animation: bounce 1.8s ease infinite;
     }
 
-    .logo-main { width: 300px; max-width: 88%; margin-bottom: 20px; }
+    /* ── SEZIONI ── */
+    .section {
+      padding: 96px 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--blue-light);
+      margin-bottom: 12px; text-align: center;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+      font-weight: 800; text-align: center;
+      letter-spacing: -0.02em; line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1rem; line-height: 1.6;
+      max-width: 560px;
+      margin: 0 auto 60px;
+    }
 
-    .step { width: 100%; max-width: 400px; }
-    .step.hidden { display: none; }
+    /* ── COME FUNZIONA ── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: calc(16.66% + 16px);
+      right: calc(16.66% + 16px);
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+    }
+    .step-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .step-card:hover { border-color: var(--border-glow); transform: translateY(-4px); }
+    .step-num {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+    .step-num.blue  { background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.4); }
+    .step-num.green { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); }
+    .step-tag {
+      display: inline-block;
+      font-size: 10px; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 20px;
+      margin-bottom: 12px;
+    }
+    .step-tag.blue  { background: rgba(37,99,235,0.15); color: #93c5fd; }
+    .step-tag.green { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .step-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+    .step-card p  { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
 
-    .room-card {
-      background: #0b132b;
-      border: 1px solid #1c2541;
+    /* ── FEATURES ── */
+    .features-section {
+      padding: 0 24px 96px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 28px;
-      margin-top: 28px;
+      padding: 22px 20px;
+      display: flex; align-items: flex-start; gap: 14px;
+      transition: border-color 0.2s, background 0.2s;
     }
-    .room-card h2 { color: #f1f5f9; font-size: 1.1rem; margin-bottom: 4px; }
-    .room-card p  { color: #64748b; font-size: 12px; margin-bottom: 16px; }
+    .feature-card:hover { border-color: var(--border-glow); background: var(--bg-card2); }
+    .feature-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+    .feature-card h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 4px; }
+    .feature-card p  { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ── RUOLI ── */
+    .roles-section {
+      padding: 0 24px 96px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .role-card {
+      border-radius: 14px;
+      padding: 24px 18px;
+      text-align: center;
+      border: 1px solid transparent;
+      transition: transform 0.2s;
+    }
+    .role-card:hover { transform: translateY(-4px); }
+    .role-card .role-icon { font-size: 2rem; margin-bottom: 12px; }
+    .role-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .role-card p  { font-size: 0.8rem; line-height: 1.5; }
+    .role-admin { background: rgba(220,38,38,0.1);   border-color: rgba(220,38,38,0.3); }
+    .role-admin h4, .role-admin .role-icon { color: #fca5a5; }
+    .role-admin p { color: #fca5a5; opacity: 0.7; }
+    .role-host  { background: rgba(37,99,235,0.1);   border-color: rgba(37,99,235,0.3); }
+    .role-host  h4, .role-host .role-icon { color: #93c5fd; }
+    .role-host  p { color: #93c5fd; opacity: 0.7; }
+    .role-phone { background: rgba(16,185,129,0.1);  border-color: rgba(16,185,129,0.3); }
+    .role-phone h4, .role-phone .role-icon { color: #6ee7b7; }
+    .role-phone p { color: #6ee7b7; opacity: 0.7; }
+    .role-rose  { background: rgba(245,158,11,0.1);  border-color: rgba(245,158,11,0.3); }
+    .role-rose  h4, .role-rose .role-icon { color: #fcd34d; }
+    .role-rose  p { color: #fcd34d; opacity: 0.7; }
+
+    /* ── HUB FUNZIONALE ── */
+    .hub-section {
+      padding: 0 24px 120px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .hub-header { text-align: center; margin-bottom: 32px; }
+    .hub-header h2 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800; letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .hub-header p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+
+    .hub-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .hub-card h3 { color: var(--text-primary); font-size: 1.05rem; margin-bottom: 4px; }
+    .hub-card p  { color: var(--text-muted); font-size: 12px; margin-bottom: 18px; }
 
     .btn-create {
-      width: 100%;
-      padding: 14px;
-      border-radius: 8px;
-      border: none;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      width: 100%; padding: 14px;
+      border-radius: 8px; border: none;
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
       color: white;
-      font-size: 15px;
-      font-weight: bold;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 700;
       cursor: pointer;
-      transition: opacity 0.2s;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 2px 16px rgba(37,99,235,0.3);
     }
-    .btn-create:hover { opacity: 0.85; }
+    .btn-create:hover { opacity: 0.88; transform: translateY(-1px); }
 
     .divider {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 16px 0;
-      color: #334155;
-      font-size: 12px;
+      display: flex; align-items: center; gap: 10px;
+      margin: 18px 0;
+      color: var(--text-muted);
+      font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
     }
-    .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid #1c2541; }
+    .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
 
     .input-row { display: flex; gap: 8px; }
     input[type="text"] {
-      flex: 1;
-      padding: 12px 14px;
+      flex: 1; padding: 12px 14px;
       border-radius: 8px;
-      border: 1px solid #1c2541;
-      background: #050914;
+      border: 1px solid var(--border);
+      background: var(--bg-deep);
       color: #fff;
+      font-family: 'Inter', sans-serif;
       font-size: 16px;
       text-transform: uppercase;
-      letter-spacing: 3px;
-      font-weight: bold;
+      letter-spacing: 3px; font-weight: 700;
+      transition: border-color 0.2s; outline: none;
     }
+    input[type="text"]:focus { border-color: var(--blue-light); }
     input[type="text"]::placeholder {
-      text-transform: none; letter-spacing: 0; font-weight: normal; color: #334155;
+      text-transform: none; letter-spacing: 0;
+      font-weight: normal; color: var(--text-muted);
     }
     .btn-join {
       padding: 12px 18px;
-      border-radius: 8px;
-      border: none;
-      background: #10b981;
+      border-radius: 8px; border: none;
+      background: var(--green);
       color: white;
-      font-weight: bold;
-      font-size: 14px;
-      cursor: pointer;
-      transition: opacity 0.2s;
+      font-family: 'Inter', sans-serif;
+      font-weight: 700; font-size: 14px;
+      cursor: pointer; transition: opacity 0.2s;
       white-space: nowrap;
     }
     .btn-join:hover { opacity: 0.85; }
 
     .error-msg { color: #ef4444; font-size: 13px; margin-top: 8px; min-height: 18px; }
-    .spinner { color: #38bdf8; font-size: 13px; text-align: center; margin-top: 8px; display: none; }
+    .spinner    { color: var(--blue-light); font-size: 13px; text-align: center; margin-top: 8px; display: none; }
 
+    /* ── Scelta ruolo ── */
     .room-badge {
-      background: #0b132b;
-      border: 1px solid rgba(56,189,248,0.3);
-      border-radius: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-glow);
+      border-radius: 12px;
       padding: 14px 20px;
-      margin-top: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px;
+      margin-bottom: 16px;
     }
-    .room-badge .label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
-    .room-badge .code  { font-size: 2rem; font-weight: bold; color: #38bdf8; letter-spacing: 4px; }
+    .room-badge .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .room-badge .code  { font-size: 2rem; font-weight: 800; color: var(--blue-light); letter-spacing: 4px; }
     .btn-copy {
       padding: 8px 14px;
       border-radius: 6px;
-      border: 1px solid rgba(56,189,248,0.3);
-      background: none;
-      color: #38bdf8;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
+      border: 1px solid var(--border-glow);
+      background: none; color: var(--blue-light);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: background 0.2s;
       white-space: nowrap;
     }
     .btn-copy:hover { background: rgba(56,189,248,0.1); }
@@ -128,118 +439,360 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
-      margin-top: 20px;
     }
     .nav-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       padding: 22px 10px;
-      border-radius: 12px;
-      border: none;
+      border-radius: 12px; border: none;
       cursor: pointer;
-      font-size: 15px;
-      font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: transform 0.15s;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      transition: transform 0.15s, opacity 0.2s;
       gap: 8px;
     }
+    .nav-btn:hover  { opacity: 0.9; }
     .nav-btn:active { transform: scale(0.97); }
-    .nav-btn .icon { font-size: 28px; }
+    .nav-btn .icon  { font-size: 26px; }
     .btn-admin { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; }
     .btn-host  { background: linear-gradient(135deg, #1d4ed8, #1e40af); color: #fff; }
     .btn-phone { background: linear-gradient(135deg, #10b981, #047857); color: #fff; }
     .btn-rose  { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
 
-    @media (max-width: 360px) {
-      .nav-grid { grid-template-columns: 1fr; }
-      .nav-btn { padding: 16px 10px; font-size: 13px; }
-      .room-badge .code { font-size: 1.5rem; letter-spacing: 2px; }
-    }
-
     .change-room {
       margin-top: 16px;
-      font-size: 12px;
-      color: #475569;
-      text-align: center;
-      cursor: pointer;
+      font-size: 12px; color: var(--text-muted);
+      text-align: center; cursor: pointer;
+      transition: color 0.2s;
     }
-    .change-room:hover { color: #94a3b8; }
+    .change-room:hover { color: var(--text-secondary); }
 
-    /* ── Modale creazione stanza ── */
+    .hidden { display: none !important; }
+
+    /* ── MODALE ── */
     .modal-overlay {
       display: none;
       position: fixed; inset: 0;
-      background: rgba(2,8,23,0.85);
-      backdrop-filter: blur(4px);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
+      background: rgba(2,8,23,0.88);
+      backdrop-filter: blur(6px);
+      z-index: 200;
+      align-items: center; justify-content: center;
       padding: 24px;
     }
     .modal-overlay.open { display: flex; }
     .modal-card {
-      background: #0b132b;
-      border: 1px solid #1c2541;
-      border-radius: 16px;
-      padding: 28px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 30px;
       width: 100%; max-width: 380px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
     }
-    .modal-card h3 { font-size: 1rem; color: #f1f5f9; margin-bottom: 6px; }
-    .modal-card p  { font-size: 12px; color: #64748b; margin-bottom: 18px; line-height: 1.5; }
+    .modal-card h3 { font-size: 1.05rem; color: var(--text-primary); margin-bottom: 6px; }
+    .modal-card p  { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
     .modal-step { display: none; }
     .modal-step.active { display: block; }
     .access-input {
       width: 100%; padding: 12px 14px;
-      border-radius: 8px; border: 1px solid #1c2541;
-      background: #050914; color: #fff; font-size: 16px;
-      text-transform: uppercase; letter-spacing: 2px; font-weight: 700;
-      margin-bottom: 12px;
+      border-radius: 8px; border: 1px solid var(--border);
+      background: var(--bg-deep); color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px; text-transform: uppercase;
+      letter-spacing: 2px; font-weight: 700;
+      margin-bottom: 12px; outline: none;
+      transition: border-color 0.2s;
     }
-    .access-input::placeholder { text-transform: none; letter-spacing: 0; font-weight: normal; color: #334155; }
-    .access-input:focus { outline: none; border-color: #38bdf8; }
+    .access-input:focus { border-color: var(--blue-light); }
+    .access-input::placeholder { text-transform: none; letter-spacing: 0; font-weight: normal; color: var(--text-muted); }
     input[type="number"].access-input { letter-spacing: 0; text-transform: none; font-size: 1.4rem; text-align: center; }
     .btn-access-confirm {
       width: 100%; padding: 13px;
       border-radius: 8px; border: none;
-      background: linear-gradient(135deg, #2563eb, #1d4ed8);
-      color: white; font-size: 15px; font-weight: 700;
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      color: white;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 700;
       cursor: pointer; transition: opacity 0.2s;
     }
     .btn-access-confirm:hover { opacity: 0.85; }
-    .btn-access-confirm.free { background: linear-gradient(135deg, #10b981, #047857); }
     .btn-access-cancel {
       width: 100%; padding: 10px;
       border-radius: 8px; border: none;
-      background: none; color: #475569;
+      background: none; color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
       font-size: 13px; cursor: pointer; margin-top: 8px;
       transition: color 0.2s;
     }
-    .btn-access-cancel:hover { color: #94a3b8; }
+    .btn-access-cancel:hover { color: var(--text-secondary); }
     .access-error { color: #ef4444; font-size: 12px; margin-top: 4px; min-height: 16px; }
-    .free-badge {
-      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
-      border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
-      font-size: 12px; color: #10b981; text-align: center; line-height: 1.5;
-    }
     .paid-badge {
       background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
       border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
-      font-size: 12px; color: #f59e0b; text-align: center; line-height: 1.5;
+      font-size: 12px; color: var(--amber); text-align: center; line-height: 1.5;
+    }
+    .pin-badge {
+      background: rgba(251,191,36,0.1);
+      border: 1px solid rgba(251,191,36,0.4);
+      border-radius: 8px;
+      padding: 10px 16px;
+      margin-bottom: 16px;
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50%       { transform: rotate(45deg) translateY(5px); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .navbar { padding: 14px 20px; }
+      .navbar-logo { height: 30px; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .steps-grid::before { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .roles-grid { grid-template-columns: 1fr 1fr; }
+      .btn-nav-enter { display: none; }
+    }
+    @media (max-width: 480px) {
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-hero-primary, .btn-hero-secondary { width: 100%; max-width: 320px; }
+    }
+    @media (max-width: 360px) {
+      .nav-grid { grid-template-columns: 1fr; }
+      .room-badge .code { font-size: 1.5rem; letter-spacing: 2px; }
     }
   </style>
 </head>
 <body>
 
-  <img src="/DraftARENA.png" alt="DraftARENA" class="logo-main">
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <img src="/DraftARENA.png" alt="DraftARENA" class="navbar-logo">
+    <div class="navbar-cta">
+      <button class="btn-nav-enter" onclick="scrollToHub()">Entra in una stanza</button>
+      <button class="btn-nav-create" onclick="apriModaleCreazione()">+ Crea stanza</button>
+    </div>
+  </nav>
 
-  <!-- Modale creazione stanza -->
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <img src="/DraftARENA.png" alt="DraftARENA" class="hero-logo">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Asta in tempo reale
+    </div>
+    <h1 class="hero-title">
+      L'asta del fantacalcio<br>
+      come non l'hai mai <span class="accent">vissuta</span>
+    </h1>
+    <p class="hero-sub">
+      Timer live, rilanci dal telefono, schermata TV per tutti. Organizza l'asta della tua lega in pochi secondi — gratis, senza installazioni.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-hero-primary" onclick="apriModaleCreazione()">+ Crea una stanza</button>
+      <button class="btn-hero-secondary" onclick="scrollToHub()">Entra in una stanza</button>
+    </div>
+    <div class="hero-scroll">
+      <span>Scopri di più</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- COME FUNZIONA -->
+  <div class="section" id="come-funziona">
+    <div class="section-label">Come funziona</div>
+    <h2 class="section-title">Tre passi, un'asta perfetta</h2>
+    <p class="section-sub">Nessuna installazione. Funziona su qualsiasi dispositivo dal browser.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num blue">🎮</div>
+        <div class="step-tag blue">Admin — Regia</div>
+        <h3>Crea e controlla</h3>
+        <p>Carica la lista giocatori, imposta i budget e gestisci l'asta in tempo reale. Metti il giocatore all'asta, avvia il timer, aggiudica.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num blue">📺</div>
+        <div class="step-tag blue">Host — TV</div>
+        <h3>Proietta in sala</h3>
+        <p>Apri la schermata TV sul grande schermo o proiettore. Mostra il giocatore in asta, il timer e le offerte in diretta a tutti i partecipanti.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num green">📱</div>
+        <div class="step-tag green">Squadre — Buzzer</div>
+        <h3>Rilancia dal telefono</h3>
+        <p>Ogni fantasquadra usa il proprio smartphone come buzzer. Un tap per rilanciare, in tempo reale, senza app da installare.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features-section">
+    <div class="section-label" style="text-align:center; margin-bottom:12px;">Funzionalità</div>
+    <h2 class="section-title">Tutto quello che serve per un'asta seria</h2>
+    <p class="section-sub">Progettato per leghe vere, con le funzioni che contano davvero.</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">⏱</div>
+        <div>
+          <h4>Timer live sincronizzato</h4>
+          <p>Countdown visibile su tutti i dispositivi in tempo reale. Nessun "quanto manca?" in sala.</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <div>
+          <h4>Storico offerte in diretta</h4>
+          <p>Ogni rilancio appare istantaneamente su tutti gli schermi. Trasparenza totale durante l'asta.</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div>
+          <h4>Le rose aggiornate</h4>
+          <p>Ogni squadra vede la propria rosa e il budget residuo aggiornati dopo ogni acquisto.</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📁</div>
+        <div>
+          <h4>Export Excel</h4>
+          <p>A fine asta esporta tutti i risultati in un file Excel con un click. Pronto per il tuo foglio lega.</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <div>
+          <h4>Solo browser, niente app</h4>
+          <p>Funziona su qualsiasi smartphone dal browser. Basta aprire il link e inserire il codice stanza.</p>
+        </div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔒</div>
+        <div>
+          <h4>Stanza privata con codice</h4>
+          <p>Ogni asta ha un codice univoco a 6 caratteri. Solo chi ha il codice può entrare nella stanza.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- I RUOLI -->
+  <div class="roles-section">
+    <div class="section-label" style="text-align:center; margin-bottom:12px;">I ruoli</div>
+    <h2 class="section-title">Una stanza, quattro viste</h2>
+    <p class="section-sub">Ogni partecipante accede alla vista giusta per il proprio ruolo.</p>
+
+    <div class="roles-grid">
+      <div class="role-card role-admin">
+        <div class="role-icon">🎮</div>
+        <h4>Regia</h4>
+        <p>Controllo completo dell'asta. Solo per l'amministratore.</p>
+      </div>
+      <div class="role-card role-host">
+        <div class="role-icon">📺</div>
+        <h4>TV Host</h4>
+        <p>Schermata per proiettore o TV. Mostra tutto in sala.</p>
+      </div>
+      <div class="role-card role-phone">
+        <div class="role-icon">📱</div>
+        <h4>Buzzer</h4>
+        <p>Lo smartphone di ogni squadra. Un tap per rilanciare.</p>
+      </div>
+      <div class="role-card role-rose">
+        <div class="role-icon">📋</div>
+        <h4>Le Rose</h4>
+        <p>Vista rosa e budget di tutte le squadre in tempo reale.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HUB FUNZIONALE -->
+  <div class="hub-section" id="hub">
+    <div class="hub-header">
+      <h2>Inizia adesso</h2>
+      <p>Crea una stanza in 10 secondi oppure entra in una già esistente con il codice che ti ha condiviso l'admin.</p>
+    </div>
+
+    <div id="step-room">
+      <div class="hub-card">
+        <h3>Sei l'amministratore?</h3>
+        <p>Crea una nuova stanza e condividi il codice con i partecipanti.</p>
+        <button class="btn-create" id="btn-create-room">+ CREA NUOVA STANZA</button>
+
+        <div class="divider">oppure entra in una stanza esistente</div>
+
+        <div class="input-row">
+          <input type="text" id="room-code-input" placeholder="Codice (es: ABC123)" maxlength="6">
+          <button class="btn-join" id="btn-join-room">ENTRA</button>
+        </div>
+        <div class="error-msg" id="room-error"></div>
+        <div class="spinner" id="loading">Connessione in corso...</div>
+      </div>
+    </div>
+
+    <div id="step-role" class="hidden">
+      <div class="room-badge">
+        <div>
+          <div class="label">Codice Stanza</div>
+          <div class="code" id="display-room-code">------</div>
+        </div>
+        <button class="btn-copy" id="btn-copy-code">COPIA</button>
+      </div>
+
+      <div class="pin-badge" id="pin-badge" style="display:none; flex-direction:row; align-items:center; justify-content:space-between; gap:12px;">
+        <div>
+          <div style="color:#f59e0b; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;">PIN REGIA (solo per te)</div>
+          <div id="display-admin-pin" style="color:#f59e0b; font-size:1.6rem; font-weight:800; letter-spacing:0.25em;">----</div>
+        </div>
+        <div style="font-size:11px; color:#92400e; max-width:160px; line-height:1.4;">Conserva questo PIN — serve per aprire la Regia.</div>
+      </div>
+
+      <div class="nav-grid">
+        <button class="nav-btn btn-admin" onclick="vai('admin.html')">
+          <span class="icon">🎮</span>REGIA
+        </button>
+        <button class="nav-btn btn-host" onclick="vai('host.html')">
+          <span class="icon">📺</span>TV HOST
+        </button>
+        <button class="nav-btn btn-phone" onclick="vai('phone.html')">
+          <span class="icon">📱</span>BUZZER
+        </button>
+        <button class="nav-btn btn-rose" onclick="vai('rose.html')">
+          <span class="icon">📋</span>LE ROSE
+        </button>
+      </div>
+
+      <div class="change-room" id="btn-change-room">Cambia stanza</div>
+    </div>
+  </div>
+
+  <!-- MODALE creazione stanza -->
   <div class="modal-overlay" id="modal-access">
     <div class="modal-card">
 
-      <!-- Step 1: numero squadre -->
       <div class="modal-step active" id="modal-step-1">
         <h3>Quante squadre partecipano?</h3>
         <p>Inserisci il numero di fantasquadre che parteciperanno all'asta.</p>
@@ -249,7 +802,6 @@
         <button class="btn-access-cancel" id="btn-access-cancel">Annulla</button>
       </div>
 
-      <!-- Step 2: codice (solo se >8 squadre) -->
       <div class="modal-step" id="modal-step-2">
         <h3>Codice di attivazione</h3>
         <div class="paid-badge">Per leghe con più di 8 squadre è richiesto un codice di attivazione.</div>
@@ -263,80 +815,23 @@
     </div>
   </div>
 
-  <!-- Step 1: crea o entra in una stanza -->
-  <div class="step" id="step-room">
-    <div class="room-card">
-      <h2>Sei l'amministratore?</h2>
-      <p>Crea una nuova stanza e condividi il codice con i partecipanti.</p>
-      <button class="btn-create" id="btn-create-room">+ CREA NUOVA STANZA</button>
-
-      <div class="divider">oppure entra in una stanza esistente</div>
-
-      <div class="input-row">
-        <input type="text" id="room-code-input" placeholder="Codice (es: ABC123)" maxlength="6">
-        <button class="btn-join" id="btn-join-room">ENTRA</button>
-      </div>
-      <div class="error-msg" id="room-error"></div>
-      <div class="spinner" id="loading">Connessione in corso...</div>
-    </div>
-  </div>
-
-  <!-- Step 2: scelta ruolo -->
-  <div class="step hidden" id="step-role">
-    <div class="room-badge">
-      <div>
-        <div class="label">Codice Stanza</div>
-        <div class="code" id="display-room-code">------</div>
-      </div>
-      <button class="btn-copy" id="btn-copy-code">COPIA</button>
-    </div>
-
-    <div class="pin-badge" style="display:none; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.4); border-radius: 8px; padding: 10px 16px; margin-bottom: 16px; align-items: center; justify-content: space-between; gap: 12px;">
-      <div>
-        <div class="label" style="color: #f59e0b; font-size: 10px; letter-spacing: 0.1em;">PIN REGIA (solo per te)</div>
-        <div class="code" id="display-admin-pin" style="color: #f59e0b; font-size: 1.6rem; letter-spacing: 0.25em;">----</div>
-      </div>
-      <div style="font-size: 11px; color: #92400e; max-width: 160px; line-height: 1.4;">Conserva questo PIN — serve per aprire la Regia.</div>
-    </div>
-
-    <div class="nav-grid">
-      <button class="nav-btn btn-admin" onclick="vai('admin.html')">
-        <span class="icon">🎮</span>REGIA
-      </button>
-      <button class="nav-btn btn-host" onclick="vai('host.html')">
-        <span class="icon">📺</span>TV HOST
-      </button>
-      <button class="nav-btn btn-phone" onclick="vai('phone.html')">
-        <span class="icon">📱</span>BUZZER
-      </button>
-      <button class="nav-btn btn-rose" onclick="vai('rose.html')">
-        <span class="icon">📋</span>LE ROSE
-      </button>
-    </div>
-
-    <div class="change-room" id="btn-change-room">Cambia stanza</div>
-  </div>
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>DraftARENA &mdash; L'asta del fantacalcio in tempo reale</p>
+  </footer>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    const socket = io({ transports: ["polling"] });
-    let activeRoomCode = sessionStorage.getItem('roomCode');
-    let isConnected = false;
+    /* ── Navbar scroll ── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
 
-    socket.on('connect', () => {
-      isConnected = true;
-      if (activeRoomCode) subscribeSocket(activeRoomCode);
-    });
-    socket.on('disconnect', () => { isConnected = false; });
-
-    function subscribeSocket(code) {
-      socket.emit('joinRoom', code);
+    function scrollToHub() {
+      document.getElementById('hub').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-    // ── Modale creazione stanza ─────────────────────────────────────────
-    let pendingTeamCount = 0;
-
-    document.getElementById('btn-create-room').addEventListener('click', () => {
+    function apriModaleCreazione() {
       pendingTeamCount = 0;
       document.getElementById('team-count-input').value = '';
       document.getElementById('team-count-error').textContent = '';
@@ -345,7 +840,22 @@
       showModalStep(1);
       document.getElementById('modal-access').classList.add('open');
       setTimeout(() => document.getElementById('team-count-input').focus(), 100);
-    });
+    }
+
+    /* ── Socket.io ── */
+    const socket = io({ transports: ["polling"] });
+    let activeRoomCode = sessionStorage.getItem('roomCode');
+    let isConnected = false;
+
+    socket.on('connect',    () => { isConnected = true;  if (activeRoomCode) subscribeSocket(activeRoomCode); });
+    socket.on('disconnect', () => { isConnected = false; });
+
+    function subscribeSocket(code) { socket.emit('joinRoom', code); }
+
+    /* ── Modale ── */
+    let pendingTeamCount = 0;
+
+    document.getElementById('btn-create-room').addEventListener('click', apriModaleCreazione);
 
     function showModalStep(n) {
       document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
@@ -355,16 +865,13 @@
     document.getElementById('btn-access-cancel').addEventListener('click', () => {
       document.getElementById('modal-access').classList.remove('open');
     });
-
     document.getElementById('btn-back-step1').addEventListener('click', () => {
       showModalStep(1);
       setTimeout(() => document.getElementById('team-count-input').focus(), 100);
     });
-
     document.getElementById('team-count-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') document.getElementById('btn-team-count-confirm').click();
     });
-
     document.getElementById('btn-team-count-confirm').addEventListener('click', () => {
       const val = parseInt(document.getElementById('team-count-input').value);
       const errEl = document.getElementById('team-count-error');
@@ -372,20 +879,16 @@
       errEl.textContent = '';
       pendingTeamCount = val;
       if (val <= 8) {
-        // Free tier: crea direttamente
         document.getElementById('modal-access').classList.remove('open');
         creaStanza(null, val);
       } else {
-        // Paid: chiedi codice
         showModalStep(2);
         setTimeout(() => document.getElementById('access-code-input').focus(), 100);
       }
     });
-
     document.getElementById('access-code-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') document.getElementById('btn-access-confirm').click();
     });
-
     document.getElementById('btn-access-confirm').addEventListener('click', async () => {
       const accessCode = document.getElementById('access-code-input').value.trim().toUpperCase();
       const errEl = document.getElementById('access-error');
@@ -399,7 +902,7 @@
       btn.disabled = false;
     });
 
-    // ── Crea stanza (HTTP) ───────────────────────────────────────────────
+    /* ── Crea stanza ── */
     async function creaStanza(accessCode, teamCount) {
       setLoading(true); setError('');
       try {
@@ -413,6 +916,7 @@
           activeRoomCode = res.roomCode;
           if (isConnected) subscribeSocket(res.roomCode);
           mostraStanza(res.roomCode, res.adminPin);
+          scrollToHub();
         } else {
           document.getElementById('access-error').textContent = res.error || 'Codice non valido.';
           if (teamCount > 8) showModalStep(2);
@@ -427,7 +931,7 @@
       }
     }
 
-    // ── Entra stanza (HTTP) ──────────────────────────────────────────────
+    /* ── Entra stanza ── */
     document.getElementById('btn-join-room').addEventListener('click', entra);
     document.getElementById('room-code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') entra(); });
 
@@ -446,13 +950,13 @@
           setError(res.error || 'Stanza non trovata.');
         }
       } catch (e) {
-        setError('Server non raggiungibile. Verifica che sia avviato e ricarica con Ctrl+Shift+R.');
+        setError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.');
       } finally {
         setLoading(false);
       }
     }
 
-    // ── Auto-join se codice in sessione ──────────────────────────────────
+    /* ── Auto-join se codice in sessione ── */
     if (activeRoomCode) {
       (async () => {
         setLoading(true);
@@ -465,12 +969,12 @@
             sessionStorage.removeItem('roomCode');
             activeRoomCode = null;
           }
-        } catch (e) { /* ignora, lascia mostrare il form */ }
+        } catch (e) { /* ignora */ }
         finally { setLoading(false); }
       })();
     }
 
-    // ── Cambia stanza ────────────────────────────────────────────────────
+    /* ── Cambia stanza ── */
     document.getElementById('btn-change-room').addEventListener('click', () => {
       sessionStorage.removeItem('roomCode');
       sessionStorage.removeItem('adminPin');
@@ -481,7 +985,7 @@
       setError('');
     });
 
-    // ── Copia codice ─────────────────────────────────────────────────────
+    /* ── Copia codice ── */
     document.getElementById('btn-copy-code').addEventListener('click', () => {
       if (!activeRoomCode) return;
       navigator.clipboard.writeText(activeRoomCode).then(() => {
@@ -499,20 +1003,19 @@
     function mostraStanza(code, pin) {
       document.getElementById('display-room-code').textContent = code;
       const effectivePin = pin || sessionStorage.getItem('adminPin');
-      const pinBox = document.getElementById('display-admin-pin');
-      if (pinBox) {
-        if (effectivePin) {
-          pinBox.textContent = effectivePin;
-          pinBox.closest('.pin-badge').style.display = 'flex';
-        } else {
-          pinBox.closest('.pin-badge').style.display = 'none';
-        }
+      const pinBadge = document.getElementById('pin-badge');
+      const pinEl = document.getElementById('display-admin-pin');
+      if (effectivePin) {
+        pinEl.textContent = effectivePin;
+        pinBadge.style.display = 'flex';
+      } else {
+        pinBadge.style.display = 'none';
       }
       document.getElementById('step-room').classList.add('hidden');
       document.getElementById('step-role').classList.remove('hidden');
     }
 
-    function setError(msg) { document.getElementById('room-error').textContent = msg; }
+    function setError(msg)    { document.getElementById('room-error').textContent = msg; }
     function setLoading(show) { document.getElementById('loading').style.display = show ? 'block' : 'none'; }
 
     async function fetchWithTimeout(url, ms) {
