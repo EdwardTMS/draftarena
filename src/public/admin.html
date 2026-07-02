@@ -661,6 +661,11 @@
             100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
         }
         #review-panel.pulse { animation: reviewPulse 1s ease 3; }
+
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%       { opacity: 0.4; transform: scale(0.7); }
+        }
     </style>
 </head>
 <body>
@@ -697,6 +702,18 @@
   </div>
 
   <div id="admin-main" style="display:none;">
+
+    <!-- Banner di connessione (visibile solo quando disconnesso) -->
+    <div id="conn-banner" style="display:none;background:#7f1d1d;color:#fecaca;
+         padding:10px 20px;font-size:0.85rem;font-weight:bold;text-align:center;
+         position:sticky;top:0;z-index:200;border-bottom:2px solid #ef4444;">
+      ⚠️ Connessione persa — riconnessione in corso...
+      <button onclick="location.reload()"
+        style="margin-left:16px;background:#ef4444;border:none;color:#fff;
+               padding:3px 10px;border-radius:4px;cursor:pointer;font-weight:bold;font-size:0.8rem;">
+        Ricarica
+      </button>
+    </div>
 
     <!-- Header -->
     <header class="header">
@@ -757,10 +774,86 @@
 
         <div class="card">
             <h3 class="card-title">Salvataggio & Reset</h3>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button class="btn btn-success" onclick="saveSession()">Salva Sessione</button>
-                <button class="btn btn-secondary" onclick="loadSession()">Ricarica Sessione</button>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                <button class="btn btn-success" onclick="saveSession()">💾 Salva Sessione</button>
+                <button class="btn btn-secondary" onclick="loadSession()">🔄 Ricarica Sessione</button>
                 <button class="btn btn-danger" onclick="resetAll()">Reset Completo</button>
+            </div>
+            <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <span id="auto-save-badge"
+                      style="display:inline-flex;align-items:center;gap:5px;font-size:0.8rem;
+                             background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);
+                             color:#10b981;padding:4px 10px;border-radius:20px;">
+                  <span style="width:7px;height:7px;background:#10b981;border-radius:50%;
+                               animation:pulse-dot 2s infinite;"></span>
+                  Auto-save attivo
+                </span>
+                <span id="last-saved-label"
+                      style="font-size:0.8rem;color:var(--text-secondary);">
+                  Ultimo salvataggio: —
+                </span>
+            </div>
+        </div>
+
+        <!-- BACKUP ASTA ─────────────────────────────────────────────────────── -->
+        <div class="card">
+            <h3 class="card-title">📦 Backup Asta</h3>
+
+            <!-- Esporta -->
+            <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
+                        border-radius:8px;padding:14px;margin-bottom:14px;">
+                <div style="font-weight:600;color:#10b981;margin-bottom:6px;font-size:0.9rem;">
+                    Esporta backup completo
+                </div>
+                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
+                    Scarica un file JSON con tutte le squadre, rose e parametri dell'asta.
+                    Conservalo sul tuo PC per riutilizzarlo l'anno prossimo.
+                </p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <input type="number" id="backup-year" placeholder="Anno (es. 2026)"
+                           style="width:140px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
+                                  background:var(--bg-input);color:var(--text-primary);font-size:0.88rem;">
+                    <input type="text" id="backup-label" placeholder="Etichetta (es. Fantacalcio 2026)"
+                           style="flex:1;min-width:180px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
+                                  background:var(--bg-input);color:var(--text-primary);font-size:0.88rem;">
+                    <button class="btn btn-success" style="white-space:nowrap;" onclick="esportaBackup()">
+                        ⬇️ Scarica Backup
+                    </button>
+                    <button class="btn" style="white-space:nowrap;background:rgba(56,189,248,0.15);
+                            color:#38bdf8;border:1px solid rgba(56,189,248,0.3);" onclick="salvaBackupStoico()">
+                        📚 Salva nello Storico
+                    </button>
+                </div>
+                <p style="font-size:0.78rem;color:#64748b;margin-top:8px;">
+                    "Salva nello Storico" carica il backup sul server così sarà visibile nella pagina Rose.
+                </p>
+            </div>
+
+            <!-- Importa -->
+            <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);
+                        border-radius:8px;padding:14px;">
+                <div style="font-weight:600;color:#f59e0b;margin-bottom:6px;font-size:0.9rem;">
+                    Importa backup (nuovo anno)
+                </div>
+                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
+                    Carica un backup dell'anno precedente per ritrovare subito squadre e parametri già impostati.
+                    Le rose vengono azzerate, il budget ripristinato al valore iniziale.
+                </p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <label style="flex:1;min-width:200px;display:flex;align-items:center;gap:8px;
+                                  padding:7px 10px;border-radius:6px;border:1px dashed var(--border);
+                                  background:var(--bg-input);cursor:pointer;font-size:0.85rem;color:var(--text-secondary);">
+                        <input type="file" id="backup-file-input" accept=".json"
+                               style="display:none;" onchange="previewBackupFile(this)">
+                        <span id="backup-file-label">📂 Seleziona file .json...</span>
+                    </label>
+                    <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaBackupConfig()">
+                        ⬆️ Carica Configurazione
+                    </button>
+                </div>
+                <div id="backup-preview" style="display:none;margin-top:10px;padding:10px;
+                     background:rgba(245,158,11,0.08);border-radius:6px;font-size:0.82rem;">
+                </div>
             </div>
         </div>
     </div>
@@ -1479,6 +1572,31 @@
             showAlert('error', msg);
         });
 
+        // ── Connessione / Disconnessione ─────────────────────────────────────
+        socket.on('disconnect', () => {
+            const banner = document.getElementById('conn-banner');
+            if (banner) banner.style.display = 'block';
+        });
+
+        socket.on('connect', () => {
+            const banner = document.getElementById('conn-banner');
+            if (banner) banner.style.display = 'none';
+            // Ri-unisciti alla stanza dopo riconnessione
+            if (currentRoomCode) socket.emit('joinRoom', currentRoomCode);
+        });
+
+        // ── Auto-save dal server ─────────────────────────────────────────────
+        socket.on('autoSaved', (data) => {
+            _aggiornaUltimoSalvataggio(data.ts);
+        });
+
+        function _aggiornaUltimoSalvataggio(isoTs) {
+            const el = document.getElementById('last-saved-label');
+            if (!el) return;
+            const d = isoTs ? new Date(isoTs) : new Date();
+            el.textContent = 'Ultimo salvataggio: ' + d.toLocaleTimeString('it-IT');
+        }
+
         socket.on('auctionEnded', (data) => {
             if (data.winner) {
                 apriPannelloRevisione(data);
@@ -1518,6 +1636,7 @@
 
         function saveSession() {
             socket.emit('adminTriggerSave');
+            _aggiornaUltimoSalvataggio(null);
         }
 
         function loadSession() {
@@ -1530,6 +1649,115 @@
                 socket.emit('reset');
                 showAlert('warning', 'Reset completato');
             }
+        }
+
+        // ============================================================
+        // BACKUP MANAGEMENT
+        // ============================================================
+
+        let _loadedBackupData = null;
+
+        // Inizializza i campi anno/label con valori di default
+        (function() {
+            const yearInput = document.getElementById('backup-year');
+            const labelInput = document.getElementById('backup-label');
+            if (yearInput) yearInput.value = new Date().getFullYear();
+        })();
+
+        let _pendingSaveToHistory = false;
+
+        socket.on('backupReady', ({ backup, filename }) => {
+            // Download sempre il file
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+            showAlert('success', `✅ Backup "${filename}" scaricato!`);
+
+            // Se richiesto, salva anche nello storico
+            if (_pendingSaveToHistory) {
+                _pendingSaveToHistory = false;
+                socket.emit('adminSaveHistoricalBackup', backup);
+            }
+        });
+
+        socket.on('backupImportSuccess', ({ label, year }) => {
+            showAlert('success', `✅ Configurazione "${label} (${year})" caricata con successo!`);
+            _loadedBackupData = null;
+            document.getElementById('backup-file-label').textContent = '📂 Seleziona file .json...';
+            document.getElementById('backup-preview').style.display = 'none';
+            const fi = document.getElementById('backup-file-input');
+            if (fi) fi.value = '';
+        });
+
+        socket.on('historicalBackupSaved', () => {
+            showAlert('success', '📚 Backup salvato nello storico con successo!');
+        });
+
+        function esportaBackup() {
+            const year = parseInt(document.getElementById('backup-year').value) || new Date().getFullYear();
+            const label = document.getElementById('backup-label').value.trim() || `Asta ${year}`;
+            _pendingSaveToHistory = false;
+            socket.emit('adminExportBackup', { year, label });
+        }
+
+        function salvaBackupStoico() {
+            const year = parseInt(document.getElementById('backup-year').value) || new Date().getFullYear();
+            const label = document.getElementById('backup-label').value.trim() || `Asta ${year}`;
+            if (!confirm(`Vuoi scaricare il backup "${label}" E salvarlo nello storico server?\nSarà visibile nella pagina Rose.`)) return;
+            _pendingSaveToHistory = true;
+            socket.emit('adminExportBackup', { year, label });
+        }
+
+        function previewBackupFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+            document.getElementById('backup-file-label').textContent = '📄 ' + file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const b = JSON.parse(e.target.result);
+                    if (!b.version || b.app !== 'DraftARENA') {
+                        showAlert('error', '❌ File non valido: non è un backup DraftARENA.');
+                        _loadedBackupData = null;
+                        return;
+                    }
+                    _loadedBackupData = b;
+                    const teamCount = b.teams ? b.teams.length : 0;
+                    const soldCount = b.soldPlayers ? b.soldPlayers.length : 0;
+                    const preview = document.getElementById('backup-preview');
+                    preview.style.display = 'block';
+                    preview.innerHTML = `
+                        <strong style="color:#f59e0b;">Backup: ${b.label || b.auctionName} (${b.year})</strong><br>
+                        Esportato il: ${b.exportedAt ? new Date(b.exportedAt).toLocaleString('it-IT') : '—'}<br>
+                        Squadre: <strong>${teamCount}</strong> &nbsp;|&nbsp;
+                        Giocatori acquistati: <strong>${soldCount}</strong> &nbsp;|&nbsp;
+                        Budget iniziale: <strong>${b.config?.STARTING_BUDGET || '?'} cr</strong>
+                    `;
+                } catch {
+                    showAlert('error', '❌ Errore lettura file JSON.');
+                    _loadedBackupData = null;
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function importaBackupConfig() {
+            if (!_loadedBackupData) {
+                showAlert('error', 'Seleziona prima un file di backup .json');
+                return;
+            }
+            const b = _loadedBackupData;
+            const teamCount = b.teams ? b.teams.length : 0;
+            if (!confirm(
+                `Stai per caricare il backup "${b.label || b.auctionName} (${b.year})".\n\n` +
+                `• Verranno create ${teamCount} squadre con budget di ${b.config?.STARTING_BUDGET || '?'} cr\n` +
+                `• Le rose dell'asta corrente saranno AZZERATE\n\n` +
+                `Procedere?`
+            )) return;
+            socket.emit('adminImportBackupConfig', b);
         }
 
         // ============================================================
