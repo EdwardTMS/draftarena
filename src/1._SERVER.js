@@ -35,6 +35,7 @@ app.use(express.static(path.join(__dirname, "../public"), {
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const xlsx = require("xlsx");
+const QRCode = require("qrcode");
 
 /* ==========================================================================
    SUPABASE CLIENT
@@ -150,7 +151,8 @@ function buildConnectionData(roomCode) {
   const room = rooms.get(roomCode);
   const host = getEffectiveHost(room);
   const phoneUrl = host.startsWith("http") ? `${host}/phone.html?room=${roomCode}` : `http://${host}:3000/phone.html?room=${roomCode}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(phoneUrl)}`;
+  const qrBase = host.startsWith("http") ? host : `http://${host}:3000`;
+  const qrUrl = `${qrBase}/qr?data=${encodeURIComponent(phoneUrl)}`;
   return { url: phoneUrl, qr: qrUrl };
 }
 
@@ -163,6 +165,11 @@ function buildConnectionData(roomCode) {
 function salvaFileLocale(room) {
   try {
     const filePath = getSavePath(room.code, room.auctionName);
+    const currentState = room.state.player ? {
+      player: room.state.player,
+      currentPrice: room.state.currentPrice,
+      highestBidder: room.state.highestBidder
+    } : null;
     fs.writeFileSync(filePath, JSON.stringify({
       adminPin: room.adminPin,
       auctionName: room.auctionName,
@@ -170,7 +177,8 @@ function salvaFileLocale(room) {
       playersList: room.playersList,
       soldPlayers: room.soldPlayers,
       CONFIG: room.CONFIG,
-      settings: { timerDuration: room.state.timerDuration }
+      settings: { timerDuration: room.state.timerDuration },
+      currentState
     }, null, 2));
   } catch (e) {
     console.error(`[LOCAL] Errore salvataggio file ${room.code}:`, e.message);
@@ -188,10 +196,19 @@ function caricaFileLocale(room) {
     room.soldPlayers = data.soldPlayers || [];
     if (data.settings) room.state.timerDuration = parseInt(data.settings.timerDuration) || 10;
     if (data.CONFIG) room.CONFIG = data.CONFIG;
-    room.state.player = null;
-    room.state.time = room.state.timerDuration;
-    room.state.highestBidder = null;
-    room.state.isPaused = false;
+    if (data.currentState && data.currentState.player) {
+      room.state.player = data.currentState.player;
+      room.state.currentPrice = data.currentState.currentPrice || 0;
+      room.state.highestBidder = data.currentState.highestBidder || null;
+      room.state.time = room.state.timerDuration;
+      room.state.isPaused = true;
+      console.log(`[LOCAL] Stato asta ripristinato: ${data.currentState.player.nome} (in pausa)`);
+    } else {
+      room.state.player = null;
+      room.state.time = room.state.timerDuration;
+      room.state.highestBidder = null;
+      room.state.isPaused = false;
+    }
     console.log(`[LOCAL] File caricato per ${room.code}/${room.auctionName}`);
     return true;
   } catch (e) {
@@ -252,8 +269,13 @@ async function salvaSessioneDB(room) {
       .eq("code", rc);
 
     // Upsert auction_session config
+    const currentState = room.state.player ? {
+      player: room.state.player,
+      currentPrice: room.state.currentPrice,
+      highestBidder: room.state.highestBidder
+    } : null;
     await supabase.from("auction_sessions")
-      .upsert({ room_code: rc, auction_name: an, config: room.CONFIG, timer_duration: room.state.timerDuration, updated_at: new Date().toISOString() }, { onConflict: "room_code,auction_name" });
+      .upsert({ room_code: rc, auction_name: an, config: room.CONFIG, timer_duration: room.state.timerDuration, current_state: currentState, updated_at: new Date().toISOString() }, { onConflict: "room_code,auction_name" });
 
     // Cancella e reinserisci teams
     await supabase.from("teams").delete().eq("room_code", rc).eq("auction_name", an);
@@ -303,6 +325,25 @@ async function caricaSessioneDB(room) {
     if (sessRes.data) {
       room.CONFIG = sessRes.data.config || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
       room.state.timerDuration = sessRes.data.timer_duration || 10;
+      const cs = sessRes.data.current_state;
+      if (cs && cs.player) {
+        room.state.player = cs.player;
+        room.state.currentPrice = cs.currentPrice || 0;
+        room.state.highestBidder = cs.highestBidder || null;
+        room.state.time = room.state.timerDuration;
+        room.state.isPaused = true;
+        console.log(`[DB] Stato asta ripristinato: ${cs.player.nome} (in pausa)`);
+      } else {
+        room.state.player = null;
+        room.state.time = room.state.timerDuration;
+        room.state.highestBidder = null;
+        room.state.isPaused = false;
+      }
+    } else {
+      room.state.player = null;
+      room.state.time = room.state.timerDuration;
+      room.state.highestBidder = null;
+      room.state.isPaused = false;
     }
 
     if (teamsRes.data && teamsRes.data.length > 0) {
@@ -323,10 +364,7 @@ async function caricaSessioneDB(room) {
       }));
     }
 
-    room.state.player = null;
-    room.state.time = room.state.timerDuration;
-    room.state.highestBidder = null;
-    room.state.isPaused = false;
+    room.state.history = [];
     console.log(`[DB] Sessione ${rc}/${an} caricata.`);
     return true;
   } catch (e) {
@@ -526,6 +564,38 @@ setInterval(() => {
 }, 1000);
 
 /* ==========================================================================
+   AUTO-SAVE PERIODICO (ogni 2 minuti)
+   ========================================================================== */
+setInterval(async () => {
+  for (const [code, room] of rooms.entries()) {
+    try {
+      await salvaSessioneDB(room);
+      // Notifica i socket admin connessi a questa stanza
+      io.to(code).emit("autoSaved", { ts: new Date().toISOString() });
+    } catch (e) {
+      console.error(`[AUTO-SAVE] Errore per stanza ${code}:`, e.message);
+    }
+  }
+}, 2 * 60 * 1000);
+
+/* ==========================================================================
+   SPEGNIMENTO GRACEFUL (salva tutto prima di uscire)
+   ========================================================================== */
+async function gracefulShutdown(signal) {
+  console.log(`\n[SERVER] Ricevuto ${signal} — salvataggio di tutte le stanze attive...`);
+  const saves = [];
+  for (const room of rooms.values()) {
+    saves.push(salvaSessioneDB(room).catch(e => console.error(`[SHUTDOWN] Errore ${room.code}:`, e.message)));
+  }
+  await Promise.all(saves);
+  console.log("[SERVER] Salvataggio completato. Uscita.");
+  process.exit(0);
+}
+
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
+
+/* ==========================================================================
    ROTTE EXPRESS
    ========================================================================== */
 app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
@@ -708,6 +778,21 @@ app.get("/api/room/join/:code", async (req, res) => {
 });
 
 /* ==========================================================================
+   QR CODE LOCALE (non richiede connessione internet)
+   ========================================================================== */
+app.get("/qr", async (req, res) => {
+  try {
+    const data = req.query.data || "";
+    const buffer = await QRCode.toBuffer(data, { width: 200, margin: 2, color: { dark: "#000000", light: "#ffffff" } });
+    res.setHeader("Content-Type", "image/png");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.send(buffer);
+  } catch (e) {
+    res.status(500).send("Errore QR");
+  }
+});
+
+/* ==========================================================================
    UPLOAD EXCEL
    ========================================================================== */
 app.post("/upload", upload.single("file"), async (req, res) => {
@@ -829,6 +914,66 @@ app.get("/export", (req, res) => {
   } catch (e) {
     console.error("[SERVER] Errore export Excel:", e);
     res.status(500).send("Errore durante la generazione del file Excel.");
+  }
+});
+
+/* ==========================================================================
+   BACKUP STORICI — REST API
+   ========================================================================== */
+
+// GET /api/room/:code/backups  → lista backup per rose.html (pubblica)
+app.get("/api/room/:code/backups", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  if (LOCAL_MODE) return res.json({ success: true, backups: [] });
+  try {
+    const { data, error } = await supabase
+      .from("auction_backups")
+      .select("id, year, auction_name, label, exported_at")
+      .eq("room_code", code)
+      .order("year", { ascending: false });
+    if (error) throw error;
+    res.json({ success: true, backups: data || [] });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// GET /api/room/:code/backups/:id  → dati completi di un backup
+app.get("/api/room/:code/backups/:id", async (req, res) => {
+  if (LOCAL_MODE) return res.status(404).json({ success: false, error: "Non disponibile in LOCAL_MODE" });
+  try {
+    const { data, error } = await supabase
+      .from("auction_backups")
+      .select("*")
+      .eq("id", req.params.id)
+      .eq("room_code", String(req.params.code).toUpperCase().trim())
+      .single();
+    if (error || !data) return res.status(404).json({ success: false, error: "Backup non trovato" });
+    res.json({ success: true, backup: data });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// DELETE /api/room/:code/backups/:id  → elimina un backup (solo con pin admin in header)
+app.delete("/api/room/:code/backups/:id", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  const room = rooms.get(code);
+  const pin = String(req.headers["x-admin-pin"] || "");
+  if (!room || String(room.adminPin) !== pin) {
+    return res.status(403).json({ success: false, error: "PIN admin non valido." });
+  }
+  if (LOCAL_MODE) return res.json({ success: true });
+  try {
+    const { error } = await supabase
+      .from("auction_backups")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("room_code", code);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
   }
 });
 
@@ -1376,6 +1521,123 @@ io.on("connection", (socket) => {
   });
 
   // ─── SALVATAGGIO / RESET ─────────────────────────────────────────────────
+
+  // ─── BACKUP EXPORT ───────────────────────────────────────────────────────
+
+  socket.on("adminExportBackup", (opts) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+
+    const year = opts?.year || new Date().getFullYear();
+    const label = opts?.label || `${room.auctionName} ${year}`;
+
+    // Costruisce la struttura backup
+    const teamsArray = Object.entries(room.teams).map(([key, t]) => ({
+      key,
+      name: t.name,
+      finalBudget: t.budget,
+      slots: t.slots
+    }));
+
+    const backup = {
+      version: 1,
+      app: "DraftARENA",
+      year,
+      label,
+      exportedAt: new Date().toISOString(),
+      auctionName: room.auctionName,
+      config: room.CONFIG,
+      timerDuration: room.state.timerDuration,
+      teams: teamsArray,
+      soldPlayers: room.soldPlayers,
+      unsoldPlayers: room.playersList
+    };
+
+    socket.emit("backupReady", { backup, filename: `DraftARENA_backup_${room.auctionName}_${year}.json` });
+  });
+
+  // ─── BACKUP IMPORT CONFIGURAZIONE ────────────────────────────────────────
+
+  socket.on("adminImportBackupConfig", async (backupData) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+
+    try {
+      const b = typeof backupData === "string" ? JSON.parse(backupData) : backupData;
+      if (!b.version || b.app !== "DraftARENA") {
+        socket.emit("errorNotify", "❌ File di backup non valido."); return;
+      }
+
+      // Ripristina config e timer
+      if (b.config) room.CONFIG = b.config;
+      if (b.timerDuration) room.state.timerDuration = b.timerDuration;
+
+      // Ricrea le squadre con budget iniziale (rosa vuota)
+      room.teams = {};
+      if (b.teams && Array.isArray(b.teams)) {
+        b.teams.forEach(t => {
+          const key = String(t.name).toLowerCase().trim();
+          room.teams[key] = {
+            name: t.name,
+            budget: room.CONFIG.STARTING_BUDGET,
+            slots: { P: 0, D: 0, C: 0, A: 0 }
+          };
+        });
+      }
+
+      // Reset stato asta
+      room.soldPlayers = [];
+      room.playersList = b.unsoldPlayers || [];
+      room.state.player = null;
+      room.state.currentPrice = 0;
+      room.state.highestBidder = null;
+      room.state.time = room.state.timerDuration;
+      room.state.isPaused = false;
+
+      const rc = socket.roomCode;
+      await salvaSessioneDB(room);
+      io.to(rc).emit("updateTeams", room.teams);
+      io.to(rc).emit("teamsUpdate", room.teams);
+      io.to(rc).emit("updateSold", room.soldPlayers);
+      io.to(rc).emit("playersList", room.playersList);
+      io.to(rc).emit("update", room.state);
+      io.to(rc).emit("configUpdate", { CONFIG: room.CONFIG, timerDuration: room.state.timerDuration });
+      socket.emit("backupImportSuccess", { label: b.label || b.auctionName, year: b.year });
+      socket.emit("errorNotify", `✅ Backup "${b.label || b.year}" caricato! ${Object.keys(room.teams).length} squadre pronte.`);
+    } catch (e) {
+      socket.emit("errorNotify", "❌ Errore lettura backup: " + e.message);
+    }
+  });
+
+  // ─── BACKUP SALVA COME STORICO ────────────────────────────────────────────
+
+  socket.on("adminSaveHistoricalBackup", async (backupData) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+    if (LOCAL_MODE) { socket.emit("errorNotify", "⚠️ Storico non disponibile in LOCAL_MODE."); return; }
+
+    try {
+      const b = typeof backupData === "string" ? JSON.parse(backupData) : backupData;
+      if (!b.version || b.app !== "DraftARENA") {
+        socket.emit("errorNotify", "❌ File di backup non valido."); return;
+      }
+
+      const { error } = await supabase.from("auction_backups").insert({
+        room_code: socket.roomCode,
+        year: b.year || new Date().getFullYear(),
+        auction_name: b.auctionName || "default",
+        label: b.label || `${b.auctionName} ${b.year}`,
+        backup_data: b,
+        exported_at: b.exportedAt || new Date().toISOString()
+      });
+
+      if (error) throw error;
+      socket.emit("errorNotify", `📚 Storico "${b.label || b.year}" salvato con successo!`);
+      socket.emit("historicalBackupSaved");
+    } catch (e) {
+      socket.emit("errorNotify", "❌ Errore salvataggio storico: " + e.message);
+    }
+  });
 
   socket.on("setHostUrl", async (data) => {
     const url = (data.url || "").trim();
