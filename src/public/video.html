@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video — DraftARENA</title>
+  <link rel="icon" type="image/png" href="/DraftARENAico.png">
+  <link rel="manifest" href="/manifest.json">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #111117;
+      --bg-card2: #16161e;
+      --border: rgba(255,255,255,0.07);
+      --border-glow: rgba(59,130,246,0.35);
+      --text-primary: #f0f0f8;
+      --text-secondary: #a0a0b8;
+      --text-muted: #606078;
+      --blue: #3b82f6;
+      --blue-light: #60a5fa;
+      --green: #10b981;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 32px; position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.85); backdrop-filter: blur(16px);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    .navbar.scrolled { border-color: var(--border); }
+    .navbar-logo { height: 36px; flex-shrink: 0; cursor: pointer; }
+    .navbar-links { display: flex; gap: 4px; }
+    .navbar-links a {
+      padding: 7px 14px; font-size: 0.84rem; color: var(--text-secondary);
+      text-decoration: none; border-radius: 8px; transition: all 0.2s;
+    }
+    .navbar-links a:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+    .navbar-links a.active { color: var(--blue-light); }
+    .navbar-cta { display: flex; gap: 10px; flex-shrink: 0; }
+    .btn-nav-enter {
+      padding: 8px 16px; font-size: 0.84rem; font-weight: 600;
+      background: transparent; color: var(--text-secondary);
+      border: 1px solid var(--border); border-radius: 8px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-nav-enter:hover { border-color: var(--blue-light); color: var(--blue-light); }
+    .btn-nav-create {
+      padding: 8px 16px; font-size: 0.84rem; font-weight: 600;
+      background: var(--blue); color: #fff;
+      border: none; border-radius: 8px; cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .btn-nav-create:hover { opacity: 0.85; }
+
+    /* PAGE */
+    .page { max-width: 1100px; margin: 0 auto; padding: 60px 24px 96px; }
+
+    .section-label {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--blue-light); margin-bottom: 12px;
+    }
+    .page-title {
+      font-size: clamp(1.8rem, 4vw, 2.4rem); font-weight: 800;
+      color: var(--text-primary); line-height: 1.2; margin-bottom: 12px;
+    }
+    .page-sub {
+      font-size: 1rem; color: var(--text-secondary); line-height: 1.6;
+      max-width: 540px; margin-bottom: 56px;
+    }
+
+    /* VIDEO GRID */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+    .video-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .video-card:hover {
+      border-color: var(--border-glow);
+      transform: translateY(-3px);
+    }
+    .video-card video {
+      width: 100%;
+      display: block;
+      aspect-ratio: 16/9;
+      background: #000;
+    }
+    .video-info {
+      padding: 16px 18px 18px;
+    }
+    .video-num {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--blue-light); margin-bottom: 4px;
+    }
+    .video-title {
+      font-size: 0.95rem; font-weight: 700; color: var(--text-primary);
+    }
+
+    /* FOOTER NOTE */
+    .footer-note {
+      margin-top: 64px; text-align: center;
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    .footer-note a { color: var(--blue-light); text-decoration: none; }
+    .footer-note a:hover { text-decoration: underline; }
+
+    @media (max-width: 680px) {
+      .navbar { padding: 14px 16px; }
+      .navbar-logo { height: 28px; }
+      .navbar-links { display: none; }
+      .video-grid { grid-template-columns: 1fr; }
+      .page { padding: 40px 16px 72px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar" id="navbar">
+    <img src="/DraftARENA.png" alt="DraftARENA" class="navbar-logo" onclick="location.href='/'">
+    <div class="navbar-links">
+      <a href="/#come-funziona">Come funziona</a>
+      <a href="/video" class="active">Video</a>
+      <a href="/#prezzi">Prezzi</a>
+      <a href="/#faq">FAQ</a>
+    </div>
+    <div class="navbar-cta">
+      <button class="btn-nav-enter" onclick="location.href='/'">Entra in una stanza</button>
+      <button class="btn-nav-create" onclick="location.href='/'">+ Crea stanza</button>
+    </div>
+  </nav>
+
+  <div class="page">
+    <div class="section-label">Video</div>
+    <h1 class="page-title">DraftARENA in azione</h1>
+    <p class="page-sub">Guarda come funziona l'asta del fantacalcio dal vivo — timer, rilanci, schermata TV e molto altro.</p>
+
+    <div class="video-grid">
+
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="/videos/DraftARENA1.mp4" type="video/mp4">
+        </video>
+        <div class="video-info">
+          <div class="video-num">Video 01</div>
+          <div class="video-title">DraftARENA — Presentazione</div>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="/videos/DraftARENA2.mp4" type="video/mp4">
+        </video>
+        <div class="video-info">
+          <div class="video-num">Video 02</div>
+          <div class="video-title">Come creare una stanza</div>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="/videos/DraftARENA3.mp4" type="video/mp4">
+        </video>
+        <div class="video-info">
+          <div class="video-num">Video 03</div>
+          <div class="video-title">L'asta in diretta</div>
+        </div>
+      </div>
+
+      <div class="video-card">
+        <video controls preload="metadata">
+          <source src="/videos/DraftARENA4.mp4" type="video/mp4">
+        </video>
+        <div class="video-info">
+          <div class="video-num">Video 04</div>
+          <div class="video-title">Schermata TV e rose</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer-note">
+      Vuoi provarlo subito? <a href="/">Torna alla homepage</a> e crea la tua stanza gratis.
+    </div>
+  </div>
+
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
+    });
+  </script>
+
+</body>
+</html>
