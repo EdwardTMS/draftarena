@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guida Partecipanti — DraftARENA</title>
+  <link rel="icon" type="image/png" href="/DraftARENAico.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161a24;
+      --surface2: #1e2433;
+      --border: #2a3045;
+      --primary: #e8b84b;
+      --red: #e05c5c;
+      --green: #4caf7d;
+      --blue: #4c8fe0;
+      --text: #e8eaf0;
+      --text-muted: #8892a4;
+      --radius: 12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .site-header .logo img { height: 32px; }
+    .site-header .logo span {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .back-btn:hover { color: var(--text); border-color: var(--text-muted); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0f1a2e 0%, #0d0f14 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 24px 48px;
+      text-align: center;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(76,143,224,0.15);
+      border: 1px solid rgba(76,143,224,0.4);
+      color: var(--blue);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--blue); }
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .toc-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .toc-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toc-item:hover { border-color: var(--blue); color: var(--blue); }
+    .toc-num {
+      background: var(--blue);
+      color: #fff;
+      border-radius: 50%;
+      width: 20px; height: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .main-wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── SECTION ── */
+    .guide-section { margin-bottom: 64px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    .step-circle {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-size: 1.3rem;
+      font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-circle.gold { background: var(--primary); color: #000; }
+    .step-circle.green { background: var(--green); color: #fff; }
+    .section-header-text h2 { font-size: 1.5rem; font-weight: 700; }
+    .section-header-text p { font-size: 0.9rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--blue);
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 10px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card strong { color: var(--text); }
+
+    /* ── STEPS ── */
+    .steps-list {
+      list-style: none;
+      counter-reset: step;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .steps-list li {
+      counter-increment: step;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .steps-list li::before {
+      content: counter(step);
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      background: rgba(76,143,224,0.15);
+      border: 1px solid var(--blue);
+      color: var(--blue);
+      font-weight: 700; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .steps-list li .step-text { color: var(--text-muted); font-size: 0.95rem; }
+    .steps-list li .step-text strong { color: var(--text); }
+
+    /* ── INFO BOX ── */
+    .info-box {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      border-left: 4px solid;
+      font-size: 0.9rem;
+    }
+    .info-box.tip { background: rgba(76,175,125,0.08); border-color: var(--green); color: var(--text-muted); }
+    .info-box.tip strong { color: var(--green); }
+    .info-box.warn { background: rgba(224,92,92,0.08); border-color: var(--red); color: var(--text-muted); }
+    .info-box.warn strong { color: var(--red); }
+    .info-box.note { background: rgba(76,143,224,0.08); border-color: var(--blue); color: var(--text-muted); }
+    .info-box.note strong { color: var(--blue); }
+
+    /* ── PHONE MOCKUP ── */
+    .phone-screen {
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 340px;
+      margin: 16px auto;
+    }
+    .phone-screen .ps-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .phone-screen .ps-player {
+      font-size: 1.6rem;
+      font-weight: 800;
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .phone-screen .ps-meta {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .badge-role {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .badge-role.a { background: rgba(224,92,92,0.2); color: var(--red); }
+    .badge-role.c { background: rgba(76,175,125,0.2); color: var(--green); }
+    .badge-role.d { background: rgba(76,143,224,0.2); color: var(--blue); }
+    .badge-role.p { background: rgba(232,184,75,0.2); color: var(--primary); }
+    .badge-team { padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); }
+    .phone-screen .ps-price {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--green);
+      margin-bottom: 4px;
+    }
+    .phone-screen .ps-bidder {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+    .phone-screen .ps-timer {
+      text-align: center;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 16px;
+    }
+    .bid-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .bid-btn {
+      padding: 12px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 1rem;
+      text-align: center;
+      border: 2px solid;
+    }
+    .bid-btn.b1 { background: rgba(76,175,125,0.15); border-color: var(--green); color: var(--green); }
+    .bid-btn.b3 { background: rgba(232,184,75,0.15); border-color: var(--primary); color: var(--primary); }
+    .bid-btn.b5 { background: rgba(76,143,224,0.15); border-color: var(--blue); color: var(--blue); }
+    .bid-btn.b10 { background: rgba(224,92,92,0.15); border-color: var(--red); color: var(--red); }
+
+    /* ── FEATURE ROW ── */
+    .feature-row {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
+    .feature-label { font-weight: 600; color: var(--text); font-size: 0.95rem; }
+    .feature-desc { color: var(--text-muted); font-size: 0.88rem; margin-top: 2px; }
+
+    /* ── FAQ ── */
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 0;
+    }
+    .faq-item:first-child { padding-top: 0; }
+    .faq-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .faq-q { font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .faq-a { color: var(--text-muted); font-size: 0.9rem; }
+    .faq-a strong { color: var(--text); }
+
+    /* ── FOOTER ── */
+    .guide-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .guide-footer p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; }
+    .footer-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .footer-links a {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border: 1px solid rgba(76,143,224,0.3);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .footer-links a:hover { background: rgba(76,143,224,0.1); }
+
+    @media (max-width: 600px) {
+      .hero { padding: 40px 16px 32px; }
+      .main-wrap { padding: 32px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="/">
+    <img src="/DraftARENAico.png" alt="DraftARENA" />
+    <span>DraftARENA</span>
+  </a>
+  <a class="back-btn" href="/">&#8592; Torna alla Home</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">Guida Partecipanti</div>
+  <h1>Come fare l'asta con <span>DraftARENA</span></h1>
+  <p>Tutto quello che devi sapere per partecipare all'asta dal tuo telefono, fare offerte e costruire la tua rosa.</p>
+  <div class="toc-grid">
+    <a class="toc-item" href="#step1"><span class="toc-num">1</span> Connettersi</a>
+    <a class="toc-item" href="#step2"><span class="toc-num">2</span> Scegliere la squadra</a>
+    <a class="toc-item" href="#step3"><span class="toc-num">3</span> Fare offerte</a>
+    <a class="toc-item" href="#step4"><span class="toc-num">4</span> Gestire il budget</a>
+    <a class="toc-item" href="#step5"><span class="toc-num">5</span> Vedere le rose</a>
+    <a class="toc-item" href="#step6"><span class="toc-num">6</span> Domande frequenti</a>
+  </div>
+</section>
+
+<div class="main-wrap">
+
+  <!-- STEP 1 -->
+  <section class="guide-section" id="step1">
+    <div class="section-header">
+      <div class="step-circle">1</div>
+      <div class="section-header-text">
+        <h2>Connettersi all'asta</h2>
+        <p>Come entrare nella stanza dal tuo telefono</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128247; Metodo 1 — Scansiona il QR Code (consigliato)</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Guarda lo schermo TV (o il proiettore) dove è proiettata l'asta: c'è un <strong>QR code</strong> nella parte laterale dello schermo.</div></li>
+        <li><div class="step-text">Apri la <strong>fotocamera del tuo telefono</strong> (su iOS e Android basta la fotocamera nativa, senza app extra).</div></li>
+        <li><div class="step-text">Inquadra il QR code. Apparirà una notifica con un link — toccala per aprire la pagina nel browser.</div></li>
+        <li><div class="step-text">Sei dentro! Vedrai direttamente la schermata di selezione della squadra.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128279; Metodo 2 — Inserisci il codice stanza</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Chiedi all'admin il <strong>codice stanza</strong> (6 caratteri, es. <code>5UKUQ9</code>) — di solito è visibile anche sul TV.</div></li>
+        <li><div class="step-text">Apri il browser del tuo telefono e vai all'indirizzo che ti ha comunicato l'admin (es. <code>draftarena.up.railway.app</code>).</div></li>
+        <li><div class="step-text">Clicca <strong>"Unisciti a una Stanza"</strong>, inserisci il codice e conferma.</div></li>
+      </ul>
+    </div>
+
+    <div class="info-box tip"><strong>Suggerimento iOS:</strong> Quando sei nella pagina, tocca il pulsante <strong>"Aggiungi alla schermata Home"</strong> (l'icona di condivisione in Safari). Cosi la pagina si apre a schermo intero come un'app vera.</div>
+    <div class="info-box note"><strong>Nota:</strong> Non serve scaricare nessuna app. DraftARENA funziona direttamente nel browser del tuo telefono.</div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="guide-section" id="step2">
+    <div class="section-header">
+      <div class="step-circle">2</div>
+      <div class="section-header-text">
+        <h2>Scegliere la tua squadra</h2>
+        <p>Come registrarsi e bloccare la tua squadra</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127942; Selezione squadra</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Dopo esserti connesso, vedrai un menu a tendina con tutte le squadre della lega. <strong>Seleziona la tua squadra</strong> (il nome concordato con l'admin).</div></li>
+        <li><div class="step-text">Clicca <strong>"Entra come questa squadra"</strong>. La squadra ora è <strong>bloccata per te</strong> — nessun altro può fare offerte per la tua squadra finché sei connesso.</div></li>
+        <li><div class="step-text">Vedrai in alto il nome della tua squadra evidenziato in giallo e il tuo <strong>budget corrente</strong> in verde.</div></li>
+      </ul>
+      <div class="info-box warn" style="margin-top:14px;"><strong>Attenzione:</strong> Se esci dall'app o ricarichi la pagina, la tua squadra viene liberata. Rientra subito e riseleziona la tua squadra per riprendere a fare offerte.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128260; Cambiare squadra</div>
+      <p>Se hai selezionato per errore la squadra sbagliata, tocca il pulsante <strong>"Cambia Squadra"</strong> in fondo alla schermata. La squadra attuale viene liberata e puoi selezionarne un'altra.</p>
+      <p>Puoi anche usare questa funzione per tenere d'occhio il budget di un'altra squadra durante l'asta (ma non puoi fare offerte contemporaneamente per due squadre).</p>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="guide-section" id="step3">
+    <div class="section-header">
+      <div class="step-circle gold">3</div>
+      <div class="section-header-text">
+        <h2>Fare offerte</h2>
+        <p>Come rilancere e aggiudicarti i giocatori</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127918; La schermata di offerta</div>
+      <p>Quando l'admin mette in asta un giocatore, vedrai questa schermata sul tuo telefono:</p>
+
+      <div class="phone-screen">
+        <div class="ps-player">Vlahovic D.</div>
+        <div class="ps-meta">
+          <span class="badge-role a">A</span>
+          <span class="badge-team">Juventus</span>
+        </div>
+        <div class="ps-price">24 cr</div>
+        <div class="ps-bidder">Offerta di: FC Napoli</div>
+        <div class="ps-timer">&#9203; 18"</div>
+        <div class="bid-buttons">
+          <div class="bid-btn b1">+1 cr</div>
+          <div class="bid-btn b3">+3 cr</div>
+          <div class="bid-btn b5">+5 cr</div>
+          <div class="bid-btn b10">+10 cr</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <div class="feature-row">
+          <div class="feature-icon" style="color:var(--text);">A</div>
+          <div>
+            <div class="feature-label">Nome e ruolo del giocatore</div>
+            <div class="feature-desc">Il ruolo è color-coded: rosso = Attaccante, verde = Centrocampista, blu = Difensore, giallo = Portiere.</div>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-icon" style="color:var(--green);">&#128176;</div>
+          <div>
+            <div class="feature-label">Prezzo corrente</div>
+            <div class="feature-desc">Il valore attuale dell'offerta più alta. Parte da 1 credito.</div>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-icon" style="color:var(--primary);">&#128081;</div>
+          <div>
+            <div class="feature-label">Miglior offerente</div>
+            <div class="feature-desc">La squadra che ha fatto l'ultima offerta. Se scade il timer, si aggiudica il giocatore.</div>
+          </div>
+        </div>
+        <div class="feature-row">
+          <div class="feature-icon" style="color:var(--red);">&#9203;</div>
+          <div>
+            <div class="feature-label">Countdown</div>
+            <div class="feature-desc">Secondi rimasti. Ogni nuova offerta <strong>resetta il timer</strong>, quindi puoi fare un'offerta anche all'ultimo secondo.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127919; Come fare un'offerta</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Tocca uno dei pulsanti colorati: <strong>+1</strong>, <strong>+3</strong>, <strong>+5</strong> o <strong>+10</strong> crediti. La tua offerta viene inviata <em>immediatamente</em>.</div></li>
+        <li><div class="step-text">Il prezzo sale del valore che hai scelto, il tuo nome appare come miglior offerente, e il <strong>timer si azzera</strong>.</div></li>
+        <li><div class="step-text">Se nessun altro rilancia prima che il timer scada, il giocatore è tuo!</div></li>
+      </ul>
+      <div class="info-box tip" style="margin-top:14px;"><strong>Strategia:</strong> Usa <strong>+1</strong> per superare di poco un rivale, <strong>+10</strong> per scoraggiare rilanci sugli acquisti prioritari. Non sprecare crediti su giocatori di cui non hai bisogno.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128683; Quando non puoi fare offerte</div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128178;</div>
+        <div>
+          <div class="feature-label">Budget insufficiente</div>
+          <div class="feature-desc">I pulsanti si disabilitano se non hai abbastanza crediti per quella offerta. Devi tenere sempre almeno 1 credito per ogni rosa slot rimasto da riempire.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128683;</div>
+        <div>
+          <div class="feature-label">Rosa piena per quel ruolo</div>
+          <div class="feature-desc">Se hai già raggiunto il limite di acquisti per un ruolo (es. max 3 portieri), non puoi fare offerte su altri giocatori di quel ruolo.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#9208;</div>
+        <div>
+          <div class="feature-label">Asta in pausa</div>
+          <div class="feature-desc">L'admin ha messo in pausa il timer. I pulsanti sono disabilitati fino alla ripresa.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="guide-section" id="step4">
+    <div class="section-header">
+      <div class="step-circle gold">4</div>
+      <div class="section-header-text">
+        <h2>Gestire il budget</h2>
+        <p>Come tenere sotto controllo crediti e roster</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128200; Monitorare il budget</div>
+      <p>In alto nella schermata trovi sempre:</p>
+      <div class="feature-row">
+        <div class="feature-icon" style="color:var(--primary);">&#127942;</div>
+        <div>
+          <div class="feature-label">Nome squadra</div>
+          <div class="feature-desc">La squadra con cui stai giocando, evidenziata in giallo.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon" style="color:var(--green);">&#128176;</div>
+        <div>
+          <div class="feature-label">Budget rimanente</div>
+          <div class="feature-desc">I crediti ancora disponibili per i tuoi acquisti. Scende ad ogni acquisto.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128101;</div>
+        <div>
+          <div class="feature-label">Slot rosa</div>
+          <div class="feature-desc">Quanti giocatori per ruolo hai già acquistato e quanti slot ti restano: <strong>P | D | C | A</strong>.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128161; Calcolo del budget disponibile</div>
+      <p>Ricorda: il sistema blocca automaticamente le offerte se non hai abbastanza crediti. Per esempio, se hai <strong>10 crediti rimanenti</strong> e ti mancano ancora <strong>3 giocatori</strong>, puoi al massimo spendere <strong>7 crediti</strong> sul giocatore in asta (devi tenere 1 credito per ciascuno degli altri due).</p>
+      <div class="info-box note"><strong>Regola base:</strong> Budget residuo - (slot rosa rimasti - 1) = crediti massimi spendibili sul giocatore attuale.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128203; I tuoi acquisti</div>
+      <p>Nella parte inferiore della schermata c'è la lista di tutti i giocatori che hai già <strong>acquistato in questa asta</strong>, con ruolo e prezzo pagato. Scorri verso il basso per vederla.</p>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="guide-section" id="step5">
+    <div class="section-header">
+      <div class="step-circle green">5</div>
+      <div class="section-header-text">
+        <h2>Vedere le rose</h2>
+        <p>Come consultare le squadre di tutti i partecipanti</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128203; Pagina "Le Rose"</div>
+      <ul class="steps-list">
+        <li><div class="step-text">In fondo alla schermata del telefono c'è il pulsante <strong>"Le Rose"</strong>. Toccalo.</div></li>
+        <li><div class="step-text">Si apre la pagina con le rose di <strong>tutte le squadre</strong> — puoi vedere chi ha comprato cosa e a che prezzo.</div></li>
+        <li><div class="step-text">Puoi filtrare per squadra o scorrere la lista completa. Torna indietro per riprendere a fare offerte.</div></li>
+      </ul>
+      <div class="info-box tip"><strong>Strategia:</strong> Controlla le rose degli avversari per capire di quali ruoli hanno ancora bisogno — potrai sfruttarla per alzare il prezzo su un giocatore che a loro serve davvero.</div>
+    </div>
+  </section>
+
+  <!-- STEP 6 - FAQ -->
+  <section class="guide-section" id="step6">
+    <div class="section-header">
+      <div class="step-circle" style="background:var(--text-muted);color:#000;font-size:1rem;">?</div>
+      <div class="section-header-text">
+        <h2>Domande frequenti</h2>
+        <p>Problemi comuni e come risolverli</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="faq-item">
+        <div class="faq-q">Ho chiuso per errore il browser. Cosa faccio?</div>
+        <div class="faq-a">Riaprilo e torna all'URL dell'asta. Riseleziona la tua squadra dal menu a tendina — <strong>la tua rosa e il budget sono salvati</strong>, non perdi nulla. Solo le offerte che potresti aver perso nel frattempo non saranno recuperabili.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Non vedo il QR code sul TV. Come mi connetto?</div>
+        <div class="faq-a">Chiedi all'admin il <strong>codice stanza</strong> (6 caratteri) e vai direttamente all'URL dell'app. Dalla home clicca "Unisciti a una Stanza" e inserisci il codice.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">I pulsanti di offerta sono grigi e non funzionano.</div>
+        <div class="faq-a">Può succedere per tre motivi: <strong>(1)</strong> budget insufficiente per quella cifra, <strong>(2)</strong> hai già raggiunto il limite di quel ruolo nella tua rosa, <strong>(3)</strong> l'asta è in pausa. Controlla il tuo budget e gli slot rimasti in cima alla schermata.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">La pagina non si aggiorna in tempo reale.</div>
+        <div class="faq-a">Prova a ricaricare la pagina e riseleziona la tua squadra. Se il problema persiste, controlla la connessione WiFi — DraftARENA usa WebSocket e ha bisogno di una connessione stabile.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Ho acquistato un giocatore per errore (o l'admin l'ha assegnato alla squadra sbagliata).</div>
+        <div class="faq-a">Avvisa l'admin: può <strong>rimuovere il giocatore dalla tua rosa</strong> e rimborsarti i crediti, oppure riassegnarlo alla squadra corretta. Non puoi farlo tu direttamente dal telefono.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Posso usare DraftARENA su PC o tablet invece del telefono?</div>
+        <div class="faq-a">Sì, funziona su qualsiasi browser moderno — Chrome, Safari, Firefox. L'interfaccia è ottimizzata per il telefono ma è perfettamente usabile anche su tablet e PC.</div>
+      </div>
+      <div class="faq-item" style="border-bottom:none;padding-bottom:0;">
+        <div class="faq-q">Quando finisce l'asta, dove vedo i risultati?</div>
+        <div class="faq-a">L'admin esporterà un file Excel con tutte le rose e i budget finali. Puoi anche consultare la pagina <strong>"Le Rose"</strong> in qualsiasi momento durante e dopo l'asta.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="guide-footer">
+  <p>Sei l'admin della lega? Consulta la guida completa per organizzare e gestire l'asta.</p>
+  <div class="footer-links">
+    <a href="/">Home DraftARENA</a>
+    <a href="/guida-admin">Guida Admin</a>
+    <a href="/rose">Le Rose</a>
+  </div>
+</footer>
+
+</body>
+</html>

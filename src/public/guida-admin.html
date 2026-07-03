@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guida Admin — DraftARENA</title>
+  <link rel="icon" type="image/png" href="/DraftARENAico.png" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0f14;
+      --surface: #161a24;
+      --surface2: #1e2433;
+      --border: #2a3045;
+      --primary: #e8b84b;
+      --primary-dim: #c99d3a;
+      --red: #e05c5c;
+      --green: #4caf7d;
+      --blue: #4c8fe0;
+      --text: #e8eaf0;
+      --text-muted: #8892a4;
+      --radius: 12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-header .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .site-header .logo img { height: 32px; }
+    .site-header .logo span {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+    }
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .back-btn:hover { color: var(--text); border-color: var(--text-muted); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #1a1f2e 0%, #0d1520 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 24px 48px;
+      text-align: center;
+    }
+    .hero .badge {
+      display: inline-block;
+      background: rgba(232,184,75,0.15);
+      border: 1px solid rgba(232,184,75,0.4);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--primary); }
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+    .toc-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .toc-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .toc-item:hover { border-color: var(--primary); color: var(--primary); }
+    .toc-num {
+      background: var(--primary);
+      color: #000;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .main-wrap {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 48px 24px 80px;
+    }
+
+    /* ── SECTION ── */
+    .guide-section {
+      margin-bottom: 64px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+    .step-circle {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #000;
+      font-size: 1.3rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-circle.red { background: var(--red); color: #fff; }
+    .step-circle.blue { background: var(--blue); color: #fff; }
+    .step-circle.green { background: var(--green); color: #fff; }
+    .section-header-text h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .section-header-text p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 10px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card strong { color: var(--text); }
+
+    /* ── STEPS LIST ── */
+    .steps-list {
+      list-style: none;
+      counter-reset: step;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .steps-list li {
+      counter-increment: step;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .steps-list li::before {
+      content: counter(step);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .steps-list li .step-text { color: var(--text-muted); font-size: 0.95rem; }
+    .steps-list li .step-text strong { color: var(--text); }
+
+    /* ── INFO BOXES ── */
+    .info-box {
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      border-left: 4px solid;
+      font-size: 0.9rem;
+    }
+    .info-box.tip { background: rgba(76,175,125,0.08); border-color: var(--green); color: var(--text-muted); }
+    .info-box.tip strong { color: var(--green); }
+    .info-box.warn { background: rgba(224,92,92,0.08); border-color: var(--red); color: var(--text-muted); }
+    .info-box.warn strong { color: var(--red); }
+    .info-box.note { background: rgba(76,143,224,0.08); border-color: var(--blue); color: var(--text-muted); }
+    .info-box.note strong { color: var(--blue); }
+
+    /* ── ROLE GRID ── */
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .role-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+    }
+    .role-card .role-name {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .role-card .role-codes { font-size: 0.82rem; color: var(--text-muted); }
+    .role-p .role-name { color: #f5c842; }
+    .role-d .role-name { color: #4c8fe0; }
+    .role-c .role-name { color: #4caf7d; }
+    .role-a .role-name { color: #e05c5c; }
+
+    /* ── EXCEL TABLE ── */
+    .excel-preview {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .excel-preview table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .excel-preview thead { background: rgba(232,184,75,0.15); }
+    .excel-preview th {
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 1px solid var(--border);
+    }
+    .excel-preview td {
+      padding: 9px 14px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(42,48,69,0.6);
+    }
+    .excel-preview tr:last-child td { border-bottom: none; }
+
+    /* ── FEATURE ROW ── */
+    .feature-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .feature-row .feature-body {}
+    .feature-row .feature-label { font-weight: 600; color: var(--text); font-size: 0.95rem; }
+    .feature-row .feature-desc { color: var(--text-muted); font-size: 0.88rem; margin-top: 2px; }
+
+    /* ── SETTINGS TABLE ── */
+    .settings-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    .settings-table th {
+      background: var(--surface2);
+      padding: 10px 14px;
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+    .settings-table td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    .settings-table td:first-child { color: var(--text); font-weight: 600; }
+    .settings-table tr:last-child td { border-bottom: none; }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 28px;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid var(--bg);
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+    .timeline-item .ti-title { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .timeline-item .ti-desc { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* ── FOOTER ── */
+    .guide-footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .guide-footer p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; }
+    .footer-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .footer-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      padding: 8px 16px;
+      border: 1px solid rgba(232,184,75,0.3);
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .footer-links a:hover { background: rgba(232,184,75,0.1); }
+
+    @media (max-width: 600px) {
+      .hero { padding: 40px 16px 32px; }
+      .main-wrap { padding: 32px 16px 60px; }
+      .role-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="/">
+    <img src="/DraftARENAico.png" alt="DraftARENA" />
+    <span>DraftARENA</span>
+  </a>
+  <a class="back-btn" href="/">&#8592; Torna alla Home</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">Manuale Admin</div>
+  <h1>Guida Completa per l'<span>Amministratore</span></h1>
+  <p>Tutto quello che devi sapere per creare, configurare e gestire un'asta dalla A alla Z.</p>
+  <div class="toc-grid">
+    <a class="toc-item" href="#step1"><span class="toc-num">1</span> Preparazione</a>
+    <a class="toc-item" href="#step2"><span class="toc-num">2</span> Creare la Stanza</a>
+    <a class="toc-item" href="#step3"><span class="toc-num">3</span> Caricare i Giocatori</a>
+    <a class="toc-item" href="#step4"><span class="toc-num">4</span> Aggiungere le Squadre</a>
+    <a class="toc-item" href="#step5"><span class="toc-num">5</span> Configurare l'Asta</a>
+    <a class="toc-item" href="#step6"><span class="toc-num">6</span> Condurre l'Asta</a>
+    <a class="toc-item" href="#step7"><span class="toc-num">7</span> Operazioni Speciali</a>
+    <a class="toc-item" href="#step8"><span class="toc-num">8</span> Fine Asta &amp; Export</a>
+  </div>
+</section>
+
+<div class="main-wrap">
+
+  <!-- STEP 1 -->
+  <section class="guide-section" id="step1">
+    <div class="section-header">
+      <div class="step-circle">1</div>
+      <div class="section-header-text">
+        <h2>Preparazione</h2>
+        <p>Cosa fare prima di aprire l'app</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128196; Prepara il file Excel con i giocatori</div>
+      <p>Prima di tutto devi avere la lista dei giocatori in un file <strong>.xlsx</strong> (Excel). Il file deve avere esattamente queste colonne nel foglio principale:</p>
+      <div class="excel-preview" style="margin-top:14px;">
+        <table>
+          <thead>
+            <tr><th>Nome</th><th>Ruolo</th><th>Squadra</th><th>Quotazione</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Donnarumma</td><td>P</td><td>PSG</td><td>35</td></tr>
+            <tr><td>Bastoni</td><td>DC</td><td>Inter</td><td>22</td></tr>
+            <tr><td>Barella</td><td>M</td><td>Inter</td><td>42</td></tr>
+            <tr><td>Vlahovic</td><td>A</td><td>Juventus</td><td>38</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box tip"><strong>Suggerimento:</strong> La colonna "Quotazione" definisce il valore iniziale del giocatore ma non è obbligatoriamente il prezzo minimo — l'asta parte sempre da 1 credito.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127944; Ruoli Mantra supportati</div>
+      <p>I ruoli nel file devono corrispondere ai codici del sistema Mantra. Ogni codice viene tradotto automaticamente in una posizione (P, D, C, A):</p>
+      <div class="role-grid" style="margin-top:12px;">
+        <div class="role-card role-p">
+          <div class="role-name">P — Portiere</div>
+          <div class="role-codes">Codice: <strong>P</strong></div>
+        </div>
+        <div class="role-card role-d">
+          <div class="role-name">D — Difensore</div>
+          <div class="role-codes">Codici: <strong>DC, DD, DS, B</strong></div>
+        </div>
+        <div class="role-card role-c">
+          <div class="role-name">C — Centrocampista</div>
+          <div class="role-codes">Codici: <strong>M, C, E, T, W</strong></div>
+        </div>
+        <div class="role-card role-a">
+          <div class="role-name">A — Attaccante</div>
+          <div class="role-codes">Codici: <strong>A, PC</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-box note"><strong>Nota:</strong> Puoi caricare il file anche dopo aver creato la stanza e le squadre. L'ordine non è strettamente obbligatorio, ma farlo prima rende tutto più fluido.</div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="guide-section" id="step2">
+    <div class="section-header">
+      <div class="step-circle">2</div>
+      <div class="section-header-text">
+        <h2>Creare la Stanza</h2>
+        <p>Come generare il codice stanza e il PIN admin</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127968; Dalla Home Page</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Apri DraftARENA sul tuo browser — vedrai la sezione <strong>"Entra nell'Arena"</strong> in fondo alla pagina.</div></li>
+        <li><div class="step-text">Clicca su <strong>"Crea Stanza"</strong> e inserisci il numero di squadre che parteciperanno all'asta.</div></li>
+        <li><div class="step-text">Se la tua lega ha <strong>più di 8 squadre</strong>, ti verrà chiesto un codice di accesso (Commander Plus / Pro). Per 8 squadre o meno, tutto è gratuito.</div></li>
+        <li><div class="step-text">Conferma: ti viene mostrato il <strong>Codice Stanza</strong> (6 lettere, es. <code>5UKUQ9</code>) e il <strong>PIN Admin</strong> (4 cifre). <strong>Salvali!</strong></div></li>
+        <li><div class="step-text">Clicca <strong>"REGIA"</strong> per aprire il pannello admin della tua stanza.</div></li>
+      </ul>
+    </div>
+
+    <div class="info-box warn"><strong>Importante:</strong> Il PIN Admin è l'unica protezione contro modifiche non autorizzate. Non condividerlo con i partecipanti — solo con chi gestirà l'asta con te.</div>
+
+    <div class="card">
+      <div class="card-title">&#128279; Accedere al Pannello Admin</div>
+      <p>Puoi raggiungere il pannello admin in due modi:</p>
+      <div class="feature-row">
+        <div class="feature-icon">&#127968;</div>
+        <div class="feature-body">
+          <div class="feature-label">Dalla Home</div>
+          <div class="feature-desc">Dopo aver creato la stanza, clicca sul pulsante <strong>REGIA</strong>. Verrai reindirizzato ad <code>/admin</code> con il codice stanza già precompilato.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128279;</div>
+        <div class="feature-body">
+          <div class="feature-label">Direttamente da URL</div>
+          <div class="feature-desc">Vai su <code>/admin</code>, inserisci il codice stanza e il PIN admin quando richiesto.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="guide-section" id="step3">
+    <div class="section-header">
+      <div class="step-circle">3</div>
+      <div class="section-header-text">
+        <h2>Caricare i Giocatori</h2>
+        <p>Come importare la lista giocatori dall'Excel</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128196; Caricare il file Excel</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Nel pannello admin, vai alla scheda <strong>"Giocatori"</strong>.</div></li>
+        <li><div class="step-text">Clicca su <strong>"Carica File Excel"</strong> e seleziona il tuo file <code>.xlsx</code>.</div></li>
+        <li><div class="step-text">Scegli la modalità di caricamento: <strong>"Sostituisci"</strong> (cancella la lista esistente) oppure <strong>"Integra"</strong> (aggiunge i nuovi giocatori senza cancellare quelli già presenti).</div></li>
+        <li><div class="step-text">Conferma il caricamento. I giocatori appariranno nella lista con il loro ruolo e valore.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#9998; Modifiche manuali</div>
+      <div class="feature-row">
+        <div class="feature-icon">&#10133;</div>
+        <div class="feature-body">
+          <div class="feature-label">Aggiungere un giocatore manualmente</div>
+          <div class="feature-desc">Usa il form "Aggiungi Giocatore" con nome, ruolo e valore. Utile per svincolati o giocatori mancanti nella lista.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128295;</div>
+        <div class="feature-body">
+          <div class="feature-label">Correggere il ruolo di un giocatore</div>
+          <div class="feature-desc">Seleziona il giocatore dalla lista e usa "Correggi Ruolo" per aggiornare la sua posizione senza ricaricare tutto il file.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128465;</div>
+        <div class="feature-body">
+          <div class="feature-label">Scartare un giocatore dal mazzo</div>
+          <div class="feature-desc">Se un giocatore non deve entrare nell'asta (es. è ritirato), puoi rimuoverlo dal mazzo. Non sarà mai estratto come prossimo giocatore.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="guide-section" id="step4">
+    <div class="section-header">
+      <div class="step-circle">4</div>
+      <div class="section-header-text">
+        <h2>Aggiungere le Squadre</h2>
+        <p>Come creare le squadre che parteciperanno all'asta</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127942; Creare le squadre</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Vai alla scheda <strong>"Squadre"</strong> nel pannello admin.</div></li>
+        <li><div class="step-text">Per ogni partecipante, inserisci il <strong>nome della squadra</strong> (es. "Napoli di Marco") e il <strong>budget iniziale</strong> in crediti.</div></li>
+        <li><div class="step-text">Clicca <strong>"Aggiungi Squadra"</strong>. Ripeti per ogni partecipante.</div></li>
+        <li><div class="step-text">Puoi eliminare una squadra con l'icona del cestino accanto al suo nome, oppure aggiungere crediti extra con il tasto dedicato.</div></li>
+      </ul>
+      <div class="info-box tip" style="margin-top:14px;"><strong>Suggerimento:</strong> Il budget iniziale può essere lo stesso per tutti (es. 500 crediti) oppure diverso per ogni squadra — è una tua scelta strategica.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128179; Gestione budget in corso d'asta</div>
+      <p>Il budget di ogni squadra si aggiorna automaticamente ad ogni acquisto. Puoi vedere in tempo reale quanto crediti restano a ciascuna squadra direttamente nella scheda Squadre e nel pannello TV (host.html).</p>
+      <p>Per <strong>aggiungere crediti</strong> manualmente a una squadra (es. per correggere un errore), usa il pulsante "+" accanto al nome della squadra.</p>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="guide-section" id="step5">
+    <div class="section-header">
+      <div class="step-circle">5</div>
+      <div class="section-header-text">
+        <h2>Configurare l'Asta</h2>
+        <p>Impostazioni di budget, rosa, timer e limiti</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#9881; Impostazioni nella scheda "Operazioni"</div>
+      <div style="overflow-x:auto;">
+        <table class="settings-table">
+          <thead>
+            <tr><th>Impostazione</th><th>Descrizione</th><th>Esempio</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Budget Iniziale</td>
+              <td>Crediti iniziali di ogni squadra (se non impostati singolarmente)</td>
+              <td>500 cr</td>
+            </tr>
+            <tr>
+              <td>Giocatori Totali</td>
+              <td>Numero massimo di giocatori acquistabili per squadra</td>
+              <td>25</td>
+            </tr>
+            <tr>
+              <td>Limite Portieri (P)</td>
+              <td>Quanti portieri ogni squadra può acquistare al massimo</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>Limite Difensori (D)</td>
+              <td>Numero massimo di difensori per squadra</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>Limite Centrocampisti (C)</td>
+              <td>Numero massimo di centrocampisti per squadra</td>
+              <td>8</td>
+            </tr>
+            <tr>
+              <td>Limite Attaccanti (A)</td>
+              <td>Numero massimo di attaccanti per squadra</td>
+              <td>6</td>
+            </tr>
+            <tr>
+              <td>Durata Timer</td>
+              <td>Secondi di countdown per ogni offerta</td>
+              <td>30 sec</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box tip" style="margin-top:14px;"><strong>Suggerimento:</strong> Imposta queste opzioni <em>prima</em> di iniziare l'asta. Cambiarle a metà asta è possibile ma potrebbe creare squilibri tra le squadre.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127754; Auto-Avanzamento</div>
+      <p>Quando <strong>Auto-Avanzamento</strong> è attivo, dopo che un giocatore viene venduto (o rimane invenduto), il prossimo giocatore parte automaticamente senza che l'admin debba premere un pulsante. Ideale per aste veloci.</p>
+      <p>Puoi attivarlo/disattivarlo dalla scheda "Asta" in qualsiasi momento.</p>
+    </div>
+  </section>
+
+  <!-- STEP 6 -->
+  <section class="guide-section" id="step6">
+    <div class="section-header">
+      <div class="step-circle blue">6</div>
+      <div class="section-header-text">
+        <h2>Condurre l'Asta</h2>
+        <p>Come gestire il flusso dell'asta in tempo reale</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#9654; Avviare l'asta</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Prima di avviare, assicurati che i partecipanti abbiano scansionato il QR code sul TV (o aperto il link) e abbiano scelto la loro squadra su <strong>phone.html</strong>.</div></li>
+        <li><div class="step-text">Vai alla scheda <strong>"Asta"</strong> nel pannello admin.</div></li>
+        <li><div class="step-text">Clicca <strong>"Avvia Casuale"</strong> per estrarre un giocatore a caso, oppure seleziona un giocatore specifico dalla lista e clicca <strong>"Avvia Giocatore"</strong>.</div></li>
+        <li><div class="step-text">Il countdown parte, i partecipanti possono fare offerte dal loro telefono. Le offerte arrivano in tempo reale.</div></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#9203; Gestione del timer</div>
+      <div class="feature-row">
+        <div class="feature-icon">&#9208;</div>
+        <div class="feature-body">
+          <div class="feature-label">Pausa / Riprendi</div>
+          <div class="feature-desc">Puoi mettere in pausa il timer in qualsiasi momento — ad esempio se un partecipante ha un problema. Il timer riprende esattamente da dove si era fermato.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128308;</div>
+        <div class="feature-body">
+          <div class="feature-label">Assegnazione forzata</div>
+          <div class="feature-desc">Se il timer è scaduto ma vuoi assegnare il giocatore a una squadra specifica con un prezzo specifico (es. per correggere un errore), usa <strong>"Assegna Forzato"</strong>.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128257;</div>
+        <div class="feature-body">
+          <div class="feature-label">Ricicla invenduti</div>
+          <div class="feature-desc">I giocatori rimasti invenduti vengono automaticamente rimessi nel mazzo. Puoi riciclarli manualmente dalla scheda Asta con il pulsante "Ricicla Invenduti".</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128250; Vista TV (host.html)</div>
+      <p>Mentre gestisci l'asta dal pannello admin, il <strong>TV Host</strong> (<code>/host</code>) mostra ai partecipanti in sala:</p>
+      <ul style="margin-top:10px;padding-left:20px;color:var(--text-muted);font-size:0.9rem;display:flex;flex-direction:column;gap:6px;">
+        <li>Nome del giocatore in asta (grande)</li>
+        <li>Prezzo corrente e miglior offerente</li>
+        <li>Countdown in rosso</li>
+        <li>QR code per connettersi dal telefono</li>
+        <li>Classifica squadre con budget rimanente</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- STEP 7 -->
+  <section class="guide-section" id="step7">
+    <div class="section-header">
+      <div class="step-circle red">7</div>
+      <div class="section-header-text">
+        <h2>Operazioni Speciali</h2>
+        <p>Correzioni, rimozioni e gestione di situazioni particolari</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128295; Correggere errori durante l'asta</div>
+      <div class="feature-row">
+        <div class="feature-icon">&#8617;</div>
+        <div class="feature-body">
+          <div class="feature-label">Riassegnare l'ultimo giocatore venduto</div>
+          <div class="feature-desc">Se l'ultimo giocatore è stato assegnato alla squadra sbagliata, usa <strong>"Riassegna Ultimo Venduto"</strong> per spostarlo su un'altra squadra con il prezzo corretto. Il credito viene ricalcolato automaticamente.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128465;</div>
+        <div class="feature-body">
+          <div class="feature-label">Rimuovere un giocatore acquistato</div>
+          <div class="feature-desc">Dalla lista delle rose, puoi rimuovere un giocatore già acquistato. Il credito speso viene <strong>rimborsato</strong> automaticamente alla squadra.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128176;</div>
+        <div class="feature-body">
+          <div class="feature-label">Aggiungere crediti manualmente</div>
+          <div class="feature-desc">Dalla scheda Squadre, puoi aggiungere o sottrarre crediti a una singola squadra. Utile per correggere errori o applicare bonus/malus della lega.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128190; Backup e salvataggi</div>
+      <p>DraftARENA salva automaticamente lo stato dell'asta in tempo reale. Ma puoi anche:</p>
+      <div class="feature-row">
+        <div class="feature-icon">&#128190;</div>
+        <div class="feature-body">
+          <div class="feature-label">Esportare un backup manuale</div>
+          <div class="feature-desc">Dalla scheda Config, usa "Esporta Backup" per scaricare un file JSON con l'intera configurazione della stanza — utile prima di operazioni rischiose.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128228;</div>
+        <div class="feature-body">
+          <div class="feature-label">Importare un backup</div>
+          <div class="feature-desc">Se qualcosa va storto, puoi ripristinare uno stato precedente importando il file JSON di backup.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#127942;</div>
+        <div class="feature-body">
+          <div class="feature-label">Salvare nella Hall of Fame</div>
+          <div class="feature-desc">A fine stagione, puoi archiviare i risultati nell'Albo d'Oro della lega con classifica finale, trofei e statistiche.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 8 -->
+  <section class="guide-section" id="step8">
+    <div class="section-header">
+      <div class="step-circle green">8</div>
+      <div class="section-header-text">
+        <h2>Fine Asta &amp; Export</h2>
+        <p>Come chiudere l'asta ed esportare i risultati</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128200; Esportare i risultati</div>
+      <p>Quando l'asta è terminata, esporta i risultati in formato Excel dalla scheda <strong>"Export"</strong>. Il file generato contiene:</p>
+      <div class="feature-row">
+        <div class="feature-icon">&#128202;</div>
+        <div class="feature-body">
+          <div class="feature-label">Riepilogo Budget</div>
+          <div class="feature-desc">Budget iniziale, totale speso, crediti residui per ogni squadra.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128101;</div>
+        <div class="feature-body">
+          <div class="feature-label">Rose Complete</div>
+          <div class="feature-desc">Per ogni squadra, elenco di tutti i giocatori acquistati con ruolo e prezzo pagato.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128683;</div>
+        <div class="feature-body">
+          <div class="feature-label">Giocatori Invenduti</div>
+          <div class="feature-desc">Lista completa dei giocatori rimasti senza acquirente.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#127942; Archiviare nella Hall of Fame</div>
+      <ul class="steps-list">
+        <li><div class="step-text">Vai alla scheda <strong>"Config"</strong> e clicca su <strong>"Salva nell'Albo d'Oro"</strong>.</div></li>
+        <li><div class="step-text">Assegna un nome alla stagione (es. "Fantacalcio 2025/26").</div></li>
+        <li><div class="step-text">I dati vengono archiviati nella sezione <strong>/albo</strong> della tua lega, accessibile da tutti i partecipanti.</div></li>
+      </ul>
+      <div class="info-box tip" style="margin-top:14px;"><strong>Suggerimento:</strong> Fai sempre un export Excel <em>prima</em> di archiviare, così hai una copia locale dei risultati.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">&#128260; Reset completo</div>
+      <p>Per ripartire da zero con la stessa stanza (es. per una seconda asta), usa il pulsante <strong>"Reset Completo"</strong> nella scheda Operazioni. Questo cancella tutte le rose, le offerte e i giocatori venduti, mantenendo la configurazione delle squadre e del budget.</p>
+      <div class="info-box warn"><strong>Attenzione:</strong> Il reset completo è irreversibile. Esporta sempre un backup prima di procedere.</div>
+    </div>
+  </section>
+
+  <!-- RIEPILOGO FLUSSO -->
+  <section class="guide-section" id="flusso">
+    <div class="section-header">
+      <div class="step-circle" style="background:var(--text-muted);color:#000;font-size:1.2rem;">&#8635;</div>
+      <div class="section-header-text">
+        <h2>Riepilogo del Flusso Completo</h2>
+        <p>Tutto in ordine dalla A alla Z</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="timeline">
+        <div class="timeline-item"><div class="ti-title">Prepara il file Excel</div><div class="ti-desc">Colonne: Nome, Ruolo (Mantra), Squadra, Quotazione</div></div>
+        <div class="timeline-item"><div class="ti-title">Crea la stanza dalla Home</div><div class="ti-desc">Ottieni codice stanza + PIN admin e aprono il pannello admin</div></div>
+        <div class="timeline-item"><div class="ti-title">Carica i giocatori</div><div class="ti-desc">Scheda Giocatori → Carica file Excel</div></div>
+        <div class="timeline-item"><div class="ti-title">Aggiungi le squadre</div><div class="ti-desc">Scheda Squadre → Aggiungi una squadra per ogni partecipante con budget iniziale</div></div>
+        <div class="timeline-item"><div class="ti-title">Configura le impostazioni</div><div class="ti-desc">Scheda Operazioni → Timer, limiti posizione, numero totale giocatori</div></div>
+        <div class="timeline-item"><div class="ti-title">Apri il TV Host</div><div class="ti-desc">Vai su /host, inserisci codice + PIN — la schermata TV è pronta</div></div>
+        <div class="timeline-item"><div class="ti-title">I partecipanti si connettono</div><div class="ti-desc">Scansionano il QR sul TV, aprono /phone, scelgono la propria squadra</div></div>
+        <div class="timeline-item"><div class="ti-title">Avvia l'asta</div><div class="ti-desc">Scheda Asta → Avvia Casuale (o seleziona giocatore specifico)</div></div>
+        <div class="timeline-item"><div class="ti-title">Gestisci il flusso</div><div class="ti-desc">Pausa, assegna, correggi errori, ricicla invenduti</div></div>
+        <div class="timeline-item"><div class="ti-title">Fine asta → Export</div><div class="ti-desc">Scheda Export → Scarica Excel con rose e riepilogo budget</div></div>
+        <div class="timeline-item"><div class="ti-title">Archivia nella Hall of Fame</div><div class="ti-desc">Scheda Config → Salva nell'Albo d'Oro della lega</div></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="guide-footer">
+  <p>Hai bisogno di aiuto? Consulta anche la guida per i partecipanti.</p>
+  <div class="footer-links">
+    <a href="/">Home DraftARENA</a>
+    <a href="/guida-utenti">Guida Partecipanti</a>
+    <a href="/admin">Pannello Admin</a>
+  </div>
+</footer>
+
+</body>
+</html>
