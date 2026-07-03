@@ -164,7 +164,7 @@
     .btn-pin:hover { opacity: 0.75; }
 
     .stats-row {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px;
       margin-bottom: 4px;
     }
     .stat-card {
@@ -172,7 +172,24 @@
       padding: 16px; text-align: center;
     }
     .stat-card .val { font-size: 2rem; font-weight: 700; color: #f59e0b; }
+    .stat-card .val.live { color: #10b981; }
     .stat-card .lbl { font-size: 11px; color: #475569; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .live-dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: #10b981; margin-right: 5px; vertical-align: middle;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .rooms-live-table { font-size: 13px; }
+    .rooms-live-table th { color: #64748b; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; padding: 8px 10px; border-bottom: 1px solid #1c2541; }
+    .rooms-live-table td { padding: 9px 10px; border-bottom: 1px solid #0f172a; }
+    .live-count { display: inline-block; background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25); border-radius: 5px; padding: 2px 8px; font-weight: 700; font-size: 12px; }
+    .refresh-hint { font-size: 11px; color: #334155; margin-top: 8px; }
 
     @media (max-width: 640px) {
       .gen-card { grid-template-columns: 1fr 1fr; }
@@ -207,12 +224,39 @@
   <div class="main">
 
     <!-- Stats -->
-    <div class="section-title">Statistiche</div>
+    <div class="section-title">Statistiche codici</div>
     <div class="stats-row" id="stats-row">
       <div class="stat-card"><div class="val" id="stat-total-codes">—</div><div class="lbl">Codici totali</div></div>
       <div class="stat-card"><div class="val" id="stat-promo-active">—</div><div class="lbl">Promo attivi</div></div>
       <div class="stat-card"><div class="val" id="stat-total-uses">—</div><div class="lbl">Usi totali</div></div>
       <div class="stat-card"><div class="val" id="stat-rooms">—</div><div class="lbl">Stanze create</div></div>
+    </div>
+
+    <!-- Live connections -->
+    <div class="section-title" style="margin-top:28px;">
+      <span class="live-dot"></span>Connessioni in tempo reale
+      <span id="live-refresh-time" class="refresh-hint" style="float:right;margin-top:2px;"></span>
+    </div>
+    <div class="stats-row" style="margin-bottom:16px;">
+      <div class="stat-card"><div class="val live" id="stat-landing">—</div><div class="lbl">Sulla homepage</div></div>
+      <div class="stat-card"><div class="val live" id="stat-in-rooms">—</div><div class="lbl">Nelle stanze</div></div>
+      <div class="stat-card"><div class="val live" id="stat-active-rooms">—</div><div class="lbl">Stanze attive</div></div>
+      <div class="stat-card"><div class="val" id="stat-page-views">—</div><div class="lbl">Visite totali</div></div>
+      <div class="stat-card"><div class="val" id="stat-page-views-session">—</div><div class="lbl">Visite questa sessione</div></div>
+    </div>
+
+    <div class="table-wrap" id="live-rooms-wrap" style="display:none;">
+      <table class="rooms-live-table">
+        <thead>
+          <tr>
+            <th>Stanza</th>
+            <th>Asta attiva</th>
+            <th>Squadre</th>
+            <th>Connessi</th>
+          </tr>
+        </thead>
+        <tbody id="live-rooms-tbody"></tbody>
+      </table>
     </div>
 
     <!-- Genera nuovo codice -->
@@ -337,6 +381,7 @@
   document.getElementById('btn-login').addEventListener('click', doLogin);
   document.getElementById('sa-password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
   document.getElementById('btn-logout').addEventListener('click', () => {
+    stopLiveRefresh();
     sessionStorage.removeItem('sa_auth');
     document.getElementById('dashboard').style.display = 'none';
     document.getElementById('login-screen').style.display = 'flex';
@@ -348,11 +393,56 @@
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     loadAll();
+    startLiveRefresh();
   }
 
   // ── Carica dati ──────────────────────────────────────────────────────────
   async function loadAll() {
-    await Promise.all([loadCodes(), loadRooms()]);
+    await Promise.all([loadCodes(), loadRooms(), loadLiveStats()]);
+  }
+
+  async function loadLiveStats() {
+    try {
+      const r = await fetch('/api/superadmin/stats');
+      const data = await r.json();
+      if (!data.success) return;
+      document.getElementById('stat-landing').textContent = data.landingViewers;
+      document.getElementById('stat-in-rooms').textContent = data.totalInRooms;
+      document.getElementById('stat-active-rooms').textContent = data.activeRoomsCount;
+      document.getElementById('stat-page-views').textContent = data.pageViewsTotal;
+      document.getElementById('stat-page-views-session').textContent = data.pageViewsSinceStart;
+
+      const now = new Date();
+      document.getElementById('live-refresh-time').textContent =
+        'Aggiornato alle ' + now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+      const tbody = document.getElementById('live-rooms-tbody');
+      const wrap = document.getElementById('live-rooms-wrap');
+      if (data.activeRooms.length === 0) {
+        wrap.style.display = 'none';
+      } else {
+        wrap.style.display = 'block';
+        tbody.innerHTML = data.activeRooms.map(r => `
+          <tr>
+            <td><span class="code-text" onclick="copyCode('${r.code}')">${r.code}</span></td>
+            <td style="color:#94a3b8;font-size:12px">${r.auctionName}</td>
+            <td style="color:#94a3b8">${r.teams}</td>
+            <td><span class="live-count">${r.count} online</span></td>
+          </tr>
+        `).join('');
+      }
+    } catch (e) {
+      // silently ignore network errors on live refresh
+    }
+  }
+
+  // Auto-refresh live stats every 15 seconds
+  let liveInterval = null;
+  function startLiveRefresh() {
+    liveInterval = setInterval(loadLiveStats, 15000);
+  }
+  function stopLiveRefresh() {
+    if (liveInterval) { clearInterval(liveInterval); liveInterval = null; }
   }
 
   async function loadCodes() {
