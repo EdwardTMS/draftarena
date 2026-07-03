@@ -720,6 +720,7 @@
         <div style="display:flex; align-items:center; gap:1rem;">
             <a href="/#hub" class="btn-hub-mobile" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border:1px solid var(--border); border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'">← Hub</a>
             <img src="/DraftARENAws.png" alt="DraftARENA" style="height:30px;max-height:30px;">
+            <a href="/guida-admin" target="_blank" title="Guida Admin" style="color:var(--text-secondary); text-decoration:none; font-size:0.8rem; padding:0.35rem 0.75rem; border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'">? Guida</a>
         </div>
         <div class="league-info">
             <div style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:8px;">
@@ -923,6 +924,32 @@
                 <p style="color: var(--text-secondary);">Nessuna squadra creata</p>
             </div>
         </div>
+
+        <!-- GESTIONE CREDITI ─────────────────────────────────────────────── -->
+        <div class="card">
+            <h3 class="card-title">💰 Gestione Crediti (Mercato di Riparazione)</h3>
+            <p style="font-size:0.83rem;color:var(--text-secondary);margin-bottom:14px;">
+                Aggiungi o sottrai crediti a una squadra in vista del mercato di riparazione. Usa un valore negativo per rimuovere crediti.
+            </p>
+            <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+                <div style="flex:1;min-width:150px;">
+                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;">Squadra</label>
+                    <select id="creditTeamSelect" style="width:100%;padding:8px 10px;background:var(--bg-input);
+                            border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:0.88rem;">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div style="width:110px;">
+                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;">Crediti (±)</label>
+                    <input type="number" id="creditAmount" placeholder="es. 100"
+                           style="width:100%;padding:8px 10px;background:var(--bg-input);border:1px solid var(--border);
+                                  border-radius:6px;color:var(--text-primary);font-size:0.88rem;">
+                </div>
+                <button class="btn btn-success" onclick="aggiungiCrediti()" style="white-space:nowrap;padding:8px 18px;">
+                    ✔ Applica
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- TAB 3: Lista Giocatori -->
@@ -935,6 +962,20 @@
                     <label>Soglia Minima Quotazione</label>
                     <input type="number" id="sogliaMinima" value="0" min="0" placeholder="Filtra giocatori sotto questo valore">
                 </div>
+
+                <!-- Toggle modalità riparazione -->
+                <div id="riparazione-toggle-wrap" style="display:flex;align-items:flex-start;gap:10px;
+                     padding:12px;background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);
+                     border-radius:8px;margin-bottom:12px;cursor:pointer;" onclick="document.getElementById('riparazioneToggle').click()">
+                    <input type="checkbox" id="riparazioneToggle" style="margin-top:3px;width:16px;height:16px;cursor:pointer;accent-color:#38bdf8;">
+                    <div>
+                        <div style="font-weight:600;font-size:0.88rem;color:#38bdf8;">🔧 Modalità Riparazione</div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;line-height:1.4;">
+                            Aggiunge i nuovi giocatori a quelli già nel mazzo. I giocatori già <strong>assegnati</strong> e quelli già <strong>presenti nel mazzo</strong> vengono saltati automaticamente.
+                        </div>
+                    </div>
+                </div>
+
                 <div class="file-upload" onclick="document.getElementById('excelFile').click()">
                     <div class="upload-icon">📊</div>
                     <p>Trascina il file Excel o clicca per selezionare</p>
@@ -943,6 +984,11 @@
                     </p>
                     <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="uploadExcel()">
                 </div>
+
+                <!-- Riepilogo riparazione -->
+                <div id="riparazione-report" style="display:none;margin-top:10px;padding:10px 12px;
+                     background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:8px;
+                     font-size:0.82rem;line-height:1.8;"></div>
             </div>
 
             <!-- Aggiunta Manuale -->
@@ -2115,6 +2161,24 @@
 
             document.getElementById('startingBudgetDisplay').textContent =
                 currentTeams[keys[0]]?.budget || '500';
+
+            // Aggiorna il select per la gestione crediti
+            const sel = document.getElementById('creditTeamSelect');
+            if (sel) {
+                const prev = sel.value;
+                sel.innerHTML = '<option value="">Seleziona squadra...</option>' +
+                    keys.map(k => `<option value="${k}">${currentTeams[k].name}</option>`).join('');
+                if (prev && currentTeams[prev]) sel.value = prev;
+            }
+        }
+
+        function aggiungiCrediti() {
+            const teamKey = document.getElementById('creditTeamSelect').value;
+            const amount = parseInt(document.getElementById('creditAmount').value);
+            if (!teamKey) { showAlert('error', 'Seleziona una squadra.'); return; }
+            if (isNaN(amount) || amount === 0) { showAlert('error', 'Inserisci un importo valido (diverso da 0).'); return; }
+            socket.emit('adminAddCredits', { teamKey, amount });
+            document.getElementById('creditAmount').value = '';
         }
 
         function updateStats() {
@@ -2135,25 +2199,36 @@
             if (!file) return;
 
             const soglia = document.getElementById('sogliaMinima').value || 0;
+            const riparazione = document.getElementById('riparazioneToggle').checked;
             const formData = new FormData();
             formData.append('file', file);
 
-            fetch(`/upload?room=${currentRoomCode}&soglia=${soglia}`, {
-                method: 'POST',
-                body: formData
-            })
+            const report = document.getElementById('riparazione-report');
+            report.style.display = 'none';
+
+            const url = `/upload?room=${currentRoomCode}&soglia=${soglia}${riparazione ? '&mode=riparazione' : ''}`;
+
+            fetch(url, { method: 'POST', body: formData })
             .then(res => res.json())
             .then(data => {
                 socket.emit('getPlayers');
+                if (riparazione && data.riparazione) {
+                    const r = data.riparazione;
+                    report.style.display = 'block';
+                    report.innerHTML =
+                        `<strong style="color:#38bdf8;">📊 Riepilogo Riparazione</strong><br>` +
+                        `✅ <strong>${r.added}</strong> nuovi giocatori aggiunti al mazzo<br>` +
+                        `🚫 <strong>${r.alreadySold}</strong> già assegnati (saltati)<br>` +
+                        `⏭️ <strong>${r.alreadyInList}</strong> già presenti nel mazzo (saltati)<br>` +
+                        `📦 Totale giocatori nel mazzo: <strong>${data.count}</strong>`;
+                }
                 if (data.warnings && data.warnings.length > 0) {
                     _mostraWarningRuoli(data.warnings, data.count);
-                } else {
+                } else if (!riparazione || !data.riparazione) {
                     showAlert('success', `${data.count} giocatori caricati con successo!`);
                 }
             })
-            .catch(err => {
-                showAlert('error', 'Errore nel caricamento del file');
-            });
+            .catch(() => showAlert('error', 'Errore nel caricamento del file'));
         }
 
         function _mostraWarningRuoli(warnings, count) {
