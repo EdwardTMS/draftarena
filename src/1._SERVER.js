@@ -978,6 +978,58 @@ app.delete("/api/room/:code/backups/:id", async (req, res) => {
 });
 
 /* ==========================================================================
+   ALBO D'ORO
+   ========================================================================== */
+
+app.get("/albo", (req, res) => res.sendFile(path.join(__dirname, "public", "albo.html")));
+app.get("/albo.html", (req, res) => res.sendFile(path.join(__dirname, "public", "albo.html")));
+
+// GET /api/lega/:code/albo  → tutte le stagioni con season_data (pubblica)
+app.get("/api/lega/:code/albo", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  if (LOCAL_MODE) return res.json({ success: true, seasons: [] });
+  try {
+    const { data, error } = await supabase
+      .from("auction_backups")
+      .select("id, year, label, auction_name, exported_at, backup_data, season_data")
+      .eq("room_code", code)
+      .order("year", { ascending: false });
+    if (error) throw error;
+    res.json({ success: true, seasons: data || [] });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// PATCH /api/room/:code/backups/:id/season  → aggiorna season_data (richiede x-admin-pin)
+app.patch("/api/room/:code/backups/:id/season", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  const room = rooms.get(code);
+  const pin = String(req.headers["x-admin-pin"] || "");
+  if (!room || String(room.adminPin) !== pin) {
+    return res.status(403).json({ success: false, error: "PIN admin non valido." });
+  }
+  if (LOCAL_MODE) return res.json({ success: true });
+
+  const { classifica, competizioni } = req.body;
+  if (!Array.isArray(classifica) || !Array.isArray(competizioni)) {
+    return res.status(400).json({ success: false, error: "Dati stagione non validi." });
+  }
+
+  try {
+    const { error } = await supabase
+      .from("auction_backups")
+      .update({ season_data: { classifica, competizioni } })
+      .eq("id", req.params.id)
+      .eq("room_code", code);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+/* ==========================================================================
    SOCKET.IO
    ========================================================================== */
 io.on("connection", (socket) => {
