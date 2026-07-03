@@ -605,6 +605,8 @@ app.get("/host.html", (req, res) => res.sendFile(path.join(__dirname, "public", 
 app.get("/rose", (req, res) => res.sendFile(path.join(__dirname, "public", "rose.html")));
 app.get("/rose.html", (req, res) => res.sendFile(path.join(__dirname, "public", "rose.html")));
 app.get("/superadmin", (req, res) => res.sendFile(path.join(__dirname, "public", "superadmin.html")));
+app.get("/guida-admin", (req, res) => res.sendFile(path.join(__dirname, "public", "guida-admin.html")));
+app.get("/guida-utenti", (req, res) => res.sendFile(path.join(__dirname, "public", "guida-utenti.html")));
 
 /* ==========================================================================
    SUPERADMIN PASSWORD (caricata da DB, fallback env)
@@ -801,6 +803,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   if (!room) return res.status(400).send("Stanza non trovata");
   if (!req.file) return res.status(400).send("Nessun file caricato");
 
+  const modeRiparazione = req.query.mode === "riparazione";
+
   try {
     const workbook = xlsx.readFile(req.file.path);
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -825,8 +829,9 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     }
 
     const sogliaMinima = parseInt(req.query.soglia) || 0;
-    room.playersList = [];
 
+    // Costruisce la lista dal file Excel
+    const fromFile = [];
     for (let r = rigaIntestazione + 1; r < matrix.length; r++) {
       const row = matrix[r];
       if (!row || row.length === 0) continue;
@@ -835,7 +840,25 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       const squadra = indexSquadra !== -1 && row[indexSquadra] ? String(row[indexSquadra]).trim() : "Svincolato";
       const valoreEffettivo = indexPrezzo !== -1 && row[indexPrezzo] ? parseInt(row[indexPrezzo]) : 1;
       if (valoreEffettivo < sogliaMinima) continue;
-      if (nome && ruolo) room.playersList.push({ nome, ruolo: ruolo.toUpperCase(), squadra });
+      if (nome && ruolo) fromFile.push({ nome, ruolo: ruolo.toUpperCase(), squadra });
+    }
+
+    let alreadySold = 0, alreadyInList = 0;
+
+    if (modeRiparazione) {
+      // Insiemi di nomi già presenti (lowercase per confronto case-insensitive)
+      const soldNames = new Set(room.soldPlayers.map(p => p.player.toLowerCase().trim()));
+      const listNames = new Set(room.playersList.map(p => p.nome.toLowerCase().trim()));
+
+      for (const p of fromFile) {
+        const key = p.nome.toLowerCase().trim();
+        if (soldNames.has(key)) { alreadySold++; continue; }
+        if (listNames.has(key)) { alreadyInList++; continue; }
+        room.playersList.push(p);
+        listNames.add(key); // evita duplicati all'interno dello stesso file
+      }
+    } else {
+      room.playersList = fromFile;
     }
 
     const warnings = [];
@@ -847,7 +870,12 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
     await salvaSessioneDB(room);
     io.to(roomCode).emit("playersList", room.playersList);
-    res.json({ success: true, count: room.playersList.length, warnings });
+    res.json({
+      success: true,
+      count: room.playersList.length,
+      warnings,
+      riparazione: modeRiparazione ? { alreadySold, alreadyInList, added: fromFile.length - alreadySold - alreadyInList } : null
+    });
   } catch (e) {
     console.error("[SERVER] Errore parsing Excel:", e);
     res.status(500).send("Errore nel parsing del file Excel");
@@ -1703,6 +1731,21 @@ io.on("connection", (socket) => {
     }
     if (!socket.roomCode) CUSTOM_HOST_URL = url || null;
     socket.emit("hostUrlUpdate", { hostUrl: url || CUSTOM_HOST_URL || LOCAL_IP, isCustom: !!url });
+  });
+
+  socket.on("adminAddCredits", async (data) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+    const teamKey = String(data.teamKey || "").toLowerCase().trim();
+    const amount = parseInt(data.amount);
+    if (!room.teams[teamKey]) { socket.emit("errorNotify", "Squadra non trovata!"); return; }
+    if (isNaN(amount) || amount === 0) { socket.emit("errorNotify", "Importo non valido."); return; }
+    room.teams[teamKey].budget += amount;
+    await salvaSessioneDB(room);
+    io.to(socket.roomCode).emit("updateTeams", room.teams);
+    io.to(socket.roomCode).emit("teamsUpdate", room.teams);
+    const segno = amount > 0 ? "+" : "";
+    socket.emit("errorNotify", `💰 ${room.teams[teamKey].name}: ${segno}${amount} cr (nuovo budget: ${room.teams[teamKey].budget} cr)`);
   });
 
   socket.on("adminTriggerSave", async () => {
