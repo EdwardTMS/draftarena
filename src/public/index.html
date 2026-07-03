@@ -1,1186 +1,2663 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DraftARENA — L'asta del fantacalcio in tempo reale</title>
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#10b981">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="DraftArena">
-  <link rel="apple-touch-icon" href="/DraftARENAico.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DraftARENA - Pannello Admin</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DraftArena">
+    <link rel="apple-touch-icon" href="/DraftARENAico.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    :root {
-      --bg-deep:     #020810;
-      --bg-dark:     #060d1e;
-      --bg-card:     #0b1428;
-      --bg-card2:    #0e1a32;
-      --border:      #1c2d4a;
-      --border-glow: rgba(56,189,248,0.25);
-      --text-primary:   #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted:     #475569;
-      --blue:       #2563eb;
-      --blue-light: #38bdf8;
-      --green:      #10b981;
-      --green-dark: #047857;
-      --amber:      #f59e0b;
-      --red:        #dc2626;
-    }
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --success-dark: #059669;
+            --warning: #f59e0b;
+            --warning-dark: #d97706;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #475569;
+        }
 
-    html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
 
-    body {
-      background: var(--bg-deep);
-      color: var(--text-primary);
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
+        /* Header */
+        .header {
+            background: var(--bg-card);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-    /* ── NAVBAR ── */
-    .navbar {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px 32px;
-      background: rgba(2,8,16,0.8);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.3s;
-      gap: 16px;
-    }
-    .navbar.scrolled { border-color: var(--border); }
-    .navbar-logo { height: 36px; flex-shrink: 0; }
-    .navbar-links {
-      display: flex; align-items: center; gap: 4px;
-      flex: 1;
-    }
-    .navbar-links a {
-      padding: 6px 14px;
-      border-radius: 6px;
-      color: var(--text-secondary);
-      font-size: 13px; font-weight: 600;
-      text-decoration: none;
-      transition: color 0.2s, background 0.2s;
-      white-space: nowrap;
-    }
-    .navbar-links a:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-    .navbar-cta { display: flex; gap: 10px; flex-shrink: 0; }
-    .btn-nav-enter {
-      padding: 8px 20px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-nav-enter:hover { border-color: var(--blue-light); color: var(--blue-light); }
-    .btn-nav-create {
-      padding: 8px 20px;
-      border-radius: 8px; border: none;
-      background: linear-gradient(135deg, var(--blue), #1d4ed8);
-      color: white;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px; font-weight: 700;
-      cursor: pointer; transition: opacity 0.2s;
-    }
-    .btn-nav-create:hover { opacity: 0.85; }
+        .header h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
 
-    /* ── HERO ── */
-    .hero {
-      position: relative;
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      text-align: center;
-      padding: 100px 24px 80px;
-      overflow: hidden;
-    }
-    .hero-glow {
-      position: absolute; top: -200px; left: 50%;
-      transform: translateX(-50%);
-      width: 800px; height: 800px;
-      background: radial-gradient(ellipse at center, rgba(37,99,235,0.18) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .hero-glow2 {
-      position: absolute; bottom: -100px; left: 20%;
-      width: 500px; height: 500px;
-      background: radial-gradient(ellipse at center, rgba(16,185,129,0.1) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .hero-logo {
-      width: 280px; max-width: 80%;
-      margin-bottom: 32px;
-      animation: fadeUp 0.8s ease both;
-    }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3);
-      border-radius: 20px; padding: 5px 14px;
-      font-size: 12px; font-weight: 600; color: var(--green);
-      margin-bottom: 20px; animation: fadeUp 0.8s 0.1s ease both;
-    }
-    .hero-badge .dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--green); animation: pulse 2s infinite;
-    }
-    .hero-title {
-      font-size: clamp(2rem, 5.5vw, 3.6rem); font-weight: 900;
-      line-height: 1.12; letter-spacing: -0.02em;
-      max-width: 780px; margin-bottom: 18px;
-      animation: fadeUp 0.8s 0.15s ease both;
-    }
-    .hero-title .accent { color: var(--blue-light); }
-    .hero-sub {
-      font-size: clamp(1rem, 2vw, 1.15rem); color: var(--text-secondary);
-      max-width: 560px; line-height: 1.65; margin-bottom: 40px;
-      animation: fadeUp 0.8s 0.2s ease both;
-    }
-    .hero-actions {
-      display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
-      animation: fadeUp 0.8s 0.28s ease both;
-    }
-    .btn-hero-primary {
-      padding: 16px 36px; border-radius: 10px; border: none;
-      background: linear-gradient(135deg, var(--blue), #1d4ed8);
-      color: white; font-family: 'Inter', sans-serif;
-      font-size: 16px; font-weight: 700; cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s;
-      box-shadow: 0 4px 24px rgba(37,99,235,0.4);
-    }
-    .btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(37,99,235,0.55); }
-    .btn-hero-secondary {
-      padding: 16px 36px; border-radius: 10px;
-      border: 1px solid var(--border); background: transparent;
-      color: var(--text-primary); font-family: 'Inter', sans-serif;
-      font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
-    }
-    .btn-hero-secondary:hover { border-color: var(--blue-light); color: var(--blue-light); }
-    .hero-scroll {
-      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 6px;
-      color: var(--text-muted); font-size: 11px; font-weight: 600;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      animation: fadeUp 0.8s 0.4s ease both;
-    }
-    .scroll-arrow {
-      width: 18px; height: 18px;
-      border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted);
-      transform: rotate(45deg); animation: bounce 1.8s ease infinite;
-    }
+        .league-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
 
-    /* ── SEZIONI GENERICHE ── */
-    .section {
-      padding: 96px 24px; max-width: 1100px; margin: 0 auto;
-    }
-    .section-label {
-      font-size: 12px; font-weight: 700; letter-spacing: 0.15em;
-      text-transform: uppercase; color: var(--blue-light);
-      margin-bottom: 12px; text-align: center;
-    }
-    .section-title {
-      font-size: clamp(1.6rem, 3.5vw, 2.4rem); font-weight: 800;
-      text-align: center; letter-spacing: -0.02em; line-height: 1.2; margin-bottom: 14px;
-    }
-    .section-sub {
-      text-align: center; color: var(--text-secondary);
-      font-size: 1rem; line-height: 1.6; max-width: 560px; margin: 0 auto 60px;
-    }
+        .league-name {
+            background: var(--bg-input);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: bold;
+            color: var(--warning);
+        }
 
-    /* ── COME FUNZIONA ── */
-    .steps-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 24px; position: relative;
-    }
-    .steps-grid::before {
-      content: ''; position: absolute; top: 36px;
-      left: calc(16.66% + 16px); right: calc(16.66% + 16px);
-      height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent);
-    }
-    .step-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 28px 24px; text-align: center;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-    .step-card:hover { border-color: var(--border-glow); transform: translateY(-4px); }
-    .step-num {
-      display: inline-flex; align-items: center; justify-content: center;
-      width: 52px; height: 52px; border-radius: 50%; font-size: 1.3rem; margin-bottom: 20px;
-    }
-    .step-num.blue  { background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.4); }
-    .step-num.green { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); }
-    .step-tag {
-      display: inline-block; font-size: 10px; font-weight: 700;
-      letter-spacing: 0.08em; text-transform: uppercase;
-      padding: 3px 10px; border-radius: 20px; margin-bottom: 12px;
-    }
-    .step-tag.blue  { background: rgba(37,99,235,0.15); color: #93c5fd; }
-    .step-tag.green { background: rgba(16,185,129,0.15); color: #6ee7b7; }
-    .step-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
-    .step-card p  { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+        /* Tabs Navigation */
+        .tabs-nav {
+            display: flex;
+            background: var(--bg-card);
+            padding: 0;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+        }
 
-    /* ── FEATURES GRID ── */
-    .features-section { padding: 0 24px 96px; max-width: 1100px; margin: 0 auto; }
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
-    .feature-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 14px; padding: 22px 20px;
-      display: flex; align-items: flex-start; gap: 14px;
-      transition: border-color 0.2s, background 0.2s;
-    }
-    .feature-card:hover { border-color: var(--border-glow); background: var(--bg-card2); }
-    .feature-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
-    .feature-card h4 { font-size: 0.92rem; font-weight: 700; margin-bottom: 4px; }
-    .feature-card p  { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5; }
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
 
-    /* ── APPROFONDIMENTI TECNICI ── */
-    .deep-section { padding: 0 24px 96px; max-width: 1100px; margin: 0 auto; }
-    .deep-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
-    .deep-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 28px 24px;
-      transition: border-color 0.2s, transform 0.2s;
-      display: flex; flex-direction: column; gap: 14px;
-    }
-    .deep-card:hover { border-color: var(--border-glow); transform: translateY(-4px); }
-    .deep-card-icon {
-      width: 48px; height: 48px; border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem; flex-shrink: 0;
-    }
-    .deep-card-icon.blue  { background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.3); }
-    .deep-card-icon.green { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
-    .deep-card-icon.amber { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); }
-    .deep-card-icon.gold  { background: rgba(251,191,36,0.15); border: 1px solid rgba(251,191,36,0.4); }
-    .deep-card h3 { font-size: 1rem; font-weight: 700; line-height: 1.3; }
-    .deep-card p  { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.65; flex: 1; }
+        .tab-btn:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--text-primary);
+        }
 
-    /* ── RUOLI ── */
-    .roles-section { padding: 0 24px 96px; max-width: 1100px; margin: 0 auto; }
-    .roles-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-    .role-card {
-      border-radius: 14px; padding: 24px 18px; text-align: center;
-      border: 1px solid transparent; transition: transform 0.2s;
-    }
-    .role-card:hover { transform: translateY(-4px); }
-    .role-card .role-icon { font-size: 2rem; margin-bottom: 12px; }
-    .role-card h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
-    .role-card p  { font-size: 0.8rem; line-height: 1.5; }
-    .role-admin { background: rgba(220,38,38,0.1);  border-color: rgba(220,38,38,0.3); }
-    .role-admin h4, .role-admin .role-icon { color: #fca5a5; }
-    .role-admin p { color: #fca5a5; opacity: 0.7; }
-    .role-host  { background: rgba(37,99,235,0.1);  border-color: rgba(37,99,235,0.3); }
-    .role-host  h4, .role-host .role-icon { color: #93c5fd; }
-    .role-host  p { color: #93c5fd; opacity: 0.7; }
-    .role-phone { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); }
-    .role-phone h4, .role-phone .role-icon { color: #6ee7b7; }
-    .role-phone p { color: #6ee7b7; opacity: 0.7; }
-    .role-rose  { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); }
-    .role-rose  h4, .role-rose .role-icon { color: #fcd34d; }
-    .role-rose  p { color: #fcd34d; opacity: 0.7; }
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+        }
 
-    /* ── PRICING ── */
-    .pricing-section { padding: 0 24px 96px; max-width: 1100px; margin: 0 auto; }
-    .pricing-note {
-      text-align: center; font-size: 0.88rem; color: var(--text-muted);
-      margin-bottom: 48px; line-height: 1.6;
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 10px; padding: 14px 20px; max-width: 640px; margin-left: auto; margin-right: auto;
-    }
-    .pricing-note strong { color: var(--text-secondary); }
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
 
-    .pricing-group-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
-      text-transform: uppercase; color: var(--text-muted);
-      margin-bottom: 14px; padding-left: 2px;
-    }
-    .pricing-group { margin-bottom: 40px; }
+        .tab-content.active {
+            display: block;
+        }
 
-    .pricing-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .pricing-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 680px; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-    .price-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 24px;
-      display: flex; flex-direction: column; gap: 12px;
-      transition: border-color 0.2s, transform 0.2s; position: relative;
-    }
-    .price-card:hover { border-color: var(--border-glow); transform: translateY(-3px); }
-    .price-card.featured {
-      border-color: rgba(37,99,235,0.5);
-      background: linear-gradient(145deg, rgba(37,99,235,0.08) 0%, var(--bg-card) 100%);
-    }
-    .price-card.featured::before {
-      content: 'PIÙ POPOLARE';
-      position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
-      background: linear-gradient(135deg, var(--blue), #1d4ed8);
-      color: white; font-size: 9px; font-weight: 700; letter-spacing: 0.12em;
-      padding: 3px 12px; border-radius: 0 0 8px 8px;
-    }
-    .price-card-header { display: flex; align-items: flex-start; gap: 10px; }
-    .price-card-icon {
-      width: 36px; height: 36px; border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.1rem; flex-shrink: 0;
-    }
-    .pc-blue  { background: rgba(37,99,235,0.15); border: 1px solid rgba(37,99,235,0.3); }
-    .pc-green { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); }
-    .price-card-name { font-size: 0.88rem; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
-    .price-card-desc { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
-    .price-amount {
-      display: flex; align-items: baseline; gap: 4px;
-    }
-    .price-value {
-      font-size: 2rem; font-weight: 900; letter-spacing: -0.03em; color: var(--text-primary);
-    }
-    .price-value.free { color: var(--green); }
-    .price-period { font-size: 0.78rem; color: var(--text-muted); }
-    .price-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-    .price-tag {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
-      text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
-    }
-    .tag-free    { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
-    .tag-once    { background: rgba(37,99,235,0.12); color: #93c5fd; border: 1px solid rgba(37,99,235,0.25); }
-    .tag-annual  { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.25); }
-    .tag-banner  { background: rgba(100,116,139,0.15); color: #94a3b8; border: 1px solid rgba(100,116,139,0.25); }
-    .tag-nobanner{ background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.25); }
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
 
-    /* ── FAQ ── */
-    .faq-section { padding: 0 24px 96px; max-width: 760px; margin: 0 auto; }
-    .faq-list { display: flex; flex-direction: column; gap: 10px; }
-    .faq-item {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 12px; overflow: hidden;
-      transition: border-color 0.2s;
-    }
-    .faq-item.open { border-color: var(--border-glow); }
-    .faq-q {
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 16px; padding: 18px 20px; cursor: pointer;
-      user-select: none;
-    }
-    .faq-q span {
-      font-size: 0.92rem; font-weight: 600; color: var(--text-primary); line-height: 1.45;
-    }
-    .faq-chevron {
-      width: 20px; height: 20px; flex-shrink: 0;
-      border-right: 2px solid var(--text-muted); border-bottom: 2px solid var(--text-muted);
-      transform: rotate(45deg); margin-top: -4px;
-      transition: transform 0.25s, border-color 0.2s;
-    }
-    .faq-item.open .faq-chevron { transform: rotate(-135deg); margin-top: 4px; border-color: var(--blue-light); }
-    .faq-a {
-      max-height: 0; overflow: hidden;
-      transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1), padding 0.3s;
-      padding: 0 20px;
-    }
-    .faq-item.open .faq-a { max-height: 400px; padding: 0 20px 18px; }
-    .faq-a p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; }
+        .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-    /* ── HUB FUNZIONALE ── */
-    .hub-section { padding: 0 24px 120px; max-width: 480px; margin: 0 auto; }
-    .hub-header { text-align: center; margin-bottom: 32px; }
-    .hub-header h2 {
-      font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800;
-      letter-spacing: -0.02em; margin-bottom: 10px;
-    }
-    .hub-header p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
 
-    .hub-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 28px;
-    }
-    .hub-card h3 { color: var(--text-primary); font-size: 1.05rem; margin-bottom: 4px; }
-    .hub-card p  { color: var(--text-muted); font-size: 12px; margin-bottom: 18px; }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
 
-    .btn-create {
-      width: 100%; padding: 14px; border-radius: 8px; border: none;
-      background: linear-gradient(135deg, var(--blue), #1d4ed8);
-      color: white; font-family: 'Inter', sans-serif;
-      font-size: 15px; font-weight: 700; cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
-      box-shadow: 0 2px 16px rgba(37,99,235,0.3);
-    }
-    .btn-create:hover { opacity: 0.88; transform: translateY(-1px); }
+        @media (max-width: 900px) {
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .divider {
-      display: flex; align-items: center; gap: 10px; margin: 18px 0;
-      color: var(--text-muted); font-size: 11px; font-weight: 600; letter-spacing: 0.05em;
-    }
-    .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--border); }
+        /* ── Tablet (≤ 768px) ─────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .header { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.5rem; }
+            .header h1 { font-size: 1.1rem; }
+            .league-info { gap: 0.5rem; flex-wrap: wrap; }
+            .league-name { padding: 0.3rem 0.6rem; font-size: 0.85rem; }
+            .tab-btn { padding: 0.75rem 1rem; font-size: 0.82rem; }
+            .tab-content { padding: 1.25rem 1rem; }
+            .grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
+            .auction-control { gap: 0.6rem; }
+            .control-box { min-width: 140px; padding: 1rem; }
+            .control-box .value { font-size: 1.8rem; }
+            .stats-bar { flex-wrap: wrap; gap: 1rem; }
+            #toast { right: 1rem; left: 1rem; max-width: none; text-align: center; }
+        }
 
-    .input-row { display: flex; gap: 8px; }
-    input[type="text"] {
-      flex: 1; padding: 12px 14px; border-radius: 8px;
-      border: 1px solid var(--border); background: var(--bg-deep); color: #fff;
-      font-family: 'Inter', sans-serif; font-size: 16px;
-      text-transform: uppercase; letter-spacing: 3px; font-weight: 700;
-      transition: border-color 0.2s; outline: none;
-    }
-    input[type="text"]:focus { border-color: var(--blue-light); }
-    input[type="text"]::placeholder {
-      text-transform: none; letter-spacing: 0; font-weight: normal; color: var(--text-muted);
-    }
-    .btn-join {
-      padding: 12px 18px; border-radius: 8px; border: none;
-      background: var(--green); color: white;
-      font-family: 'Inter', sans-serif; font-weight: 700; font-size: 14px;
-      cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
-    }
-    .btn-join:hover { opacity: 0.85; }
+        /* ── Mobile (≤ 480px) ─────────────────────────────────────── */
+        @media (max-width: 480px) {
+            .header { padding: 0.6rem 0.75rem; }
+            .header h1 { display: none; }
+            .league-info > span:first-child { display: none; }
+            .tab-btn { padding: 0.7rem 0.55rem; font-size: 0; white-space: nowrap; }
+            .tab-btn::after { font-size: 0.68rem; font-weight: 600; }
+            .tab-btn[data-tab="tab-leghe"]::after    { content: "Leghe"; }
+            .tab-btn[data-tab="tab-squadre"]::after  { content: "Squadre"; }
+            .tab-btn[data-tab="tab-giocatori"]::after { content: "Gioc."; }
+            .tab-btn[data-tab="tab-asta"]::after     { content: "Asta"; }
+            .tab-btn[data-tab="tab-operazioni"]::after { content: "Op."; }
+            .tab-btn[data-tab="tab-config"]::after   { content: "Config"; }
+            .tab-btn[data-tab="tab-export"]::after   { content: "Export"; }
+            .tab-content { padding: 0.85rem 0.75rem; }
+            .card { padding: 0.9rem; margin-bottom: 1rem; }
+            .card-title { font-size: 0.95rem; margin-bottom: 0.75rem; }
+            .grid-4 { grid-template-columns: 1fr 1fr !important; gap: 0.75rem !important; }
+            .auction-control { flex-direction: column; gap: 0.5rem; }
+            .control-box { min-width: unset; width: 100%; padding: 0.85rem; display: flex; justify-content: space-between; align-items: center; text-align: left; border-radius: 8px; }
+            .control-box .value { font-size: 1.6rem; }
+            .control-box .label { font-size: 0.8rem; }
+            .btn { padding: 0.85rem 1rem; font-size: 0.9rem; min-height: 48px; }
+            .btn-block { width: 100%; }
+            input, select, textarea { font-size: 16px !important; padding: 0.85rem 0.9rem; min-height: 48px; }
+            table { font-size: 0.78rem; }
+            th, td { padding: 0.5rem 0.6rem; }
+            .table-scroll-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .review-grid-override { grid-template-columns: 1fr !important; }
+            .stats-bar { flex-direction: row; flex-wrap: wrap; gap: 0.75rem; padding: 0.75rem 0; }
+            .stat-value { font-size: 1.4rem; }
+            .stats-bar .stat-item { flex: 1; min-width: 80px; }
+            .toggle-container { flex-wrap: wrap; gap: 0.5rem; }
+            #bid-history-list { max-height: 180px; }
+            .header .btn-hub-mobile { font-size: 11px; padding: 0.35rem 0.7rem; }
+        }
 
-    .error-msg { color: #ef4444; font-size: 13px; margin-top: 8px; min-height: 18px; }
-    .spinner    { color: var(--blue-light); font-size: 13px; text-align: center; margin-top: 8px; display: none; }
+        /* Smooth scroll per tab bar su touch */
+        .tabs-nav { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .tabs-nav::-webkit-scrollbar { display: none; }
 
-    /* ── Scelta ruolo ── */
-    .room-badge {
-      background: var(--bg-card); border: 1px solid var(--border-glow);
-      border-radius: 12px; padding: 14px 20px;
-      display: flex; align-items: center; justify-content: space-between; gap: 12px;
-      margin-bottom: 16px;
-    }
-    .room-badge .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .room-badge .code  { font-size: 2rem; font-weight: 800; color: var(--blue-light); letter-spacing: 4px; }
-    .btn-copy {
-      padding: 8px 14px; border-radius: 6px;
-      border: 1px solid var(--border-glow); background: none; color: var(--blue-light);
-      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700;
-      cursor: pointer; transition: background 0.2s; white-space: nowrap;
-    }
-    .btn-copy:hover { background: rgba(56,189,248,0.1); }
-    .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .nav-btn {
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: 22px 10px; border-radius: 12px; border: none; cursor: pointer;
-      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      transition: transform 0.15s, opacity 0.2s; gap: 8px;
-    }
-    .nav-btn:hover  { opacity: 0.9; }
-    .nav-btn:active { transform: scale(0.97); }
-    .nav-btn .icon  { font-size: 26px; }
-    .btn-admin { background: linear-gradient(135deg, #dc2626, #b91c1c); color: #fff; }
-    .btn-host  { background: linear-gradient(135deg, #1d4ed8, #1e40af); color: #fff; }
-    .btn-phone { background: linear-gradient(135deg, #10b981, #047857); color: #fff; }
-    .btn-rose  { background: linear-gradient(135deg, #d97706, #b45309); color: #fff; }
-    .change-room {
-      margin-top: 16px; font-size: 12px; color: var(--text-muted);
-      text-align: center; cursor: pointer; transition: color 0.2s;
-    }
-    .change-room:hover { color: var(--text-secondary); }
+        /* Tap target minimo garantito per tutti i bottoni su mobile */
+        @media (max-width: 768px) {
+            .btn { min-height: 44px; }
+            input, select { min-height: 44px; font-size: 16px !important; }
+        }
 
-    .pin-badge {
-      background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.4);
-      border-radius: 8px; padding: 10px 16px; margin-bottom: 16px;
-    }
+        /* Spazio per quickbar mobile */
+        @media (max-width: 480px) {
+            #admin-main { padding-bottom: 68px; }
+        }
 
-    .hidden { display: none !important; }
+        /* Forms */
+        .form-group {
+            margin-bottom: 1rem;
+        }
 
-    /* ── MODALE ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(2,8,23,0.88); backdrop-filter: blur(6px);
-      z-index: 200; align-items: center; justify-content: center; padding: 24px;
-    }
-    .modal-overlay.open { display: flex; }
-    .modal-card {
-      background: var(--bg-card); border: 1px solid var(--border);
-      border-radius: 18px; padding: 30px; width: 100%; max-width: 380px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.6);
-    }
-    .modal-card h3 { font-size: 1.05rem; color: var(--text-primary); margin-bottom: 6px; }
-    .modal-card p  { font-size: 12px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.5; }
-    .modal-step { display: none; }
-    .modal-step.active { display: block; }
-    .access-input {
-      width: 100%; padding: 12px 14px; border-radius: 8px;
-      border: 1px solid var(--border); background: var(--bg-deep); color: #fff;
-      font-family: 'Inter', sans-serif; font-size: 16px; text-transform: uppercase;
-      letter-spacing: 2px; font-weight: 700; margin-bottom: 12px; outline: none;
-      transition: border-color 0.2s;
-    }
-    .access-input:focus { border-color: var(--blue-light); }
-    .access-input::placeholder { text-transform: none; letter-spacing: 0; font-weight: normal; color: var(--text-muted); }
-    input[type="number"].access-input { letter-spacing: 0; text-transform: none; font-size: 1.4rem; text-align: center; }
-    .btn-access-confirm {
-      width: 100%; padding: 13px; border-radius: 8px; border: none;
-      background: linear-gradient(135deg, var(--blue), #1d4ed8); color: white;
-      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
-      cursor: pointer; transition: opacity 0.2s;
-    }
-    .btn-access-confirm:hover { opacity: 0.85; }
-    .btn-access-cancel {
-      width: 100%; padding: 10px; border-radius: 8px; border: none;
-      background: none; color: var(--text-muted);
-      font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; margin-top: 8px;
-      transition: color 0.2s;
-    }
-    .btn-access-cancel:hover { color: var(--text-secondary); }
-    .access-error { color: #ef4444; font-size: 12px; margin-top: 4px; min-height: 16px; }
-    .paid-badge {
-      background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
-      border-radius: 8px; padding: 10px 14px; margin-bottom: 14px;
-      font-size: 12px; color: var(--amber); text-align: center; line-height: 1.5;
-    }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
 
-    /* ── FOOTER ── */
-    .footer {
-      border-top: 1px solid var(--border); padding: 28px 24px;
-      text-align: center; color: var(--text-muted); font-size: 12px;
-    }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
 
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; } 50% { opacity: 0.4; }
-    }
-    @keyframes bounce {
-      0%, 100% { transform: rotate(45deg) translateY(0); }
-      50%       { transform: rotate(45deg) translateY(5px); }
-    }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 960px) {
-      .pricing-grid-3 { grid-template-columns: 1fr 1fr; }
-      .deep-grid { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 768px) {
-      .navbar { padding: 14px 20px; }
-      .navbar-logo { height: 30px; }
-      .navbar-links { display: none; }
-      .steps-grid { grid-template-columns: 1fr; }
-      .steps-grid::before { display: none; }
-      .features-grid { grid-template-columns: 1fr; }
-      .roles-grid { grid-template-columns: 1fr 1fr; }
-      .btn-nav-enter { display: none; }
-      .pricing-grid-3, .pricing-grid-2 { grid-template-columns: 1fr; max-width: 100%; }
-    }
-    @media (max-width: 480px) {
-      .hero-actions { flex-direction: column; align-items: center; }
-      .btn-hero-primary, .btn-hero-secondary { width: 100%; max-width: 320px; }
-    }
-    @media (max-width: 360px) {
-      .nav-grid { grid-template-columns: 1fr; }
-      .room-badge .code { font-size: 1.5rem; letter-spacing: 2px; }
-    }
-  </style>
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--success-dark);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: #1e293b;
+        }
+
+        .btn-warning:hover {
+            background: var(--warning-dark);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-dark);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg-input);
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        tr:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        /* Status Indicators */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .status-paused {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .status-stopped {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* Auction Control Panel */
+        .auction-control {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-box {
+            background: var(--bg-input);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 200px;
+            flex: 1;
+        }
+
+        .control-box .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .control-box .label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-input);
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--success);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        /* Alert Box */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Player List */
+        .player-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .player-item:hover {
+            background: var(--border);
+        }
+
+        .player-item .role {
+            background: var(--primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .player-item .club {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Team Cards */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .team-card {
+            background: var(--bg-input);
+            border-radius: 12px;
+            padding: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .team-card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-budget {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--success);
+        }
+
+        .team-slots {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .slot-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .slot-P { background: #fbbf24; color: #1e293b; }
+        .slot-D { background: #22c55e; color: white; }
+        .slot-C { background: #3b82f6; color: white; }
+        .slot-A { background: #ef4444; color: white; }
+
+        /* File Upload */
+        .file-upload {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Notification Toast */
+        #toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+            max-width: 400px;
+        }
+
+        #toast.show {
+            display: block;
+            animation: toastSlide 0.3s ease;
+        }
+
+        @keyframes toastSlide {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Storico offerte */
+        .bid-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            margin-bottom: 0.35rem;
+            font-size: 0.9rem;
+        }
+        .bid-row:nth-child(odd)  { background: rgba(37,99,235,0.07); }
+        .bid-row:nth-child(even) { background: rgba(255,255,255,0.03); }
+        .bid-row.bid-winner      { background: rgba(16,185,129,0.12); border-left: 3px solid var(--success); }
+        .bid-row .bid-num        { font-size: 0.72rem; color: var(--text-secondary); min-width: 24px; }
+        .bid-row .bid-team       { font-weight: 600; flex: 1; padding: 0 0.5rem; }
+        .bid-row .bid-price      { font-weight: 700; color: var(--success); }
+
+        /* Pulse animation per il pannello revisione */
+        @keyframes reviewPulse {
+            0%   { box-shadow: 0 0 0 0 rgba(245,158,11,0.4); }
+            70%  { box-shadow: 0 0 0 10px rgba(245,158,11,0); }
+            100% { box-shadow: 0 0 0 0 rgba(245,158,11,0); }
+        }
+        #review-panel.pulse { animation: reviewPulse 1s ease 3; }
+
+        @keyframes pulse-dot {
+          0%, 100% { opacity: 1; transform: scale(1); }
+          50%       { opacity: 0.4; transform: scale(0.7); }
+        }
+    </style>
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar" id="navbar">
-    <img src="/DraftARENA.png" alt="DraftARENA" class="navbar-logo">
-    <div class="navbar-links">
-      <a href="#come-funziona">Come funziona</a>
-      <a href="#prezzi">Prezzi</a>
-      <a href="#faq">FAQ</a>
+  <!-- PIN GATE ──────────────────────────────────────────────────────────── -->
+  <div id="pin-gate" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;flex-direction:column;">
+    <div style="background:#1e293b;border:1px solid #f59e0b;border-radius:14px;padding:32px;width:320px;max-width:90%;text-align:center;">
+      <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
+      <h3 style="color:#f59e0b;margin:0 0 4px 0;">PIN Regia</h3>
+      <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;">Inserisci il PIN che hai ricevuto alla creazione della stanza.</p>
+      <input id="pin-gate-input" type="text" maxlength="4" inputmode="numeric" placeholder="----"
+        style="width:100%;box-sizing:border-box;padding:12px;font-size:1.5rem;text-align:center;letter-spacing:0.3em;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#fff;margin-bottom:8px;">
+      <div class="pin-gate-error" style="color:#ef4444;font-size:12px;min-height:18px;margin-bottom:8px;"></div>
+      <button onclick="submitPinGate()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">ENTRA</button>
     </div>
-    <div class="navbar-cta">
-      <button class="btn-nav-enter" onclick="scrollToHub()">Entra in una stanza</button>
-      <button class="btn-nav-create" onclick="apriModaleCreazione()">+ Crea stanza</button>
-    </div>
-  </nav>
+  </div>
+  <!-- ROOM GATE ─────────────────────────────────────────────────────────── -->
+  <div id="room-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0f172a;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;">
+    <div style="background:#1e293b;border:1px solid #334155;border-radius:14px;padding:32px;width:360px;max-width:90%;">
+      <h2 style="color:#38bdf8;margin:0 0 4px 0;font-size:1.4rem;">DraftARENA</h2>
+      <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;">Pannello Amministratore</p>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-glow2"></div>
-    <img src="/DraftARENA.png" alt="DraftARENA" class="hero-logo">
-    <div class="hero-badge"><span class="dot"></span>Asta in tempo reale</div>
-    <h1 class="hero-title">
-      L'asta del fantacalcio<br>come non l'hai mai <span class="accent">vissuta</span>
-    </h1>
-    <p class="hero-sub">
-      Timer live, rilanci dal telefono, schermata TV per tutti. Organizza l'asta della tua lega in pochi secondi — gratis, senza installazioni.
-    </p>
-    <div class="hero-actions">
-      <button class="btn-hero-primary" onclick="apriModaleCreazione()">+ Crea una stanza</button>
-      <button class="btn-hero-secondary" onclick="scrollToHub()">Entra in una stanza</button>
-    </div>
-    <div class="hero-scroll">
-      <span>Scopri di più</span>
-      <div class="scroll-arrow"></div>
-    </div>
-  </section>
-
-  <!-- COME FUNZIONA -->
-  <div class="section" id="come-funziona">
-    <div class="section-label">Come funziona</div>
-    <h2 class="section-title">Tre passi, un'asta perfetta</h2>
-    <p class="section-sub">Nessuna installazione. Funziona su qualsiasi dispositivo dal browser.</p>
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-num blue">🎮</div>
-        <div class="step-tag blue">Admin — Regia</div>
-        <h3>Crea e controlla</h3>
-        <p>Carica la lista giocatori, imposta i budget e gestisci l'asta in tempo reale. Metti il giocatore all'asta, avvia il timer, aggiudica.</p>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice (es: ABC123)"
+          style="flex:1;padding:11px 12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:15px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
+        <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;white-space:nowrap;">ENTRA</button>
       </div>
-      <div class="step-card">
-        <div class="step-num blue">📺</div>
-        <div class="step-tag blue">Host — TV</div>
-        <h3>Proietta in sala</h3>
-        <p>Apri la schermata TV sul grande schermo o proiettore. Mostra il giocatore in asta, il timer e le offerte in diretta a tutti i partecipanti.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num green">📱</div>
-        <div class="step-tag green">Squadre — Buzzer</div>
-        <h3>Rilancia dal telefono</h3>
-        <p>Ogni fantasquadra usa il proprio smartphone come buzzer. Un tap per rilanciare, in tempo reale, senza app da installare.</p>
+      <div id="gate-error" style="color:#ef4444;font-size:12px;margin-top:4px;min-height:16px;"></div>
+      <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:4px;display:none;">Connessione in corso...</div>
+      <div style="border-top:1px solid #1c2541;margin-top:14px;padding-top:12px;text-align:center;">
+        <a href="/#hub" style="color:#475569;font-size:12px;text-decoration:none;">Non hai ancora una stanza? <span style="color:#38bdf8;font-weight:bold;">Creane una dall'Hub →</span></a>
       </div>
     </div>
   </div>
 
-  <!-- FEATURES -->
-  <div class="features-section">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">Funzionalità</div>
-    <h2 class="section-title">Tutto quello che serve per un'asta seria</h2>
-    <p class="section-sub">Progettato per leghe vere, con le funzioni che contano davvero.</p>
-    <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon">⏱</div><div><h4>Timer live sincronizzato</h4><p>Countdown visibile su tutti i dispositivi in tempo reale. Nessun "quanto manca?" in sala.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">📊</div><div><h4>Storico offerte in diretta</h4><p>Ogni rilancio appare istantaneamente su tutti gli schermi. Trasparenza totale durante l'asta.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">📋</div><div><h4>Le rose aggiornate</h4><p>Ogni squadra vede la propria rosa e il budget residuo aggiornati dopo ogni acquisto.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">📁</div><div><h4>Export Excel</h4><p>A fine asta esporta tutti i risultati in un file Excel con un click. Pronto per il tuo foglio lega.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">📱</div><div><h4>Solo browser, niente app</h4><p>Funziona su qualsiasi smartphone dal browser. Basta aprire il link e inserire il codice stanza.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">🔒</div><div><h4>Stanza privata con codice</h4><p>Ogni asta ha un codice univoco a 6 caratteri. Solo chi ha il codice può entrare nella stanza.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">🏆</div><div><h4>Albo d'Oro della lega</h4><p>Archivia classifica e coppe di ogni stagione. Il medagliere cresce anno dopo anno, accessibile a tutti.</p></div></div>
-    </div>
-  </div>
+  <div id="admin-main" style="display:none;">
 
-  <!-- APPROFONDIMENTI TECNICI -->
-  <div class="deep-section">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">Sotto il cofano</div>
-    <h2 class="section-title">La tecnologia che fa la differenza</h2>
-    <p class="section-sub">Architettura progettata per non sbagliare un colpo, nemmeno il giorno dell'asta.</p>
-    <div class="deep-grid">
-      <div class="deep-card">
-        <div class="deep-card-icon blue">🗂</div>
-        <h3>Gestione Mantra</h3>
-        <p>DraftARENA non è solo per il Fantacalcio. La nostra architettura flessibile consente il caricamento di database personalizzati per qualsiasi sport. Grazie al sistema di "Role Mapping", puoi definire i ruoli (P, D, C, A o personalizzati) e impostare le regole della tua lega in pochi clic. Il database indicizza automaticamente i giocatori e le loro quotazioni, offrendoti un ambiente di lavoro sempre pulito e pronto all'uso.</p>
-      </div>
-      <div class="deep-card">
-        <div class="deep-card-icon green">⚡</div>
-        <h3>Aste in Tempo Reale</h3>
-        <p>Dimentica i fogli di carta e gli errori manuali. Il sistema utilizza i protocolli WebSocket per garantire una sincronizzazione in millisecondi: ogni rilancio o assegnazione effettuata dal Commander viene visualizzata istantaneamente su tutti i dispositivi dei partecipanti. Questa tecnologia elimina il ritardo di comunicazione, garantendo un'asta fluida, competitiva e priva di malintesi, ovunque tu sia.</p>
-      </div>
-      <div class="deep-card">
-        <div class="deep-card-icon amber">📤</div>
-        <h3>Export Intelligente</h3>
-        <p>La gestione dei dati non finisce con il martelletto dell'asta. Al termine di ogni sessione, DraftARENA ti offre un report completo in formato Excel/CSV. Questo file include non solo le rose definitive di ogni squadra, ma anche il dettaglio dei crediti spesi e quelli rimanenti. Uno strumento indispensabile per monitorare l'andamento finanziario della tua lega e importare le rose direttamente nei portali di gioco ufficiali.</p>
-      </div>
-      <div class="deep-card">
-        <div class="deep-card-icon gold">🏆</div>
-        <h3>Storico Lega & Albo d'Oro</h3>
-        <p>Ogni stagione diventa un capitolo nella storia della tua lega. Dopo l'asta, il Commander arricchisce il backup con la classifica finale e i titoli vinti: Campionato, Champions League, Coppa Italia, Cucchiaio di Legno e qualsiasi competizione personalizzata. L'Albo d'Oro aggrega tutti i trionfi in un medagliere visuale accessibile a tutti — uno storico permanente che cresce anno dopo anno.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- I RUOLI -->
-  <div class="roles-section">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">I ruoli</div>
-    <h2 class="section-title">Una stanza, quattro viste</h2>
-    <p class="section-sub">Ogni partecipante accede alla vista giusta per il proprio ruolo.</p>
-    <div class="roles-grid">
-      <div class="role-card role-admin"><div class="role-icon">🎮</div><h4>Regia</h4><p>Controllo completo dell'asta. Solo per l'amministratore.</p></div>
-      <div class="role-card role-host"><div class="role-icon">📺</div><h4>TV Host</h4><p>Schermata per proiettore o TV. Mostra tutto in sala.</p></div>
-      <div class="role-card role-phone"><div class="role-icon">📱</div><h4>Buzzer</h4><p>Lo smartphone di ogni squadra. Un tap per rilanciare.</p></div>
-      <div class="role-card role-rose"><div class="role-icon">📋</div><h4>Le Rose</h4><p>Vista rosa e budget di tutte le squadre in tempo reale.</p></div>
-    </div>
-  </div>
-
-  <!-- PIANI E PREZZI -->
-  <div class="pricing-section" id="prezzi">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">Piani e Prezzi</div>
-    <h2 class="section-title">Scegli il piano giusto per la tua lega</h2>
-    <p class="section-sub">Flexible per ogni tipo di asta. Gratis per iniziare, accessibile per crescere.</p>
-
-    <div class="pricing-note">
-      <strong>Il modello flessibile di DraftARENA garantisce un'asta fluida per tutti.</strong><br>
-      Gli abbonamenti hanno valore annuale. Le aste singole si acquistano all'occorrenza.
+    <!-- Banner di connessione (visibile solo quando disconnesso) -->
+    <div id="conn-banner" style="display:none;background:#7f1d1d;color:#fecaca;
+         padding:10px 20px;font-size:0.85rem;font-weight:bold;text-align:center;
+         position:sticky;top:0;z-index:200;border-bottom:2px solid #ef4444;">
+      ⚠️ Connessione persa — riconnessione in corso...
+      <button onclick="location.reload()"
+        style="margin-left:16px;background:#ef4444;border:none;color:#fff;
+               padding:3px 10px;border-radius:4px;cursor:pointer;font-weight:bold;font-size:0.8rem;">
+        Ricarica
+      </button>
     </div>
 
-    <div class="pricing-group">
-      <div class="pricing-group-label">Commander — Chi organizza l'asta</div>
-      <div class="pricing-grid-3">
+    <!-- Header -->
+    <header class="header">
+        <div style="display:flex; align-items:center; gap:1rem;">
+            <a href="/#hub" class="btn-hub-mobile" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border:1px solid var(--border); border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'">← Hub</a>
+            <img src="/DraftARENAws.png" alt="DraftARENA" style="height:30px;max-height:30px;">
+        </div>
+        <div class="league-info">
+            <div style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:8px;">
+              <span style="font-size:11px;color:#64748b;">STANZA</span>
+              <span id="room-code-display" style="font-weight:bold;color:#38bdf8;letter-spacing:2px;font-size:1rem;">---</span>
+              <button onclick="copiaCodice()" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-size:11px;padding:0;font-weight:bold;" title="Copia codice">COPIA</button>
+            </div>
+            <span>Lega:</span>
+            <span class="league-name" id="currentLeagueName">default</span>
+        </div>
+    </header>
 
-        <div class="price-card">
-          <div class="price-card-header">
-            <div class="price-card-icon pc-green">🎮</div>
-            <div>
-              <div class="price-card-name">Commander Free</div>
-              <div class="price-card-desc">Fino a 8 squadre</div>
+    <!-- Tabs Navigation -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab-leghe">Gestione Leghe</button>
+        <button class="tab-btn" data-tab="tab-squadre">Squadre</button>
+        <button class="tab-btn" data-tab="tab-giocatori">Lista Giocatori</button>
+        <button class="tab-btn" data-tab="tab-asta">Controlli Asta</button>
+        <button class="tab-btn" data-tab="tab-operazioni">Operazioni Speciali</button>
+        <button class="tab-btn" data-tab="tab-config">Configurazione</button>
+        <button class="tab-btn" data-tab="tab-export">Export</button>
+    </nav>
+
+    <!-- Alert Container -->
+    <div style="padding: 1rem 2rem 0;">
+        <div class="alert alert-success" id="alertSuccess"></div>
+        <div class="alert alert-error" id="alertError"></div>
+        <div class="alert alert-warning" id="alertWarning"></div>
+    </div>
+
+    <!-- TAB 1: Gestione Leghe -->
+    <div class="tab-content active" id="tab-leghe">
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title">Crea Nuova Lega</h3>
+                <div class="form-group">
+                    <label>Nome Lega</label>
+                    <input type="text" id="newLeagueName" placeholder="Es: lega-2024">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="createNewLeague()">Crea Lega</button>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Cambia Lega Attiva</h3>
+                <div class="form-group">
+                    <label>Seleziona Lega</label>
+                    <input type="text" id="switchLeagueName" placeholder="Nome lega da caricare">
+                </div>
+                <button class="btn btn-warning btn-block" onclick="switchLeague()">Carica Lega</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Salvataggio & Reset</h3>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+                <button class="btn btn-success" onclick="saveSession()">💾 Salva Sessione</button>
+                <button class="btn btn-secondary" onclick="loadSession()">🔄 Ricarica Sessione</button>
+                <button class="btn btn-danger" onclick="resetAll()">Reset Completo</button>
+            </div>
+            <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+                <span id="auto-save-badge"
+                      style="display:inline-flex;align-items:center;gap:5px;font-size:0.8rem;
+                             background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);
+                             color:#10b981;padding:4px 10px;border-radius:20px;">
+                  <span style="width:7px;height:7px;background:#10b981;border-radius:50%;
+                               animation:pulse-dot 2s infinite;"></span>
+                  Auto-save attivo
+                </span>
+                <span id="last-saved-label"
+                      style="font-size:0.8rem;color:var(--text-secondary);">
+                  Ultimo salvataggio: —
+                </span>
+            </div>
+        </div>
+
+        <!-- BACKUP ASTA ─────────────────────────────────────────────────────── -->
+        <div class="card">
+            <h3 class="card-title">📦 Backup Asta</h3>
+
+            <!-- Esporta -->
+            <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
+                        border-radius:8px;padding:14px;margin-bottom:14px;">
+                <div style="font-weight:600;color:#10b981;margin-bottom:6px;font-size:0.9rem;">
+                    Esporta backup completo
+                </div>
+                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
+                    Scarica un file JSON con tutte le squadre, rose e parametri dell'asta.
+                    Conservalo sul tuo PC per riutilizzarlo l'anno prossimo.
+                </p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <input type="number" id="backup-year" placeholder="Anno (es. 2026)"
+                           style="width:140px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
+                                  background:var(--bg-input);color:var(--text-primary);font-size:0.88rem;">
+                    <input type="text" id="backup-label" placeholder="Etichetta (es. Fantacalcio 2026)"
+                           style="flex:1;min-width:180px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
+                                  background:var(--bg-input);color:var(--text-primary);font-size:0.88rem;">
+                    <button class="btn btn-success" style="white-space:nowrap;" onclick="esportaBackup()">
+                        ⬇️ Scarica Backup
+                    </button>
+                    <button class="btn" style="white-space:nowrap;background:rgba(56,189,248,0.15);
+                            color:#38bdf8;border:1px solid rgba(56,189,248,0.3);" onclick="salvaBackupStoico()">
+                        📚 Salva nello Storico
+                    </button>
+                </div>
+                <p style="font-size:0.78rem;color:#64748b;margin-top:8px;">
+                    "Salva nello Storico" carica il backup sul server così sarà visibile nella pagina Rose.
+                </p>
+            </div>
+
+            <!-- Importa -->
+            <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);
+                        border-radius:8px;padding:14px;">
+                <div style="font-weight:600;color:#f59e0b;margin-bottom:6px;font-size:0.9rem;">
+                    Importa backup (nuovo anno)
+                </div>
+                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
+                    Carica un backup dell'anno precedente per ritrovare subito squadre e parametri già impostati.
+                    Le rose vengono azzerate, il budget ripristinato al valore iniziale.
+                </p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <label style="flex:1;min-width:200px;display:flex;align-items:center;gap:8px;
+                                  padding:7px 10px;border-radius:6px;border:1px dashed var(--border);
+                                  background:var(--bg-input);cursor:pointer;font-size:0.85rem;color:var(--text-secondary);">
+                        <input type="file" id="backup-file-input" accept=".json"
+                               style="display:none;" onchange="previewBackupFile(this)">
+                        <span id="backup-file-label">📂 Seleziona file .json...</span>
+                    </label>
+                    <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaBackupConfig()">
+                        ⬆️ Carica Configurazione
+                    </button>
+                </div>
+                <div id="backup-preview" style="display:none;margin-top:10px;padding:10px;
+                     background:rgba(245,158,11,0.08);border-radius:6px;font-size:0.82rem;">
+                </div>
+            </div>
+        </div>
+
+        <!-- STORICO LEGA & ALBO D'ORO ──────────────────────────────────────── -->
+        <div class="card" id="card-storico-lega">
+            <h3 class="card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                🏆 Storico Lega
+                <button onclick="apriAlbo()" style="font-size:0.78rem;padding:5px 12px;background:rgba(245,158,11,0.15);
+                        color:#f59e0b;border:1px solid rgba(245,158,11,0.35);border-radius:6px;cursor:pointer;
+                        font-weight:600;transition:opacity 0.2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+                    🥇 Apri Albo d'Oro
+                </button>
+            </h3>
+            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;">
+                Aggiungi classifica finale e competizioni vinte a ogni backup storico per costruire l'Albo d'Oro della tua lega.
+            </p>
+            <div id="storico-lega-list">
+                <p style="font-size:0.85rem;color:var(--text-secondary);text-align:center;padding:10px 0;">
+                    Carica i backup storici per gestire lo storico...
+                </p>
+            </div>
+            <button onclick="caricaStoricoLega()" style="margin-top:10px;width:100%;padding:8px;background:rgba(56,189,248,0.1);
+                    color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;font-weight:600;
+                    font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+                🔄 Aggiorna lista stagioni
+            </button>
+        </div>
+    </div>
+
+    <!-- TAB 2: Squadre -->
+    <div class="tab-content" id="tab-squadre">
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title">Crea Nuova Squadra</h3>
+                <div class="form-group">
+                    <label>Nome Squadra</label>
+                    <input type="text" id="newTeamName" placeholder="Nome della fantasquadra">
+                </div>
+                <button class="btn btn-primary btn-block" onclick="createTeam()">Aggiungi Squadra</button>
+                <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+                    Budget iniziale: <strong id="startingBudgetDisplay">500</strong> crediti
+                </p>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Statistiche Lega</h3>
+                <div class="stats-bar" style="flex-direction: column; gap: 0.5rem;">
+                    <div class="stat-item">
+                        <div class="stat-value" id="statTeams">0</div>
+                        <div class="stat-label">Squadre</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statSold">0</div>
+                        <div class="stat-label">Giocatori Venduti</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statRemaining">0</div>
+                        <div class="stat-label">Giocatori Rimanenti</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Elenco Squadre</h3>
+            <div class="team-grid" id="teamsContainer">
+                <p style="color: var(--text-secondary);">Nessuna squadra creata</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Lista Giocatori -->
+    <div class="tab-content" id="tab-giocatori">
+        <div class="grid-2">
+            <!-- Upload Excel -->
+            <div class="card">
+                <h3 class="card-title">Carica Lista Excel</h3>
+                <div class="form-group">
+                    <label>Soglia Minima Quotazione</label>
+                    <input type="number" id="sogliaMinima" value="0" min="0" placeholder="Filtra giocatori sotto questo valore">
+                </div>
+                <div class="file-upload" onclick="document.getElementById('excelFile').click()">
+                    <div class="upload-icon">📊</div>
+                    <p>Trascina il file Excel o clicca per selezionare</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                        Colonne richieste: Nome, Ruolo, Squadra, Valore
+                    </p>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="uploadExcel()">
+                </div>
+            </div>
+
+            <!-- Aggiunta Manuale -->
+            <div class="card">
+                <h3 class="card-title">Aggiungi Giocatore Manualmente</h3>
+                <div class="form-group">
+                    <label>Nome Giocatore</label>
+                    <input type="text" id="manualPlayerName" placeholder="Nome e cognome">
+                </div>
+                <div class="form-group">
+                    <label>Ruolo Mantra</label>
+                    <select id="manualPlayerRole">
+                        <option value="P">P - Portiere</option>
+                        <option value="DC">DC - Difensore Centrale</option>
+                        <option value="DD">DD - Difensore Destro</option>
+                        <option value="DS">DS - Difensore Sinistro</option>
+                        <option value="B">B - Terzino</option>
+                        <option value="C">C - Centrocampista</option>
+                        <option value="M">M - Mediano</option>
+                        <option value="E">E - Esterno</option>
+                        <option value="T">T - Trequartista</option>
+                        <option value="W">W - Ala</option>
+                        <option value="A">A - Attaccante</option>
+                        <option value="PC">PC - Punta Centrale</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Squadra di Appartenenza</label>
+                    <input type="text" id="manualPlayerClub" placeholder="Serie A team">
+                </div>
+                <button class="btn btn-success btn-block" onclick="addManualPlayer()">Aggiungi al Mazzo</button>
+            </div>
+        </div>
+
+        <!-- Lista Giocatori Rimanenti -->
+        <div class="card">
+            <h3 class="card-title">
+                Giocatori nel Mazzo (<span id="playersCount">0</span>)
+                <button class="btn btn-secondary" style="margin-left: auto; padding: 0.5rem 1rem;" onclick="refreshPlayersList()">Aggiorna</button>
+            </h3>
+            <div class="player-list" id="playersListContainer">
+                <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                    Carica un file Excel per popolare la lista
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: Controlli Asta -->
+    <div class="tab-content" id="tab-asta">
+        <div class="card">
+            <h3 class="card-title">Stato Asta Corrente</h3>
+            <div class="auction-control">
+                <div class="control-box">
+                    <div class="value" id="displayPlayerName">---</div>
+                    <div class="label">Giocatore in Asta</div>
+                </div>
+                <div class="control-box">
+                    <div class="value" id="displayPrice">0</div>
+                    <div class="label">Offerta Attuale</div>
+                </div>
+                <div class="control-box">
+                    <div class="value" id="displayTimer">--</div>
+                    <div class="label">Timer</div>
+                </div>
+                <div class="control-box">
+                    <div class="value" id="displayBidder">---</div>
+                    <div class="label">Miglior Offerente</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h3 class="card-title">Avvia Asta</h3>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <button class="btn btn-success btn-block" onclick="startRandomAuction()">
+                        🎲 Estrazione Random
+                    </button>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin:0;">Estrae un giocatore a caso dal mazzo</p>
+                    <label style="color: var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Selezione Manuale</label>
+                    <select id="manualPlayerSelect">
+                        <option value="">Seleziona giocatore...</option>
+                    </select>
+                    <button class="btn btn-primary btn-block" onclick="startManualAuction()">Lancia Giocatore</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Controlli</h3>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <button class="btn btn-danger btn-block" onclick="pauseAuction()">⏸ PAUSA</button>
+                    <button class="btn btn-success btn-block" onclick="resumeAuction()">▶ RIPRENDI</button>
+                    <div class="toggle-container" style="margin-top:0.5rem;">
+                        <span style="font-size:0.85rem;">Flusso Manuale</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoAdvanceToggle" checked onchange="toggleAutoAdvance(this.checked)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:0.85rem;">Automatico</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin:0;">
+                        Automatico: estrae il prossimo giocatore dopo ogni vendita
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Storico offerte live -->
+        <div class="card" id="bid-history-card">
+            <h3 class="card-title">
+                📋 Storico Offerte
+                <span id="bid-history-badge" style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);font-weight:normal;">in attesa di asta...</span>
+            </h3>
+            <div id="bid-history-list" style="max-height:220px;overflow-y:auto;">
+                <p style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:1rem 0;">
+                    Nessuna offerta ancora — avvia un'asta per vedere lo storico in tempo reale.
+                </p>
+            </div>
+        </div>
+
+        <!-- Pannello revisione post-asta -->
+        <div class="card" id="review-panel" style="display:none;border:2px solid var(--warning);">
+            <h3 class="card-title" style="color:var(--warning);">
+                ⚡ Revisione Asta — <span id="review-player-name">---</span>
+            </h3>
+            <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+                L'asta si è conclusa. Controlla lo storico e decidi se confermare l'assegnazione o modificarla.
+            </p>
+
+            <div style="background:var(--bg-input);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;">Storico completo offerte</div>
+                <div id="review-history-list" style="max-height:180px;overflow-y:auto;"></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.75rem;align-items:end;" class="review-grid-override">
+                <div class="form-group" style="margin:0;">
+                    <label>Assegna a squadra</label>
+                    <select id="review-team-select">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                    <label>Prezzo finale (cr)</label>
+                    <input type="number" id="review-price-input" min="0" value="0">
+                </div>
+                <button class="btn btn-warning" onclick="confermaRiassegnazione()" style="height:fit-content;">
+                    ✅ Riassegna
+                </button>
+            </div>
+
+            <div style="margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
+                <button class="btn btn-success" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;">
+                    ✓ Conferma assegnazione originale
+                </button>
+                <button class="btn btn-secondary" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;">
+                    Chiudi senza modifiche
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 5: Operazioni Speciali -->
+    <div class="tab-content" id="tab-operazioni">
+        <div class="grid-2">
+            <!-- Assegnazione Forzata -->
+            <div class="card">
+                <h3 class="card-title">Assegnazione Forzata</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                    Assegna il giocatore corrente a una squadra specifica
+                </p>
+                <div class="form-group">
+                    <label>Squadra Destinataria</label>
+                    <select id="forceAssignTeam">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prezzo di Vendita</label>
+                    <input type="number" id="forceAssignPrice" value="1" min="1">
+                </div>
+                <button class="btn btn-warning btn-block" onclick="forceAssignPlayer()">Assegna Forzatamente</button>
+            </div>
+
+            <!-- Assegnazione Manuale con Ricerca -->
+            <div class="card">
+                <h3 class="card-title">Assegna Giocatore a Squadra</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                    Cerca un giocatore dal mazzo e assegnalo direttamente a una squadra senza passare dall'asta
+                </p>
+                <div class="form-group">
+                    <label>Cerca Giocatore</label>
+                    <input type="text" id="manualAssignSearch" placeholder="Nome giocatore..." oninput="filtraGiocatoriAssegnazione()">
+                </div>
+                <div id="manualAssignResults" style="max-height:140px;overflow-y:auto;background:var(--bg-input);border-radius:8px;margin-bottom:0.75rem;border:1px solid var(--border);display:none;"></div>
+                <div class="form-group">
+                    <label>Giocatore Selezionato</label>
+                    <input type="text" id="manualAssignPlayerDisplay" placeholder="Nessun giocatore selezionato" readonly style="background:var(--bg-main);color:var(--warning);font-weight:bold;">
+                    <input type="hidden" id="manualAssignPlayerData">
+                </div>
+                <div class="form-group">
+                    <label>Squadra Destinataria</label>
+                    <select id="manualAssignTeam">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prezzo di Vendita (cr)</label>
+                    <input type="number" id="manualAssignPrice" value="1" min="1">
+                </div>
+                <button class="btn btn-success btn-block" onclick="manualAssignPlayer()">Assegna Giocatore</button>
+            </div>
+        </div>
+
+        <!-- Giro di Gara -->
+        <div class="card">
+            <h3 class="card-title">Giro di Gara</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                Riporta i giocatori invenduti nel mazzo per un nuovo giro
+            </p>
+            <button class="btn btn-primary btn-block" onclick="recycleUnsold()">Avvia Giro di Gara</button>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning);">
+                Utile quando il mazzo finisce ma ci sono giocatori invenduti
+            </p>
+        </div>
+
+        <!-- Rimozione Giocatore -->
+        <div class="card">
+            <h3 class="card-title">Rimuovi Giocatore da Rosa (con Rimborso)</h3>
+            <div class="grid-3">
+                <div class="form-group">
+                    <label>Squadra</label>
+                    <select id="removePlayerTeam">
+                        <option value="">Seleziona squadra...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Giocatore</label>
+                    <select id="removePlayerName">
+                        <option value="">Seleziona giocatore...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Crediti da Restituire</label>
+                    <input type="number" id="removePlayerCredits" value="0" min="0">
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                        Il giocatore torna nel mazzo
+                    </p>
+                </div>
+            </div>
+            <button class="btn btn-danger" onclick="removePlayerFromTeam()">Rimuovi Giocatore</button>
+        </div>
+
+        <!-- Scarta dal Mazzo -->
+        <div class="card">
+            <h3 class="card-title">Scarta Giocatore dal Mazzo</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Giocatore da Scartare</label>
+                    <select id="discardPlayerSelect">
+                        <option value="">Seleziona giocatore...</option>
+                    </select>
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button class="btn btn-danger btn-block" onclick="discardPlayer()">Scarta Definitivamente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 6: Configurazione -->
+    <div class="tab-content" id="tab-config">
+        <div class="card">
+            <h3 class="card-title">Impostazioni Timer</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Durata Timer (secondi)</label>
+                    <input type="number" id="configTimerDuration" value="10" min="5" max="60">
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <button class="btn btn-primary" onclick="updateTimerConfig()">Aggiorna Timer</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Connessione Telefono (QR Code)</h3>
+            <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 0.5rem 0;">
+                URL usato per il QR: <b id="detectedIpDisplay" style="color: var(--accent);">rilevamento automatico...</b>
+            </p>
+            <p style="color: #f59e0b; font-size: 11px; margin: 0 0 1rem 0; line-height: 1.5;">
+                Il server gira nell'ambiente Bolt, <b>non sul tuo PC</b>. Il telefono si connette tramite l'URL pubblico del browser, non tramite IP locale. L'URL viene rilevato automaticamente quando apri questa pagina.
+            </p>
+            <div class="form-group">
+                <label>URL override (solo se necessario)</label>
+                <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" id="configHostUrl" placeholder="es. https://3000-xxxx.bolt.new" style="flex: 1;">
+                    <button class="btn btn-primary" style="white-space: nowrap;" onclick="saveHostUrl()">Applica</button>
+                    <button class="btn btn-secondary" style="white-space: nowrap;" onclick="resetHostUrl()">Auto</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Regole Mantra</h3>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Budget Iniziale (crediti)</label>
+                    <input type="number" id="configStartingBudget" value="500" min="100">
+                </div>
+                <div class="form-group">
+                    <label>Max Giocatori Totali</label>
+                    <input type="number" id="configMaxTotalPlayers" value="25" min="11">
+                </div>
+                <div class="form-group">
+                    <label>Max Offensivi Puri</label>
+                    <input type="number" id="configMaxOffensive" value="6" min="1">
+                </div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Limiti per Ruolo</h3>
+            <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 1rem 0;">Inserisci il numero esatto da raggiungere per completare la rosa. <strong style="color: var(--text-primary);">0 = illimitato</strong> (vincolato solo dal totale giocatori).</p>
+            <div class="grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label>Portieri (P)</label>
+                    <input type="number" id="configLimitP" value="3" min="0" placeholder="0 = ∞">
+                </div>
+                <div class="form-group">
+                    <label>Difensori (D)</label>
+                    <input type="number" id="configLimitD" value="10" min="0" placeholder="0 = ∞">
+                </div>
+                <div class="form-group">
+                    <label>Centrocampisti (C)</label>
+                    <input type="number" id="configLimitC" value="8" min="0" placeholder="0 = ∞">
+                </div>
+                <div class="form-group">
+                    <label>Attaccanti (A)</label>
+                    <input type="number" id="configLimitA" value="4" min="0" placeholder="0 = ∞">
+                </div>
+            </div>
+            <button class="btn btn-success" style="margin-top: 1rem;" onclick="saveAllConfig()">Salva Tutte le Configurazioni</button>
+        </div>
+    </div>
+
+    <!-- TAB 7: Export -->
+    <div class="tab-content" id="tab-export">
+        <div class="card">
+            <h3 class="card-title">Esporta Report Excel</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                Genera un file Excel completo con tutti i dati dell'asta:
+            </p>
+            <ul style="color: var(--text-secondary); margin-bottom: 1.5rem; padding-left: 1.5rem;">
+                <li>Un foglio per ogni squadra con acquisti ordinati per ruolo</li>
+                <li>Foglio giocatori svincolati (invenduti)</li>
+                <li>Tabellone generale budget e slot</li>
+            </ul>
+            <button class="btn btn-success btn-block" onclick="exportExcel()">Scarica Report Completo</button>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title">Storico Vendite</h3>
+            <div class="table-scroll-wrapper">
+            <table id="soldPlayersTable">
+                <thead>
+                    <tr>
+                        <th>Giocatore</th>
+                        <th>Ruolo</th>
+                        <th>Squadra</th>
+                        <th>Venduto a</th>
+                        <th>Prezzo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" style="text-align: center; color: var(--text-secondary);">Nessuna vendita registrata</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALE EDITOR STAGIONE ──────────────────────────────────────────── -->
+    <div id="modal-stagione" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);
+         backdrop-filter:blur(4px);z-index:3000;align-items:center;justify-content:center;padding:16px;">
+      <div style="background:#1e293b;border:1px solid #475569;border-radius:16px;width:100%;max-width:580px;
+                  max-height:90vh;overflow-y:auto;padding:24px;position:relative;">
+        <button onclick="chiudiModaleStagione()" style="position:absolute;top:14px;right:14px;background:none;
+                border:none;color:#94a3b8;font-size:1.4rem;cursor:pointer;line-height:1;">✕</button>
+
+        <h3 style="font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:4px;">
+            ✏️ Modifica Stagione
+        </h3>
+        <p id="modal-stagione-label" style="font-size:0.82rem;color:#94a3b8;margin-bottom:20px;"></p>
+
+        <!-- CLASSIFICA -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+                      color:#38bdf8;margin-bottom:10px;">Classifica Finale</div>
+          <div id="classifica-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+        </div>
+
+        <!-- COMPETIZIONI -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+                      color:#10b981;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
+            Competizioni Vinte
+            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+              <button onclick="aggiuntaCompetizione()" style="font-size:11px;padding:3px 9px;background:rgba(16,185,129,0.15);
+                      color:#10b981;border:1px solid rgba(16,185,129,0.3);border-radius:5px;cursor:pointer;font-weight:600;">
+                + Personalizzata
+              </button>
+              <button onclick="apriPresetComp()" style="font-size:11px;padding:3px 9px;background:rgba(245,158,11,0.15);
+                      color:#f59e0b;border:1px solid rgba(245,158,11,0.3);border-radius:5px;cursor:pointer;font-weight:600;">
+                📋 Preset
+              </button>
             </div>
           </div>
-          <div class="price-amount">
-            <span class="price-value free">Gratis</span>
-          </div>
-          <div class="price-tags">
-            <span class="price-tag tag-free">Sempre gratis</span>
-            <span class="price-tag tag-nobanner">Nessun banner</span>
-          </div>
-        </div>
-
-        <div class="price-card featured">
-          <div class="price-card-header">
-            <div class="price-card-icon pc-blue">🎮</div>
-            <div>
-              <div class="price-card-name">Commander Plus</div>
-              <div class="price-card-desc">9+ squadre — asta singola</div>
-            </div>
-          </div>
-          <div class="price-amount">
-            <span class="price-value">2,99€</span>
-            <span class="price-period">/ asta</span>
-          </div>
-          <div class="price-tags">
-            <span class="price-tag tag-once">Acquisto singolo</span>
-            <span class="price-tag tag-nobanner">Nessun banner</span>
+          <div id="competizioni-list" style="display:flex;flex-direction:column;gap:6px;"></div>
+          <div id="preset-comp-panel" style="display:none;margin-top:8px;padding:10px;background:rgba(245,158,11,0.06);
+               border:1px solid rgba(245,158,11,0.2);border-radius:8px;">
+            <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;">Clicca per aggiungere:</div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px;" id="preset-comp-buttons"></div>
           </div>
         </div>
 
-        <div class="price-card">
-          <div class="price-card-header">
-            <div class="price-card-icon pc-blue">🎮</div>
-            <div>
-              <div class="price-card-name">Commander Pro</div>
-              <div class="price-card-desc">9+ squadre — aste illimitate</div>
-            </div>
-          </div>
-          <div class="price-amount">
-            <span class="price-value">7,99€</span>
-            <span class="price-period">/ anno</span>
-          </div>
-          <div class="price-tags">
-            <span class="price-tag tag-annual">Abbonamento annuale</span>
-            <span class="price-tag tag-nobanner">Nessun banner</span>
-          </div>
+        <!-- AZIONI -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+          <button onclick="salvaStagione()" style="flex:1;min-width:140px;padding:11px;background:linear-gradient(135deg,#2563eb,#1d4ed8);
+                  color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+            💾 Salva su Server
+          </button>
+          <button onclick="scaricaJsonConStagione()" style="flex:1;min-width:140px;padding:11px;
+                  background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);
+                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+            ⬇️ Scarica JSON
+          </button>
         </div>
-
       </div>
     </div>
 
-    <div class="pricing-group">
-      <div class="pricing-group-label">Partecipante — Chi partecipa all'asta</div>
-      <div class="pricing-grid-2">
-
-        <div class="price-card">
-          <div class="price-card-header">
-            <div class="price-card-icon pc-green">📱</div>
-            <div>
-              <div class="price-card-name">Partecipante Standard</div>
-              <div class="price-card-desc">Accesso completo all'asta</div>
-            </div>
-          </div>
-          <div class="price-amount">
-            <span class="price-value free">Gratis</span>
-          </div>
-          <div class="price-tags">
-            <span class="price-tag tag-free">Sempre gratis</span>
-            <span class="price-tag tag-banner">Con banner</span>
-          </div>
-        </div>
-
-        <div class="price-card">
-          <div class="price-card-header">
-            <div class="price-card-icon pc-blue">📱</div>
-            <div>
-              <div class="price-card-name">Partecipante Premium</div>
-              <div class="price-card-desc">Esperienza senza interruzioni</div>
-            </div>
-          </div>
-          <div class="price-amount">
-            <span class="price-value">0,99€</span>
-            <span class="price-period">/ anno</span>
-          </div>
-          <div class="price-tags">
-            <span class="price-tag tag-annual">Abbonamento annuale</span>
-            <span class="price-tag tag-nobanner">Nessun banner</span>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- FAQ -->
-  <div class="faq-section" id="faq">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">FAQ</div>
-    <h2 class="section-title">Domande frequenti</h2>
-    <p class="section-sub" style="margin-bottom:40px;">Tutto quello che vuoi sapere prima di iniziare.</p>
-
-    <div class="faq-list">
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Perché DraftARENA è diverso dai soliti siti di aste?</span>
-          <div class="faq-chevron"></div>
-        </div>
-        <div class="faq-a">
-          <p>La maggior parte dei portali è pensata per il gioco online massivo. DraftARENA è nato con un focus diverso: l'esperienza dal vivo. Abbiamo studiato l'interfaccia affinché il Commander (l'organizzatore) abbia il pieno controllo su ogni rilancio, sincronizzando istantaneamente i buzzer di ogni partecipante. Non è solo un'app, è il sistema nervoso della tua asta, progettato per eliminare i tempi morti e gli errori umani nella gestione del foglio Excel.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Come funziona la sicurezza dei pagamenti?</span>
-          <div class="faq-chevron"></div>
-        </div>
-        <div class="faq-a">
-          <p>La tua tranquillità è la nostra priorità. DraftARENA non memorizza mai i dati delle tue carte di credito. Per le transazioni, ci appoggiamo ai gateway di pagamento standard del settore (come Stripe), che utilizzano protocolli di crittografia avanzati (SSL/TLS). Il tuo pagamento è protetto e immediato, permettendoti di sbloccare le funzioni premium in pochi secondi e senza attese.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Cosa succede se durante l'asta cade la connessione?</span>
-          <div class="faq-chevron"></div>
-        </div>
-        <div class="faq-a">
-          <p>Sappiamo che l'asta è un momento critico. Il nostro sistema di socket in tempo reale è progettato per la resilienza: in caso di breve caduta della linea, l'applicazione tenta automaticamente il ricollegamento rapido. Poiché il database dell'asta risiede nel cloud, una volta ripristinata la connessione, lo stato della stanza (offerte correnti, budget rimasti, giocatori chiamati) sarà esattamente quello che avevi prima della disconnessione.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Posso usare DraftARENA anche per sport diversi dal Fantacalcio?</span>
-          <div class="faq-chevron"></div>
-        </div>
-        <div class="faq-a">
-          <p>Nel prossimo futuro assolutamente sì. Abbiamo architettato DraftARENA come un motore modulare. Grazie alla possibilità di caricare file database personalizzati (CSV), potrai adattare la nostra interfaccia per gestire aste di FantaNBA, NFL, NBL o qualsiasi altra lega sportiva. La struttura "Giocatore-Ruolo-Squadra" è flessibile: basterà caricare il file Excel dello sport che vuoi. Al momento, essendo ancora in una fase iniziale, ci siamo concentrati sul calcio — ma a breve implementeremo questa possibilità.</p>
-        </div>
-      </div>
-
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Come posso ricevere assistenza in caso di problemi?</span>
-          <div class="faq-chevron"></div>
-        </div>
-        <div class="faq-a">
-          <p>Anche se DraftARENA è pensata per essere intuitiva, sappiamo che un'asta dal vivo richiede precisione assoluta. Se riscontri problemi tecnici durante la configurazione o durante l'asta, il nostro team di supporto è disponibile via email. Inoltre, stiamo creando una sezione "Wiki" dedicata ai Commander con tutorial passo-passo per il caricamento dei database e la gestione avanzata della stanza.</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- HUB FUNZIONALE -->
-  <div class="hub-section" id="hub">
-    <div class="hub-header">
-      <h2>Inizia adesso</h2>
-      <p>Crea una stanza in 10 secondi oppure entra in una già esistente con il codice che ti ha condiviso l'admin.</p>
+    <!-- Toast Notification -->
+    <div id="toast">
+        <span id="toastMessage"></span>
     </div>
 
-    <div id="step-room">
-      <div class="hub-card">
-        <h3>Sei l'amministratore?</h3>
-        <p>Crea una nuova stanza e condividi il codice con i partecipanti.</p>
-        <button class="btn-create" id="btn-create-room">+ CREA NUOVA STANZA</button>
-        <div class="divider">oppure entra in una stanza esistente</div>
-        <div class="input-row">
-          <input type="text" id="room-code-input" placeholder="Codice (es: ABC123)" maxlength="6">
-          <button class="btn-join" id="btn-join-room">ENTRA</button>
-        </div>
-        <div class="error-msg" id="room-error"></div>
-        <div class="spinner" id="loading">Connessione in corso...</div>
-      </div>
+    <!-- Barra di accesso rapido mobile (visibile solo su smartphone) -->
+    <div id="mobile-quickbar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);padding:8px 12px;z-index:200;gap:6px;justify-content:space-around;align-items:center;">
+        <button onclick="goTab('tab-asta')" style="flex:1;padding:10px 4px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">ASTA</button>
+        <button onclick="goTab('tab-squadre')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">SQUADRE</button>
+        <button onclick="goTab('tab-operazioni')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">OPERAZ.</button>
+        <button onclick="goTab('tab-giocatori')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">GIOC.</button>
     </div>
 
-    <div id="step-role" class="hidden">
-      <div class="room-badge">
-        <div>
-          <div class="label">Codice Stanza</div>
-          <div class="code" id="display-room-code">------</div>
-        </div>
-        <button class="btn-copy" id="btn-copy-code">COPIA</button>
-      </div>
+  </div><!-- /admin-main -->
 
-      <div class="pin-badge" id="pin-badge" style="display:none; flex-direction:row; align-items:center; justify-content:space-between; gap:12px;">
-        <div>
-          <div style="color:#f59e0b; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;">PIN REGIA (solo per te)</div>
-          <div id="display-admin-pin" style="color:#f59e0b; font-size:1.6rem; font-weight:800; letter-spacing:0.25em;">----</div>
-        </div>
-        <div style="font-size:11px; color:#92400e; max-width:160px; line-height:1.4;">Conserva questo PIN — serve per aprire la Regia.</div>
-      </div>
+    <!-- Socket.IO -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io({ transports: ["polling"] });
 
-      <div class="nav-grid">
-        <button class="nav-btn btn-admin" onclick="vai('admin.html')"><span class="icon">🎮</span>REGIA</button>
-        <button class="nav-btn btn-host"  onclick="vai('host.html')"><span class="icon">📺</span>TV HOST</button>
-        <button class="nav-btn btn-phone" onclick="vai('phone.html')"><span class="icon">📱</span>BUZZER</button>
-        <button class="nav-btn btn-rose"  onclick="vai('rose.html')"><span class="icon">📋</span>LE ROSE</button>
-      </div>
+        // Current state
+        let currentTeams = {};
+        let currentPlayersList = [];
+        let currentSoldPlayers = [];
+        let currentAuctionName = 'default';
+        let currentRoomCode = null;
+        let pendingSocketRoomCode = null;
 
-      <div class="change-room" id="btn-change-room">Cambia stanza</div>
-    </div>
-  </div>
+        function getStoredAdminPin() { return sessionStorage.getItem('adminPin') || ''; }
 
-  <!-- MODALE creazione stanza -->
-  <div class="modal-overlay" id="modal-access">
-    <div class="modal-card">
-
-      <div class="modal-step active" id="modal-step-1">
-        <h3>Quante squadre partecipano?</h3>
-        <p>Inserisci il numero di fantasquadre che parteciperanno all'asta.</p>
-        <input type="number" class="access-input" id="team-count-input" placeholder="es: 8" min="2" max="100" autocomplete="off">
-        <div class="access-error" id="team-count-error"></div>
-        <button class="btn-access-confirm" id="btn-team-count-confirm">CONTINUA</button>
-        <button class="btn-access-cancel" id="btn-access-cancel">Annulla</button>
-      </div>
-
-      <div class="modal-step" id="modal-step-2">
-        <h3>Codice di attivazione</h3>
-        <div class="paid-badge">Per leghe con più di 8 squadre è richiesto un codice di attivazione.</div>
-        <p>Inserisci il codice ricevuto per sbloccare questa funzione.</p>
-        <input type="text" class="access-input" id="access-code-input" placeholder="es: DRAFT-ABC123" maxlength="30" autocomplete="off">
-        <div class="access-error" id="access-error"></div>
-        <button class="btn-access-confirm" id="btn-access-confirm">CONFERMA E CREA STANZA</button>
-        <button class="btn-access-cancel" id="btn-back-step1">← Indietro</button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer class="footer">
-    <p>DraftARENA &mdash; L'asta del fantacalcio in tempo reale</p>
-  </footer>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    /* ── Navbar scroll ── */
-    const navbar = document.getElementById('navbar');
-    window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 40);
-    }, { passive: true });
-
-    function scrollToHub() {
-      document.getElementById('hub').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    function apriModaleCreazione() {
-      pendingTeamCount = 0;
-      document.getElementById('team-count-input').value = '';
-      document.getElementById('team-count-error').textContent = '';
-      document.getElementById('access-code-input').value = '';
-      document.getElementById('access-error').textContent = '';
-      showModalStep(1);
-      document.getElementById('modal-access').classList.add('open');
-      setTimeout(() => document.getElementById('team-count-input').focus(), 100);
-    }
-
-    /* ── FAQ accordion ── */
-    function toggleFaq(qEl) {
-      const item = qEl.closest('.faq-item');
-      const wasOpen = item.classList.contains('open');
-      document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
-      if (!wasOpen) item.classList.add('open');
-    }
-
-    /* ── Socket.io ── */
-    const socket = io({ transports: ["polling"] });
-    let activeRoomCode = sessionStorage.getItem('roomCode');
-    let isConnected = false;
-
-    socket.on('connect',    () => { isConnected = true;  if (activeRoomCode) subscribeSocket(activeRoomCode); });
-    socket.on('disconnect', () => { isConnected = false; });
-
-    function subscribeSocket(code) { socket.emit('joinRoom', code); }
-
-    /* ── Modale ── */
-    let pendingTeamCount = 0;
-
-    document.getElementById('btn-create-room').addEventListener('click', apriModaleCreazione);
-
-    function showModalStep(n) {
-      document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
-      document.getElementById('modal-step-' + n).classList.add('active');
-    }
-
-    document.getElementById('btn-access-cancel').addEventListener('click', () => {
-      document.getElementById('modal-access').classList.remove('open');
-    });
-    document.getElementById('btn-back-step1').addEventListener('click', () => {
-      showModalStep(1);
-      setTimeout(() => document.getElementById('team-count-input').focus(), 100);
-    });
-    document.getElementById('team-count-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('btn-team-count-confirm').click();
-    });
-    document.getElementById('btn-team-count-confirm').addEventListener('click', () => {
-      const val = parseInt(document.getElementById('team-count-input').value);
-      const errEl = document.getElementById('team-count-error');
-      if (!val || val < 2) { errEl.textContent = 'Inserisci un numero di squadre valido (min. 2).'; return; }
-      errEl.textContent = '';
-      pendingTeamCount = val;
-      if (val <= 8) {
-        document.getElementById('modal-access').classList.remove('open');
-        creaStanza(null, val);
-      } else {
-        showModalStep(2);
-        setTimeout(() => document.getElementById('access-code-input').focus(), 100);
-      }
-    });
-    document.getElementById('access-code-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('btn-access-confirm').click();
-    });
-    document.getElementById('btn-access-confirm').addEventListener('click', async () => {
-      const accessCode = document.getElementById('access-code-input').value.trim().toUpperCase();
-      const errEl = document.getElementById('access-error');
-      if (!accessCode) { errEl.textContent = 'Inserisci un codice di attivazione.'; return; }
-      errEl.textContent = '';
-      const btn = document.getElementById('btn-access-confirm');
-      btn.textContent = 'Verifica in corso...';
-      btn.disabled = true;
-      await creaStanza(accessCode, pendingTeamCount);
-      btn.textContent = 'CONFERMA E CREA STANZA';
-      btn.disabled = false;
-    });
-
-    /* ── Crea stanza ── */
-    async function creaStanza(accessCode, teamCount) {
-      setLoading(true); setError('');
-      try {
-        let url = `/api/room/create?teamCount=${teamCount || 0}`;
-        if (accessCode) url += `&accessCode=${encodeURIComponent(accessCode)}`;
-        const res = await fetchWithTimeout(url, 10000);
-        if (res.success) {
-          document.getElementById('modal-access').classList.remove('open');
-          sessionStorage.setItem('roomCode', res.roomCode);
-          sessionStorage.setItem('adminPin', res.adminPin);
-          activeRoomCode = res.roomCode;
-          if (isConnected) subscribeSocket(res.roomCode);
-          mostraStanza(res.roomCode, res.adminPin);
-          scrollToHub();
-        } else {
-          document.getElementById('access-error').textContent = res.error || 'Codice non valido.';
-          if (teamCount > 8) showModalStep(2);
-          else { document.getElementById('modal-access').classList.remove('open'); setError(res.error || 'Errore creazione stanza.'); }
+        function doAdminAuth() {
+          const pin = getStoredAdminPin();
+          if (pin) socket.emit('adminAuth', { pin });
         }
-      } catch (e) {
-        const msg = e.name === 'AbortError' ? 'Timeout: server non risponde.' : 'Errore di rete. Riprova.';
-        document.getElementById('access-error').textContent = msg;
-        if (!teamCount || teamCount <= 8) setError(msg);
-      } finally {
-        setLoading(false);
-      }
-    }
 
-    /* ── Entra stanza ── */
-    document.getElementById('btn-join-room').addEventListener('click', entra);
-    document.getElementById('room-code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') entra(); });
-
-    async function entra() {
-      const code = document.getElementById('room-code-input').value.trim().toUpperCase();
-      if (!code || code.length < 4) { setError('Inserisci un codice valido.'); return; }
-      setLoading(true); setError('');
-      try {
-        const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
-        if (res.success) {
-          sessionStorage.setItem('roomCode', res.roomCode);
-          activeRoomCode = res.roomCode;
-          if (isConnected) subscribeSocket(res.roomCode);
-          mostraStanza(res.roomCode);
-        } else {
-          setError(res.error || 'Stanza non trovata.');
-        }
-      } catch (e) {
-        setError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.');
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    /* ── Auto-join se codice in sessione ── */
-    if (activeRoomCode) {
-      (async () => {
-        setLoading(true);
-        try {
-          const res = await fetchWithTimeout('/api/room/join/' + activeRoomCode, 8000);
-          if (res.success) {
-            if (isConnected) subscribeSocket(res.roomCode);
-            mostraStanza(res.roomCode);
+        socket.on('adminAuthResult', (data) => {
+          if (data.success) {
+            document.getElementById('pin-gate').style.display = 'none';
+            document.getElementById('admin-main').style.display = 'block';
+            initQuickbar();
           } else {
-            sessionStorage.removeItem('roomCode');
-            activeRoomCode = null;
+            sessionStorage.removeItem('adminPin');
+            document.getElementById('admin-main').style.display = 'none';
+            showPinGate('PIN errato. Riprova.');
           }
-        } catch (e) { /* ignora */ }
-        finally { setLoading(false); }
-      })();
-    }
+        });
 
-    /* ── Cambia stanza ── */
-    document.getElementById('btn-change-room').addEventListener('click', () => {
-      sessionStorage.removeItem('roomCode');
-      sessionStorage.removeItem('adminPin');
-      activeRoomCode = null;
-      document.getElementById('step-role').classList.add('hidden');
-      document.getElementById('step-room').classList.remove('hidden');
-      document.getElementById('room-code-input').value = '';
-      setError('');
-    });
+        function showPinGate(errorMsg) {
+          const gate = document.getElementById('pin-gate');
+          if (gate) {
+            gate.style.display = 'flex';
+            const err = gate.querySelector('.pin-gate-error');
+            if (err) err.textContent = errorMsg || '';
+          }
+        }
 
-    /* ── Copia codice ── */
-    document.getElementById('btn-copy-code').addEventListener('click', () => {
-      if (!activeRoomCode) return;
-      navigator.clipboard.writeText(activeRoomCode).then(() => {
-        const btn = document.getElementById('btn-copy-code');
-        btn.textContent = 'COPIATO!';
-        setTimeout(() => btn.textContent = 'COPIA', 2000);
-      });
-    });
+        function submitPinGate() {
+          const pin = document.getElementById('pin-gate-input').value.trim();
+          if (!pin) return;
+          sessionStorage.setItem('adminPin', pin);
+          socket.emit('adminAuth', { pin });
+        }
 
-    function vai(pagina) {
-      if (!activeRoomCode) return;
-      window.location.href = '/' + pagina + '?room=' + activeRoomCode;
-    }
+        document.addEventListener('keydown', (e) => {
+          const gate = document.getElementById('pin-gate');
+          if (gate && gate.style.display !== 'none' && e.key === 'Enter') submitPinGate();
+        });
 
-    function mostraStanza(code, pin) {
-      document.getElementById('display-room-code').textContent = code;
-      const effectivePin = pin || sessionStorage.getItem('adminPin');
-      const pinBadge = document.getElementById('pin-badge');
-      const pinEl = document.getElementById('display-admin-pin');
-      if (effectivePin) {
-        pinEl.textContent = effectivePin;
-        pinBadge.style.display = 'flex';
-      } else {
-        pinBadge.style.display = 'none';
-      }
-      document.getElementById('step-room').classList.add('hidden');
-      document.getElementById('step-role').classList.remove('hidden');
-      setTimeout(() => {
-        document.getElementById('hub').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 80);
-    }
+        socket.on('connect', () => {
+          if (pendingSocketRoomCode) {
+            socket.emit('joinRoom', pendingSocketRoomCode);
+            socket.emit('setHostUrl', { url: window.location.origin });
+            const pin = getStoredAdminPin();
+            if (pin) socket.emit('adminAuth', { pin });
+            else showPinGate();
+            pendingSocketRoomCode = null;
+          }
+        });
 
-    function setError(msg)    { document.getElementById('room-error').textContent = msg; }
-    function setLoading(show) { document.getElementById('loading').style.display = show ? 'block' : 'none'; }
+        // ── Room Gate ─────────────────────────────────────────────────────
+        function gateSetLoading(show) {
+          document.getElementById('gate-loading').style.display = show ? 'block' : 'none';
+        }
+        function gateSetError(msg) {
+          document.getElementById('gate-error').textContent = msg;
+        }
+        function hideGate() {
+          document.getElementById('room-gate').style.display = 'none';
+        }
+        function onRoomJoined(code) {
+          currentRoomCode = code;
+          document.getElementById('room-code-display').textContent = code;
+          hideGate();
+          caricaStoricoLega();
+          if (socket.connected) {
+            socket.emit('joinRoom', code);
+            socket.emit('setHostUrl', { url: window.location.origin });
+            const pin = getStoredAdminPin();
+            if (pin) {
+              socket.emit('adminAuth', { pin });
+            } else {
+              showPinGate();
+            }
+          } else {
+            pendingSocketRoomCode = code;
+          }
+        }
 
-    async function fetchWithTimeout(url, ms) {
-      const ctrl = new AbortController();
-      const t = setTimeout(() => ctrl.abort(), ms);
-      try {
-        const r = await fetch(url, { signal: ctrl.signal });
-        return r.json();
-      } finally {
-        clearTimeout(t);
-      }
-    }
-  </script>
+        async function fetchWithTimeout(url, ms) {
+          const ctrl = new AbortController();
+          const t = setTimeout(() => ctrl.abort(), ms);
+          try {
+            const r = await fetch(url, { signal: ctrl.signal });
+            return r.json();
+          } finally { clearTimeout(t); }
+        }
+
+        // Auto-join on page load if saved code exists
+        (async () => {
+          const saved = sessionStorage.getItem('roomCode') || new URLSearchParams(location.search).get('room');
+          if (saved) {
+            gateSetLoading(true);
+            try {
+              const res = await fetchWithTimeout('/api/room/join/' + saved, 8000);
+              if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
+              else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || 'Stanza non trovata.'); }
+            } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+            finally { gateSetLoading(false); }
+          }
+        })();
+
+        document.getElementById('gate-btn-join').addEventListener('click', gateJoin);
+        document.getElementById('gate-code-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') gateJoin(); });
+
+        async function gateJoin() {
+          const code = document.getElementById('gate-code-input').value.trim().toUpperCase();
+          if (!code) return;
+          gateSetLoading(true); gateSetError('');
+          try {
+            const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
+            if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
+            else gateSetError(res.error || 'Stanza non trovata.');
+          } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+          finally { gateSetLoading(false); }
+        }
+
+        function copiaCodice() {
+          if (!currentRoomCode) return;
+          navigator.clipboard.writeText(currentRoomCode);
+        }
+
+        // Initialize tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+                updateQuickbar(btn.dataset.tab);
+            });
+        });
+
+        function goTab(tabId) {
+            const btn = document.querySelector(`.tab-btn[data-tab="${tabId}"]`);
+            if (btn) btn.click();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateQuickbar(activeTabId) {
+            const bar = document.getElementById('mobile-quickbar');
+            if (!bar) return;
+            bar.querySelectorAll('button').forEach(b => {
+                const isActive = b.getAttribute('onclick')?.includes(activeTabId);
+                b.style.background = isActive ? 'var(--success)' : 'var(--bg-input)';
+                b.style.color = isActive ? '#fff' : 'var(--text-primary)';
+                b.style.border = isActive ? 'none' : '1px solid var(--border)';
+            });
+        }
+
+        function initQuickbar() {
+            if (window.innerWidth <= 480) {
+                document.getElementById('mobile-quickbar').style.display = 'flex';
+                updateQuickbar('tab-leghe');
+            }
+        }
+        window.addEventListener('resize', () => {
+            const bar = document.getElementById('mobile-quickbar');
+            if (bar) bar.style.display = window.innerWidth <= 480 ? 'flex' : 'none';
+        });
+
+        // ============================================================
+        // SOCKET EVENT HANDLERS
+        // ============================================================
+
+        socket.on('connectionData', (data) => {
+            console.log('Connected to server');
+            const detectedEl = document.getElementById('detectedIpDisplay');
+            if (detectedEl && data.url) {
+                try { detectedEl.textContent = new URL(data.url).hostname; } catch { detectedEl.textContent = data.url; }
+            }
+        });
+
+        socket.on('hostUrlUpdate', (data) => {
+            const detectedEl = document.getElementById('detectedIpDisplay');
+            if (detectedEl) detectedEl.textContent = data.hostUrl + (data.isCustom ? ' (override)' : ' (auto)');
+            const input = document.getElementById('configHostUrl');
+            if (input && data.isCustom) input.value = data.hostUrl;
+        });
+
+        socket.on('configUpdate', (data) => {
+            if (data.timerDuration) document.getElementById('configTimerDuration').value = data.timerDuration;
+            if (data.CONFIG) {
+                const c = data.CONFIG;
+                document.getElementById('configStartingBudget').value = c.STARTING_BUDGET || 500;
+                document.getElementById('configMaxTotalPlayers').value = c.MAX_TOTAL_PLAYERS || 25;
+                document.getElementById('configMaxOffensive').value = c.MAX_OFFENSIVE_PLAYERS || 6;
+                if (c.LIMITS) {
+                    document.getElementById('configLimitP').value = c.LIMITS.P || 3;
+                    document.getElementById('configLimitD').value = c.LIMITS.D || 10;
+                    document.getElementById('configLimitC').value = c.LIMITS.C || 8;
+                    document.getElementById('configLimitA').value = c.LIMITS.A || 4;
+                }
+            }
+        });
+
+        socket.on('currentAuctionName', (name) => {
+            currentAuctionName = name;
+            document.getElementById('currentLeagueName').textContent = name;
+        });
+
+        socket.on('update', (state) => {
+            // Update auction display
+            document.getElementById('displayPlayerName').textContent = state.player ? state.player.nome : '---';
+            document.getElementById('displayPrice').textContent = state.currentPrice || 0;
+            document.getElementById('displayTimer').textContent = state.time !== null ? state.time : '--';
+            document.getElementById('displayBidder').textContent = state.highestBidder || '---';
+
+            // Aggiorna storico offerte live
+            renderBidHistory(state.history || [], state.player);
+        });
+
+        socket.on('updateTeams', (teams) => {
+            currentTeams = teams;
+            renderTeams();
+            updateTeamSelects();
+            updateStats();
+        });
+
+        socket.on('teamsUpdate', (teams) => {
+            currentTeams = teams;
+            renderTeams();
+            updateTeamSelects();
+        });
+
+        socket.on('updateSold', (sold) => {
+            currentSoldPlayers = sold;
+            renderSoldPlayers();
+            updateStats();
+        });
+
+        socket.on('playersList', (players) => {
+            currentPlayersList = players;
+            renderPlayersList();
+            updateStats();
+        });
+
+        socket.on('errorNotify', (msg) => {
+            showAlert('error', msg);
+        });
+
+        // ── Connessione / Disconnessione ─────────────────────────────────────
+        socket.on('disconnect', () => {
+            const banner = document.getElementById('conn-banner');
+            if (banner) banner.style.display = 'block';
+        });
+
+        socket.on('connect', () => {
+            const banner = document.getElementById('conn-banner');
+            if (banner) banner.style.display = 'none';
+            // Ri-unisciti alla stanza dopo riconnessione
+            if (currentRoomCode) socket.emit('joinRoom', currentRoomCode);
+        });
+
+        // ── Auto-save dal server ─────────────────────────────────────────────
+        socket.on('autoSaved', (data) => {
+            _aggiornaUltimoSalvataggio(data.ts);
+        });
+
+        function _aggiornaUltimoSalvataggio(isoTs) {
+            const el = document.getElementById('last-saved-label');
+            if (!el) return;
+            const d = isoTs ? new Date(isoTs) : new Date();
+            el.textContent = 'Ultimo salvataggio: ' + d.toLocaleTimeString('it-IT');
+        }
+
+        socket.on('auctionEnded', (data) => {
+            if (data.winner) {
+                apriPannelloRevisione(data);
+            }
+        });
+
+        socket.on('lastAuctionReassigned', (data) => {
+            showAlert('success', `✅ ${data.player} riassegnato a ${data.newWinner} per ${data.newPrice} cr`);
+        });
+
+        socket.on('auctionSwitchedSuccess', (name) => {
+            showAlert('success', `Lega "${name}" caricata con successo!`);
+        });
+
+        // ============================================================
+        // LEAGUE MANAGEMENT
+        // ============================================================
+
+        function createNewLeague() {
+            const name = document.getElementById('newLeagueName').value.trim();
+            if (!name) {
+                showAlert('error', 'Inserisci un nome per la lega');
+                return;
+            }
+            socket.emit('adminSwitchAuction', name);
+            document.getElementById('newLeagueName').value = '';
+        }
+
+        function switchLeague() {
+            const name = document.getElementById('switchLeagueName').value.trim();
+            if (!name) {
+                showAlert('error', 'Inserisci il nome della lega da caricare');
+                return;
+            }
+            socket.emit('adminSwitchAuction', name);
+        }
+
+        function saveSession() {
+            socket.emit('adminTriggerSave');
+            _aggiornaUltimoSalvataggio(null);
+        }
+
+        function loadSession() {
+            socket.emit('adminTriggerLoad');
+            showAlert('success', 'Sessione ricaricata!');
+        }
+
+        function resetAll() {
+            if (confirm('Sei sicuro? Questo cancellera tutti i dati dell\'asta corrente!')) {
+                socket.emit('reset');
+                showAlert('warning', 'Reset completato');
+            }
+        }
+
+        // ============================================================
+        // BACKUP MANAGEMENT
+        // ============================================================
+
+        let _loadedBackupData = null;
+
+        // Inizializza i campi anno/label con valori di default
+        (function() {
+            const yearInput = document.getElementById('backup-year');
+            const labelInput = document.getElementById('backup-label');
+            if (yearInput) yearInput.value = new Date().getFullYear();
+        })();
+
+        let _pendingSaveToHistory = false;
+
+        socket.on('backupReady', ({ backup, filename }) => {
+            // Download sempre il file
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = filename;
+            document.body.appendChild(a); a.click();
+            setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+            showAlert('success', `✅ Backup "${filename}" scaricato!`);
+
+            // Se richiesto, salva anche nello storico
+            if (_pendingSaveToHistory) {
+                _pendingSaveToHistory = false;
+                socket.emit('adminSaveHistoricalBackup', backup);
+            }
+        });
+
+        socket.on('backupImportSuccess', ({ label, year }) => {
+            showAlert('success', `✅ Configurazione "${label} (${year})" caricata con successo!`);
+            _loadedBackupData = null;
+            document.getElementById('backup-file-label').textContent = '📂 Seleziona file .json...';
+            document.getElementById('backup-preview').style.display = 'none';
+            const fi = document.getElementById('backup-file-input');
+            if (fi) fi.value = '';
+        });
+
+        socket.on('historicalBackupSaved', () => {
+            showAlert('success', '📚 Backup salvato nello storico con successo!');
+        });
+
+        function esportaBackup() {
+            const year = parseInt(document.getElementById('backup-year').value) || new Date().getFullYear();
+            const label = document.getElementById('backup-label').value.trim() || `Asta ${year}`;
+            _pendingSaveToHistory = false;
+            socket.emit('adminExportBackup', { year, label });
+        }
+
+        function salvaBackupStoico() {
+            const year = parseInt(document.getElementById('backup-year').value) || new Date().getFullYear();
+            const label = document.getElementById('backup-label').value.trim() || `Asta ${year}`;
+            if (!confirm(`Vuoi scaricare il backup "${label}" E salvarlo nello storico server?\nSarà visibile nella pagina Rose.`)) return;
+            _pendingSaveToHistory = true;
+            socket.emit('adminExportBackup', { year, label });
+        }
+
+        function previewBackupFile(input) {
+            const file = input.files[0];
+            if (!file) return;
+            document.getElementById('backup-file-label').textContent = '📄 ' + file.name;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const b = JSON.parse(e.target.result);
+                    if (!b.version || b.app !== 'DraftARENA') {
+                        showAlert('error', '❌ File non valido: non è un backup DraftARENA.');
+                        _loadedBackupData = null;
+                        return;
+                    }
+                    _loadedBackupData = b;
+                    const teamCount = b.teams ? b.teams.length : 0;
+                    const soldCount = b.soldPlayers ? b.soldPlayers.length : 0;
+                    const preview = document.getElementById('backup-preview');
+                    preview.style.display = 'block';
+                    preview.innerHTML = `
+                        <strong style="color:#f59e0b;">Backup: ${b.label || b.auctionName} (${b.year})</strong><br>
+                        Esportato il: ${b.exportedAt ? new Date(b.exportedAt).toLocaleString('it-IT') : '—'}<br>
+                        Squadre: <strong>${teamCount}</strong> &nbsp;|&nbsp;
+                        Giocatori acquistati: <strong>${soldCount}</strong> &nbsp;|&nbsp;
+                        Budget iniziale: <strong>${b.config?.STARTING_BUDGET || '?'} cr</strong>
+                    `;
+                } catch {
+                    showAlert('error', '❌ Errore lettura file JSON.');
+                    _loadedBackupData = null;
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function importaBackupConfig() {
+            if (!_loadedBackupData) {
+                showAlert('error', 'Seleziona prima un file di backup .json');
+                return;
+            }
+            const b = _loadedBackupData;
+            const teamCount = b.teams ? b.teams.length : 0;
+            if (!confirm(
+                `Stai per caricare il backup "${b.label || b.auctionName} (${b.year})".\n\n` +
+                `• Verranno create ${teamCount} squadre con budget di ${b.config?.STARTING_BUDGET || '?'} cr\n` +
+                `• Le rose dell'asta corrente saranno AZZERATE\n\n` +
+                `Procedere?`
+            )) return;
+            socket.emit('adminImportBackupConfig', b);
+        }
+
+        // ============================================================
+        // STORICO LEGA & ALBO D'ORO
+        // ============================================================
+
+        let _stagioneCurrent = null; // { id, label, year, teams, season_data }
+
+        const PRESET_COMPETIZIONI = [
+          { emoji: '🏆', nome: 'Campionato' },
+          { emoji: '⚽', nome: 'Champions League' },
+          { emoji: '🥇', nome: 'Coppa Italia' },
+          { emoji: '🥄', nome: 'Cucchiaio di Legno' },
+          { emoji: '📊', nome: 'Miglior Punteggio' },
+          { emoji: '📉', nome: 'Peggior Punteggio' },
+          { emoji: '💰', nome: 'Miglior Acquisto' },
+          { emoji: '🤦', nome: 'Peggior Acquisto' },
+        ];
+
+        async function caricaStoricoLega() {
+          if (!currentRoomCode) { showAlert('error', 'Entra in una stanza prima.'); return; }
+          const list = document.getElementById('storico-lega-list');
+          list.innerHTML = '<p style="font-size:0.83rem;color:#38bdf8;text-align:center;padding:8px 0;">Caricamento...</p>';
+          try {
+            const res = await fetch(`/api/lega/${currentRoomCode}/albo`);
+            const json = await res.json();
+            if (!json.success) throw new Error(json.error);
+            const seasons = json.seasons;
+            if (seasons.length === 0) {
+              list.innerHTML = '<p style="font-size:0.83rem;color:#64748b;text-align:center;padding:8px 0;">Nessun backup storico trovato. Usa "Salva nello Storico" per crearne uno.</p>';
+              return;
+            }
+            list.innerHTML = seasons.map(s => {
+              const hasSeason = s.season_data && (s.season_data.classifica?.length || s.season_data.competizioni?.length);
+              return `
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;
+                            padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;
+                            border:1px solid #334155;flex-wrap:wrap;">
+                  <div style="flex:1;min-width:120px;">
+                    <div style="font-weight:600;font-size:0.88rem;color:#f1f5f9;">${escHtml(s.label)}</div>
+                    <div style="font-size:0.75rem;color:#64748b;">${s.year} · ${hasSeason ? '✅ Stagione compilata' : '⬜ Stagione da compilare'}</div>
+                  </div>
+                  <button onclick="apriEditorStagione('${s.id}', ${JSON.stringify(s).replace(/'/g,"&#39;").replace(/"/g,'&quot;')})"
+                          style="font-size:0.78rem;padding:5px 12px;background:rgba(56,189,248,0.12);
+                                 color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;
+                                 cursor:pointer;font-weight:600;white-space:nowrap;">
+                    ✏️ Modifica Stagione
+                  </button>
+                </div>`;
+            }).join('');
+          } catch(e) {
+            list.innerHTML = `<p style="font-size:0.83rem;color:#ef4444;text-align:center;">${escHtml(e.message)}</p>`;
+          }
+        }
+
+        function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+        function apriAlbo() {
+          if (!currentRoomCode) { showAlert('error', 'Entra in una stanza prima.'); return; }
+          window.open(`/albo?room=${currentRoomCode}`, '_blank');
+        }
+
+        function apriEditorStagione(id, stagione) {
+          const s = (typeof stagione === 'string') ? JSON.parse(stagione) : stagione;
+          _stagioneCurrent = { id: s.id, label: s.label, year: s.year, backupData: s.backup_data, season_data: s.season_data || { classifica: [], competizioni: [] } };
+
+          document.getElementById('modal-stagione-label').textContent = `${s.label} (${s.year})`;
+
+          // Popola classifica
+          const teams = (s.backup_data?.teams || []).map(t => t.name || t.key);
+          const savedClassifica = _stagioneCurrent.season_data.classifica || [];
+          // Merge: usa l'ordine salvato se esiste, poi aggiungi le squadre mancanti
+          const orderedNames = [...savedClassifica.map(c => c.nome)];
+          teams.forEach(n => { if (!orderedNames.includes(n)) orderedNames.push(n); });
+          _stagioneCurrent.classifica = orderedNames.map((nome, i) => ({ pos: i + 1, nome }));
+
+          renderClassificaEditor();
+
+          // Popola competizioni
+          _stagioneCurrent.competizioni = [...(_stagioneCurrent.season_data.competizioni || [])];
+          renderCompetizioniEditor();
+
+          const modal = document.getElementById('modal-stagione');
+          modal.style.display = 'flex';
+          document.getElementById('preset-comp-panel').style.display = 'none';
+        }
+
+        function chiudiModaleStagione() {
+          document.getElementById('modal-stagione').style.display = 'none';
+          _stagioneCurrent = null;
+        }
+
+        function renderClassificaEditor() {
+          if (!_stagioneCurrent) return;
+          const list = document.getElementById('classifica-list');
+          const medals = ['🥇','🥈','🥉'];
+          list.innerHTML = _stagioneCurrent.classifica.map((item, i) => `
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;
+                        background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;">
+              <span style="font-size:1rem;width:24px;text-align:center;">${medals[i] || (i+1)}</span>
+              <span style="flex:1;font-size:0.88rem;color:#f1f5f9;font-weight:${i<3?'600':'400'};">${escHtml(item.nome)}</span>
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                ${i > 0 ? `<button onclick="sposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
+                ${i < _stagioneCurrent.classifica.length-1 ? `<button onclick="sposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
+              </div>
+            </div>`).join('');
+        }
+
+        function sposta(dir, idx) {
+          const cl = _stagioneCurrent.classifica;
+          const swap = dir === 'su' ? idx - 1 : idx + 1;
+          if (swap < 0 || swap >= cl.length) return;
+          [cl[idx], cl[swap]] = [cl[swap], cl[idx]];
+          cl.forEach((item, i) => item.pos = i + 1);
+          renderClassificaEditor();
+        }
+
+        function renderCompetizioniEditor() {
+          if (!_stagioneCurrent) return;
+          const squadreDisp = (_stagioneCurrent.backupData?.teams || []).map(t => t.name || t.key);
+          const list = document.getElementById('competizioni-list');
+          if (_stagioneCurrent.competizioni.length === 0) {
+            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessuna competizione — usa i pulsanti sopra per aggiungere.</p>';
+            return;
+          }
+          list.innerHTML = _stagioneCurrent.competizioni.map((c, i) => `
+            <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;
+                        background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
+              <input value="${escHtml(c.emoji)}" oninput="aggiornaComp(${i},'emoji',this.value)"
+                     style="width:42px;padding:4px;background:#0f172a;border:1px solid #475569;border-radius:5px;
+                            color:#f1f5f9;text-align:center;font-size:1rem;">
+              <input value="${escHtml(c.nome)}" oninput="aggiornaComp(${i},'nome',this.value)"
+                     placeholder="Nome competizione"
+                     style="flex:1;min-width:100px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+              <select onchange="aggiornaComp(${i},'vincitore',this.value)"
+                      style="flex:1;min-width:100px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                             border-radius:5px;color:#f1f5f9;font-size:0.83rem;">
+                <option value="">— Vincitore —</option>
+                ${squadreDisp.map(n => `<option value="${escHtml(n)}" ${c.vincitore===n?'selected':''}>${escHtml(n)}</option>`).join('')}
+              </select>
+              <button onclick="rimuoviComp(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
+                      color:#ef4444;border-radius:5px;padding:4px 8px;cursor:pointer;font-size:13px;">✕</button>
+            </div>`).join('');
+        }
+
+        function aggiornaComp(i, campo, val) {
+          if (_stagioneCurrent && _stagioneCurrent.competizioni[i]) {
+            _stagioneCurrent.competizioni[i][campo] = val;
+          }
+        }
+
+        function rimuoviComp(i) {
+          _stagioneCurrent.competizioni.splice(i, 1);
+          renderCompetizioniEditor();
+        }
+
+        function aggiuntaCompetizione(preset) {
+          if (!_stagioneCurrent) return;
+          _stagioneCurrent.competizioni.push(preset ? { ...preset, id: Date.now().toString(), vincitore: '' } : { id: Date.now().toString(), emoji: '🏅', nome: '', vincitore: '' });
+          renderCompetizioniEditor();
+          document.getElementById('preset-comp-panel').style.display = 'none';
+        }
+
+        function apriPresetComp() {
+          const panel = document.getElementById('preset-comp-panel');
+          const visible = panel.style.display !== 'none';
+          panel.style.display = visible ? 'none' : 'block';
+          if (!visible) {
+            document.getElementById('preset-comp-buttons').innerHTML = PRESET_COMPETIZIONI.map(p =>
+              `<button onclick="aggiuntaCompetizione(${JSON.stringify(p).replace(/"/g,"'")})"
+                       style="padding:5px 10px;background:rgba(245,158,11,0.12);color:#f59e0b;
+                              border:1px solid rgba(245,158,11,0.3);border-radius:6px;cursor:pointer;font-size:0.8rem;">
+                ${p.emoji} ${escHtml(p.nome)}</button>`
+            ).join('');
+          }
+        }
+
+        async function salvaStagione() {
+          if (!_stagioneCurrent) return;
+          const pin = getStoredAdminPin();
+          if (!pin) { showAlert('error', 'PIN admin non trovato in sessione.'); return; }
+
+          const body = {
+            classifica: _stagioneCurrent.classifica,
+            competizioni: _stagioneCurrent.competizioni.map(c => ({ id: c.id, emoji: c.emoji, nome: c.nome, vincitore: c.vincitore }))
+          };
+
+          try {
+            const res = await fetch(`/api/room/${currentRoomCode}/backups/${_stagioneCurrent.id}/season`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
+              body: JSON.stringify(body)
+            });
+            const json = await res.json();
+            if (!json.success) throw new Error(json.error);
+            showAlert('success', '✅ Stagione salvata nell\'Albo d\'Oro!');
+            caricaStoricoLega();
+          } catch(e) {
+            showAlert('error', '❌ Errore: ' + e.message);
+          }
+        }
+
+        function scaricaJsonConStagione() {
+          if (!_stagioneCurrent) return;
+          const enriched = {
+            ..._stagioneCurrent.backupData,
+            season_data: {
+              classifica: _stagioneCurrent.classifica,
+              competizioni: _stagioneCurrent.competizioni
+            }
+          };
+          const blob = new Blob([JSON.stringify(enriched, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `DraftARENA_stagione_${_stagioneCurrent.year}_${_stagioneCurrent.label.replace(/\s+/g,'_')}.json`;
+          a.click();
+          setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+        }
+
+        // ============================================================
+        // TEAM MANAGEMENT
+        // ============================================================
+
+        function createTeam() {
+            const name = document.getElementById('newTeamName').value.trim();
+            if (!name) {
+                showAlert('error', 'Inserisci un nome per la squadra');
+                return;
+            }
+            socket.emit('adminCreateTeam', name);
+            document.getElementById('newTeamName').value = '';
+            showAlert('success', `Squadra "${name}" creata!`);
+        }
+
+        function eliminaSquadra(key, name) {
+            if (!confirm(`Eliminare la squadra "${name}"? L'operazione non è reversibile.`)) return;
+            socket.emit('adminDeleteTeam', key);
+            showAlert('success', `Squadra "${name}" eliminata.`);
+        }
+
+        function renderTeams() {
+            const container = document.getElementById('teamsContainer');
+            const keys = Object.keys(currentTeams);
+
+            if (keys.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary);">Nessuna squadra creata</p>';
+                return;
+            }
+
+            container.innerHTML = keys.map(key => {
+                const team = currentTeams[key];
+                return `
+                    <div class="team-card">
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:0.5rem;">
+                            <h4 style="margin:0;">${team.name}</h4>
+                            <button onclick="eliminaSquadra('${key.replace(/'/g,"\\'")}', '${team.name.replace(/'/g,"\\'")}' )" style="background:none;border:1px solid #ef4444;color:#ef4444;border-radius:4px;padding:2px 7px;font-size:11px;cursor:pointer;flex-shrink:0;" title="Elimina squadra">✕</button>
+                        </div>
+                        <div class="team-budget">${team.budget} cr</div>
+                        <div class="team-slots">
+                            <span class="slot-badge slot-P">P: ${team.slots.P || 0}</span>
+                            <span class="slot-badge slot-D">D: ${team.slots.D || 0}</span>
+                            <span class="slot-badge slot-C">C: ${team.slots.C || 0}</span>
+                            <span class="slot-badge slot-A">A: ${team.slots.A || 0}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('startingBudgetDisplay').textContent =
+                currentTeams[keys[0]]?.budget || '500';
+        }
+
+        function updateStats() {
+            document.getElementById('statTeams').textContent = Object.keys(currentTeams).length;
+            document.getElementById('statSold').textContent = currentSoldPlayers.length;
+            document.getElementById('statRemaining').textContent = currentPlayersList.length;
+        }
+
+        // ============================================================
+        // PLAYERS LIST MANAGEMENT
+        // ============================================================
+
+        let _pendingWarnings = [];
+
+        function uploadExcel() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const soglia = document.getElementById('sogliaMinima').value || 0;
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch(`/upload?room=${currentRoomCode}&soglia=${soglia}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                socket.emit('getPlayers');
+                if (data.warnings && data.warnings.length > 0) {
+                    _mostraWarningRuoli(data.warnings, data.count);
+                } else {
+                    showAlert('success', `${data.count} giocatori caricati con successo!`);
+                }
+            })
+            .catch(err => {
+                showAlert('error', 'Errore nel caricamento del file');
+            });
+        }
+
+        function _mostraWarningRuoli(warnings, count) {
+            _pendingWarnings = warnings;
+            const RUOLI_VALIDI = ['P','POR','DC','DD','DS','B','M','C','E','T','W','A','PC',
+                                  'C;T','C;W','E;W','M;C','T;A','W;A','W;T'];
+            document.getElementById('_warningSubtitle').textContent =
+                `${count} giocatori caricati · ${warnings.length} con ruoli non riconosciuti dal sistema Mantra`;
+            document.getElementById('_warningList').innerHTML = warnings.map((w, i) => `
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;align-items:center;
+                            padding:0.75rem;background:rgba(245,158,11,0.08);border-radius:8px;
+                            margin-bottom:0.5rem;border:1px solid rgba(245,158,11,0.25);">
+                    <div>
+                        <div style="font-weight:600;font-size:0.95rem;">${w.nome}</div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);">${w.squadra}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:3px;">Ruolo nel file:</div>
+                        <code style="background:rgba(239,68,68,0.18);color:#ef4444;padding:2px 6px;border-radius:4px;font-size:0.85rem;">${w.ruolo}</code>
+                        <div style="font-size:0.75rem;color:#f59e0b;margin-top:4px;">Non riconosciuto: <b>${w.tokensIgnorati.join(', ')}</b></div>
+                    </div>
+                    <div>
+                        <select id="_fix_${i}" style="width:100%;padding:0.45rem 0.5rem;
+                                background:var(--bg-card);border:1px solid var(--border);
+                                color:var(--text-primary);border-radius:6px;font-size:0.85rem;">
+                            ${RUOLI_VALIDI.map(r => `<option value="${r}"${r === w.tokensIgnorati[0] ? ' selected' : ''}>${r}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('_warningModal').style.display = 'flex';
+        }
+
+        function _chiudiWarning() {
+            document.getElementById('_warningModal').style.display = 'none';
+            _pendingWarnings = [];
+        }
+
+        function _salvaCorrezioni() {
+            _pendingWarnings.forEach((w, i) => {
+                const nuovoRuolo = document.getElementById(`_fix_${i}`)?.value;
+                if (nuovoRuolo) socket.emit('adminFixPlayerRuolo', { nome: w.nome, nuovoRuolo });
+            });
+            showAlert('success', `${_pendingWarnings.length} ruoli corretti!`);
+            _chiudiWarning();
+        }
+
+        function addManualPlayer() {
+            const nome = document.getElementById('manualPlayerName').value.trim();
+            const ruolo = document.getElementById('manualPlayerRole').value;
+            const squadra = document.getElementById('manualPlayerClub').value.trim();
+
+            if (!nome || !ruolo) {
+                showAlert('error', 'Nome e ruolo sono obbligatori');
+                return;
+            }
+
+            socket.emit('adminAddNewPlayer', { nome, ruolo, squadra });
+            document.getElementById('manualPlayerName').value = '';
+            document.getElementById('manualPlayerClub').value = '';
+        }
+
+        function renderPlayersList() {
+            const container = document.getElementById('playersListContainer');
+            document.getElementById('playersCount').textContent = currentPlayersList.length;
+
+            document.getElementById('manualPlayerSelect').innerHTML =
+                '<option value="">Seleziona giocatore...</option>' +
+                currentPlayersList.map(p =>
+                    `<option value='${JSON.stringify(p)}'>${p.nome} (${p.ruolo})</option>`
+                ).join('');
+
+            document.getElementById('discardPlayerSelect').innerHTML =
+                '<option value="">Seleziona giocatore...</option>' +
+                currentPlayersList.map(p =>
+                    `<option value="${p.nome}">${p.nome} (${p.ruolo} - ${p.squadra})</option>`
+                ).join('');
+
+            if (currentPlayersList.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nessun giocatore nel mazzo</p>';
+                return;
+            }
+
+            container.innerHTML = currentPlayersList.map(p => `
+                <div class="player-item">
+                    <div>
+                        <strong>${p.nome}</strong>
+                        <span class="club">${p.squadra}</span>
+                    </div>
+                    <span class="role">${p.ruolo}</span>
+                </div>
+            `).join('');
+        }
+
+        function refreshPlayersList() {
+            socket.emit('getPlayers');
+        }
+
+        function discardPlayer() {
+            const name = document.getElementById('discardPlayerSelect').value;
+            if (!name) {
+                showAlert('error', 'Seleziona un giocatore da scartare');
+                return;
+            }
+            if (confirm(`Scartare definitivamente ${name} dal mazzo?`)) {
+                socket.emit('adminScartaDalMazzo', name);
+            }
+        }
+
+        // ============================================================
+        // AUCTION CONTROLS
+        // ============================================================
+
+        function startRandomAuction() {
+            if (currentPlayersList.length === 0) {
+                showAlert('error', 'Nessun giocatore nel mazzo!');
+                return;
+            }
+            socket.emit('startRandom');
+        }
+
+        function startManualAuction() {
+            const select = document.getElementById('manualPlayerSelect');
+            const value = select.value;
+            if (!value) {
+                showAlert('error', 'Seleziona un giocatore');
+                return;
+            }
+            try {
+                const player = JSON.parse(value);
+                socket.emit('adminStartPlayer', player);
+            } catch (e) {
+                showAlert('error', 'Errore nella selezione');
+            }
+        }
+
+        function pauseAuction() {
+            socket.emit('pauseTimer');
+            showAlert('warning', 'Asta in pausa');
+        }
+
+        function resumeAuction() {
+            socket.emit('resumeTimer');
+            showAlert('success', 'Asta ripresa');
+        }
+
+        function toggleAutoAdvance(checked) {
+            socket.emit('toggleAutoAdvance', checked);
+            showAlert('info', checked ? 'Modalita automatica attivata' : 'Modalita manuale attivata');
+        }
+
+        // ============================================================
+        // SPECIAL OPERATIONS
+        // ============================================================
+
+        function forceAssignPlayer() {
+            const squadra = document.getElementById('forceAssignTeam').value;
+            const prezzo = parseInt(document.getElementById('forceAssignPrice').value) || 1;
+
+            if (!squadra) {
+                showAlert('error', 'Seleziona una squadra');
+                return;
+            }
+
+            socket.emit('adminForceAssign', { squadra, prezzo });
+        }
+
+        function recycleUnsold() {
+            socket.emit('adminRiciclaInvenduti');
+        }
+
+        function removePlayerFromTeam() {
+            const teamName = document.getElementById('removePlayerTeam').value;
+            const playerName = document.getElementById('removePlayerName').value;
+            const credits = parseInt(document.getElementById('removePlayerCredits').value) || 0;
+
+            if (!teamName || !playerName) {
+                showAlert('error', 'Seleziona squadra e giocatore');
+                return;
+            }
+
+            if (confirm(`Rimuovere ${playerName} da ${teamName} e restituire ${credits} crediti?`)) {
+                socket.emit('adminRemovePlayer', { teamName, playerName, creditsToReturn: credits });
+            }
+        }
+
+        function updateTeamSelects() {
+            const teamOptions = Object.keys(currentTeams).map(k =>
+                `<option value="${currentTeams[k].name}">${currentTeams[k].name}</option>`
+            ).join('');
+
+            document.getElementById('forceAssignTeam').innerHTML =
+                '<option value="">Seleziona squadra...</option>' + teamOptions;
+
+            document.getElementById('manualAssignTeam').innerHTML =
+                '<option value="">Seleziona squadra...</option>' + teamOptions;
+
+            document.getElementById('removePlayerTeam').innerHTML =
+                '<option value="">Seleziona squadra...</option>' + teamOptions;
+        }
+
+        function filtraGiocatoriAssegnazione() {
+            const q = document.getElementById('manualAssignSearch').value.trim().toLowerCase();
+            const box = document.getElementById('manualAssignResults');
+            if (!q) { box.style.display = 'none'; box.innerHTML = ''; return; }
+            const matches = currentPlayersList.filter(p =>
+                p.nome.toLowerCase().includes(q) || (p.squadra || '').toLowerCase().includes(q)
+            ).slice(0, 20);
+            if (matches.length === 0) {
+                box.style.display = 'block';
+                box.innerHTML = '<div style="padding:10px;color:var(--text-secondary);font-size:0.85rem;">Nessun risultato.</div>';
+                return;
+            }
+            box.style.display = 'block';
+            box.innerHTML = matches.map(p => `
+                <div onclick="selezionaGiocatoreManuale(${JSON.stringify(p).replace(/"/g,'&quot;')})"
+                     style="padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);font-size:0.85rem;transition:background 0.15s;"
+                     onmouseover="this.style.background='var(--border)'" onmouseout="this.style.background=''">
+                    <strong>${escHtml(p.nome)}</strong>
+                    <span style="color:var(--text-secondary);margin-left:6px;">[${escHtml(p.ruolo)}]</span>
+                    <span style="color:var(--text-secondary);margin-left:4px;font-size:0.78rem;">${escHtml(p.squadra || '')}</span>
+                </div>
+            `).join('');
+        }
+
+        function selezionaGiocatoreManuale(p) {
+            document.getElementById('manualAssignPlayerDisplay').value = p.nome + ' [' + p.ruolo + '] - ' + (p.squadra || '');
+            document.getElementById('manualAssignPlayerData').value = JSON.stringify(p);
+            document.getElementById('manualAssignSearch').value = '';
+            document.getElementById('manualAssignResults').style.display = 'none';
+        }
+
+        function manualAssignPlayer() {
+            const playerJson = document.getElementById('manualAssignPlayerData').value;
+            const squadra = document.getElementById('manualAssignTeam').value;
+            const prezzo = parseInt(document.getElementById('manualAssignPrice').value) || 1;
+            if (!playerJson) { showAlert('error', 'Seleziona prima un giocatore dalla ricerca'); return; }
+            if (!squadra) { showAlert('error', 'Seleziona una squadra'); return; }
+            const player = JSON.parse(playerJson);
+            socket.emit('adminManualAssign', { player, squadra, prezzo });
+            document.getElementById('manualAssignPlayerDisplay').value = '';
+            document.getElementById('manualAssignPlayerData').value = '';
+            document.getElementById('manualAssignTeam').value = '';
+            document.getElementById('manualAssignPrice').value = 1;
+            showAlert('success', `${player.nome} assegnato a ${squadra} per ${prezzo} cr`);
+        }
+
+        // Handle team selection for player removal
+        document.getElementById('removePlayerTeam').addEventListener('change', function() {
+            const teamName = this.value.toLowerCase().trim();
+            const playersOfTeam = currentSoldPlayers.filter(p =>
+                p.winner.toLowerCase().trim() === teamName
+            );
+
+            document.getElementById('removePlayerName').innerHTML =
+                '<option value="">Seleziona giocatore...</option>' +
+                playersOfTeam.map(p =>
+                    `<option value="${p.player}">${p.player} (${p.ruolo}) - ${p.price}cr</option>`
+                ).join('');
+        });
+
+        // ============================================================
+        // CONFIGURATION
+        // ============================================================
+
+        function updateTimerConfig() {
+            const duration = parseInt(document.getElementById('configTimerDuration').value);
+            socket.emit('updateSettings', { timerDuration: duration });
+            showAlert('success', `Timer aggiornato a ${duration} secondi`);
+        }
+
+        function saveHostUrl() {
+            const url = document.getElementById('configHostUrl').value.trim();
+            socket.emit('setHostUrl', { url });
+            showAlert('success', url ? `Host impostato: ${url}` : 'Ripristinato auto-detect');
+        }
+
+        function resetHostUrl() {
+            document.getElementById('configHostUrl').value = '';
+            socket.emit('setHostUrl', { url: window.location.origin });
+            showAlert('success', 'Host ripristinato all\'URL del browser');
+        }
+
+        function saveAllConfig() {
+            const config = {
+                timerDuration: parseInt(document.getElementById('configTimerDuration').value),
+                startingBudget: parseInt(document.getElementById('configStartingBudget').value),
+                maxTotalPlayers: parseInt(document.getElementById('configMaxTotalPlayers').value),
+                maxOffensivePlayers: parseInt(document.getElementById('configMaxOffensive').value),
+                limitP: parseInt(document.getElementById('configLimitP').value),
+                limitD: parseInt(document.getElementById('configLimitD').value),
+                limitC: parseInt(document.getElementById('configLimitC').value),
+                limitA: parseInt(document.getElementById('configLimitA').value)
+            };
+            socket.emit('updateSettings', config);
+            showAlert('success', 'Configurazione salvata!');
+        }
+
+        // ============================================================
+        // EXPORT
+        // ============================================================
+
+        function exportExcel() {
+            window.location.href = `/export?room=${currentRoomCode}`;
+            showAlert('success', 'Download avviato...');
+        }
+
+        function renderSoldPlayers() {
+            const tbody = document.querySelector('#soldPlayersTable tbody');
+
+            if (currentSoldPlayers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary);">Nessuna vendita registrata</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = currentSoldPlayers.map(p => `
+                <tr>
+                    <td>${p.player}</td>
+                    <td><span class="role">${p.ruolo}</span></td>
+                    <td>${p.squadra}</td>
+                    <td>${p.winner}</td>
+                    <td><strong>${p.price} cr</strong></td>
+                </tr>
+            `).join('');
+        }
+
+        // ============================================================
+        // UTILITY FUNCTIONS
+        // ============================================================
+
+        function showAlert(type, message) {
+            const alertEl = document.getElementById(`alert${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            if (!alertEl) {
+                showToast(message);
+                return;
+            }
+
+            document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
+            alertEl.textContent = message;
+            alertEl.classList.add('show');
+
+            setTimeout(() => {
+                alertEl.classList.remove('show');
+            }, 4000);
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ============================================================
+        // STORICO OFFERTE LIVE
+        // ============================================================
+
+        function renderBidHistory(history, player) {
+            const list = document.getElementById('bid-history-list');
+            const badge = document.getElementById('bid-history-badge');
+
+            if (!player) {
+                badge.textContent = 'in attesa di asta...';
+                // Non svuotare la lista — mantieni l'ultima asta visibile finché non parte la prossima
+                return;
+            }
+
+            badge.textContent = player.nome + ' — ' + history.length + ' offerta/e';
+
+            if (history.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:0.5rem 0;">Nessuna offerta ancora.</p>';
+                return;
+            }
+
+            list.innerHTML = history.map((b, i) => `
+                <div class="bid-row ${i === history.length - 1 ? 'bid-winner' : ''}">
+                    <span class="bid-num">#${i + 1}</span>
+                    <span class="bid-team">${escHtml(b.bidder)}</span>
+                    <span class="bid-price">${b.price} cr</span>
+                </div>
+            `).join('');
+
+            // Scrolla all'ultima offerta
+            list.scrollTop = list.scrollHeight;
+        }
+
+        // ============================================================
+        // PANNELLO REVISIONE POST-ASTA
+        // ============================================================
+
+        let lastAuctionData = null;
+
+        function apriPannelloRevisione(data) {
+            lastAuctionData = data;
+
+            document.getElementById('review-player-name').textContent = data.player;
+            document.getElementById('review-price-input').value = data.price;
+
+            // Storico nel pannello revisione
+            const rl = document.getElementById('review-history-list');
+            const history = data.history || [];
+            if (history.length === 0) {
+                rl.innerHTML = '<p style="color:var(--text-secondary);font-size:0.85rem;">Nessuna offerta registrata.</p>';
+            } else {
+                rl.innerHTML = history.map((b, i) => `
+                    <div class="bid-row ${i === history.length - 1 ? 'bid-winner' : ''}">
+                        <span class="bid-num">#${i + 1}</span>
+                        <span class="bid-team">${escHtml(b.bidder)}</span>
+                        <span class="bid-price">${b.price} cr</span>
+                    </div>
+                `).join('');
+            }
+
+            // Popola il select con le squadre
+            const sel = document.getElementById('review-team-select');
+            const winnerTeamLower = data.winner.toLowerCase().trim();
+            sel.innerHTML = Object.keys(currentTeams).map(k => {
+                const t = currentTeams[k];
+                const isWinner = t.name.toLowerCase().trim() === winnerTeamLower;
+                return `<option value="${escAttr(t.name)}" ${isWinner ? 'selected' : ''}>
+                    ${escHtml(t.name)}${isWinner ? ' ✓ (vincitore attuale)' : ''}
+                </option>`;
+            }).join('');
+
+            const panel = document.getElementById('review-panel');
+            panel.style.display = 'block';
+            panel.classList.remove('pulse');
+            void panel.offsetWidth; // force reflow per riavviare animation
+            panel.classList.add('pulse');
+
+            // Vai al tab Asta se non ci sei già
+            const tabBtn = document.querySelector('[data-tab="tab-asta"]');
+            if (tabBtn && !tabBtn.classList.contains('active')) {
+                tabBtn.click();
+            }
+
+            // Scroll al pannello
+            setTimeout(() => panel.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+        }
+
+        function chiudiRevisione() {
+            document.getElementById('review-panel').style.display = 'none';
+            lastAuctionData = null;
+        }
+
+        function confermaRiassegnazione() {
+            const newWinner = document.getElementById('review-team-select').value;
+            const newPrice = parseInt(document.getElementById('review-price-input').value);
+
+            if (!newWinner) { showAlert('error', 'Seleziona una squadra'); return; }
+            if (isNaN(newPrice) || newPrice < 0) { showAlert('error', 'Prezzo non valido'); return; }
+
+            socket.emit('adminReassignLastSold', { newWinner, newPrice });
+            chiudiRevisione();
+        }
+
+        function escHtml(str) {
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        }
+        function escAttr(str) {
+            return String(str).replace(/"/g,'&quot;');
+        }
+    </script>
+    <!-- Warning Modal: Ruoli non riconosciuti -->
+    <div id="_warningModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);
+         z-index:9999;align-items:center;justify-content:center;padding:1.5rem;">
+        <div style="width:100%;max-width:700px;background:var(--bg-card);border-radius:16px;
+                    padding:2rem;border:1px solid #f59e0b;box-shadow:0 20px 60px rgba(0,0,0,0.5);
+                    max-height:90vh;display:flex;flex-direction:column;">
+            <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem;">
+                <span style="font-size:2rem;line-height:1;">⚠️</span>
+                <div>
+                    <h3 style="color:#f59e0b;margin:0 0 4px;">Ruoli non riconosciuti</h3>
+                    <p id="_warningSubtitle" style="color:var(--text-secondary);margin:0;font-size:0.88rem;"></p>
+                </div>
+            </div>
+            <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:1rem;
+                      padding:0.75rem;background:rgba(245,158,11,0.07);border-radius:8px;border-left:3px solid #f59e0b;">
+                Questi giocatori hanno ruoli che il sistema Mantra non riconosce: durante l'asta il controllo del limite di reparto non funzionerà correttamente.
+                Seleziona il ruolo corretto e clicca <b>Salva correzioni</b>.
+            </p>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;padding:0 0.25rem 0.5rem;
+                        font-size:0.78rem;color:var(--text-secondary);font-weight:600;text-transform:uppercase;">
+                <span>Giocatore</span><span>Ruolo attuale</span><span>Correggi con</span>
+            </div>
+            <div id="_warningList" style="overflow-y:auto;flex:1;"></div>
+            <div style="display:flex;gap:1rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
+                <button onclick="_salvaCorrezioni()"
+                        style="background:#22c55e;color:white;border:none;padding:0.75rem 1.5rem;
+                               border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;">
+                    Salva correzioni
+                </button>
+                <button onclick="_chiudiWarning()"
+                        style="background:transparent;color:var(--text-secondary);
+                               border:1px solid var(--border);padding:0.75rem 1.5rem;
+                               border-radius:8px;cursor:pointer;font-size:0.9rem;">
+                    Ignora e continua
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
