@@ -642,6 +642,7 @@ app.get("/rose.html", (req, res) => res.sendFile(path.join(__dirname, "public", 
 app.get("/superadmin", (req, res) => res.sendFile(path.join(__dirname, "public", "superadmin.html")));
 app.get("/guida-admin", (req, res) => res.sendFile(path.join(__dirname, "public", "guida-admin.html")));
 app.get("/guida-utenti", (req, res) => res.sendFile(path.join(__dirname, "public", "guida-utenti.html")));
+app.get("/video", (req, res) => res.sendFile(path.join(__dirname, "public", "video.html")));
 
 /* ==========================================================================
    SUPERADMIN PASSWORD (caricata da DB, fallback env)
