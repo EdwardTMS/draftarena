@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DraftARENA — Albo d'Oro</title>
+  <link rel="icon" href="/DraftARENAico.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #020810;
+      --bg-card: #0b1428;
+      --bg-card2:#0e1a32;
+      --border:  #1c2d4a;
+      --text:    #f1f5f9;
+      --muted:   #94a3b8;
+      --dim:     #475569;
+      --blue:    #2563eb;
+      --sky:     #38bdf8;
+      --green:   #10b981;
+      --amber:   #f59e0b;
+      --gold:    #fbbf24;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAVBAR ── */
+    .nav {
+      position: sticky; top: 0; z-index: 10;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 28px;
+      background: rgba(2,8,16,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav img { height: 32px; }
+    .nav-room {
+      background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3);
+      border-radius: 6px; padding: 3px 10px;
+      font-size: 12px; font-weight: 700; color: var(--sky); letter-spacing: 1.5px;
+    }
+    .nav-back {
+      margin-left: auto; text-decoration: none; color: var(--muted);
+      font-size: 13px; font-weight: 600;
+      padding: 5px 12px; border: 1px solid var(--border); border-radius: 6px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .nav-back:hover { color: var(--sky); border-color: var(--sky); }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 64px 24px 48px;
+      position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -120px; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse, rgba(245,158,11,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .hero-trophy { font-size: 3.5rem; margin-bottom: 16px; }
+    .hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 900; letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 0.95rem; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+    /* ── WRAPPER ── */
+    .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px 80px; }
+
+    /* ── SECTION LABEL ── */
+    .sec-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--sky); margin-bottom: 14px;
+    }
+
+    /* ── MEDAGLIERE ── */
+    .medagliere-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 12px; margin-bottom: 48px;
+    }
+    .med-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 16px; text-align: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .med-card:hover { border-color: rgba(251,191,36,0.4); transform: translateY(-3px); }
+    .med-card.gold { border-color: rgba(251,191,36,0.4); background: rgba(251,191,36,0.06); }
+    .med-team { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-bottom: 10px; word-break: break-word; }
+    .med-count {
+      font-size: 2rem; font-weight: 900; color: var(--gold); letter-spacing: -0.03em;
+      margin-bottom: 2px;
+    }
+    .med-sub { font-size: 11px; color: var(--dim); }
+    .med-trophies { font-size: 1.1rem; margin-top: 6px; letter-spacing: 2px; }
+
+    /* ── STAGIONI ── */
+    .season-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      margin-bottom: 24px;
+      transition: border-color 0.2s;
+    }
+    .season-card:hover { border-color: rgba(56,189,248,0.25); }
+    .season-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+    .season-year {
+      font-size: 1.6rem; font-weight: 900; color: var(--gold);
+      letter-spacing: -0.03em; line-height: 1;
+    }
+    .season-label { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+    .season-sub   { font-size: 0.75rem; color: var(--dim); margin-top: 2px; }
+    .season-body { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    @media (max-width: 560px) { .season-body { grid-template-columns: 1fr; } }
+
+    .season-col { padding: 18px 22px; }
+    .season-col + .season-col { border-left: 1px solid var(--border); }
+    @media (max-width: 560px) { .season-col + .season-col { border-left: none; border-top: 1px solid var(--border); } }
+
+    .col-title {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--dim); margin-bottom: 12px;
+    }
+
+    /* Classifica */
+    .rank-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .rank-row:last-child { border-bottom: none; }
+    .rank-pos { width: 28px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+    .rank-pos.num { font-size: 0.82rem; font-weight: 700; color: var(--dim); }
+    .rank-name { font-size: 0.85rem; font-weight: 600; color: var(--text); flex: 1; word-break: break-word; }
+    .rank-name.first  { color: var(--gold); }
+    .rank-name.second { color: #d1d5db; }
+    .rank-name.third  { color: #cd7f32; }
+
+    /* Competizioni */
+    .comp-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .comp-row:last-child { border-bottom: none; }
+    .comp-emoji { font-size: 1.2rem; flex-shrink: 0; margin-top: 1px; }
+    .comp-info { flex: 1; }
+    .comp-nome  { font-size: 0.82rem; color: var(--muted); }
+    .comp-vince { font-size: 0.88rem; font-weight: 700; color: var(--text); margin-top: 2px; word-break: break-word; }
+
+    /* empty / loading */
+    .empty {
+      text-align: center; padding: 60px 20px;
+      color: var(--dim); font-size: 0.9rem; line-height: 1.7;
+    }
+    .empty .icon { font-size: 3rem; margin-bottom: 12px; }
+    .loader { text-align: center; padding: 60px 20px; color: var(--sky); font-size: 0.9rem; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <img src="/DraftARENA.png" alt="DraftARENA">
+  <span class="nav-room" id="nav-room">---</span>
+  <a href="/#hub" class="nav-back">← Hub</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-trophy">🏆</div>
+  <h1>Albo d'<span>Oro</span></h1>
+  <p>Lo storico completo della lega — classifiche, coppe e vittorie stagione dopo stagione.</p>
+</div>
+
+<div class="wrap">
+
+  <div id="content">
+    <div class="loader"><span class="spin">⏳</span> Caricamento in corso...</div>
+  </div>
+
+</div>
+
+<script>
+  const params = new URLSearchParams(location.search);
+  const roomCode = (params.get('room') || '').toUpperCase().trim();
+
+  document.getElementById('nav-room').textContent = roomCode || '---';
+  document.title = roomCode ? `Albo d'Oro — ${roomCode}` : "Albo d'Oro — DraftARENA";
+
+  async function loadAlbo() {
+    const content = document.getElementById('content');
+    if (!roomCode) {
+      content.innerHTML = `<div class="empty"><div class="icon">🔍</div>Nessun codice stanza specificato.<br>Apri questa pagina con <code>?room=XXXXXX</code></div>`;
+      return;
+    }
+    try {
+      const res = await fetch(`/api/lega/${roomCode}/albo`);
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error);
+
+      const seasons = json.seasons.filter(s => s.season_data &&
+        (s.season_data.classifica?.length || s.season_data.competizioni?.length));
+
+      if (seasons.length === 0) {
+        content.innerHTML = `<div class="empty">
+          <div class="icon">📋</div>
+          Nessuna stagione compilata ancora.<br>
+          Il Commander può aggiungere classifiche e competizioni<br>dal pannello Regia → Storico Lega.
+        </div>`;
+        return;
+      }
+
+      content.innerHTML = renderMedagliere(seasons) + renderStagioni(seasons);
+    } catch(e) {
+      content.innerHTML = `<div class="empty"><div class="icon">⚠️</div>${esc(e.message)}</div>`;
+    }
+  }
+
+  function renderMedagliere(seasons) {
+    const counts = {};
+    const details = {};
+    seasons.forEach(s => {
+      const comps = s.season_data.competizioni || [];
+      comps.forEach(c => {
+        if (!c.vincitore) return;
+        counts[c.vincitore] = (counts[c.vincitore] || 0) + 1;
+        if (!details[c.vincitore]) details[c.vincitore] = [];
+        details[c.vincitore].push(c.emoji || '🏅');
+      });
+      const cl = s.season_data.classifica || [];
+      if (cl[0]?.nome) {
+        counts[cl[0].nome] = (counts[cl[0].nome] || 0) + 1;
+        if (!details[cl[0].nome]) details[cl[0].nome] = [];
+        details[cl[0].nome].push('🥇');
+      }
+    });
+    const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
+    if (sorted.length === 0) return '';
+    const cards = sorted.map(([nome, tot], i) => `
+      <div class="med-card ${i===0?'gold':''}">
+        <div class="med-team">${esc(nome)}</div>
+        <div class="med-count">${tot}</div>
+        <div class="med-sub">titol${tot===1?'o':'i'}</div>
+        <div class="med-trophies">${(details[nome]||[]).join('')}</div>
+      </div>`).join('');
+    return `<div style="margin-bottom:40px;">
+      <div class="sec-label">Medagliere Totale</div>
+      <div class="medagliere-grid">${cards}</div>
+    </div>`;
+  }
+
+  function renderStagioni(seasons) {
+    return `<div class="sec-label">Stagioni</div>` +
+      seasons.map(s => {
+        const cl = s.season_data.classifica || [];
+        const comps = s.season_data.competizioni || [];
+        const medals = ['🥇','🥈','🥉'];
+        const classCol = cl.length
+          ? cl.map((r, i) => {
+              const cls = i===0?'first':i===1?'second':i===2?'third':'';
+              return `<div class="rank-row">
+                <div class="rank-pos">${medals[i] || `<span class="rank-pos num">${i+1}</span>`}</div>
+                <div class="rank-name ${cls}">${esc(r.nome)}</div>
+              </div>`;
+            }).join('')
+          : '<p style="font-size:0.83rem;color:#475569;">Classifica non inserita.</p>';
+
+        const compCol = comps.length
+          ? comps.map(c => `<div class="comp-row">
+              <div class="comp-emoji">${c.emoji||'🏅'}</div>
+              <div class="comp-info">
+                <div class="comp-nome">${esc(c.nome)}</div>
+                <div class="comp-vince">${esc(c.vincitore||'—')}</div>
+              </div>
+            </div>`).join('')
+          : '<p style="font-size:0.83rem;color:#475569;">Nessuna competizione registrata.</p>';
+
+        const d = new Date(s.exported_at);
+        const dateStr = d.toLocaleDateString('it-IT', { year:'numeric', month:'long', day:'numeric' });
+
+        return `<div class="season-card">
+          <div class="season-header">
+            <div class="season-year">${s.year}</div>
+            <div>
+              <div class="season-label">${esc(s.label)}</div>
+              <div class="season-sub">Archiviata il ${dateStr}</div>
+            </div>
+          </div>
+          <div class="season-body">
+            <div class="season-col">
+              <div class="col-title">📊 Classifica Finale</div>
+              ${classCol}
+            </div>
+            <div class="season-col">
+              <div class="col-title">🏆 Competizioni Vinte</div>
+              ${compCol}
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+  }
+
+  function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  loadAlbo();
+</script>
+</body>
+</html>
