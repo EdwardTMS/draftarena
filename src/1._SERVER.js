@@ -79,6 +79,40 @@ const ROOM_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
    rooms: Map<roomCode, roomData>
    ========================================================================== */
 const rooms = new Map();
+let pageViewsSinceStart = 0;
+let pageViewsTotal = 0;
+let pageViewsUnsaved = 0;
+const PAGE_VIEWS_FLUSH_EVERY = 10;
+
+async function loadPageViewsTotal() {
+  if (!supabase) return;
+  try {
+    const { data } = await supabase.from("platform_settings").select("value").eq("key", "page_views_total").maybeSingle();
+    if (data) pageViewsTotal = parseInt(data.value) || 0;
+  } catch (e) {
+    console.warn("[SERVER] Impossibile caricare page_views_total dal DB.");
+  }
+}
+
+async function flushPageViews() {
+  if (!supabase || pageViewsUnsaved === 0) return;
+  try {
+    await supabase.from("platform_settings").upsert(
+      { key: "page_views_total", value: String(pageViewsTotal), updated_at: new Date().toISOString() },
+      { onConflict: "key" }
+    );
+    pageViewsUnsaved = 0;
+  } catch (e) {
+    console.warn("[SERVER] Errore flush page_views_total:", e.message);
+  }
+}
+
+function trackPageView() {
+  pageViewsSinceStart++;
+  pageViewsTotal++;
+  pageViewsUnsaved++;
+  if (pageViewsUnsaved >= PAGE_VIEWS_FLUSH_EVERY) flushPageViews();
+}
 
 function generateRoomCode() {
   let code = "";
@@ -587,6 +621,7 @@ async function gracefulShutdown(signal) {
   for (const room of rooms.values()) {
     saves.push(salvaSessioneDB(room).catch(e => console.error(`[SHUTDOWN] Errore ${room.code}:`, e.message)));
   }
+  saves.push(flushPageViews().catch(e => console.error("[SHUTDOWN] Errore flush page views:", e.message)));
   await Promise.all(saves);
   console.log("[SERVER] Salvataggio completato. Uscita.");
   process.exit(0);
@@ -598,7 +633,7 @@ process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
 /* ==========================================================================
    ROTTE EXPRESS
    ========================================================================== */
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "index.html")); });
 app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "public", "admin.html")));
 app.get("/host", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
 app.get("/host.html", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
@@ -689,6 +724,36 @@ app.get("/api/superadmin/rooms", async (req, res) => {
   const { data, error } = await supabase.from("rooms").select("*").order("created_at", { ascending: false }).limit(50);
   if (error) return res.status(500).json({ success: false, error: error.message });
   res.json({ success: true, rooms: data });
+});
+
+app.get("/api/superadmin/stats", (req, res) => {
+  const allSockets = io.sockets.sockets;
+  let landingViewers = 0;
+  allSockets.forEach(s => {
+    if (s.isViewingLanding && !s.roomCode) landingViewers++;
+  });
+
+  let totalInRooms = 0;
+  const activeRooms = [];
+  for (const [code, room] of rooms.entries()) {
+    const roomSockets = io.sockets.adapter.rooms.get(code);
+    const count = roomSockets ? roomSockets.size : 0;
+    if (count > 0) {
+      activeRooms.push({ code, count, auctionName: room.auctionName, teams: Object.keys(room.teams).length });
+      totalInRooms += count;
+    }
+  }
+
+  res.json({
+    success: true,
+    landingViewers,
+    totalInRooms,
+    activeRooms,
+    activeRoomsCount: activeRooms.length,
+    pageViewsSinceStart,
+    pageViewsTotal,
+    totalSockets: allSockets.size
+  });
 });
 
 /* ==========================================================================
@@ -1088,6 +1153,10 @@ io.on("connection", (socket) => {
     socket.emit("configUpdate", { CONFIG: room.CONFIG, timerDuration: room.state.timerDuration });
     socket.emit("takenTeams", Object.keys(room.claimedTeams || {}));
   }
+
+  socket.on("viewingLanding", () => {
+    socket.isViewingLanding = true;
+  });
 
   // ─── GESTIONE STANZE ─────────────────────────────────────────────────────
 
@@ -1785,7 +1854,7 @@ io.on("connection", (socket) => {
    AVVIO SERVER
    ========================================================================== */
 const PORT = process.env.PORT || 3000;
-loadSuperadminPassword().then(() => {
+Promise.all([loadSuperadminPassword(), loadPageViewsTotal()]).then(() => {
   server.listen(PORT, () => {
     console.log("====================================================");
     console.log(`🚀 SERVER APERTO SU http://localhost:${PORT}`);
