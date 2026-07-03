@@ -1001,7 +1001,11 @@
     let activeRoomCode = sessionStorage.getItem('roomCode');
     let isConnected = false;
 
-    socket.on('connect',    () => { isConnected = true;  if (activeRoomCode) subscribeSocket(activeRoomCode); });
+    socket.on('connect', () => {
+      isConnected = true;
+      if (activeRoomCode) subscribeSocket(activeRoomCode);
+      else socket.emit('viewingLanding');
+    });
     socket.on('disconnect', () => { isConnected = false; });
 
     function subscribeSocket(code) { socket.emit('joinRoom', code); }
