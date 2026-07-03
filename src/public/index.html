@@ -295,6 +295,27 @@
 
     /* ── PRICING ── */
     .pricing-section { padding: 0 24px 96px; max-width: 1100px; margin: 0 auto; }
+
+    .beta-banner {
+      display: flex; align-items: center; gap: 14px; justify-content: center;
+      background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.06));
+      border: 1px solid rgba(16,185,129,0.35);
+      border-radius: 12px; padding: 18px 24px; margin-bottom: 48px;
+      max-width: 680px; margin-left: auto; margin-right: auto;
+      text-align: center; flex-direction: column; gap: 6px;
+    }
+    .beta-banner .beta-badge {
+      display: inline-block; background: #10b981; color: #000;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+    }
+    .beta-banner .beta-title {
+      font-size: 1.05rem; font-weight: 700; color: #6ee7b7;
+    }
+    .beta-banner .beta-sub {
+      font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;
+    }
+
     .pricing-note {
       text-align: center; font-size: 0.88rem; color: var(--text-muted);
       margin-bottom: 48px; line-height: 1.6;
@@ -302,6 +323,12 @@
       border-radius: 10px; padding: 14px 20px; max-width: 640px; margin-left: auto; margin-right: auto;
     }
     .pricing-note strong { color: var(--text-secondary); }
+
+    .price-future {
+      font-size: 0.78rem; color: var(--text-muted);
+      text-decoration: line-through; margin-left: 6px; vertical-align: middle;
+    }
+    .tag-beta { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
 
     .pricing-group-label {
       font-size: 11px; font-weight: 700; letter-spacing: 0.15em;
@@ -710,11 +737,12 @@
   <div class="pricing-section" id="prezzi">
     <div class="section-label" style="text-align:center; margin-bottom:12px;">Piani e Prezzi</div>
     <h2 class="section-title">Scegli il piano giusto per la tua lega</h2>
-    <p class="section-sub">Flexible per ogni tipo di asta. Gratis per iniziare, accessibile per crescere.</p>
+    <p class="section-sub">Tutto gratis per la stagione 2026/27. I prezzi entrano in vigore dalla stagione 2027/28.</p>
 
-    <div class="pricing-note">
-      <strong>Il modello flessibile di DraftARENA garantisce un'asta fluida per tutti.</strong><br>
-      Gli abbonamenti hanno valore annuale. Le aste singole si acquistano all'occorrenza.
+    <div class="beta-banner">
+      <span class="beta-badge">Beta Launch</span>
+      <div class="beta-title">Tutto gratis per la stagione 2026/27</div>
+      <div class="beta-sub">DraftARENA e' in fase di lancio e vogliamo che tu lo provi senza pensieri.<br>I piani a pagamento partiranno dalla stagione <strong style="color:var(--text-secondary)">2027/28</strong> — i prezzi indicati sono quelli futuri.</div>
     </div>
 
     <div class="pricing-group">
@@ -747,11 +775,11 @@
             </div>
           </div>
           <div class="price-amount">
-            <span class="price-value">2,99€</span>
-            <span class="price-period">/ asta</span>
+            <span class="price-value free">Gratis</span>
+            <span class="price-future">2,99€ / asta dal 2027/28</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-once">Acquisto singolo</span>
+            <span class="price-tag tag-beta">Gratis 2026/27</span>
             <span class="price-tag tag-nobanner">Nessun banner</span>
           </div>
         </div>
@@ -765,11 +793,11 @@
             </div>
           </div>
           <div class="price-amount">
-            <span class="price-value">7,99€</span>
-            <span class="price-period">/ anno</span>
+            <span class="price-value free">Gratis</span>
+            <span class="price-future">7,99€ / anno dal 2027/28</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-annual">Abbonamento annuale</span>
+            <span class="price-tag tag-beta">Gratis 2026/27</span>
             <span class="price-tag tag-nobanner">Nessun banner</span>
           </div>
         </div>
@@ -794,7 +822,6 @@
           </div>
           <div class="price-tags">
             <span class="price-tag tag-free">Sempre gratis</span>
-            <span class="price-tag tag-banner">Con banner</span>
           </div>
         </div>
 
@@ -807,11 +834,11 @@
             </div>
           </div>
           <div class="price-amount">
-            <span class="price-value">0,99€</span>
-            <span class="price-period">/ anno</span>
+            <span class="price-value free">Gratis</span>
+            <span class="price-future">0,99€ / anno dal 2027/28</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-annual">Abbonamento annuale</span>
+            <span class="price-tag tag-beta">Gratis 2026/27</span>
             <span class="price-tag tag-nobanner">Nessun banner</span>
           </div>
         </div>
