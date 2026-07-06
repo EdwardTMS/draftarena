@@ -195,6 +195,21 @@
       .gen-card { grid-template-columns: 1fr 1fr; }
       .gen-card > *:last-child { grid-column: 1 / -1; }
     }
+
+    /* Toggle switch */
+    .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background: #1c2541; border-radius: 24px; transition: 0.25s;
+    }
+    .toggle-slider:before {
+      position: absolute; content: ""; height: 18px; width: 18px;
+      left: 3px; bottom: 3px; background: #64748b;
+      border-radius: 50%; transition: 0.25s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: rgba(59,130,246,0.3); }
+    .toggle-switch input:checked + .toggle-slider:before { background: #3b82f6; transform: translateX(20px); }
   </style>
 </head>
 <body>
@@ -329,6 +344,46 @@
       <div id="pwd-result" style="margin-top:10px;font-size:13px;min-height:18px;"></div>
     </div>
 
+    <!-- Impostazioni Piattaforma -->
+    <div class="section-title" style="margin-top:28px;">Impostazioni Piattaforma</div>
+    <div style="background:#0b132b;border:1px solid #1c2541;border-radius:12px;padding:20px;max-width:560px;">
+
+      <!-- Toggle prezzi -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #1c2541;">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#cbd5e1;">Sezione Prezzi</div>
+          <div style="font-size:11px;color:#475569;margin-top:2px;">Mostra o nascondi la sezione prezzi sull'homepage</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="toggle-pricing" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      <!-- Prezzi futuri -->
+      <div style="margin-bottom:8px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#475569;">Prezzi futuri (visibili barrati)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
+        <div>
+          <label style="display:block;font-size:10px;color:#64748b;margin-bottom:4px;">Commander Plus (€/asta)</label>
+          <input type="text" id="price-cmd-plus" value="2,99" placeholder="2,99"
+            style="width:100%;padding:8px 10px;border-radius:7px;border:1px solid #1c2541;background:#020817;color:#fff;font-size:13px;">
+        </div>
+        <div>
+          <label style="display:block;font-size:10px;color:#64748b;margin-bottom:4px;">Commander Pro (€/anno)</label>
+          <input type="text" id="price-cmd-pro" value="7,99" placeholder="7,99"
+            style="width:100%;padding:8px 10px;border-radius:7px;border:1px solid #1c2541;background:#020817;color:#fff;font-size:13px;">
+        </div>
+        <div>
+          <label style="display:block;font-size:10px;color:#64748b;margin-bottom:4px;">Partecipante Premium (€/anno)</label>
+          <input type="text" id="price-part-premium" value="0,99" placeholder="0,99"
+            style="width:100%;padding:8px 10px;border-radius:7px;border:1px solid #1c2541;background:#020817;color:#fff;font-size:13px;">
+        </div>
+      </div>
+
+      <button id="btn-save-platform" class="btn-gen" style="width:100%;">SALVA IMPOSTAZIONI</button>
+      <div id="platform-result" style="margin-top:10px;font-size:13px;min-height:18px;"></div>
+    </div>
+
     <!-- Stanze recenti -->
     <div class="section-title">Stanze create (ultime 50)</div>
     <div class="table-wrap">
@@ -354,6 +409,7 @@
 
 <script>
   let authenticated = false;
+  let saPassword = '';
 
   // ── Login ────────────────────────────────────────────────────────────────
   async function doLogin() {
@@ -368,6 +424,7 @@
       const data = await r.json();
       if (data.success) {
         authenticated = true;
+        saPassword = pwd;
         sessionStorage.setItem('sa_auth', '1');
         showDashboard();
       } else {
@@ -398,7 +455,7 @@
 
   // ── Carica dati ──────────────────────────────────────────────────────────
   async function loadAll() {
-    await Promise.all([loadCodes(), loadRooms(), loadLiveStats()]);
+    await Promise.all([loadCodes(), loadRooms(), loadLiveStats(), loadPlatformSettings()]);
   }
 
   async function loadLiveStats() {
@@ -616,6 +673,48 @@
       setTimeout(() => t.classList.remove('show'), 2000);
     });
   }
+
+  // ── Platform Settings ─────────────────────────────────────────────────────
+  async function loadPlatformSettings() {
+    try {
+      const r = await fetch('/api/platform-settings');
+      const s = await r.json();
+      document.getElementById('toggle-pricing').checked = s.pricing_visible !== 'false';
+      if (s.price_commander_plus) document.getElementById('price-cmd-plus').value = s.price_commander_plus;
+      if (s.price_commander_pro) document.getElementById('price-cmd-pro').value = s.price_commander_pro;
+      if (s.price_partecipante_premium) document.getElementById('price-part-premium').value = s.price_partecipante_premium;
+    } catch (_) {}
+  }
+
+  document.getElementById('btn-save-platform').addEventListener('click', async () => {
+    const res = document.getElementById('platform-result');
+    res.textContent = '';
+    const pwd = saPassword || prompt('Password superadmin:');
+    if (!pwd) return;
+    const settings = {
+      pricing_visible: document.getElementById('toggle-pricing').checked ? 'true' : 'false',
+      price_commander_plus: document.getElementById('price-cmd-plus').value.trim(),
+      price_commander_pro: document.getElementById('price-cmd-pro').value.trim(),
+      price_partecipante_premium: document.getElementById('price-part-premium').value.trim(),
+    };
+    try {
+      const r = await fetch('/api/superadmin/platform-settings', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd, settings })
+      });
+      const data = await r.json();
+      if (data.success) {
+        res.style.color = '#22c55e';
+        res.textContent = 'Impostazioni salvate.';
+      } else {
+        res.style.color = '#ef4444';
+        res.textContent = data.error || 'Errore.';
+      }
+    } catch (e) {
+      res.style.color = '#ef4444';
+      res.textContent = 'Errore di rete.';
+    }
+  });
 </script>
 </body>
 </html>
