@@ -604,12 +604,13 @@ setInterval(async () => {
   for (const [code, room] of rooms.entries()) {
     try {
       await salvaSessioneDB(room);
-      // Notifica i socket admin connessi a questa stanza
       io.to(code).emit("autoSaved", { ts: new Date().toISOString() });
     } catch (e) {
       console.error(`[AUTO-SAVE] Errore per stanza ${code}:`, e.message);
     }
   }
+  // Flush page views anche se non si è raggiunta la soglia
+  if (pageViewsUnsaved > 0) flushPageViews();
 }, 2 * 60 * 1000);
 
 /* ==========================================================================
@@ -755,6 +756,44 @@ app.get("/api/superadmin/stats", (req, res) => {
     pageViewsTotal,
     totalSockets: allSockets.size
   });
+});
+
+/* ==========================================================================
+   PLATFORM SETTINGS (pubblica lettura, protetta scrittura)
+   ========================================================================== */
+const PRICING_KEYS = ["pricing_visible", "price_commander_plus", "price_commander_pro", "price_partecipante_premium"];
+
+app.get("/api/platform-settings", async (req, res) => {
+  if (!supabase) return res.json({ pricing_visible: "true", price_commander_plus: "2,99", price_commander_pro: "7,99", price_partecipante_premium: "0,99" });
+  try {
+    const { data } = await supabase.from("platform_settings").select("key, value").in("key", PRICING_KEYS);
+    const settings = {};
+    (data || []).forEach(row => { settings[row.key] = row.value; });
+    res.json({
+      pricing_visible: settings.pricing_visible ?? "true",
+      price_commander_plus: settings.price_commander_plus ?? "2,99",
+      price_commander_pro: settings.price_commander_pro ?? "7,99",
+      price_partecipante_premium: settings.price_partecipante_premium ?? "0,99"
+    });
+  } catch (e) {
+    res.json({ pricing_visible: "true", price_commander_plus: "2,99", price_commander_pro: "7,99", price_partecipante_premium: "0,99" });
+  }
+});
+
+app.post("/api/superadmin/platform-settings", async (req, res) => {
+  const { password, settings } = req.body;
+  if (!password || password !== superadminPassword) return res.status(401).json({ success: false, error: "Password errata." });
+  if (!settings || typeof settings !== "object") return res.status(400).json({ success: false, error: "Dati non validi." });
+  if (!supabase) return res.status(500).json({ success: false, error: "DB non disponibile." });
+  try {
+    const rows = Object.entries(settings)
+      .filter(([k]) => PRICING_KEYS.includes(k))
+      .map(([key, value]) => ({ key, value: String(value), updated_at: new Date().toISOString() }));
+    await supabase.from("platform_settings").upsert(rows, { onConflict: "key" });
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
 });
 
 /* ==========================================================================
