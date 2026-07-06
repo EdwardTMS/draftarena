@@ -962,26 +962,15 @@
   <!-- MODALE creazione stanza -->
   <div class="modal-overlay" id="modal-access">
     <div class="modal-card">
-
-      <div class="modal-step active" id="modal-step-1">
-        <h3>Quante squadre partecipano?</h3>
-        <p>Inserisci il numero di fantasquadre che parteciperanno all'asta.</p>
-        <input type="number" class="access-input" id="team-count-input" placeholder="es: 8" min="2" max="100" autocomplete="off">
-        <div class="access-error" id="team-count-error"></div>
-        <button class="btn-access-confirm" id="btn-team-count-confirm">CONTINUA</button>
-        <button class="btn-access-cancel" id="btn-access-cancel">Annulla</button>
+      <h3>Codice di attivazione</h3>
+      <p>Inserisci il tuo codice personale per creare la stanza.</p>
+      <input type="text" class="access-input" id="access-code-input" placeholder="es: DRAFT-ABC123" maxlength="30" autocomplete="off">
+      <div class="access-error" id="access-error"></div>
+      <button class="btn-access-confirm" id="btn-access-confirm">CREA STANZA</button>
+      <button class="btn-access-cancel" id="btn-access-cancel">Annulla</button>
+      <div style="text-align:center;margin-top:16px;">
+        <a href="/richiesta-codice" style="color:#38bdf8;font-size:12px;text-decoration:none;">Non hai ancora un codice? Richiedilo gratis →</a>
       </div>
-
-      <div class="modal-step" id="modal-step-2">
-        <h3>Codice di attivazione</h3>
-        <div class="paid-badge">Per leghe con più di 8 squadre è richiesto un codice di attivazione.</div>
-        <p>Inserisci il codice ricevuto per sbloccare questa funzione.</p>
-        <input type="text" class="access-input" id="access-code-input" placeholder="es: DRAFT-ABC123" maxlength="30" autocomplete="off">
-        <div class="access-error" id="access-error"></div>
-        <button class="btn-access-confirm" id="btn-access-confirm">CONFERMA E CREA STANZA</button>
-        <button class="btn-access-cancel" id="btn-back-step1">← Indietro</button>
-      </div>
-
     </div>
   </div>
 
@@ -1006,14 +995,10 @@
       document.getElementById('hub').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
     function apriModaleCreazione() {
-      pendingTeamCount = 0;
-      document.getElementById('team-count-input').value = '';
-      document.getElementById('team-count-error').textContent = '';
       document.getElementById('access-code-input').value = '';
       document.getElementById('access-error').textContent = '';
-      showModalStep(1);
       document.getElementById('modal-access').classList.add('open');
-      setTimeout(() => document.getElementById('team-count-input').focus(), 100);
+      setTimeout(() => document.getElementById('access-code-input').focus(), 100);
     }
 
     /* ── FAQ accordion ── */
@@ -1039,38 +1024,10 @@
     function subscribeSocket(code) { socket.emit('joinRoom', code); }
 
     /* ── Modale ── */
-    let pendingTeamCount = 0;
-
     document.getElementById('btn-create-room').addEventListener('click', apriModaleCreazione);
-
-    function showModalStep(n) {
-      document.querySelectorAll('.modal-step').forEach(s => s.classList.remove('active'));
-      document.getElementById('modal-step-' + n).classList.add('active');
-    }
 
     document.getElementById('btn-access-cancel').addEventListener('click', () => {
       document.getElementById('modal-access').classList.remove('open');
-    });
-    document.getElementById('btn-back-step1').addEventListener('click', () => {
-      showModalStep(1);
-      setTimeout(() => document.getElementById('team-count-input').focus(), 100);
-    });
-    document.getElementById('team-count-input').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') document.getElementById('btn-team-count-confirm').click();
-    });
-    document.getElementById('btn-team-count-confirm').addEventListener('click', () => {
-      const val = parseInt(document.getElementById('team-count-input').value);
-      const errEl = document.getElementById('team-count-error');
-      if (!val || val < 2) { errEl.textContent = 'Inserisci un numero di squadre valido (min. 2).'; return; }
-      errEl.textContent = '';
-      pendingTeamCount = val;
-      if (val <= 8) {
-        document.getElementById('modal-access').classList.remove('open');
-        creaStanza(null, val);
-      } else {
-        showModalStep(2);
-        setTimeout(() => document.getElementById('access-code-input').focus(), 100);
-      }
     });
     document.getElementById('access-code-input').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') document.getElementById('btn-access-confirm').click();
@@ -1081,10 +1038,10 @@
       if (!accessCode) { errEl.textContent = 'Inserisci un codice di attivazione.'; return; }
       errEl.textContent = '';
       const btn = document.getElementById('btn-access-confirm');
-      btn.textContent = 'Verifica in corso...';
+      btn.textContent = 'Creazione in corso...';
       btn.disabled = true;
-      await creaStanza(accessCode, pendingTeamCount);
-      btn.textContent = 'CONFERMA E CREA STANZA';
+      await creaStanza(accessCode, 0);
+      btn.textContent = 'CREA STANZA';
       btn.disabled = false;
     });
 
@@ -1105,17 +1062,30 @@
           scrollToHub();
         } else {
           document.getElementById('access-error').textContent = res.error || 'Codice non valido.';
-          if (teamCount > 8) showModalStep(2);
-          else { document.getElementById('modal-access').classList.remove('open'); setError(res.error || 'Errore creazione stanza.'); }
+          document.getElementById('modal-access').classList.add('open');
         }
       } catch (e) {
         const msg = e.name === 'AbortError' ? 'Timeout: server non risponde.' : 'Errore di rete. Riprova.';
         document.getElementById('access-error').textContent = msg;
-        if (!teamCount || teamCount <= 8) setError(msg);
+        document.getElementById('modal-access').classList.add('open');
       } finally {
         setLoading(false);
       }
     }
+
+    /* ── Auto-crea stanza da URL param (redirect da richiesta-codice) ── */
+    (function checkUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const urlCodice = params.get('codice');
+      const urlSquadre = parseInt(params.get('squadre')) || 0;
+      if (urlCodice) {
+        window.history.replaceState({}, '', '/');
+        setTimeout(() => {
+          scrollToHub();
+          creaStanza(urlCodice.toUpperCase(), urlSquadre);
+        }, 400);
+      }
+    })();
 
     /* ── Entra stanza ── */
     document.getElementById('btn-join-room').addEventListener('click', entra);
