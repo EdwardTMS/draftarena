@@ -618,7 +618,7 @@
     <div class="navbar-links">
       <a href="#come-funziona">Come funziona</a>
       <a href="/video">Video</a>
-      <a href="#prezzi" id="nav-link-prezzi">Prezzi</a>
+      <a href="#prezzi" id="nav-link-prezzi" style="display:none">Prezzi</a>
       <a href="#faq">FAQ</a>
     </div>
     <div class="navbar-cta">
@@ -734,8 +734,8 @@
     </div>
   </div>
 
-  <!-- PIANI E PREZZI -->
-  <div class="pricing-section" id="prezzi">
+  <!-- PIANI E PREZZI — nascosto di default; riattivabile dal superadmin o togliendo display:none -->
+  <div class="pricing-section" id="prezzi" style="display:none">
     <div class="section-label" style="text-align:center; margin-bottom:12px;">Piani e Prezzi</div>
     <h2 class="section-title">Scegli il piano giusto per la tua lega</h2>
     <p class="section-sub">Tutto gratis per la stagione 2025/26. I prezzi entrano in vigore dalla stagione 2026/27.</p>
@@ -1222,11 +1222,11 @@
     (async function applyPlatformSettings() {
       try {
         const s = await fetchWithTimeout("/api/platform-settings");
-        if (s.pricing_visible === "false") {
+        if (s.pricing_visible === "true") {
           const section = document.getElementById("prezzi");
-          if (section) section.style.display = "none";
+          if (section) section.style.display = "";
           const navLink = document.getElementById("nav-link-prezzi");
-          if (navLink) navLink.style.display = "none";
+          if (navLink) navLink.style.display = "";
         }
         const map = {
           "price-future-commander-plus":       s.price_commander_plus      ? s.price_commander_plus + "€ / asta dal 2026/27"  : null,
