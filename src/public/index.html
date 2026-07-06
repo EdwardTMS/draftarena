@@ -618,7 +618,7 @@
     <div class="navbar-links">
       <a href="#come-funziona">Come funziona</a>
       <a href="/video">Video</a>
-      <a href="#prezzi">Prezzi</a>
+      <a href="#prezzi" id="nav-link-prezzi">Prezzi</a>
       <a href="#faq">FAQ</a>
     </div>
     <div class="navbar-cta">
@@ -738,12 +738,12 @@
   <div class="pricing-section" id="prezzi">
     <div class="section-label" style="text-align:center; margin-bottom:12px;">Piani e Prezzi</div>
     <h2 class="section-title">Scegli il piano giusto per la tua lega</h2>
-    <p class="section-sub">Tutto gratis per la stagione 2026/27. I prezzi entrano in vigore dalla stagione 2027/28.</p>
+    <p class="section-sub">Tutto gratis per la stagione 2025/26. I prezzi entrano in vigore dalla stagione 2026/27.</p>
 
     <div class="beta-banner">
       <span class="beta-badge">Beta Launch</span>
-      <div class="beta-title">Tutto gratis per la stagione 2026/27</div>
-      <div class="beta-sub">DraftARENA e' in fase di lancio e vogliamo che tu lo provi senza pensieri.<br>I piani a pagamento partiranno dalla stagione <strong style="color:var(--text-secondary)">2027/28</strong> — i prezzi indicati sono quelli futuri.</div>
+      <div class="beta-title">Tutto gratis per la stagione 2025/26</div>
+      <div class="beta-sub">DraftARENA e' in fase di lancio e vogliamo che tu lo provi senza pensieri.<br>I piani a pagamento partiranno dalla stagione <strong style="color:var(--text-secondary)">2026/27</strong> — i prezzi indicati sono quelli futuri.</div>
     </div>
 
     <div class="pricing-group">
@@ -777,10 +777,10 @@
           </div>
           <div class="price-amount">
             <span class="price-value free">Gratis</span>
-            <span class="price-future">2,99€ / asta dal 2027/287</span>
+            <span class="price-future" id="price-future-commander-plus">2,99€ / asta dal 2026/27</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-beta">Gratis 2026/27</span>
+            <span class="price-tag tag-beta">Gratis 2025/26</span>
             <span class="price-tag tag-nobanner">Nessun banner</span>
           </div>
         </div>
@@ -795,10 +795,10 @@
           </div>
           <div class="price-amount">
             <span class="price-value free">Gratis</span>
-            <span class="price-future">7,99€ / anno dal 2027/28</span>
+            <span class="price-future" id="price-future-commander-pro">7,99€ / anno dal 2026/27</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-beta">Gratis 2026/27</span>
+            <span class="price-tag tag-beta">Gratis 2025/26</span>
             <span class="price-tag tag-nobanner">Nessun banner</span>
           </div>
         </div>
@@ -836,10 +836,10 @@
           </div>
           <div class="price-amount">
             <span class="price-value free">Gratis</span>
-            <span class="price-future">0,99€ / anno dal 2027/28</span>
+            <span class="price-future" id="price-future-partecipante-premium">0,99€ / anno dal 2026/27</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-beta">Gratis 2026/27</span>
+            <span class="price-tag tag-beta">Gratis 2025/26</span>
             <span class="price-tag tag-nobanner">Nessun banner</span>
           </div>
         </div>
@@ -1217,6 +1217,29 @@
         clearTimeout(t);
       }
     }
+
+    // Carica impostazioni piattaforma (visibilità prezzi + prezzi futuri)
+    (async function applyPlatformSettings() {
+      try {
+        const s = await fetchWithTimeout("/api/platform-settings");
+        if (s.pricing_visible === "false") {
+          const section = document.getElementById("prezzi");
+          if (section) section.style.display = "none";
+          const navLink = document.getElementById("nav-link-prezzi");
+          if (navLink) navLink.style.display = "none";
+        }
+        const map = {
+          "price-future-commander-plus":       s.price_commander_plus      ? s.price_commander_plus + "€ / asta dal 2026/27"  : null,
+          "price-future-commander-pro":        s.price_commander_pro       ? s.price_commander_pro  + "€ / anno dal 2026/27" : null,
+          "price-future-partecipante-premium": s.price_partecipante_premium ? s.price_partecipante_premium + "€ / anno dal 2026/27" : null,
+        };
+        Object.entries(map).forEach(([id, text]) => {
+          if (!text) return;
+          const el = document.getElementById(id);
+          if (el) el.textContent = text;
+        });
+      } catch (_) {}
+    })();
   </script>
 </body>
 </html>
