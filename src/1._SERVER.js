@@ -18,6 +18,7 @@ const io = new Server(server, {
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"), {
+  index: false,
   setHeaders: (res) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, "public"), {
   }
 }));
 app.use(express.static(path.join(__dirname, "../public"), {
+  index: false,
   setHeaders: (res) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
@@ -635,6 +637,9 @@ process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
    ROTTE EXPRESS
    ========================================================================== */
 app.get("/", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "index.html")); });
+app.get("/index.html", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "index.html")); });
+app.get("/richiesta-codice", (req, res) => res.sendFile(path.join(__dirname, "public", "richiesta-codice.html")));
+app.get("/richiesta-codice.html", (req, res) => res.sendFile(path.join(__dirname, "public", "richiesta-codice.html")));
 app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "public", "admin.html")));
 app.get("/host", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
 app.get("/host.html", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
@@ -807,6 +812,88 @@ app.post("/api/access/validate", async (req, res) => {
 });
 
 /* ==========================================================================
+   RICHIESTA CODICE (registrazione pubblica)
+   ========================================================================== */
+app.post("/api/richiesta-codice", async (req, res) => {
+  if (!supabase) return res.status(503).json({ success: false, error: "DB non disponibile." });
+
+  const { nome, cognome, email, nome_lega, num_squadre, piattaforma, telefono, come_trovato } = req.body;
+  if (!nome || !cognome || !email || !nome_lega || !num_squadre) {
+    return res.status(400).json({ success: false, error: "Compila tutti i campi obbligatori." });
+  }
+
+  const emailLower = email.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLower)) {
+    return res.status(400).json({ success: false, error: "Indirizzo email non valido." });
+  }
+
+  try {
+    // Se l'email esiste già, restituiamo il codice già assegnato
+    const { data: existing } = await supabase
+      .from("code_requests")
+      .select("codice_assegnato, nome")
+      .eq("email", emailLower)
+      .maybeSingle();
+
+    if (existing) {
+      return res.json({ success: true, code: existing.codice_assegnato, alreadyExists: true });
+    }
+
+    // Genera codice DRAFT-XXXXXX univoco
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let promoCode;
+    let attempts = 0;
+    do {
+      promoCode = "DRAFT-";
+      for (let i = 0; i < 6; i++) promoCode += chars[Math.floor(Math.random() * chars.length)];
+      const { data: existing } = await supabase.from("access_codes").select("code").eq("code", promoCode).maybeSingle();
+      if (!existing) break;
+      attempts++;
+    } while (attempts < 20);
+
+    // Inserisce in access_codes
+    const { error: codeErr } = await supabase.from("access_codes").insert({
+      code: promoCode,
+      type: "promo",
+      max_uses: null,
+      is_active: true,
+      note: `${nome.trim()} ${cognome.trim()} — ${emailLower}`
+    });
+    if (codeErr) throw codeErr;
+
+    // Salva la richiesta
+    const { error: reqErr } = await supabase.from("code_requests").insert({
+      nome: nome.trim(),
+      cognome: cognome.trim(),
+      email: emailLower,
+      nome_lega: nome_lega.trim(),
+      num_squadre: parseInt(num_squadre) || 8,
+      piattaforma: piattaforma || null,
+      telefono: telefono || null,
+      come_trovato: come_trovato || null,
+      codice_assegnato: promoCode
+    });
+    if (reqErr) throw reqErr;
+
+    console.log(`[SERVER] Nuovo codice registrato: ${promoCode} — ${emailLower}`);
+    res.json({ success: true, code: promoCode, alreadyExists: false });
+  } catch (e) {
+    console.error("[SERVER] richiesta-codice error:", e);
+    res.status(500).json({ success: false, error: "Errore interno. Riprova più tardi." });
+  }
+});
+
+app.get("/api/superadmin/requests", async (req, res) => {
+  if (!supabase) return res.status(503).json({ success: false, error: "DB non disponibile." });
+  const { data, error } = await supabase
+    .from("code_requests")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) return res.status(500).json({ success: false, error: error.message });
+  res.json({ success: true, requests: data });
+});
+
+/* ==========================================================================
    REST API — Room Create/Join
    ========================================================================== */
 const createRoomLimiter = new Map();
@@ -819,7 +906,7 @@ function rateLimit(ip, maxPerMinute = 10) {
   return entry.count > maxPerMinute;
 }
 
-const FREE_TIER_TEAM_LIMIT = 8;
+const FREE_TIER_TEAM_LIMIT = 0;
 
 app.get("/api/room/create", async (req, res) => {
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
