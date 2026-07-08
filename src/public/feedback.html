@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DraftARENA — Feedback & Supporto</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#10b981">
+  <link rel="apple-touch-icon" href="/DraftARENAico.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-deep: #020810;
+      --bg-card: #0b1428;
+      --border:  #1c2d4a;
+      --border-glow: rgba(56,189,248,0.25);
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #475569;
+      --blue:       #2563eb;
+      --blue-light: #38bdf8;
+      --green:      #10b981;
+      --amber:      #f59e0b;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      padding: 16px 32px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(2,8,16,0.9);
+      backdrop-filter: blur(10px);
+    }
+    .topbar img { height: 32px; }
+    .topbar a { color: var(--text-muted); font-size: 12px; text-decoration: none; transition: color 0.2s; }
+    .topbar a:hover { color: var(--text-secondary); }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1; padding: 48px 24px 80px;
+      max-width: 680px; margin: 0 auto; width: 100%;
+    }
+
+    .page-header { text-align: center; margin-bottom: 40px; }
+    .page-header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 10px;
+    }
+    .page-header p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+
+    /* ── TIPO TABS ── */
+    .tipo-tabs {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 28px;
+    }
+    .tipo-tab {
+      background: var(--bg-card); border: 2px solid var(--border);
+      border-radius: 14px; padding: 18px 16px; cursor: pointer;
+      text-align: center; transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+    }
+    .tipo-tab:hover { border-color: var(--border-glow); }
+    .tipo-tab.active.feedback { border-color: rgba(59,130,246,0.6); background: rgba(59,130,246,0.06); }
+    .tipo-tab.active.supporto { border-color: rgba(245,158,11,0.6); background: rgba(245,158,11,0.06); }
+    .tipo-tab .icon { font-size: 1.6rem; }
+    .tipo-tab .label {
+      font-size: 0.92rem; font-weight: 700;
+      color: var(--text-primary);
+    }
+    .tipo-tab .sub { font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── FORM ── */
+    .form-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+    }
+    .form-group { margin-bottom: 18px; }
+    .form-label {
+      display: block; font-size: 11px; font-weight: 700; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;
+    }
+    .form-label span { color: #ef4444; margin-left: 2px; }
+    .form-input, .form-textarea {
+      width: 100%; padding: 11px 14px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--bg-deep);
+      color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 14px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-textarea:focus { border-color: var(--blue-light); }
+    .form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+
+    /* ── STELLE ── */
+    .stars-row {
+      display: flex; gap: 6px; margin-top: 4px;
+    }
+    .star-btn {
+      background: none; border: none; font-size: 1.6rem; cursor: pointer;
+      color: #1c2d4a; transition: color 0.15s, transform 0.1s;
+      padding: 0;
+    }
+    .star-btn:hover, .star-btn.active { color: #f59e0b; transform: scale(1.1); }
+
+    /* ── VISIBILITA ── */
+    .vis-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    }
+    .vis-opt {
+      background: var(--bg-deep); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 14px; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .vis-opt:hover { border-color: var(--border-glow); }
+    .vis-opt.active { border-color: var(--green); background: rgba(16,185,129,0.06); }
+    .vis-opt input[type="radio"] { display: none; }
+    .vis-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .vis-label { font-size: 0.82rem; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+    .vis-sub { font-size: 0.72rem; color: var(--text-muted); line-height: 1.4; }
+
+    /* ── BTN ── */
+    .btn-submit {
+      width: 100%; padding: 14px; border-radius: 10px; border: none;
+      background: linear-gradient(135deg, var(--green), #047857);
+      color: white; font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 700; cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      box-shadow: 0 2px 16px rgba(16,185,129,0.3);
+      margin-top: 6px;
+    }
+    .btn-submit:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .form-error { color: #f87171; font-size: 12px; margin-top: 10px; min-height: 16px; }
+
+    /* ── SUCCESS ── */
+    .success-card {
+      background: var(--bg-card); border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 16px; padding: 40px 28px; text-align: center;
+      display: none; flex-direction: column; align-items: center; gap: 14px;
+    }
+    .success-card.show { display: flex; }
+    .success-icon { font-size: 3rem; }
+    .success-card h2 { font-size: 1.3rem; font-weight: 800; color: var(--green); }
+    .success-card p  { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; max-width: 400px; }
+    .btn-back {
+      padding: 10px 24px; border-radius: 8px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-secondary);
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: all 0.2s; margin-top: 8px;
+    }
+    .btn-back:hover { border-color: var(--blue-light); color: var(--blue-light); }
+
+    /* ── FOOTER ── */
+    .footer {
+      border-top: 1px solid var(--border); padding: 20px 24px;
+      text-align: center; color: var(--text-muted); font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <img src="/DraftARENA.png" alt="DraftARENA">
+    <a href="/">← Torna alla home</a>
+  </div>
+
+  <div class="main">
+
+    <div class="page-header">
+      <h1>Feedback & Supporto</h1>
+      <p>Hai usato DraftARENA? Lascia una recensione per aiutare altri utenti, oppure contattaci per qualsiasi problema.</p>
+    </div>
+
+    <!-- Selezione tipo -->
+    <div class="tipo-tabs" id="tipo-tabs">
+      <div class="tipo-tab feedback active" data-tipo="feedback" onclick="setTipo('feedback')">
+        <span class="icon">⭐</span>
+        <span class="label">Lascia una recensione</span>
+        <span class="sub">Condividi la tua esperienza. Potra' essere pubblicata sulla homepage.</span>
+      </div>
+      <div class="tipo-tab supporto" data-tipo="supporto" onclick="setTipo('supporto')">
+        <span class="icon">🛠</span>
+        <span class="label">Richiesta supporto</span>
+        <span class="sub">Hai un problema o una domanda? Scrivici, ti risponderemo via email.</span>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-card" id="form-card">
+
+      <!-- Stelle (solo feedback) -->
+      <div class="form-group" id="stars-group">
+        <label class="form-label">Valutazione</label>
+        <div class="stars-row" id="stars-row">
+          <button class="star-btn" data-v="1" onclick="setStar(1)">☆</button>
+          <button class="star-btn" data-v="2" onclick="setStar(2)">☆</button>
+          <button class="star-btn" data-v="3" onclick="setStar(3)">☆</button>
+          <button class="star-btn" data-v="4" onclick="setStar(4)">☆</button>
+          <button class="star-btn" data-v="5" onclick="setStar(5)">☆</button>
+        </div>
+      </div>
+
+      <!-- Messaggio -->
+      <div class="form-group">
+        <label class="form-label" for="msg-input">Messaggio<span>*</span></label>
+        <textarea class="form-textarea" id="msg-input" placeholder="Scrivi qui la tua recensione o descrivi il tuo problema..."></textarea>
+      </div>
+
+      <!-- Nome -->
+      <div class="form-group">
+        <label class="form-label" for="nome-input">Nome (opzionale)</label>
+        <input type="text" class="form-input" id="nome-input" placeholder="es: Mario Rossi" maxlength="80">
+      </div>
+
+      <!-- Email -->
+      <div class="form-group" id="email-group">
+        <label class="form-label" for="email-input">Email<span id="email-required-star"></span></label>
+        <input type="email" class="form-input" id="email-input" placeholder="es: mario@email.it" maxlength="200">
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px;" id="email-hint"></div>
+      </div>
+
+      <!-- Visibilita (solo feedback) -->
+      <div class="form-group" id="vis-group">
+        <label class="form-label">Visibilita'</label>
+        <div class="vis-row">
+          <label class="vis-opt active" id="vis-pubblico" onclick="setVis('pubblico')">
+            <input type="radio" name="visibilita" value="pubblico" checked>
+            <div>
+              <div class="vis-icon">🌐</div>
+            </div>
+            <div>
+              <div class="vis-label">Pubblica</div>
+              <div class="vis-sub">Potrebbe apparire sulla homepage dopo approvazione</div>
+            </div>
+          </label>
+          <label class="vis-opt" id="vis-privato" onclick="setVis('privato')">
+            <input type="radio" name="visibilita" value="privato">
+            <div>
+              <div class="vis-icon">🔒</div>
+            </div>
+            <div>
+              <div class="vis-label">Privata</div>
+              <div class="vis-sub">Solo il team DraftARENA la legge, non appare sul sito</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btn-submit" onclick="inviaFeedback()">INVIA</button>
+      <div class="form-error" id="form-error"></div>
+    </div>
+
+    <!-- Successo -->
+    <div class="success-card" id="success-card">
+      <div class="success-icon">✅</div>
+      <h2>Grazie!</h2>
+      <p id="success-msg">Il tuo feedback e' stato inviato. Lo leggeremo al piu' presto.</p>
+      <a href="/" class="btn-back">Torna alla homepage</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    DraftARENA &mdash; L'asta del fantacalcio in tempo reale
+  </footer>
+
+  <script>
+    let tipoAttuale = 'feedback';
+    let visAttuale  = 'pubblico';
+    let votoAttuale = 0;
+
+    function setTipo(tipo) {
+      tipoAttuale = tipo;
+      document.querySelectorAll('.tipo-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.tipo-tab[data-tipo="${tipo}"]`).classList.add('active');
+
+      const isSupp = tipo === 'supporto';
+      document.getElementById('stars-group').style.display  = isSupp ? 'none' : '';
+      document.getElementById('vis-group').style.display    = isSupp ? 'none' : '';
+      document.getElementById('email-required-star').textContent = isSupp ? '*' : '';
+      document.getElementById('email-hint').textContent = isSupp
+        ? 'Necessaria per ricevere la risposta dal team.'
+        : 'Facoltativa. Non verra\u0027 pubblicata.';
+      document.getElementById('msg-input').placeholder = isSupp
+        ? 'Descrivi il problema o la domanda...'
+        : 'Scrivi qui la tua recensione...';
+    }
+
+    function setVis(v) {
+      visAttuale = v;
+      document.getElementById('vis-pubblico').classList.toggle('active', v === 'pubblico');
+      document.getElementById('vis-privato').classList.toggle('active', v === 'privato');
+    }
+
+    function setStar(v) {
+      votoAttuale = v;
+      document.querySelectorAll('.star-btn').forEach(btn => {
+        const bv = parseInt(btn.dataset.v);
+        btn.textContent = bv <= v ? '★' : '☆';
+        btn.classList.toggle('active', bv <= v);
+      });
+    }
+
+    async function inviaFeedback() {
+      const messaggio = document.getElementById('msg-input').value.trim();
+      const nome      = document.getElementById('nome-input').value.trim();
+      const email     = document.getElementById('email-input').value.trim();
+      const errEl     = document.getElementById('form-error');
+      const btn       = document.getElementById('btn-submit');
+
+      errEl.textContent = '';
+
+      if (!messaggio || messaggio.length < 5) {
+        errEl.textContent = 'Scrivi almeno qualche parola nel messaggio.';
+        return;
+      }
+      if (tipoAttuale === 'supporto' && !email) {
+        errEl.textContent = 'Inserisci la tua email per ricevere una risposta.';
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = 'Invio in corso...';
+
+      const payload = {
+        tipo: tipoAttuale,
+        visibilita: tipoAttuale === 'supporto' ? 'privato' : visAttuale,
+        nome:     nome   || null,
+        email:    email  || null,
+        voto:     tipoAttuale === 'feedback' && votoAttuale > 0 ? votoAttuale : null,
+        messaggio
+      };
+
+      try {
+        const r = await fetch('/api/feedback/invia', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await r.json();
+        if (data.success) {
+          document.getElementById('form-card').style.display = 'none';
+          document.querySelector('.tipo-tabs').style.display = 'none';
+          const sc = document.getElementById('success-card');
+          document.getElementById('success-msg').textContent = tipoAttuale === 'supporto'
+            ? 'La tua richiesta e\u0027 stata inviata. Ti risponderemo all\u0027indirizzo email fornito.'
+            : 'Il tuo feedback e\u0027 stato inviato. Se lo riterremo adatto, apparira\u0027 sulla homepage.';
+          sc.classList.add('show');
+        } else {
+          errEl.textContent = data.error || 'Errore durante l\u0027invio. Riprova.';
+          btn.disabled = false;
+          btn.textContent = 'INVIA';
+        }
+      } catch (e) {
+        errEl.textContent = 'Errore di rete. Controlla la connessione e riprova.';
+        btn.disabled = false;
+        btn.textContent = 'INVIA';
+      }
+    }
+
+    // Init
+    setTipo('feedback');
+    setVis('pubblico');
+  </script>
+</body>
+</html>
