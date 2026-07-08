@@ -98,6 +98,14 @@
       cursor: pointer; transition: opacity 0.2s;
     }
     .btn-nav-create:hover { opacity: 0.85; }
+    .btn-lang {
+      padding: 6px 12px; border-radius: 7px;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text-muted); font-family: 'Inter', sans-serif;
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; letter-spacing: 0.03em; flex-shrink: 0;
+    }
+    .btn-lang:hover { border-color: var(--blue-light); color: var(--blue-light); }
 
     /* ── HERO ── */
     .hero {
@@ -641,14 +649,15 @@
   <nav class="navbar" id="navbar">
     <img src="/DraftARENA.png" alt="DraftARENA" class="navbar-logo">
     <div class="navbar-links">
-      <a href="#come-funziona">Come funziona</a>
+      <a href="#come-funziona" data-i18n="nav_how">Come funziona</a>
       <a href="/video">Video</a>
-      <a href="#prezzi" id="nav-link-prezzi" style="display:none">Prezzi</a>
+      <a href="#prezzi" id="nav-link-prezzi" style="display:none" data-i18n="nav_pricing">Prezzi</a>
       <a href="#faq">FAQ</a>
     </div>
     <div class="navbar-cta">
-      <button class="btn-nav-enter" onclick="scrollToHub()">Entra in una stanza</button>
-      <button class="btn-nav-create" onclick="apriModaleCreazione()">+ Crea stanza</button>
+      <button class="btn-lang" id="lang-toggle" onclick="toggleLang()">🇬🇧 EN</button>
+      <button class="btn-nav-enter" id="btn-nav-enter" onclick="scrollToHub()" data-i18n="nav_enter">Entra in una stanza</button>
+      <button class="btn-nav-create" id="btn-nav-create" onclick="apriModaleCreazione()" data-i18n="nav_create">+ Crea stanza</button>
     </div>
   </nav>
 
@@ -657,218 +666,211 @@
     <div class="hero-glow"></div>
     <div class="hero-glow2"></div>
     <img src="/DraftARENA.png" alt="DraftARENA" class="hero-logo">
-    <div class="hero-badge"><span class="dot"></span>Asta in tempo reale</div>
-    <h1 class="hero-title">
+    <div class="hero-badge"><span class="dot"></span><span data-i18n="hero_badge">Asta in tempo reale</span></div>
+    <h1 class="hero-title" data-i18n-html="hero_title">
       L'asta del fantacalcio<br>come non l'hai mai <span class="accent">vissuta</span>
     </h1>
-    <p class="hero-sub">
+    <p class="hero-sub" data-i18n="hero_sub">
       Timer live, rilanci dal telefono, schermata TV per tutti. Organizza l'asta della tua lega in pochi secondi — gratis, senza installazioni.
     </p>
     <div class="hero-actions">
-      <button class="btn-hero-primary" onclick="apriModaleCreazione()">+ Crea una stanza</button>
-      <button class="btn-hero-secondary" onclick="scrollToHub()">Entra in una stanza</button>
+      <button class="btn-hero-primary" onclick="apriModaleCreazione()" data-i18n="hero_cta_primary">+ Crea una stanza</button>
+      <button class="btn-hero-secondary" onclick="scrollToHub()" data-i18n="hero_cta_secondary">Entra in una stanza</button>
     </div>
     <div class="hero-scroll">
-      <span>Scopri di più</span>
+      <span data-i18n="hero_scroll">Scopri di più</span>
       <div class="scroll-arrow"></div>
     </div>
   </section>
 
   <!-- COME FUNZIONA -->
   <div class="section" id="come-funziona">
-    <div class="section-label">Come funziona</div>
-    <h2 class="section-title">Tre passi, un'asta perfetta</h2>
-    <p class="section-sub">Nessuna installazione. Funziona su qualsiasi dispositivo dal browser.</p>
+    <div class="section-label" data-i18n="how_label">Come funziona</div>
+    <h2 class="section-title" data-i18n="how_title">Tre passi, un'asta perfetta</h2>
+    <p class="section-sub" data-i18n="how_sub">Nessuna installazione. Funziona su qualsiasi dispositivo dal browser.</p>
     <div class="steps-grid">
       <div class="step-card">
         <div class="step-num blue">🎮</div>
-        <div class="step-tag blue">Admin — Regia</div>
-        <h3>Crea e controlla</h3>
-        <p>Carica la lista giocatori, imposta i budget e gestisci l'asta in tempo reale. Metti il giocatore all'asta, avvia il timer, aggiudica.</p>
+        <div class="step-tag blue" data-i18n="step1_tag">Admin — Regia</div>
+        <h3 data-i18n="step1_title">Crea e controlla</h3>
+        <p data-i18n="step1_desc">Carica la lista giocatori, imposta i budget e gestisci l'asta in tempo reale. Metti il giocatore all'asta, avvia il timer, aggiudica.</p>
       </div>
       <div class="step-card">
         <div class="step-num blue">📺</div>
-        <div class="step-tag blue">Host — TV</div>
-        <h3>Proietta in sala</h3>
-        <p>Apri la schermata TV sul grande schermo o proiettore. Mostra il giocatore in asta, il timer e le offerte in diretta a tutti i partecipanti.</p>
+        <div class="step-tag blue" data-i18n="step2_tag">Host — TV</div>
+        <h3 data-i18n="step2_title">Proietta in sala</h3>
+        <p data-i18n="step2_desc">Apri la schermata TV sul grande schermo o proiettore. Mostra il giocatore in asta, il timer e le offerte in diretta a tutti i partecipanti.</p>
       </div>
       <div class="step-card">
         <div class="step-num green">📱</div>
-        <div class="step-tag green">Squadre — Buzzer</div>
-        <h3>Rilancia dal telefono</h3>
-        <p>Ogni fantasquadra usa il proprio smartphone come buzzer. Un tap per rilanciare, in tempo reale, senza app da installare.</p>
+        <div class="step-tag green" data-i18n="step3_tag">Squadre — Buzzer</div>
+        <h3 data-i18n="step3_title">Rilancia dal telefono</h3>
+        <p data-i18n="step3_desc">Ogni fantasquadra usa il proprio smartphone come buzzer. Un tap per rilanciare, in tempo reale, senza app da installare.</p>
       </div>
     </div>
   </div>
 
   <!-- FEATURES -->
   <div class="features-section">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">Funzionalità</div>
-    <h2 class="section-title">Tutto quello che serve per un'asta seria</h2>
-    <p class="section-sub">Progettato per leghe vere, con le funzioni che contano davvero.</p>
+    <div class="section-label" style="text-align:center; margin-bottom:12px;" data-i18n="feat_label">Funzionalità</div>
+    <h2 class="section-title" data-i18n="feat_title">Tutto quello che serve per un'asta seria</h2>
+    <p class="section-sub" data-i18n="feat_sub">Progettato per leghe vere, con le funzioni che contano davvero.</p>
     <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon">⏱</div><div><h4>Timer live sincronizzato</h4><p>Countdown visibile su tutti i dispositivi in tempo reale. Nessun "quanto manca?" in sala.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">📊</div><div><h4>Storico offerte in diretta</h4><p>Ogni rilancio appare istantaneamente su tutti gli schermi. Trasparenza totale durante l'asta.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">📋</div><div><h4>Le rose aggiornate</h4><p>Ogni squadra vede la propria rosa e il budget residuo aggiornati dopo ogni acquisto.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">📁</div><div><h4>Export Excel</h4><p>A fine asta esporta tutti i risultati in un file Excel con un click. Pronto per il tuo foglio lega.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">📱</div><div><h4>Solo browser, niente app</h4><p>Funziona su qualsiasi smartphone dal browser. Basta aprire il link e inserire il codice stanza.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">🔒</div><div><h4>Stanza privata con codice</h4><p>Ogni asta ha un codice univoco a 6 caratteri. Solo chi ha il codice può entrare nella stanza.</p></div></div>
-      <div class="feature-card"><div class="feature-icon">🏆</div><div><h4>Albo d'Oro della lega</h4><p>Archivia classifica e coppe di ogni stagione. Il medagliere cresce anno dopo anno, accessibile a tutti.</p></div></div>
+      <div class="feature-card"><div class="feature-icon">⏱</div><div><h4 data-i18n="f1_title">Timer live sincronizzato</h4><p data-i18n="f1_desc">Countdown visibile su tutti i dispositivi in tempo reale. Nessun "quanto manca?" in sala.</p></div></div>
+      <div class="feature-card"><div class="feature-icon">📊</div><div><h4 data-i18n="f2_title">Storico offerte in diretta</h4><p data-i18n="f2_desc">Ogni rilancio appare istantaneamente su tutti gli schermi. Trasparenza totale durante l'asta.</p></div></div>
+      <div class="feature-card"><div class="feature-icon">📋</div><div><h4 data-i18n="f3_title">Le rose aggiornate</h4><p data-i18n="f3_desc">Ogni squadra vede la propria rosa e il budget residuo aggiornati dopo ogni acquisto.</p></div></div>
+      <div class="feature-card"><div class="feature-icon">📁</div><div><h4 data-i18n="f4_title">Export Excel</h4><p data-i18n="f4_desc">A fine asta esporta tutti i risultati in un file Excel con un click. Pronto per il tuo foglio lega.</p></div></div>
+      <div class="feature-card"><div class="feature-icon">📱</div><div><h4 data-i18n="f5_title">Solo browser, niente app</h4><p data-i18n="f5_desc">Funziona su qualsiasi smartphone dal browser. Basta aprire il link e inserire il codice stanza.</p></div></div>
+      <div class="feature-card"><div class="feature-icon">🔒</div><div><h4 data-i18n="f6_title">Stanza privata con codice</h4><p data-i18n="f6_desc">Ogni asta ha un codice univoco a 6 caratteri. Solo chi ha il codice può entrare nella stanza.</p></div></div>
+      <div class="feature-card"><div class="feature-icon">🏆</div><div><h4 data-i18n="f7_title">Albo d'Oro della lega</h4><p data-i18n="f7_desc">Archivia classifica e coppe di ogni stagione. Il medagliere cresce anno dopo anno, accessibile a tutti.</p></div></div>
     </div>
   </div>
 
   <!-- APPROFONDIMENTI TECNICI -->
   <div class="deep-section">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">Sotto il cofano</div>
-    <h2 class="section-title">La tecnologia che fa la differenza</h2>
-    <p class="section-sub">Architettura progettata per non sbagliare un colpo, nemmeno il giorno dell'asta.</p>
+    <div class="section-label" style="text-align:center; margin-bottom:12px;" data-i18n="deep_label">Sotto il cofano</div>
+    <h2 class="section-title" data-i18n="deep_title">La tecnologia che fa la differenza</h2>
+    <p class="section-sub" data-i18n="deep_sub">Architettura progettata per non sbagliare un colpo, nemmeno il giorno dell'asta.</p>
     <div class="deep-grid">
       <div class="deep-card">
         <div class="deep-card-icon blue">🗂</div>
-        <h3>Gestione Mantra</h3>
-        <p>DraftARENA non è solo per il Fantacalcio. La nostra architettura flessibile consente il caricamento di database personalizzati per qualsiasi sport. Grazie al sistema di "Role Mapping", puoi definire i ruoli (P, D, C, A o personalizzati) e impostare le regole della tua lega in pochi clic. Il database indicizza automaticamente i giocatori e le loro quotazioni, offrendoti un ambiente di lavoro sempre pulito e pronto all'uso.</p>
+        <h3 data-i18n="d1_title">Gestione Mantra</h3>
+        <p data-i18n="d1_desc">DraftARENA non è solo per il Fantacalcio. La nostra architettura flessibile consente il caricamento di database personalizzati per qualsiasi sport. Grazie al sistema di "Role Mapping", puoi definire i ruoli (P, D, C, A o personalizzati) e impostare le regole della tua lega in pochi clic. Il database indicizza automaticamente i giocatori e le loro quotazioni, offrendoti un ambiente di lavoro sempre pulito e pronto all'uso.</p>
       </div>
       <div class="deep-card">
         <div class="deep-card-icon green">⚡</div>
-        <h3>Aste in Tempo Reale</h3>
-        <p>Dimentica i fogli di carta e gli errori manuali. Il sistema utilizza i protocolli WebSocket per garantire una sincronizzazione in millisecondi: ogni rilancio o assegnazione effettuata dal Commander viene visualizzata istantaneamente su tutti i dispositivi dei partecipanti. Questa tecnologia elimina il ritardo di comunicazione, garantendo un'asta fluida, competitiva e priva di malintesi, ovunque tu sia.</p>
+        <h3 data-i18n="d2_title">Aste in Tempo Reale</h3>
+        <p data-i18n="d2_desc">Dimentica i fogli di carta e gli errori manuali. Il sistema utilizza i protocolli WebSocket per garantire una sincronizzazione in millisecondi: ogni rilancio o assegnazione effettuata dal Commander viene visualizzata istantaneamente su tutti i dispositivi dei partecipanti. Questa tecnologia elimina il ritardo di comunicazione, garantendo un'asta fluida, competitiva e priva di malintesi, ovunque tu sia.</p>
       </div>
       <div class="deep-card">
         <div class="deep-card-icon amber">📤</div>
-        <h3>Export Intelligente</h3>
-        <p>La gestione dei dati non finisce con il martelletto dell'asta. Al termine di ogni sessione, DraftARENA ti offre un report completo in formato Excel/CSV. Questo file include non solo le rose definitive di ogni squadra, ma anche il dettaglio dei crediti spesi e quelli rimanenti. Uno strumento indispensabile per monitorare l'andamento finanziario della tua lega e importare le rose direttamente nei portali di gioco ufficiali.</p>
+        <h3 data-i18n="d3_title">Export Intelligente</h3>
+        <p data-i18n="d3_desc">La gestione dei dati non finisce con il martelletto dell'asta. Al termine di ogni sessione, DraftARENA ti offre un report completo in formato Excel/CSV. Questo file include non solo le rose definitive di ogni squadra, ma anche il dettaglio dei crediti spesi e quelli rimanenti. Uno strumento indispensabile per monitorare l'andamento finanziario della tua lega e importare le rose direttamente nei portali di gioco ufficiali.</p>
       </div>
       <div class="deep-card">
         <div class="deep-card-icon gold">🏆</div>
-        <h3>Storico Lega & Albo d'Oro</h3>
-        <p>Ogni stagione diventa un capitolo nella storia della tua lega. Dopo l'asta, il Commander arricchisce il backup con la classifica finale e i titoli vinti: Campionato, Champions League, Coppa Italia, Cucchiaio di Legno e qualsiasi competizione personalizzata. L'Albo d'Oro aggrega tutti i trionfi in un medagliere visuale accessibile a tutti — uno storico permanente che cresce anno dopo anno.</p>
+        <h3 data-i18n="d4_title">Storico Lega & Albo d'Oro</h3>
+        <p data-i18n="d4_desc">Ogni stagione diventa un capitolo nella storia della tua lega. Dopo l'asta, il Commander arricchisce il backup con la classifica finale e i titoli vinti: Campionato, Champions League, Coppa Italia, Cucchiaio di Legno e qualsiasi competizione personalizzata. L'Albo d'Oro aggrega tutti i trionfi in un medagliere visuale accessibile a tutti — uno storico permanente che cresce anno dopo anno.</p>
       </div>
     </div>
   </div>
 
   <!-- I RUOLI -->
   <div class="roles-section">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">I ruoli</div>
-    <h2 class="section-title">Una stanza, quattro viste</h2>
-    <p class="section-sub">Ogni partecipante accede alla vista giusta per il proprio ruolo.</p>
+    <div class="section-label" style="text-align:center; margin-bottom:12px;" data-i18n="roles_label">I ruoli</div>
+    <h2 class="section-title" data-i18n="roles_title">Una stanza, quattro viste</h2>
+    <p class="section-sub" data-i18n="roles_sub">Ogni partecipante accede alla vista giusta per il proprio ruolo.</p>
     <div class="roles-grid">
-      <div class="role-card role-admin"><div class="role-icon">🎮</div><h4>Regia</h4><p>Controllo completo dell'asta. Solo per l'amministratore.</p></div>
-      <div class="role-card role-host"><div class="role-icon">📺</div><h4>TV Host</h4><p>Schermata per proiettore o TV. Mostra tutto in sala.</p></div>
-      <div class="role-card role-phone"><div class="role-icon">📱</div><h4>Buzzer</h4><p>Lo smartphone di ogni squadra. Un tap per rilanciare.</p></div>
-      <div class="role-card role-rose"><div class="role-icon">📋</div><h4>Le Rose</h4><p>Vista rosa e budget di tutte le squadre in tempo reale.</p></div>
+      <div class="role-card role-admin"><div class="role-icon">🎮</div><h4 data-i18n="role1_name">Regia</h4><p data-i18n="role1_desc">Controllo completo dell'asta. Solo per l'amministratore.</p></div>
+      <div class="role-card role-host"><div class="role-icon">📺</div><h4>TV Host</h4><p data-i18n="role2_desc">Schermata per proiettore o TV. Mostra tutto in sala.</p></div>
+      <div class="role-card role-phone"><div class="role-icon">📱</div><h4>Buzzer</h4><p data-i18n="role3_desc">Lo smartphone di ogni squadra. Un tap per rilanciare.</p></div>
+      <div class="role-card role-rose"><div class="role-icon">📋</div><h4 data-i18n="role4_name">Le Rose</h4><p data-i18n="role4_desc">Vista rosa e budget di tutte le squadre in tempo reale.</p></div>
     </div>
   </div>
 
   <!-- PIANI E PREZZI — nascosto di default; riattivabile dal superadmin o togliendo display:none -->
   <div class="pricing-section" id="prezzi" style="display:none">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">Piani e Prezzi</div>
-    <h2 class="section-title">Scegli il piano giusto per la tua lega</h2>
-    <p class="section-sub">Tutto gratis per la stagione 2025/26. I prezzi entrano in vigore dalla stagione 2026/27.</p>
+    <div class="section-label" style="text-align:center; margin-bottom:12px;" data-i18n="pricing_label">Piani e Prezzi</div>
+    <h2 class="section-title" data-i18n="pricing_title">Scegli il piano giusto per la tua lega</h2>
+    <p class="section-sub" data-i18n="pricing_sub">Tutto gratis per la stagione 2025/26. I prezzi entrano in vigore dalla stagione 2026/27.</p>
 
     <div class="beta-banner">
       <span class="beta-badge">Beta Launch</span>
-      <div class="beta-title">Tutto gratis per la stagione 2025/26</div>
-      <div class="beta-sub">DraftARENA e' in fase di lancio e vogliamo che tu lo provi senza pensieri.<br>I piani a pagamento partiranno dalla stagione <strong style="color:var(--text-secondary)">2026/27</strong> — i prezzi indicati sono quelli futuri.</div>
+      <div class="beta-title" data-i18n="beta_title">Tutto gratis per la stagione 2025/26</div>
+      <div class="beta-sub" data-i18n-html="beta_sub">DraftARENA e' in fase di lancio e vogliamo che tu lo provi senza pensieri.<br>I piani a pagamento partiranno dalla stagione <strong style="color:var(--text-secondary)">2026/27</strong> — i prezzi indicati sono quelli futuri.</div>
     </div>
 
     <div class="pricing-group">
-      <div class="pricing-group-label">Commander — Chi organizza l'asta</div>
+      <div class="pricing-group-label" data-i18n="pricing_cmd_group">Commander — Chi organizza l'asta</div>
       <div class="pricing-grid-3">
-
         <div class="price-card">
           <div class="price-card-header">
             <div class="price-card-icon pc-green">🎮</div>
             <div>
               <div class="price-card-name">Commander Free</div>
-              <div class="price-card-desc">Fino a 8 squadre</div>
+              <div class="price-card-desc" data-i18n="p_cmd_free_desc">Fino a 8 squadre</div>
             </div>
           </div>
           <div class="price-amount">
-            <span class="price-value free">Gratis</span>
+            <span class="price-value free" data-i18n="p_free">Gratis</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-free">Sempre gratis</span>
-            <span class="price-tag tag-nobanner">Nessun banner</span>
+            <span class="price-tag tag-free" data-i18n="tag_always_free">Sempre gratis</span>
+            <span class="price-tag tag-nobanner" data-i18n="tag_no_banner">Nessun banner</span>
           </div>
         </div>
-
         <div class="price-card featured">
           <div class="price-card-header">
             <div class="price-card-icon pc-blue">🎮</div>
             <div>
               <div class="price-card-name">Commander Plus</div>
-              <div class="price-card-desc">9+ squadre — asta singola</div>
+              <div class="price-card-desc" data-i18n="p_cmd_plus_desc">9+ squadre — asta singola</div>
             </div>
           </div>
           <div class="price-amount">
-            <span class="price-value free">Gratis</span>
+            <span class="price-value free" data-i18n="p_free">Gratis</span>
             <span class="price-future" id="price-future-commander-plus">2,99€ / asta dal 2026/27</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-beta">Gratis 2025/26</span>
-            <span class="price-tag tag-nobanner">Nessun banner</span>
+            <span class="price-tag tag-beta" data-i18n="tag_beta_free">Gratis 2025/26</span>
+            <span class="price-tag tag-nobanner" data-i18n="tag_no_banner">Nessun banner</span>
           </div>
         </div>
-
         <div class="price-card">
           <div class="price-card-header">
             <div class="price-card-icon pc-blue">🎮</div>
             <div>
               <div class="price-card-name">Commander Pro</div>
-              <div class="price-card-desc">9+ squadre — aste illimitate</div>
+              <div class="price-card-desc" data-i18n="p_cmd_pro_desc">9+ squadre — aste illimitate</div>
             </div>
           </div>
           <div class="price-amount">
-            <span class="price-value free">Gratis</span>
+            <span class="price-value free" data-i18n="p_free">Gratis</span>
             <span class="price-future" id="price-future-commander-pro">7,99€ / anno dal 2026/27</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-beta">Gratis 2025/26</span>
-            <span class="price-tag tag-nobanner">Nessun banner</span>
+            <span class="price-tag tag-beta" data-i18n="tag_beta_free">Gratis 2025/26</span>
+            <span class="price-tag tag-nobanner" data-i18n="tag_no_banner">Nessun banner</span>
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="pricing-group">
-      <div class="pricing-group-label">Partecipante — Chi partecipa all'asta</div>
+      <div class="pricing-group-label" data-i18n="pricing_part_group">Partecipante — Chi partecipa all'asta</div>
       <div class="pricing-grid-2">
-
         <div class="price-card">
           <div class="price-card-header">
             <div class="price-card-icon pc-green">📱</div>
             <div>
-              <div class="price-card-name">Partecipante Standard</div>
-              <div class="price-card-desc">Accesso completo all'asta</div>
+              <div class="price-card-name" data-i18n="p_part_std_name">Partecipante Standard</div>
+              <div class="price-card-desc" data-i18n="p_part_std_desc">Accesso completo all'asta</div>
             </div>
           </div>
           <div class="price-amount">
-            <span class="price-value free">Gratis</span>
+            <span class="price-value free" data-i18n="p_free">Gratis</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-free">Sempre gratis</span>
+            <span class="price-tag tag-free" data-i18n="tag_always_free">Sempre gratis</span>
           </div>
         </div>
-
         <div class="price-card">
           <div class="price-card-header">
             <div class="price-card-icon pc-blue">📱</div>
             <div>
-              <div class="price-card-name">Partecipante Premium</div>
-              <div class="price-card-desc">Esperienza senza interruzioni</div>
+              <div class="price-card-name" data-i18n="p_part_prem_name">Partecipante Premium</div>
+              <div class="price-card-desc" data-i18n="p_part_prem_desc">Esperienza senza interruzioni</div>
             </div>
           </div>
           <div class="price-amount">
-            <span class="price-value free">Gratis</span>
+            <span class="price-value free" data-i18n="p_free">Gratis</span>
             <span class="price-future" id="price-future-partecipante-premium">0,99€ / anno dal 2026/27</span>
           </div>
           <div class="price-tags">
-            <span class="price-tag tag-beta">Gratis 2025/26</span>
-            <span class="price-tag tag-nobanner">Nessun banner</span>
+            <span class="price-tag tag-beta" data-i18n="tag_beta_free">Gratis 2025/26</span>
+            <span class="price-tag tag-nobanner" data-i18n="tag_no_banner">Nessun banner</span>
           </div>
         </div>
-
       </div>
     </div>
   </div>
@@ -876,58 +878,58 @@
   <!-- FAQ -->
   <div class="faq-section" id="faq">
     <div class="section-label" style="text-align:center; margin-bottom:12px;">FAQ</div>
-    <h2 class="section-title">Domande frequenti</h2>
-    <p class="section-sub" style="margin-bottom:40px;">Tutto quello che vuoi sapere prima di iniziare.</p>
+    <h2 class="section-title" data-i18n="faq_title">Domande frequenti</h2>
+    <p class="section-sub" style="margin-bottom:40px;" data-i18n="faq_sub">Tutto quello che vuoi sapere prima di iniziare.</p>
 
     <div class="faq-list">
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Perché DraftARENA è diverso dai soliti siti di aste?</span>
+          <span data-i18n="faq1_q">Perché DraftARENA è diverso dai soliti siti di aste?</span>
           <div class="faq-chevron"></div>
         </div>
         <div class="faq-a">
-          <p>La maggior parte dei portali è pensata per il gioco online massivo. DraftARENA è nato con un focus diverso: l'esperienza dal vivo. Abbiamo studiato l'interfaccia affinché il Commander (l'organizzatore) abbia il pieno controllo su ogni rilancio, sincronizzando istantaneamente i buzzer di ogni partecipante. Non è solo un'app, è il sistema nervoso della tua asta, progettato per eliminare i tempi morti e gli errori umani nella gestione del foglio Excel.</p>
+          <p data-i18n="faq1_a">La maggior parte dei portali è pensata per il gioco online massivo. DraftARENA è nato con un focus diverso: l'esperienza dal vivo. Abbiamo studiato l'interfaccia affinché il Commander (l'organizzatore) abbia il pieno controllo su ogni rilancio, sincronizzando istantaneamente i buzzer di ogni partecipante. Non è solo un'app, è il sistema nervoso della tua asta, progettato per eliminare i tempi morti e gli errori umani nella gestione del foglio Excel.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Come funziona la sicurezza dei pagamenti?</span>
+          <span data-i18n="faq2_q">Come funziona la sicurezza dei pagamenti?</span>
           <div class="faq-chevron"></div>
         </div>
         <div class="faq-a">
-          <p>La tua tranquillità è la nostra priorità. DraftARENA non memorizza mai i dati delle tue carte di credito. Per le transazioni, ci appoggiamo ai gateway di pagamento standard del settore (come Stripe), che utilizzano protocolli di crittografia avanzati (SSL/TLS). Il tuo pagamento è protetto e immediato, permettendoti di sbloccare le funzioni premium in pochi secondi e senza attese.</p>
+          <p data-i18n="faq2_a">La tua tranquillità è la nostra priorità. DraftARENA non memorizza mai i dati delle tue carte di credito. Per le transazioni, ci appoggiamo ai gateway di pagamento standard del settore (come Stripe), che utilizzano protocolli di crittografia avanzati (SSL/TLS). Il tuo pagamento è protetto e immediato, permettendoti di sbloccare le funzioni premium in pochi secondi e senza attese.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Cosa succede se durante l'asta cade la connessione?</span>
+          <span data-i18n="faq3_q">Cosa succede se durante l'asta cade la connessione?</span>
           <div class="faq-chevron"></div>
         </div>
         <div class="faq-a">
-          <p>Sappiamo che l'asta è un momento critico. Il nostro sistema di socket in tempo reale è progettato per la resilienza: in caso di breve caduta della linea, l'applicazione tenta automaticamente il ricollegamento rapido. Poiché il database dell'asta risiede nel cloud, una volta ripristinata la connessione, lo stato della stanza (offerte correnti, budget rimasti, giocatori chiamati) sarà esattamente quello che avevi prima della disconnessione.</p>
+          <p data-i18n="faq3_a">Sappiamo che l'asta è un momento critico. Il nostro sistema di socket in tempo reale è progettato per la resilienza: in caso di breve caduta della linea, l'applicazione tenta automaticamente il ricollegamento rapido. Poiché il database dell'asta risiede nel cloud, una volta ripristinata la connessione, lo stato della stanza (offerte correnti, budget rimasti, giocatori chiamati) sarà esattamente quello che avevi prima della disconnessione.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Posso usare DraftARENA anche per sport diversi dal Fantacalcio?</span>
+          <span data-i18n="faq4_q">Posso usare DraftARENA anche per sport diversi dal Fantacalcio?</span>
           <div class="faq-chevron"></div>
         </div>
         <div class="faq-a">
-          <p>Nel prossimo futuro assolutamente sì. Abbiamo architettato DraftARENA come un motore modulare. Grazie alla possibilità di caricare file database personalizzati (CSV), potrai adattare la nostra interfaccia per gestire aste di FantaNBA, NFL, NBL o qualsiasi altra lega sportiva. La struttura "Giocatore-Ruolo-Squadra" è flessibile: basterà caricare il file Excel dello sport che vuoi. Al momento, essendo ancora in una fase iniziale, ci siamo concentrati sul calcio — ma a breve implementeremo questa possibilità.</p>
+          <p data-i18n="faq4_a">Nel prossimo futuro assolutamente sì. Abbiamo architettato DraftARENA come un motore modulare. Grazie alla possibilità di caricare file database personalizzati (CSV), potrai adattare la nostra interfaccia per gestire aste di FantaNBA, NFL, NBL o qualsiasi altra lega sportiva. La struttura "Giocatore-Ruolo-Squadra" è flessibile: basterà caricare il file Excel dello sport che vuoi. Al momento, essendo ancora in una fase iniziale, ci siamo concentrati sul calcio — ma a breve implementeremo questa possibilità.</p>
         </div>
       </div>
 
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">
-          <span>Come posso ricevere assistenza in caso di problemi?</span>
+          <span data-i18n="faq5_q">Come posso ricevere assistenza in caso di problemi?</span>
           <div class="faq-chevron"></div>
         </div>
         <div class="faq-a">
-          <p>Anche se DraftARENA è pensata per essere intuitiva, sappiamo che un'asta dal vivo richiede precisione assoluta. Se riscontri problemi tecnici durante la configurazione o durante l'asta, il nostro team di supporto è disponibile via email. Inoltre, stiamo creando una sezione "Wiki" dedicata ai Commander con tutorial passo-passo per il caricamento dei database e la gestione avanzata della stanza.</p>
+          <p data-i18n="faq5_a">Anche se DraftARENA è pensata per essere intuitiva, sappiamo che un'asta dal vivo richiede precisione assoluta. Se riscontri problemi tecnici durante la configurazione o durante l'asta, il nostro team di supporto è disponibile via email. Inoltre, stiamo creando una sezione "Wiki" dedicata ai Commander con tutorial passo-passo per il caricamento dei database e la gestione avanzata della stanza.</p>
         </div>
       </div>
 
@@ -937,92 +939,281 @@
   <!-- HUB FUNZIONALE -->
   <div class="hub-section" id="hub">
     <div class="hub-header">
-      <h2>Inizia adesso</h2>
-      <p>Crea una stanza in 10 secondi oppure entra in una già esistente con il codice che ti ha condiviso l'admin.</p>
+      <h2 data-i18n="hub_title">Inizia adesso</h2>
+      <p data-i18n="hub_sub">Crea una stanza in 10 secondi oppure entra in una già esistente con il codice che ti ha condiviso l'admin.</p>
     </div>
 
     <div id="step-room">
       <div class="hub-card">
-        <h3>Sei l'amministratore?</h3>
-        <p>Crea una nuova stanza e condividi il codice con i partecipanti.</p>
-        <button class="btn-create" id="btn-create-room">+ CREA NUOVA STANZA</button>
-        <div class="divider">oppure entra in una stanza esistente</div>
+        <h3 data-i18n="hub_card_title">Sei l'amministratore?</h3>
+        <p data-i18n="hub_card_desc">Crea una nuova stanza e condividi il codice con i partecipanti.</p>
+        <button class="btn-create" id="btn-create-room" data-i18n="hub_btn_create">+ CREA NUOVA STANZA</button>
+        <div class="divider" data-i18n="hub_divider">oppure entra in una stanza esistente</div>
         <div class="input-row">
-          <input type="text" id="room-code-input" placeholder="Codice (es: ABC123)" maxlength="6">
-          <button class="btn-join" id="btn-join-room">ENTRA</button>
+          <input type="text" id="room-code-input" placeholder="Codice (es: ABC123)" maxlength="6" data-i18n-placeholder="hub_input_ph">
+          <button class="btn-join" id="btn-join-room" data-i18n="hub_btn_join">ENTRA</button>
         </div>
         <div class="error-msg" id="room-error"></div>
-        <div class="spinner" id="loading">Connessione in corso...</div>
+        <div class="spinner" id="loading" data-i18n="hub_loading">Connessione in corso...</div>
       </div>
     </div>
 
     <div id="step-role" class="hidden">
       <div class="room-badge">
         <div>
-          <div class="label">Codice Stanza</div>
+          <div class="label" data-i18n="hub_room_label">Codice Stanza</div>
           <div class="code" id="display-room-code">------</div>
         </div>
-        <button class="btn-copy" id="btn-copy-code">COPIA</button>
+        <button class="btn-copy" id="btn-copy-code" data-i18n="hub_btn_copy">COPIA</button>
       </div>
 
       <div class="pin-badge" id="pin-badge" style="display:none; flex-direction:row; align-items:center; justify-content:space-between; gap:12px;">
         <div>
-          <div style="color:#f59e0b; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;">PIN REGIA (solo per te)</div>
+          <div style="color:#f59e0b; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; font-weight:700;" data-i18n="hub_pin_label">PIN REGIA (solo per te)</div>
           <div id="display-admin-pin" style="color:#f59e0b; font-size:1.6rem; font-weight:800; letter-spacing:0.25em;">----</div>
         </div>
-        <div style="font-size:11px; color:#92400e; max-width:160px; line-height:1.4;">Conserva questo PIN — serve per aprire la Regia.</div>
+        <div style="font-size:11px; color:#92400e; max-width:160px; line-height:1.4;" data-i18n="hub_pin_hint">Conserva questo PIN — serve per aprire la Regia.</div>
       </div>
 
       <div class="nav-grid">
-        <button class="nav-btn btn-admin" onclick="vai('admin.html')"><span class="icon">🎮</span>REGIA</button>
+        <button class="nav-btn btn-admin" onclick="vai('admin.html')"><span class="icon">🎮</span><span data-i18n="role1_name">REGIA</span></button>
         <button class="nav-btn btn-host"  onclick="vai('host.html')"><span class="icon">📺</span>TV HOST</button>
         <button class="nav-btn btn-phone" onclick="vai('phone.html')"><span class="icon">📱</span>BUZZER</button>
-        <button class="nav-btn btn-rose"  onclick="vai('rose.html')"><span class="icon">📋</span>LE ROSE</button>
+        <button class="nav-btn btn-rose"  onclick="vai('rose.html')"><span class="icon">📋</span><span data-i18n="role4_name">LE ROSE</span></button>
       </div>
 
-      <div class="change-room" id="btn-change-room">Cambia stanza</div>
+      <div class="change-room" id="btn-change-room" data-i18n="hub_change_room">Cambia stanza</div>
     </div>
   </div>
 
   <!-- MODALE creazione stanza -->
   <div class="modal-overlay" id="modal-access">
     <div class="modal-card">
-      <h3>Codice di attivazione</h3>
-      <p>Inserisci il tuo codice personale per creare la stanza.</p>
+      <h3 data-i18n="modal_title">Codice di attivazione</h3>
+      <p data-i18n="modal_desc">Inserisci il tuo codice personale per creare la stanza.</p>
       <input type="text" class="access-input" id="access-code-input" placeholder="es: DRAFT-ABC123" maxlength="30" autocomplete="off">
       <div class="access-error" id="access-error"></div>
-      <button class="btn-access-confirm" id="btn-access-confirm">CREA STANZA</button>
-      <button class="btn-access-cancel" id="btn-access-cancel">Annulla</button>
+      <button class="btn-access-confirm" id="btn-access-confirm" data-i18n="modal_btn_confirm">CREA STANZA</button>
+      <button class="btn-access-cancel" id="btn-access-cancel" data-i18n="modal_btn_cancel">Annulla</button>
       <div style="text-align:center;margin-top:16px;">
-        <a href="/richiesta-codice" style="color:#38bdf8;font-size:12px;text-decoration:none;">Non hai ancora un codice? Richiedilo gratis →</a>
+        <a href="/richiesta-codice" style="color:#38bdf8;font-size:12px;text-decoration:none;" data-i18n="modal_req_code">Non hai ancora un codice? Richiedilo gratis →</a>
       </div>
     </div>
   </div>
 
   <!-- RECENSIONI -->
   <div class="reviews-section" id="recensioni" style="display:none">
-    <div class="section-label" style="text-align:center; margin-bottom:12px;">Cosa dicono gli utenti</div>
-    <h2 class="section-title">Recensioni reali</h2>
-    <p class="section-sub" style="margin-bottom:40px;">Scritte da chi ha usato DraftARENA per la propria lega.</p>
+    <div class="section-label" style="text-align:center; margin-bottom:12px;" data-i18n="rev_label">Cosa dicono gli utenti</div>
+    <h2 class="section-title" data-i18n="rev_title">Recensioni reali</h2>
+    <p class="section-sub" style="margin-bottom:40px;" data-i18n="rev_sub">Scritte da chi ha usato DraftARENA per la propria lega.</p>
     <div class="reviews-grid" id="reviews-grid"></div>
     <div style="text-align:center; margin-top:32px;">
-      <a href="/feedback" class="review-cta">Lascia la tua recensione →</a>
+      <a href="/feedback" class="review-cta" data-i18n="rev_cta">Lascia la tua recensione →</a>
     </div>
   </div>
 
   <!-- FOOTER -->
   <footer class="footer">
-    <p>DraftARENA &mdash; L'asta del fantacalcio in tempo reale</p>
+    <p data-i18n="footer_tagline">DraftARENA &mdash; L'asta del fantacalcio in tempo reale</p>
     <p style="margin-top:10px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
-      <a href="/guida-admin" style="color:#f59e0b; text-decoration:none; font-size:12px;">Guida Admin</a>
-      <a href="/guida-utenti" style="color:#f59e0b; text-decoration:none; font-size:12px;">Guida Partecipanti</a>
-      <a href="/feedback" style="color:#10b981; text-decoration:none; font-size:12px;">Lascia un feedback</a>
+      <a href="/guida-admin" style="color:#f59e0b; text-decoration:none; font-size:12px;" data-i18n="footer_guide_admin">Guida Admin</a>
+      <a href="/guida-utenti" style="color:#f59e0b; text-decoration:none; font-size:12px;" data-i18n="footer_guide_users">Guida Partecipanti</a>
+      <a href="/feedback" style="color:#10b981; text-decoration:none; font-size:12px;" data-i18n="footer_feedback">Lascia un feedback</a>
     </p>
   </footer>
 
   <script src="/socket.io/socket.io.js"></script>
   <script>
-    /* ── Navbar scroll ── */
+    /* ── i18n ── */
+    const translations = {
+      it: {
+        nav_how: 'Come funziona', nav_pricing: 'Prezzi',
+        nav_enter: 'Entra in una stanza', nav_create: '+ Crea stanza',
+        hero_badge: 'Asta in tempo reale',
+        hero_title: 'L\'asta del fantacalcio<br>come non l\'hai mai <span class="accent">vissuta</span>',
+        hero_sub: 'Timer live, rilanci dal telefono, schermata TV per tutti. Organizza l\'asta della tua lega in pochi secondi — gratis, senza installazioni.',
+        hero_cta_primary: '+ Crea una stanza', hero_cta_secondary: 'Entra in una stanza',
+        hero_scroll: 'Scopri di più',
+        how_label: 'Come funziona', how_title: 'Tre passi, un\'asta perfetta',
+        how_sub: 'Nessuna installazione. Funziona su qualsiasi dispositivo dal browser.',
+        step1_tag: 'Admin — Regia', step1_title: 'Crea e controlla',
+        step1_desc: 'Carica la lista giocatori, imposta i budget e gestisci l\'asta in tempo reale. Metti il giocatore all\'asta, avvia il timer, aggiudica.',
+        step2_tag: 'Host — TV', step2_title: 'Proietta in sala',
+        step2_desc: 'Apri la schermata TV sul grande schermo o proiettore. Mostra il giocatore in asta, il timer e le offerte in diretta a tutti i partecipanti.',
+        step3_tag: 'Squadre — Buzzer', step3_title: 'Rilancia dal telefono',
+        step3_desc: 'Ogni fantasquadra usa il proprio smartphone come buzzer. Un tap per rilanciare, in tempo reale, senza app da installare.',
+        feat_label: 'Funzionalità', feat_title: 'Tutto quello che serve per un\'asta seria',
+        feat_sub: 'Progettato per leghe vere, con le funzioni che contano davvero.',
+        f1_title: 'Timer live sincronizzato', f1_desc: 'Countdown visibile su tutti i dispositivi in tempo reale. Nessun "quanto manca?" in sala.',
+        f2_title: 'Storico offerte in diretta', f2_desc: 'Ogni rilancio appare istantaneamente su tutti gli schermi. Trasparenza totale durante l\'asta.',
+        f3_title: 'Le rose aggiornate', f3_desc: 'Ogni squadra vede la propria rosa e il budget residuo aggiornati dopo ogni acquisto.',
+        f4_title: 'Export Excel', f4_desc: 'A fine asta esporta tutti i risultati in un file Excel con un click. Pronto per il tuo foglio lega.',
+        f5_title: 'Solo browser, niente app', f5_desc: 'Funziona su qualsiasi smartphone dal browser. Basta aprire il link e inserire il codice stanza.',
+        f6_title: 'Stanza privata con codice', f6_desc: 'Ogni asta ha un codice univoco a 6 caratteri. Solo chi ha il codice può entrare nella stanza.',
+        f7_title: 'Albo d\'Oro della lega', f7_desc: 'Archivia classifica e coppe di ogni stagione. Il medagliere cresce anno dopo anno, accessibile a tutti.',
+        deep_label: 'Sotto il cofano', deep_title: 'La tecnologia che fa la differenza',
+        deep_sub: 'Architettura progettata per non sbagliare un colpo, nemmeno il giorno dell\'asta.',
+        d1_title: 'Gestione Mantra', d1_desc: 'DraftARENA non è solo per il Fantacalcio. La nostra architettura flessibile consente il caricamento di database personalizzati per qualsiasi sport. Grazie al sistema di "Role Mapping", puoi definire i ruoli (P, D, C, A o personalizzati) e impostare le regole della tua lega in pochi clic. Il database indicizza automaticamente i giocatori e le loro quotazioni, offrendoti un ambiente di lavoro sempre pulito e pronto all\'uso.',
+        d2_title: 'Aste in Tempo Reale', d2_desc: 'Dimentica i fogli di carta e gli errori manuali. Il sistema utilizza i protocolli WebSocket per garantire una sincronizzazione in millisecondi: ogni rilancio o assegnazione effettuata dal Commander viene visualizzata istantaneamente su tutti i dispositivi dei partecipanti. Questa tecnologia elimina il ritardo di comunicazione, garantendo un\'asta fluida, competitiva e priva di malintesi, ovunque tu sia.',
+        d3_title: 'Export Intelligente', d3_desc: 'La gestione dei dati non finisce con il martelletto dell\'asta. Al termine di ogni sessione, DraftARENA ti offre un report completo in formato Excel/CSV. Questo file include non solo le rose definitive di ogni squadra, ma anche il dettaglio dei crediti spesi e quelli rimanenti. Uno strumento indispensabile per monitorare l\'andamento finanziario della tua lega e importare le rose direttamente nei portali di gioco ufficiali.',
+        d4_title: 'Storico Lega & Albo d\'Oro', d4_desc: 'Ogni stagione diventa un capitolo nella storia della tua lega. Dopo l\'asta, il Commander arricchisce il backup con la classifica finale e i titoli vinti: Campionato, Champions League, Coppa Italia, Cucchiaio di Legno e qualsiasi competizione personalizzata. L\'Albo d\'Oro aggrega tutti i trionfi in un medagliere visuale accessibile a tutti — uno storico permanente che cresce anno dopo anno.',
+        roles_label: 'I ruoli', roles_title: 'Una stanza, quattro viste',
+        roles_sub: 'Ogni partecipante accede alla vista giusta per il proprio ruolo.',
+        role1_name: 'Regia', role1_desc: 'Controllo completo dell\'asta. Solo per l\'amministratore.',
+        role2_desc: 'Schermata per proiettore o TV. Mostra tutto in sala.',
+        role3_desc: 'Lo smartphone di ogni squadra. Un tap per rilanciare.',
+        role4_name: 'Le Rose', role4_desc: 'Vista rosa e budget di tutte le squadre in tempo reale.',
+        pricing_label: 'Piani e Prezzi', pricing_title: 'Scegli il piano giusto per la tua lega',
+        pricing_sub: 'Tutto gratis per la stagione 2025/26. I prezzi entrano in vigore dalla stagione 2026/27.',
+        beta_title: 'Tutto gratis per la stagione 2025/26',
+        beta_sub: 'DraftARENA e\' in fase di lancio e vogliamo che tu lo provi senza pensieri.<br>I piani a pagamento partiranno dalla stagione <strong style="color:var(--text-secondary)">2026/27</strong> — i prezzi indicati sono quelli futuri.',
+        pricing_cmd_group: 'Commander — Chi organizza l\'asta',
+        p_cmd_free_desc: 'Fino a 8 squadre', p_cmd_plus_desc: '9+ squadre — asta singola', p_cmd_pro_desc: '9+ squadre — aste illimitate',
+        pricing_part_group: 'Partecipante — Chi partecipa all\'asta',
+        p_part_std_name: 'Partecipante Standard', p_part_std_desc: 'Accesso completo all\'asta',
+        p_part_prem_name: 'Partecipante Premium', p_part_prem_desc: 'Esperienza senza interruzioni',
+        p_free: 'Gratis', tag_always_free: 'Sempre gratis', tag_no_banner: 'Nessun banner', tag_beta_free: 'Gratis 2025/26',
+        faq_title: 'Domande frequenti', faq_sub: 'Tutto quello che vuoi sapere prima di iniziare.',
+        faq1_q: 'Perché DraftARENA è diverso dai soliti siti di aste?',
+        faq1_a: 'La maggior parte dei portali è pensata per il gioco online massivo. DraftARENA è nato con un focus diverso: l\'esperienza dal vivo. Abbiamo studiato l\'interfaccia affinché il Commander (l\'organizzatore) abbia il pieno controllo su ogni rilancio, sincronizzando istantaneamente i buzzer di ogni partecipante. Non è solo un\'app, è il sistema nervoso della tua asta, progettato per eliminare i tempi morti e gli errori umani nella gestione del foglio Excel.',
+        faq2_q: 'Come funziona la sicurezza dei pagamenti?',
+        faq2_a: 'La tua tranquillità è la nostra priorità. DraftARENA non memorizza mai i dati delle tue carte di credito. Per le transazioni, ci appoggiamo ai gateway di pagamento standard del settore (come Stripe), che utilizzano protocolli di crittografia avanzati (SSL/TLS). Il tuo pagamento è protetto e immediato, permettendoti di sbloccare le funzioni premium in pochi secondi e senza attese.',
+        faq3_q: 'Cosa succede se durante l\'asta cade la connessione?',
+        faq3_a: 'Sappiamo che l\'asta è un momento critico. Il nostro sistema di socket in tempo reale è progettato per la resilienza: in caso di breve caduta della linea, l\'applicazione tenta automaticamente il ricollegamento rapido. Poiché il database dell\'asta risiede nel cloud, una volta ripristinata la connessione, lo stato della stanza (offerte correnti, budget rimasti, giocatori chiamati) sarà esattamente quello che avevi prima della disconnessione.',
+        faq4_q: 'Posso usare DraftARENA anche per sport diversi dal Fantacalcio?',
+        faq4_a: 'Nel prossimo futuro assolutamente sì. Abbiamo architettato DraftARENA come un motore modulare. Grazie alla possibilità di caricare file database personalizzati (CSV), potrai adattare la nostra interfaccia per gestire aste di FantaNBA, NFL, NBL o qualsiasi altra lega sportiva. La struttura "Giocatore-Ruolo-Squadra" è flessibile: basterà caricare il file Excel dello sport che vuoi. Al momento, essendo ancora in una fase iniziale, ci siamo concentrati sul calcio — ma a breve implementeremo questa possibilità.',
+        faq5_q: 'Come posso ricevere assistenza in caso di problemi?',
+        faq5_a: 'Anche se DraftARENA è pensata per essere intuitiva, sappiamo che un\'asta dal vivo richiede precisione assoluta. Se riscontri problemi tecnici durante la configurazione o durante l\'asta, il nostro team di supporto è disponibile via email. Inoltre, stiamo creando una sezione "Wiki" dedicata ai Commander con tutorial passo-passo per il caricamento dei database e la gestione avanzata della stanza.',
+        hub_title: 'Inizia adesso', hub_sub: 'Crea una stanza in 10 secondi oppure entra in una già esistente con il codice che ti ha condiviso l\'admin.',
+        hub_card_title: 'Sei l\'amministratore?', hub_card_desc: 'Crea una nuova stanza e condividi il codice con i partecipanti.',
+        hub_btn_create: '+ CREA NUOVA STANZA', hub_divider: 'oppure entra in una stanza esistente',
+        hub_input_ph: 'Codice (es: ABC123)', hub_btn_join: 'ENTRA',
+        hub_loading: 'Connessione in corso...', hub_room_label: 'Codice Stanza',
+        hub_btn_copy: 'COPIA', hub_btn_copied: 'COPIATO!',
+        hub_pin_label: 'PIN REGIA (solo per te)', hub_pin_hint: 'Conserva questo PIN — serve per aprire la Regia.',
+        hub_change_room: 'Cambia stanza',
+        modal_title: 'Codice di attivazione', modal_desc: 'Inserisci il tuo codice personale per creare la stanza.',
+        modal_btn_confirm: 'CREA STANZA', modal_btn_creating: 'Creazione in corso...',
+        modal_btn_cancel: 'Annulla', modal_req_code: 'Non hai ancora un codice? Richiedilo gratis →',
+        rev_label: 'Cosa dicono gli utenti', rev_title: 'Recensioni reali',
+        rev_sub: 'Scritte da chi ha usato DraftARENA per la propria lega.',
+        rev_cta: 'Lascia la tua recensione →', rev_author_anon: 'Utente anonimo',
+        footer_tagline: 'DraftARENA — L\'asta del fantacalcio in tempo reale',
+        footer_guide_admin: 'Guida Admin', footer_guide_users: 'Guida Partecipanti', footer_feedback: 'Lascia un feedback',
+        err_code_required: 'Inserisci un codice di attivazione.', err_code_invalid: 'Codice non valido.',
+        err_room_code: 'Inserisci un codice valido.', err_room_not_found: 'Stanza non trovata.',
+        err_timeout: 'Timeout: server non risponde.', err_network: 'Errore di rete. Riprova.',
+        err_server: 'Server non raggiungibile. Ricarica con Ctrl+Shift+R.',
+      },
+      en: {
+        nav_how: 'How it works', nav_pricing: 'Pricing',
+        nav_enter: 'Join a room', nav_create: '+ Create room',
+        hero_badge: 'Live auction',
+        hero_title: 'The fantasy football auction<br>like you\'ve never <span class="accent">experienced</span> it',
+        hero_sub: 'Live timer, bids from your phone, TV screen for everyone. Set up your league auction in seconds — free, no downloads.',
+        hero_cta_primary: '+ Create a room', hero_cta_secondary: 'Join a room',
+        hero_scroll: 'Discover more',
+        how_label: 'How it works', how_title: 'Three steps, a perfect auction',
+        how_sub: 'No installation needed. Works on any device from the browser.',
+        step1_tag: 'Admin — Control Room', step1_title: 'Create & control',
+        step1_desc: 'Upload your player list, set budgets and manage the auction in real time. Put a player up for bid, start the timer, assign.',
+        step2_tag: 'Host — TV', step2_title: 'Project on the big screen',
+        step2_desc: 'Open the TV screen on a projector or large display. Show the player on auction, the timer and live bids to all participants.',
+        step3_tag: 'Teams — Buzzer', step3_title: 'Bid from your phone',
+        step3_desc: 'Each fantasy team uses their smartphone as a buzzer. One tap to bid, in real time, no app required.',
+        feat_label: 'Features', feat_title: 'Everything you need for a serious auction',
+        feat_sub: 'Designed for real leagues, with the features that actually matter.',
+        f1_title: 'Synced live timer', f1_desc: 'Countdown visible on all devices in real time. No more "how long left?" in the room.',
+        f2_title: 'Live bid history', f2_desc: 'Every bid appears instantly on all screens. Full transparency throughout the auction.',
+        f3_title: 'Updated rosters', f3_desc: 'Each team sees their roster and remaining budget updated after every purchase.',
+        f4_title: 'Excel Export', f4_desc: 'Export all results to an Excel file with one click at the end of the auction. Ready for your league spreadsheet.',
+        f5_title: 'Browser only, no app', f5_desc: 'Works on any smartphone from the browser. Just open the link and enter the room code.',
+        f6_title: 'Private room with code', f6_desc: 'Every auction has a unique 6-character code. Only those with the code can enter the room.',
+        f7_title: 'League Hall of Fame', f7_desc: 'Archive standings and trophies from every season. The trophy cabinet grows year after year, accessible to all.',
+        deep_label: 'Under the hood', deep_title: 'The technology that makes the difference',
+        deep_sub: 'Architecture designed to never miss a beat, not even on auction day.',
+        d1_title: 'Mantra Management', d1_desc: 'DraftARENA isn\'t just for Fantasy Football. Our flexible architecture allows loading custom databases for any sport. With the "Role Mapping" system, you can define roles (GK, DEF, MID, FWD or custom ones) and set your league rules in a few clicks. The database automatically indexes players and their values, giving you a clean and ready-to-use workspace at all times.',
+        d2_title: 'Real-Time Auctions', d2_desc: 'Forget paper sheets and manual errors. The system uses WebSocket protocols to guarantee millisecond synchronization: every bid or assignment made by the Commander is instantly displayed on all participants\' devices. This technology eliminates communication delays, ensuring a fluid, competitive and error-free auction wherever you are.',
+        d3_title: 'Smart Export', d3_desc: 'Data management doesn\'t end with the auctioneer\'s hammer. At the end of each session, DraftARENA provides a complete Excel/CSV report. This file includes not only the final rosters of each team, but also details of credits spent and remaining. An essential tool for tracking your league\'s financial performance and importing rosters directly into official gaming portals.',
+        d4_title: 'League History & Hall of Fame', d4_desc: 'Every season becomes a chapter in your league\'s history. After the auction, the Commander enriches the backup with the final standings and titles won: Championship, Champions League, Cup, Wooden Spoon and any custom competition. The Hall of Fame aggregates all triumphs in a visual trophy cabinet accessible to everyone — a permanent record that grows year after year.',
+        roles_label: 'Roles', roles_title: 'One room, four views',
+        roles_sub: 'Each participant accesses the right view for their role.',
+        role1_name: 'CONTROL ROOM', role1_desc: 'Full auction control. Admin only.',
+        role2_desc: 'Screen for projector or TV. Shows everything to the room.',
+        role3_desc: 'Each team\'s smartphone. One tap to bid.',
+        role4_name: 'ROSTERS', role4_desc: 'Roster and budget view for all teams in real time.',
+        pricing_label: 'Plans & Pricing', pricing_title: 'Choose the right plan for your league',
+        pricing_sub: 'Free for the 2025/26 season. Pricing takes effect from the 2026/27 season.',
+        beta_title: 'Free for the entire 2025/26 season',
+        beta_sub: 'DraftARENA is in its launch phase and we want you to try it without worries.<br>Paid plans start from the <strong style="color:var(--text-secondary)">2026/27</strong> season — prices shown are future prices.',
+        pricing_cmd_group: 'Commander — The auction organizer',
+        p_cmd_free_desc: 'Up to 8 teams', p_cmd_plus_desc: '9+ teams — single auction', p_cmd_pro_desc: '9+ teams — unlimited auctions',
+        pricing_part_group: 'Participant — Auction attendee',
+        p_part_std_name: 'Standard Participant', p_part_std_desc: 'Full auction access',
+        p_part_prem_name: 'Premium Participant', p_part_prem_desc: 'Ad-free experience',
+        p_free: 'Free', tag_always_free: 'Always free', tag_no_banner: 'No ads', tag_beta_free: 'Free 2025/26',
+        faq_title: 'Frequently asked questions', faq_sub: 'Everything you want to know before you start.',
+        faq1_q: 'Why is DraftARENA different from other auction sites?',
+        faq1_a: 'Most platforms are designed for massive online gaming. DraftARENA was built with a different focus: the live experience. We designed the interface so the Commander (the organizer) has full control over every bid, instantly syncing all participants\' buzzers. It\'s not just an app — it\'s the nervous system of your auction, built to eliminate downtime and human errors in spreadsheet management.',
+        faq2_q: 'How does payment security work?',
+        faq2_a: 'Your peace of mind is our priority. DraftARENA never stores your credit card details. For transactions, we rely on industry-standard payment gateways (like Stripe), which use advanced encryption protocols (SSL/TLS). Your payment is secure and immediate, letting you unlock premium features in seconds with no waiting.',
+        faq3_q: 'What happens if the connection drops during the auction?',
+        faq3_a: 'We know the auction is a critical moment. Our real-time socket system is designed for resilience: if the connection briefly drops, the app automatically attempts a fast reconnect. Since the auction database lives in the cloud, once reconnected, the room state (current bids, remaining budgets, called players) will be exactly as you left it.',
+        faq4_q: 'Can I use DraftARENA for sports other than Fantasy Football?',
+        faq4_a: 'Absolutely, in the near future. We architected DraftARENA as a modular engine. By loading custom database files (CSV), you can adapt our interface to manage FantaNBA, NFL, NBL or any other fantasy sports league. The "Player-Role-Team" structure is flexible: just load the Excel file for the sport you want. For now, being in an early stage, we focused on football — but we\'ll implement this soon.',
+        faq5_q: 'How can I get support if I have problems?',
+        faq5_a: 'Even though DraftARENA is designed to be intuitive, we know a live auction requires absolute precision. If you encounter technical issues during setup or the auction itself, our support team is available via email. We\'re also building a "Wiki" section dedicated to Commanders with step-by-step tutorials for database uploads and advanced room management.',
+        hub_title: 'Start now', hub_sub: 'Create a room in 10 seconds or join an existing one with the code shared by the admin.',
+        hub_card_title: 'Are you the admin?', hub_card_desc: 'Create a new room and share the code with participants.',
+        hub_btn_create: '+ CREATE NEW ROOM', hub_divider: 'or join an existing room',
+        hub_input_ph: 'Code (e.g. ABC123)', hub_btn_join: 'JOIN',
+        hub_loading: 'Connecting...', hub_room_label: 'Room Code',
+        hub_btn_copy: 'COPY', hub_btn_copied: 'COPIED!',
+        hub_pin_label: 'CONTROL ROOM PIN (for you only)', hub_pin_hint: 'Save this PIN — you need it to open the Control Room.',
+        hub_change_room: 'Change room',
+        modal_title: 'Activation code', modal_desc: 'Enter your personal code to create the room.',
+        modal_btn_confirm: 'CREATE ROOM', modal_btn_creating: 'Creating...',
+        modal_btn_cancel: 'Cancel', modal_req_code: 'Don\'t have a code yet? Request one for free →',
+        rev_label: 'What users say', rev_title: 'Real reviews',
+        rev_sub: 'Written by people who used DraftARENA for their league.',
+        rev_cta: 'Leave your review →', rev_author_anon: 'Anonymous user',
+        footer_tagline: 'DraftARENA — The fantasy football live auction',
+        footer_guide_admin: 'Admin Guide', footer_guide_users: 'Participant Guide', footer_feedback: 'Leave feedback',
+        err_code_required: 'Please enter an activation code.', err_code_invalid: 'Invalid code.',
+        err_room_code: 'Please enter a valid code.', err_room_not_found: 'Room not found.',
+        err_timeout: 'Timeout: server not responding.', err_network: 'Network error. Please try again.',
+        err_server: 'Server unreachable. Reload with Ctrl+Shift+R.',
+      }
+    };
+
+    let currentLang = localStorage.getItem('lang') || 'it';
+
+    function t(key) { return (translations[currentLang] || translations.it)[key] || key; }
+
+    function applyLang(lang) {
+      currentLang = lang;
+      localStorage.setItem('lang', lang);
+      const T = translations[lang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.dataset.i18n;
+        if (T[key] !== undefined) el.textContent = T[key];
+      });
+      document.querySelectorAll('[data-i18n-html]').forEach(el => {
+        const key = el.dataset.i18nHtml;
+        if (T[key] !== undefined) el.innerHTML = T[key];
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const key = el.dataset.i18nPlaceholder;
+        if (T[key] !== undefined) el.placeholder = T[key];
+      });
+      const toggle = document.getElementById('lang-toggle');
+      if (toggle) toggle.textContent = lang === 'it' ? '\uD83C\uDDEC\uD83C\uDDE7 EN' : '\uD83C\uDDEE\uD83C\uDDF9 IT';
+      document.documentElement.lang = lang;
+    }
+
+    function toggleLang() { applyLang(currentLang === 'it' ? 'en' : 'it'); }
+
+    /* ── Navbar scroll ──*/
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 40);
@@ -1072,13 +1263,13 @@
     document.getElementById('btn-access-confirm').addEventListener('click', async () => {
       const accessCode = document.getElementById('access-code-input').value.trim().toUpperCase();
       const errEl = document.getElementById('access-error');
-      if (!accessCode) { errEl.textContent = 'Inserisci un codice di attivazione.'; return; }
+      if (!accessCode) { errEl.textContent = t('err_code_required'); return; }
       errEl.textContent = '';
       const btn = document.getElementById('btn-access-confirm');
-      btn.textContent = 'Creazione in corso...';
+      btn.textContent = t('modal_btn_creating');
       btn.disabled = true;
       await creaStanza(accessCode, 0);
-      btn.textContent = 'CREA STANZA';
+      btn.textContent = t('modal_btn_confirm');
       btn.disabled = false;
     });
 
@@ -1098,11 +1289,11 @@
           mostraStanza(res.roomCode, res.adminPin);
           scrollToHub();
         } else {
-          document.getElementById('access-error').textContent = res.error || 'Codice non valido.';
+          document.getElementById('access-error').textContent = res.error || t('err_code_invalid');
           document.getElementById('modal-access').classList.add('open');
         }
       } catch (e) {
-        const msg = e.name === 'AbortError' ? 'Timeout: server non risponde.' : 'Errore di rete. Riprova.';
+        const msg = e.name === 'AbortError' ? t('err_timeout') : t('err_network');
         document.getElementById('access-error').textContent = msg;
         document.getElementById('modal-access').classList.add('open');
       } finally {
@@ -1130,7 +1321,7 @@
 
     async function entra() {
       const code = document.getElementById('room-code-input').value.trim().toUpperCase();
-      if (!code || code.length < 4) { setError('Inserisci un codice valido.'); return; }
+      if (!code || code.length < 4) { setError(t('err_room_code')); return; }
       setLoading(true); setError('');
       try {
         const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
@@ -1140,10 +1331,10 @@
           if (isConnected) subscribeSocket(res.roomCode);
           mostraStanza(res.roomCode);
         } else {
-          setError(res.error || 'Stanza non trovata.');
+          setError(res.error || t('err_room_not_found'));
         }
       } catch (e) {
-        setError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.');
+        setError(t('err_server'));
       } finally {
         setLoading(false);
       }
@@ -1183,8 +1374,8 @@
       if (!activeRoomCode) return;
       navigator.clipboard.writeText(activeRoomCode).then(() => {
         const btn = document.getElementById('btn-copy-code');
-        btn.textContent = 'COPIATO!';
-        setTimeout(() => btn.textContent = 'COPIA', 2000);
+        btn.textContent = t('hub_btn_copied');
+        setTimeout(() => btn.textContent = t('hub_btn_copy'), 2000);
       });
     });
 
@@ -1260,7 +1451,7 @@
         if (!grid || !section) return;
         grid.innerHTML = data.feedback.map(f => {
           const stars = f.voto ? '★'.repeat(f.voto) + '☆'.repeat(5 - f.voto) : '';
-          const autore = f.nome || 'Utente anonimo';
+          const autore = f.nome || t('rev_author_anon');
           return `<div class="review-card">
             ${stars ? `<div class="review-stars">${stars}</div>` : ''}
             <div class="review-msg">${f.messaggio}</div>
@@ -1270,6 +1461,9 @@
         section.style.display = '';
       } catch (_) {}
     })();
+
+    // Applica lingua salvata
+    applyLang(currentLang);
   </script>
 </body>
 </html>
