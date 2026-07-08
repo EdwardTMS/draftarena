@@ -18,7 +18,6 @@ const io = new Server(server, {
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public"), {
-  index: false,
   setHeaders: (res) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
@@ -26,7 +25,6 @@ app.use(express.static(path.join(__dirname, "public"), {
   }
 }));
 app.use(express.static(path.join(__dirname, "../public"), {
-  index: false,
   setHeaders: (res) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.setHeader("Pragma", "no-cache");
@@ -606,13 +604,12 @@ setInterval(async () => {
   for (const [code, room] of rooms.entries()) {
     try {
       await salvaSessioneDB(room);
+      // Notifica i socket admin connessi a questa stanza
       io.to(code).emit("autoSaved", { ts: new Date().toISOString() });
     } catch (e) {
       console.error(`[AUTO-SAVE] Errore per stanza ${code}:`, e.message);
     }
   }
-  // Flush page views anche se non si è raggiunta la soglia
-  if (pageViewsUnsaved > 0) flushPageViews();
 }, 2 * 60 * 1000);
 
 /* ==========================================================================
@@ -637,9 +634,6 @@ process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
    ROTTE EXPRESS
    ========================================================================== */
 app.get("/", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "index.html")); });
-app.get("/index.html", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "index.html")); });
-app.get("/richiesta-codice", (req, res) => res.sendFile(path.join(__dirname, "public", "richiesta-codice.html")));
-app.get("/richiesta-codice.html", (req, res) => res.sendFile(path.join(__dirname, "public", "richiesta-codice.html")));
 app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "public", "admin.html")));
 app.get("/host", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
 app.get("/host.html", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
@@ -649,6 +643,84 @@ app.get("/superadmin", (req, res) => res.sendFile(path.join(__dirname, "public",
 app.get("/guida-admin", (req, res) => res.sendFile(path.join(__dirname, "public", "guida-admin.html")));
 app.get("/guida-utenti", (req, res) => res.sendFile(path.join(__dirname, "public", "guida-utenti.html")));
 app.get("/video", (req, res) => res.sendFile(path.join(__dirname, "public", "video.html")));
+app.get("/feedback", (req, res) => res.sendFile(path.join(__dirname, "public", "feedback.html")));
+app.get("/richiesta-codice", (req, res) => res.sendFile(path.join(__dirname, "public", "richiesta-codice.html")));
+
+/* ==========================================================================
+   PLATFORM SETTINGS (pubblica lettura)
+   ========================================================================== */
+app.get("/api/platform-settings", async (req, res) => {
+  if (!supabase) return res.json({});
+  try {
+    const { data, error } = await supabase.from("platform_settings").select("key, value");
+    if (error) throw error;
+    const result = {};
+    (data || []).forEach(row => { result[row.key] = row.value; });
+    res.json(result);
+  } catch (e) {
+    res.status(500).json({});
+  }
+});
+
+app.post("/api/superadmin/platform-settings", async (req, res) => {
+  const { password, settings } = req.body;
+  if (password !== SUPERADMIN_PASSWORD) {
+    return res.status(401).json({ success: false, error: "Password errata." });
+  }
+  if (!supabase) return res.json({ success: true });
+  try {
+    const rows = Object.entries(settings).map(([key, value]) => ({
+      key, value: String(value), updated_at: new Date().toISOString()
+    }));
+    const { error } = await supabase.from("platform_settings").upsert(rows, { onConflict: "key" });
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+/* ==========================================================================
+   RICHIESTE CODICI
+   ========================================================================== */
+app.post("/api/richiesta-codice", async (req, res) => {
+  if (!supabase) return res.json({ success: true });
+  const { nome, cognome, email, nome_lega, num_squadre, piattaforma, telefono, come_trovato, codice_assegnato } = req.body;
+  if (!nome || !email || !nome_lega) {
+    return res.status(400).json({ success: false, error: "Campi obbligatori mancanti." });
+  }
+  try {
+    const { error } = await supabase.from("code_requests").insert({
+      nome: String(nome).trim().slice(0, 80),
+      cognome: cognome ? String(cognome).trim().slice(0, 80) : null,
+      email: String(email).trim().slice(0, 200),
+      nome_lega: String(nome_lega).trim().slice(0, 200),
+      num_squadre: num_squadre ? parseInt(num_squadre) : null,
+      piattaforma: piattaforma ? String(piattaforma).trim().slice(0, 100) : null,
+      telefono: telefono ? String(telefono).trim().slice(0, 50) : null,
+      come_trovato: come_trovato ? String(come_trovato).trim().slice(0, 500) : null,
+      codice_assegnato: codice_assegnato ? String(codice_assegnato).trim().toUpperCase() : null
+    });
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.get("/api/superadmin/requests", async (req, res) => {
+  if (!supabase) return res.json({ success: true, requests: [] });
+  try {
+    const { data, error } = await supabase
+      .from("code_requests")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    res.json({ success: true, requests: data || [] });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
 
 /* ==========================================================================
    SUPERADMIN PASSWORD (caricata da DB, fallback env)
@@ -764,44 +836,6 @@ app.get("/api/superadmin/stats", (req, res) => {
 });
 
 /* ==========================================================================
-   PLATFORM SETTINGS (pubblica lettura, protetta scrittura)
-   ========================================================================== */
-const PRICING_KEYS = ["pricing_visible", "price_commander_plus", "price_commander_pro", "price_partecipante_premium"];
-
-app.get("/api/platform-settings", async (req, res) => {
-  if (!supabase) return res.json({ pricing_visible: "true", price_commander_plus: "2,99", price_commander_pro: "7,99", price_partecipante_premium: "0,99" });
-  try {
-    const { data } = await supabase.from("platform_settings").select("key, value").in("key", PRICING_KEYS);
-    const settings = {};
-    (data || []).forEach(row => { settings[row.key] = row.value; });
-    res.json({
-      pricing_visible: settings.pricing_visible ?? "true",
-      price_commander_plus: settings.price_commander_plus ?? "2,99",
-      price_commander_pro: settings.price_commander_pro ?? "7,99",
-      price_partecipante_premium: settings.price_partecipante_premium ?? "0,99"
-    });
-  } catch (e) {
-    res.json({ pricing_visible: "true", price_commander_plus: "2,99", price_commander_pro: "7,99", price_partecipante_premium: "0,99" });
-  }
-});
-
-app.post("/api/superadmin/platform-settings", async (req, res) => {
-  const { password, settings } = req.body;
-  if (!password || password !== superadminPassword) return res.status(401).json({ success: false, error: "Password errata." });
-  if (!settings || typeof settings !== "object") return res.status(400).json({ success: false, error: "Dati non validi." });
-  if (!supabase) return res.status(500).json({ success: false, error: "DB non disponibile." });
-  try {
-    const rows = Object.entries(settings)
-      .filter(([k]) => PRICING_KEYS.includes(k))
-      .map(([key, value]) => ({ key, value: String(value), updated_at: new Date().toISOString() }));
-    await supabase.from("platform_settings").upsert(rows, { onConflict: "key" });
-    res.json({ success: true });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-/* ==========================================================================
    VALIDAZIONE CODICE ACCESSO (pubblica)
    ========================================================================== */
 app.post("/api/access/validate", async (req, res) => {
@@ -809,88 +843,6 @@ app.post("/api/access/validate", async (req, res) => {
   const result = await validateAccessCode(code);
   if (!result.valid) return res.status(400).json({ success: false, error: result.error });
   res.json({ success: true, type: result.data.type });
-});
-
-/* ==========================================================================
-   RICHIESTA CODICE (registrazione pubblica)
-   ========================================================================== */
-app.post("/api/richiesta-codice", async (req, res) => {
-  if (!supabase) return res.status(503).json({ success: false, error: "DB non disponibile." });
-
-  const { nome, cognome, email, nome_lega, num_squadre, piattaforma, telefono, come_trovato } = req.body;
-  if (!nome || !cognome || !email || !nome_lega || !num_squadre) {
-    return res.status(400).json({ success: false, error: "Compila tutti i campi obbligatori." });
-  }
-
-  const emailLower = email.trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLower)) {
-    return res.status(400).json({ success: false, error: "Indirizzo email non valido." });
-  }
-
-  try {
-    // Se l'email esiste già, restituiamo il codice già assegnato
-    const { data: existing } = await supabase
-      .from("code_requests")
-      .select("codice_assegnato, nome")
-      .eq("email", emailLower)
-      .maybeSingle();
-
-    if (existing) {
-      return res.json({ success: true, code: existing.codice_assegnato, alreadyExists: true });
-    }
-
-    // Genera codice DRAFT-XXXXXX univoco
-    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-    let promoCode;
-    let attempts = 0;
-    do {
-      promoCode = "DRAFT-";
-      for (let i = 0; i < 6; i++) promoCode += chars[Math.floor(Math.random() * chars.length)];
-      const { data: existing } = await supabase.from("access_codes").select("code").eq("code", promoCode).maybeSingle();
-      if (!existing) break;
-      attempts++;
-    } while (attempts < 20);
-
-    // Inserisce in access_codes
-    const { error: codeErr } = await supabase.from("access_codes").insert({
-      code: promoCode,
-      type: "promo",
-      max_uses: null,
-      is_active: true,
-      note: `${nome.trim()} ${cognome.trim()} — ${emailLower}`
-    });
-    if (codeErr) throw codeErr;
-
-    // Salva la richiesta
-    const { error: reqErr } = await supabase.from("code_requests").insert({
-      nome: nome.trim(),
-      cognome: cognome.trim(),
-      email: emailLower,
-      nome_lega: nome_lega.trim(),
-      num_squadre: parseInt(num_squadre) || 8,
-      piattaforma: piattaforma || null,
-      telefono: telefono || null,
-      come_trovato: come_trovato || null,
-      codice_assegnato: promoCode
-    });
-    if (reqErr) throw reqErr;
-
-    console.log(`[SERVER] Nuovo codice registrato: ${promoCode} — ${emailLower}`);
-    res.json({ success: true, code: promoCode, alreadyExists: false });
-  } catch (e) {
-    console.error("[SERVER] richiesta-codice error:", e);
-    res.status(500).json({ success: false, error: "Errore interno. Riprova più tardi." });
-  }
-});
-
-app.get("/api/superadmin/requests", async (req, res) => {
-  if (!supabase) return res.status(503).json({ success: false, error: "DB non disponibile." });
-  const { data, error } = await supabase
-    .from("code_requests")
-    .select("*")
-    .order("created_at", { ascending: false });
-  if (error) return res.status(500).json({ success: false, error: error.message });
-  res.json({ success: true, requests: data });
 });
 
 /* ==========================================================================
@@ -906,7 +858,7 @@ function rateLimit(ip, maxPerMinute = 10) {
   return entry.count > maxPerMinute;
 }
 
-const FREE_TIER_TEAM_LIMIT = 0;
+const FREE_TIER_TEAM_LIMIT = 8;
 
 app.get("/api/room/create", async (req, res) => {
   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
@@ -1242,6 +1194,96 @@ app.patch("/api/room/:code/backups/:id/season", async (req, res) => {
       .update({ season_data: { classifica, competizioni } })
       .eq("id", req.params.id)
       .eq("room_code", code);
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+/* ==========================================================================
+   FEEDBACK & SUPPORTO
+   ========================================================================== */
+
+/* GET pubblico — feedback approvati e pubblici (per la homepage) */
+app.get("/api/feedback/pubblici", async (req, res) => {
+  if (!supabase) return res.json({ success: true, feedback: [] });
+  try {
+    const { data, error } = await supabase
+      .from("feedback_submissions")
+      .select("id, nome, voto, messaggio, approved_at")
+      .eq("status", "approved")
+      .eq("visibilita", "pubblico")
+      .order("approved_at", { ascending: false })
+      .limit(20);
+    if (error) throw error;
+    res.json({ success: true, feedback: data });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+/* POST pubblico — invia nuovo feedback o richiesta supporto */
+app.post("/api/feedback/invia", async (req, res) => {
+  if (!supabase) return res.json({ success: true });
+  const { tipo, visibilita, nome, email, voto, messaggio } = req.body;
+  if (!messaggio || messaggio.trim().length < 5) {
+    return res.status(400).json({ success: false, error: "Messaggio troppo corto." });
+  }
+  if (tipo === "supporto" && !email) {
+    return res.status(400).json({ success: false, error: "Email obbligatoria per le richieste di supporto." });
+  }
+  if (voto !== undefined && voto !== null && (voto < 1 || voto > 5)) {
+    return res.status(400).json({ success: false, error: "Voto non valido." });
+  }
+  try {
+    const { error } = await supabase.from("feedback_submissions").insert({
+      tipo: tipo || "feedback",
+      visibilita: tipo === "supporto" ? "privato" : (visibilita || "pubblico"),
+      nome: nome ? String(nome).trim().slice(0, 80) : null,
+      email: email ? String(email).trim().slice(0, 200) : null,
+      voto: voto ? parseInt(voto) : null,
+      messaggio: String(messaggio).trim().slice(0, 2000),
+      status: "pending"
+    });
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+/* GET superadmin — tutti i feedback/supporto */
+app.get("/api/superadmin/feedback", async (req, res) => {
+  if (!supabase) return res.json({ success: true, submissions: [] });
+  try {
+    const { data, error } = await supabase
+      .from("feedback_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    res.json({ success: true, submissions: data });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+/* PATCH superadmin — approva / rifiuta / aggiungi risposta */
+app.patch("/api/superadmin/feedback/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status, risposta_admin } = req.body;
+  if (!["approved", "rejected", "pending"].includes(status)) {
+    return res.status(400).json({ success: false, error: "Status non valido." });
+  }
+  if (!supabase) return res.json({ success: true });
+  try {
+    const updates = {
+      status,
+      risposta_admin: risposta_admin !== undefined ? String(risposta_admin).trim().slice(0, 1000) : undefined,
+      approved_at: status === "approved" ? new Date().toISOString() : null
+    };
+    if (updates.risposta_admin === undefined) delete updates.risposta_admin;
+    const { error } = await supabase.from("feedback_submissions").update(updates).eq("id", id);
     if (error) throw error;
     res.json({ success: true });
   } catch (e) {
