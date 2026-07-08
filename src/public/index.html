@@ -565,6 +565,31 @@
       font-size: 12px; color: var(--amber); text-align: center; line-height: 1.5;
     }
 
+    /* ── RECENSIONI ── */
+    .reviews-section { padding: 0 24px 96px; max-width: 1100px; margin: 0 auto; }
+    .reviews-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .review-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .review-card:hover { border-color: var(--border-glow); transform: translateY(-3px); }
+    .review-stars { color: #f59e0b; font-size: 14px; letter-spacing: 2px; }
+    .review-msg { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; flex: 1; font-style: italic; }
+    .review-msg::before { content: '\201C'; }
+    .review-msg::after  { content: '\201D'; }
+    .review-author { font-size: 0.78rem; color: var(--text-muted); font-weight: 600; }
+    .review-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border-radius: 8px; border: 1px solid var(--border);
+      background: transparent; color: var(--text-secondary);
+      font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+    }
+    .review-cta:hover { border-color: var(--green); color: var(--green); }
+    @media (max-width: 768px) { .reviews-grid { grid-template-columns: 1fr; } }
+
     /* ── FOOTER ── */
     .footer {
       border-top: 1px solid var(--border); padding: 28px 24px;
@@ -974,12 +999,24 @@
     </div>
   </div>
 
+  <!-- RECENSIONI -->
+  <div class="reviews-section" id="recensioni" style="display:none">
+    <div class="section-label" style="text-align:center; margin-bottom:12px;">Cosa dicono gli utenti</div>
+    <h2 class="section-title">Recensioni reali</h2>
+    <p class="section-sub" style="margin-bottom:40px;">Scritte da chi ha usato DraftARENA per la propria lega.</p>
+    <div class="reviews-grid" id="reviews-grid"></div>
+    <div style="text-align:center; margin-top:32px;">
+      <a href="/feedback" class="review-cta">Lascia la tua recensione →</a>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="footer">
     <p>DraftARENA &mdash; L'asta del fantacalcio in tempo reale</p>
     <p style="margin-top:10px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
       <a href="/guida-admin" style="color:#f59e0b; text-decoration:none; font-size:12px;">Guida Admin</a>
       <a href="/guida-utenti" style="color:#f59e0b; text-decoration:none; font-size:12px;">Guida Partecipanti</a>
+      <a href="/feedback" style="color:#10b981; text-decoration:none; font-size:12px;">Lascia un feedback</a>
     </p>
   </footer>
 
@@ -1208,6 +1245,29 @@
           const el = document.getElementById(id);
           if (el) el.textContent = text;
         });
+      } catch (_) {}
+    })();
+
+    // Carica recensioni pubbliche approvate
+    (async function loadRecensioni() {
+      try {
+        const r = await fetch("/api/feedback/pubblici");
+        if (!r.ok) return;
+        const data = await r.json();
+        if (!data.success || !data.feedback || data.feedback.length === 0) return;
+        const grid = document.getElementById("reviews-grid");
+        const section = document.getElementById("recensioni");
+        if (!grid || !section) return;
+        grid.innerHTML = data.feedback.map(f => {
+          const stars = f.voto ? '★'.repeat(f.voto) + '☆'.repeat(5 - f.voto) : '';
+          const autore = f.nome || 'Utente anonimo';
+          return `<div class="review-card">
+            ${stars ? `<div class="review-stars">${stars}</div>` : ''}
+            <div class="review-msg">${f.messaggio}</div>
+            <div class="review-author">&mdash; ${autore}</div>
+          </div>`;
+        }).join('');
+        section.style.display = '';
       } catch (_) {}
     })();
   </script>
