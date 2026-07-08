@@ -1257,10 +1257,7 @@ app.post("/api/feedback/invia", async (req, res) => {
 app.get("/api/superadmin/feedback", async (req, res) => {
   if (!supabase) return res.json({ success: true, submissions: [] });
   try {
-    const { data, error } = await supabase
-      .from("feedback_submissions")
-      .select("*")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.rpc('get_all_feedback_submissions');
     if (error) throw error;
     res.json({ success: true, submissions: data });
   } catch (e) {
@@ -1277,13 +1274,14 @@ app.patch("/api/superadmin/feedback/:id", async (req, res) => {
   }
   if (!supabase) return res.json({ success: true });
   try {
-    const updates = {
-      status,
-      risposta_admin: risposta_admin !== undefined ? String(risposta_admin).trim().slice(0, 1000) : undefined,
-      approved_at: status === "approved" ? new Date().toISOString() : null
-    };
-    if (updates.risposta_admin === undefined) delete updates.risposta_admin;
-    const { error } = await supabase.from("feedback_submissions").update(updates).eq("id", id);
+    const rispostaVal = risposta_admin !== undefined ? String(risposta_admin).trim().slice(0, 1000) : null;
+    const approvedAt = status === "approved" ? new Date().toISOString() : null;
+    const { error } = await supabase.rpc('update_feedback_submission', {
+      p_id: id,
+      p_status: status,
+      p_risposta_admin: rispostaVal,
+      p_approved_at: approvedAt
+    });
     if (error) throw error;
     res.json({ success: true });
   } catch (e) {
