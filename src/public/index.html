@@ -976,10 +976,19 @@
       </div>
 
       <div class="nav-grid">
-        <button class="nav-btn btn-admin" onclick="vai('admin.html')"><span class="icon">🎮</span><span data-i18n="role1_name">REGIA</span></button>
-        <button class="nav-btn btn-host"  onclick="vai('host.html')"><span class="icon">📺</span>TV HOST</button>
-        <button class="nav-btn btn-phone" onclick="vai('phone.html')"><span class="icon">📱</span>BUZZER</button>
-        <button class="nav-btn btn-rose"  onclick="vai('rose.html')"><span class="icon">📋</span><span data-i18n="role4_name">LE ROSE</span></button>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <button class="nav-btn btn-admin" onclick="vai('admin-smart.html')" style="padding:14px 10px;flex:1;">
+            <span class="icon" style="font-size:1.4rem;">&#x2605;</span>
+            <span style="font-size:12px;letter-spacing:0.3px;">REGIA SMART</span>
+          </button>
+          <button class="nav-btn" onclick="vai('admin.html')" style="padding:10px;background:rgba(220,38,38,0.15);border:1px solid rgba(220,38,38,0.35);color:#fca5a5;font-size:11px;flex:1;">
+            <span style="font-size:16px;">&#x2699;</span>
+            <span>REGIA PRO</span>
+          </button>
+        </div>
+        <button class="nav-btn btn-host"  onclick="vai('host.html')"><span class="icon">&#x1F4FA;</span>TV HOST</button>
+        <button class="nav-btn btn-phone" onclick="vai('phone.html')"><span class="icon">&#x1F4F1;</span>BUZZER</button>
+        <button class="nav-btn btn-rose"  onclick="vai('rose.html')"><span class="icon">&#x1F4CB;</span><span data-i18n="role4_name">LE ROSE</span></button>
       </div>
 
       <div class="change-room" id="btn-change-room" data-i18n="hub_change_room">Cambia stanza</div>
