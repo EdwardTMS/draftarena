@@ -635,6 +635,7 @@ process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
    ========================================================================== */
 app.get("/", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "index.html")); });
 app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "public", "admin.html")));
+app.get("/admin-smart", (req, res) => res.sendFile(path.join(__dirname, "public", "admin-smart.html")));
 app.get("/host", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
 app.get("/host.html", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
 app.get("/rose", (req, res) => res.sendFile(path.join(__dirname, "public", "rose.html")));
