@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DraftARENA - Admin SMART</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="DraftArena">
+    <link rel="apple-touch-icon" href="/DraftARENAico.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --success: #10b981;
+            --success-dark: #059669;
+            --warning: #f59e0b;
+            --warning-dark: #d97706;
+            --danger: #ef4444;
+            --danger-dark: #dc2626;
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #475569;
+            --smart: #10b981;
+            --smart-dark: #059669;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* ── Gates ── */
+        .gate {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; backdrop-filter: blur(4px);
+        }
+        .gate-box {
+            background: var(--bg-card); border-radius: 16px; padding: 2.5rem;
+            width: min(400px, 90vw); border: 1px solid var(--border);
+            text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .gate-box img { height: 40px; margin-bottom: 1.5rem; }
+        .gate-box h2 { font-size: 1.3rem; margin-bottom: 0.4rem; color: var(--text-primary); }
+        .gate-box p  { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .gate-box input {
+            width: 100%; padding: 0.75rem 1rem; background: var(--bg-input);
+            border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text-primary); font-size: 1.1rem; text-align: center;
+            letter-spacing: 4px; margin-bottom: 1rem;
+        }
+        .gate-box input:focus { outline: none; border-color: var(--smart); }
+        .gate-error { color: var(--danger); font-size: 0.85rem; margin-top: 0.5rem; min-height: 1.2rem; }
+        .smart-badge {
+            display: inline-block; background: rgba(16,185,129,0.15);
+            border: 1px solid rgba(16,185,129,0.4); color: var(--smart);
+            font-size: 0.75rem; font-weight: 700; letter-spacing: 1px;
+            padding: 0.2rem 0.6rem; border-radius: 20px; margin-bottom: 1rem;
+        }
+
+        /* ── Header ── */
+        .header {
+            background: var(--bg-card); padding: 0.9rem 1.5rem;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 2px solid var(--smart); position: sticky; top: 0; z-index: 100;
+        }
+        .header-left { display: flex; align-items: center; gap: 0.8rem; }
+        .header-right { display: flex; align-items: center; gap: 0.8rem; }
+        .badge-smart {
+            background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.5);
+            color: var(--smart); font-size: 0.7rem; font-weight: 700; letter-spacing: 1.5px;
+            padding: 0.2rem 0.6rem; border-radius: 20px;
+        }
+        .room-pill {
+            background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3);
+            border-radius: 6px; padding: 0.25rem 0.75rem;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .room-pill span:first-child { font-size: 10px; color: #64748b; }
+        .room-code { font-weight: bold; color: #38bdf8; letter-spacing: 2px; font-size: 0.95rem; }
+        .btn-link {
+            color: var(--text-secondary); text-decoration: none; font-size: 0.8rem;
+            padding: 0.35rem 0.7rem; border: 1px solid var(--border); border-radius: 6px;
+            transition: background 0.2s; cursor: pointer; background: transparent;
+        }
+        .btn-link:hover { background: var(--bg-input); }
+        .btn-pro {
+            color: var(--warning); background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.35); font-size: 0.8rem;
+            padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer;
+            transition: background 0.2s; font-weight: 600;
+        }
+        .btn-pro:hover { background: rgba(245,158,11,0.2); }
+        .btn-pro:disabled { opacity: 0.4; cursor: not-allowed; }
+        #btn-proiettore-smart {
+            display: none; color: var(--warning); background: rgba(245,158,11,0.1);
+            border: 1px solid rgba(245,158,11,0.35); font-size: 0.8rem;
+            padding: 0.35rem 0.75rem; border-radius: 6px; cursor: pointer;
+            transition: background 0.2s; font-weight: 600;
+        }
+        #btn-proiettore-smart:hover { background: rgba(245,158,11,0.2); }
+        .league-name-badge {
+            background: var(--bg-input); padding: 0.25rem 0.7rem;
+            border-radius: 6px; font-weight: bold; color: var(--warning); font-size: 0.85rem;
+        }
+
+        /* ── Tabs ── */
+        .tabs-nav {
+            display: flex; background: var(--bg-card);
+            border-bottom: 1px solid var(--border); overflow-x: auto;
+            scrollbar-width: none; -webkit-overflow-scrolling: touch;
+            padding: 0 1rem; gap: 0;
+        }
+        .tabs-nav::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            padding: 0.85rem 1.2rem; border: none; background: transparent;
+            color: var(--text-secondary); cursor: pointer; font-size: 0.85rem;
+            font-weight: 600; border-bottom: 3px solid transparent;
+            white-space: nowrap; transition: all 0.2s;
+        }
+        .tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.04); }
+        .tab-btn.active { color: var(--smart); border-bottom-color: var(--smart); }
+        .tab-num {
+            display: inline-block; background: rgba(16,185,129,0.2);
+            color: var(--smart); font-size: 0.65rem; font-weight: 700;
+            padding: 0.1rem 0.35rem; border-radius: 4px; margin-right: 5px;
+        }
+
+        /* ── Alerts ── */
+        .alerts-wrap { padding: 0.75rem 1.5rem 0; }
+        .alert {
+            padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.85rem;
+            display: none; margin-bottom: 0.5rem; font-weight: 500;
+        }
+        .alert.show { display: block; }
+        .alert-success { background: rgba(16,185,129,0.15); border: 1px solid var(--success); color: var(--success); }
+        .alert-error   { background: rgba(239,68,68,0.15);  border: 1px solid var(--danger);  color: var(--danger); }
+        .alert-warning { background: rgba(245,158,11,0.15); border: 1px solid var(--warning); color: var(--warning); }
+
+        /* ── Tab content ── */
+        .tab-content { display: none; padding: 1.5rem; }
+        .tab-content.active { display: block; }
+
+        /* ── Cards & layout ── */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem;
+        }
+        .card-title { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        @media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+        @media (max-width: 700px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+
+        /* ── Forms ── */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.35rem; font-weight: 600; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 0.6rem 0.8rem; background: var(--bg-input);
+            border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text-primary); font-size: 0.9rem;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--smart); }
+        .form-row { display: flex; gap: 0.75rem; align-items: flex-end; }
+        .form-row .form-group { flex: 1; margin-bottom: 0; }
+
+        /* ── Buttons ── */
+        .btn {
+            padding: 0.6rem 1.2rem; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 0.85rem; font-weight: 600;
+            transition: all 0.2s; white-space: nowrap;
+        }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+        .btn-primary   { background: var(--primary);  color: #fff; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success   { background: var(--success);  color: #fff; }
+        .btn-success:hover { background: var(--success-dark); }
+        .btn-warning   { background: var(--warning);  color: #fff; }
+        .btn-warning:hover { background: var(--warning-dark); }
+        .btn-danger    { background: var(--danger);   color: #fff; }
+        .btn-danger:hover { background: var(--danger-dark); }
+        .btn-ghost { background: var(--bg-input); color: var(--text-primary); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--border); }
+        .btn-full { width: 100%; }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* ── Leagues ── */
+        .lega-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.6rem 0.8rem; background: var(--bg-input);
+            border-radius: 8px; margin-bottom: 0.4rem;
+            border: 1px solid transparent; transition: border-color 0.2s;
+        }
+        .lega-item.active { border-color: var(--smart); }
+        .lega-item .lega-name { font-weight: 600; font-size: 0.9rem; }
+        .lega-item .lega-actions { display: flex; gap: 0.4rem; }
+        .section-divider { border: none; border-top: 1px solid var(--border); margin: 1.25rem 0; }
+
+        /* ── Backup items ── */
+        .backup-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.7rem 0.9rem; background: var(--bg-input);
+            border-radius: 8px; margin-bottom: 0.5rem;
+        }
+        .backup-meta { font-size: 0.8rem; color: var(--text-secondary); margin-top: 2px; }
+
+        /* ── Players list ── */
+        .players-controls { display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .players-controls input { flex: 1; min-width: 180px; }
+        .role-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+        .role-btn {
+            padding: 0.25rem 0.65rem; border-radius: 20px; border: 1px solid var(--border);
+            background: var(--bg-input); color: var(--text-secondary);
+            font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .role-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .players-table-wrap { max-height: 350px; overflow-y: auto; border-radius: 8px; border: 1px solid var(--border); }
+        .players-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .players-table th {
+            background: var(--bg-input); padding: 0.5rem 0.75rem;
+            text-align: left; font-size: 0.75rem; color: var(--text-secondary);
+            position: sticky; top: 0;
+        }
+        .players-table td { padding: 0.45rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04); }
+        .players-table tr:hover td { background: rgba(255,255,255,0.03); }
+        .role-badge {
+            display: inline-block; padding: 0.1rem 0.45rem; border-radius: 4px;
+            font-size: 0.72rem; font-weight: 700;
+        }
+        .role-P { background: rgba(245,158,11,0.2); color: var(--warning); }
+        .role-D { background: rgba(37,99,235,0.25); color: #60a5fa; }
+        .role-C { background: rgba(16,185,129,0.2); color: var(--success); }
+        .role-A { background: rgba(239,68,68,0.2); color: var(--danger); }
+        .players-count { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem; }
+        .upload-zone {
+            border: 2px dashed var(--border); border-radius: 10px; padding: 1.5rem;
+            text-align: center; cursor: pointer; transition: border-color 0.2s;
+        }
+        .upload-zone:hover, .upload-zone.drag { border-color: var(--smart); }
+        .upload-zone p { color: var(--text-secondary); font-size: 0.85rem; }
+        .upload-zone strong { color: var(--text-primary); }
+        .upload-options { display: flex; gap: 1rem; margin-top: 1rem; align-items: center; flex-wrap: wrap; }
+        .toggle-row { display: flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; }
+        .toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; cursor: pointer; inset: 0;
+            background: var(--bg-input); border-radius: 22px; border: 1px solid var(--border);
+            transition: 0.3s;
+        }
+        .toggle-slider::before {
+            content: ''; position: absolute; height: 14px; width: 14px;
+            left: 3px; top: 3px; background: var(--text-secondary); border-radius: 50%; transition: 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background: var(--smart); border-color: var(--smart); }
+        .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); background: #fff; }
+        .warning-block {
+            background: rgba(245,158,11,0.1); border: 1px solid var(--warning);
+            border-radius: 8px; padding: 0.75rem 1rem; margin-top: 0.75rem; font-size: 0.82rem;
+        }
+        .warning-block select { margin-top: 0.3rem; }
+
+        /* ── Config ── */
+        .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 600px) { .config-grid { grid-template-columns: 1fr; } }
+        .config-hint { font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem; }
+
+        /* ── Teams ── */
+        .teams-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+        .team-card {
+            background: var(--bg-input); border: 1px solid var(--border);
+            border-radius: 10px; padding: 1rem; transition: border-color 0.2s;
+        }
+        .team-card:hover { border-color: var(--smart); }
+        .team-card-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .team-budget { font-size: 1.6rem; font-weight: 800; color: var(--success); }
+        .team-budget-label { font-size: 0.72rem; color: var(--text-secondary); }
+        .team-slots { display: flex; gap: 0.3rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .slot-badge {
+            padding: 0.15rem 0.5rem; border-radius: 4px; font-size: 0.72rem; font-weight: 700;
+        }
+        .slot-P { background: rgba(245,158,11,0.2); color: var(--warning); }
+        .slot-D { background: rgba(37,99,235,0.2); color: #60a5fa; }
+        .slot-C { background: rgba(16,185,129,0.2); color: var(--success); }
+        .slot-A { background: rgba(239,68,68,0.2); color: var(--danger); }
+        .team-card-actions { display: flex; gap: 0.4rem; margin-top: 0.75rem; }
+        .team-card-actions .btn { flex: 1; font-size: 0.75rem; padding: 0.3rem 0.5rem; }
+        .no-teams { text-align: center; padding: 2rem; color: var(--text-secondary); }
+
+        /* ── Auction ── */
+        .auction-stage {
+            background: linear-gradient(135deg, rgba(37,99,235,0.15), rgba(16,185,129,0.1));
+            border: 1px solid rgba(37,99,235,0.3); border-radius: 14px;
+            padding: 1.5rem; text-align: center; margin-bottom: 1.25rem;
+        }
+        .auction-stage.active { border-color: rgba(16,185,129,0.5); animation: pulse-border 2s infinite; }
+        @keyframes pulse-border {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.2); }
+            50% { box-shadow: 0 0 0 6px rgba(16,185,129,0); }
+        }
+        .stage-player { font-size: 1.6rem; font-weight: 800; color: var(--text-primary); }
+        .stage-sub { font-size: 0.82rem; color: var(--text-secondary); margin: 0.25rem 0 0.75rem; }
+        .stage-price { font-size: 2.5rem; font-weight: 900; color: var(--success); }
+        .stage-price-label { font-size: 0.75rem; color: var(--text-secondary); }
+        .stage-bidder { font-size: 0.9rem; color: var(--warning); margin-top: 0.3rem; }
+        .timer-ring {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 56px; height: 56px; border-radius: 50%;
+            border: 3px solid var(--success); font-size: 1.3rem; font-weight: 900;
+            margin: 0.75rem auto; color: var(--success); transition: border-color 0.5s, color 0.5s;
+        }
+        .timer-ring.warning { border-color: var(--warning); color: var(--warning); }
+        .timer-ring.danger  { border-color: var(--danger);  color: var(--danger); }
+        .auction-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+        .auction-controls .btn { padding: 0.75rem; font-size: 0.9rem; }
+        .start-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+        .start-row select { flex: 1; }
+        .bid-log { max-height: 200px; overflow-y: auto; margin-top: 0.75rem; }
+        .bid-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.35rem 0.6rem; border-radius: 6px; font-size: 0.82rem; margin-bottom: 2px;
+        }
+        .bid-row:nth-child(odd) { background: rgba(255,255,255,0.03); }
+        .bid-row.bid-winner { background: rgba(16,185,129,0.15); color: var(--success); font-weight: 700; }
+        .status-badge {
+            display: inline-block; padding: 0.2rem 0.65rem; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .status-idle    { background: rgba(148,163,184,0.2); color: var(--text-secondary); }
+        .status-active  { background: rgba(16,185,129,0.2);  color: var(--success); }
+        .status-paused  { background: rgba(245,158,11,0.2);  color: var(--warning); }
+        .assign-panel {
+            background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.35);
+            border-radius: 10px; padding: 1rem; margin-top: 0.75rem; display: none;
+        }
+        .assign-panel.show { display: block; }
+        .assign-panel h4 { font-size: 0.9rem; margin-bottom: 0.75rem; color: var(--success); }
+        .assign-row { display: flex; gap: 0.75rem; align-items: flex-end; flex-wrap: wrap; }
+        .assign-row .form-group { flex: 1; min-width: 120px; margin-bottom: 0; }
+
+        /* ── Export ── */
+        .export-card {
+            text-align: center; padding: 2rem;
+            background: linear-gradient(135deg, rgba(37,99,235,0.1), rgba(16,185,129,0.08));
+            border: 1px solid var(--border); border-radius: 14px;
+        }
+        .export-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+        .export-card p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+        .export-card .btn { font-size: 1rem; padding: 0.8rem 2rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 0.75rem; }
+        .stat-box {
+            background: var(--bg-input); border-radius: 8px; padding: 0.75rem;
+            text-align: center; border: 1px solid var(--border);
+        }
+        .stat-box .val { font-size: 1.5rem; font-weight: 800; color: var(--smart); }
+        .stat-box .lbl { font-size: 0.72rem; color: var(--text-secondary); margin-top: 2px; }
+
+        /* ── Modal ── */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 500; backdrop-filter: blur(3px); display: none;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: var(--bg-card); border-radius: 14px; padding: 1.75rem;
+            width: min(460px, 92vw); border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal-box h3 { font-size: 1.05rem; margin-bottom: 1rem; }
+        .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; justify-content: flex-end; }
+
+        /* ── Misc ── */
+        .section-label {
+            font-size: 0.72rem; font-weight: 700; color: var(--text-secondary);
+            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.5rem;
+        }
+        .empty-state { text-align: center; padding: 2rem; color: var(--text-secondary); font-size: 0.9rem; }
+        .chip { display: inline-block; background: var(--bg-input); border: 1px solid var(--border); border-radius: 20px; padding: 0.2rem 0.65rem; font-size: 0.75rem; color: var(--text-secondary); }
+
+        @media (max-width: 600px) {
+            .header { padding: 0.7rem 1rem; }
+            .tabs-nav { padding: 0 0.5rem; }
+            .tab-content { padding: 1rem; }
+            .auction-controls { grid-template-columns: 1fr; }
+            .start-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ── Room Gate ── -->
+<div class="gate" id="room-gate">
+    <div class="gate-box">
+        <img src="/DraftARENAws.png" alt="DraftARENA">
+        <div class="smart-badge">SMART ADMIN</div>
+        <h2>Codice Stanza</h2>
+        <p>Inserisci il codice della tua stanza</p>
+        <input type="text" id="gate-code-input" maxlength="6" placeholder="XXXXXX"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter') gateJoin()">
+        <button class="btn btn-success btn-full" onclick="gateJoin()">Entra</button>
+        <div class="gate-error" id="gate-error"></div>
+    </div>
+</div>
+
+<!-- ── PIN Gate ── -->
+<div class="gate" id="pin-gate">
+    <div class="gate-box">
+        <img src="/DraftARENAws.png" alt="DraftARENA">
+        <div class="smart-badge">SMART ADMIN</div>
+        <h2>PIN Admin</h2>
+        <p>Inserisci il PIN a 4 cifre</p>
+        <input type="password" id="pin-input" maxlength="4" inputmode="numeric" placeholder="••••"
+            onkeydown="if(event.key==='Enter') submitPin()">
+        <button class="btn btn-success btn-full" onclick="submitPin()">Accedi</button>
+        <div class="gate-error" id="pin-error"></div>
+    </div>
+</div>
+
+<!-- ── PRO Switch Modal ── -->
+<div class="modal-overlay" id="modal-pro">
+    <div class="modal-box">
+        <h3>Passa ad Admin PRO?</h3>
+        <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:0.5rem;">
+            Verrai reindirizzato all'admin completo con la stessa stanza e lega attiva.
+            Tutte le impostazioni SMART rimarranno invariate.
+        </p>
+        <p style="font-size:0.8rem;color:var(--danger);" id="pro-switch-warning"></p>
+        <div class="modal-actions">
+            <button class="btn btn-ghost" onclick="chiudiModalPro()">Annulla</button>
+            <button class="btn btn-warning" onclick="confermaSwitchPro()">Passa a PRO</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── Main App ── -->
+<div id="smart-main" style="display:none;">
+
+    <header class="header">
+        <div class="header-left">
+            <a href="/#hub" class="btn-link">← Hub</a>
+            <img src="/DraftARENAws.png" alt="DraftARENA" style="height:28px;">
+            <span class="badge-smart">SMART</span>
+        </div>
+        <div class="header-right">
+            <div class="room-pill">
+                <span>STANZA</span>
+                <span class="room-code" id="room-code-display">---</span>
+                <button onclick="copiaCodice()" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-size:11px;font-weight:bold;" title="Copia">COPIA</button>
+            </div>
+            <span>Lega:</span>
+            <span class="league-name-badge" id="lega-display">default</span>
+            <button id="btn-proiettore-smart" onclick="apriProiettore()" title="Apri proiettore/TV">&#x1F4FA; Proiettore</button>
+            <button class="btn-pro" id="btn-switch-pro" onclick="apriModalPro()">&#x2605; PRO</button>
+        </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs-nav">
+        <button class="tab-btn active" data-tab="tab-s-leghe"><span class="tab-num">1</span>Gestione Leghe</button>
+        <button class="tab-btn" data-tab="tab-s-giocatori"><span class="tab-num">2</span>Lista Giocatori</button>
+        <button class="tab-btn" data-tab="tab-s-config"><span class="tab-num">3</span>Impostazioni</button>
+        <button class="tab-btn" data-tab="tab-s-squadre"><span class="tab-num">4</span>Squadre</button>
+        <button class="tab-btn" data-tab="tab-s-asta"><span class="tab-num">5</span>Gestione Asta</button>
+        <button class="tab-btn" data-tab="tab-s-export"><span class="tab-num">6</span>Export</button>
+    </nav>
+
+    <!-- Alerts -->
+    <div class="alerts-wrap">
+        <div class="alert alert-success" id="alert-ok"></div>
+        <div class="alert alert-error"   id="alert-err"></div>
+        <div class="alert alert-warning" id="alert-warn"></div>
+    </div>
+
+    <!-- ══ TAB 1: GESTIONE LEGHE ══ -->
+    <div class="tab-content active" id="tab-s-leghe">
+        <div class="grid-2">
+            <!-- Crea / Carica -->
+            <div class="card">
+                <div class="card-title">Crea o Carica Lega</div>
+                <div class="form-group">
+                    <label>Nome lega</label>
+                    <input type="text" id="legaNome" placeholder="es. Serie A 2026">
+                </div>
+                <button class="btn btn-success btn-full" onclick="creaLega()">Crea / Carica lega</button>
+                <hr class="section-divider">
+                <div class="section-label">Leghe disponibili</div>
+                <div id="leghe-list"><div class="empty-state">Nessuna lega</div></div>
+                <div style="display:flex;gap:0.5rem;margin-top:1rem;">
+                    <button class="btn btn-ghost btn-sm" onclick="salvaSessione()" title="Salva stato attuale">&#x1F4BE; Salva</button>
+                    <button class="btn btn-ghost btn-sm" onclick="caricaSessione()" title="Ricarica dallo storage">&#x1F504; Ricarica</button>
+                </div>
+            </div>
+
+            <!-- Backup -->
+            <div class="card">
+                <div class="card-title">Backup & Ripristino</div>
+                <div class="form-row" style="margin-bottom:0.75rem;">
+                    <div class="form-group">
+                        <label>Anno stagione</label>
+                        <input type="number" id="backupYear" placeholder="2026" value="2026" min="2000" max="2100">
+                    </div>
+                    <div class="form-group">
+                        <label>Etichetta</label>
+                        <input type="text" id="backupLabel" placeholder="Es. Finale">
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-full" onclick="esportaBackup()">&#x2B07; Scarica Backup JSON</button>
+                <hr class="section-divider">
+                <div class="section-label">Ripristina da backup</div>
+                <div class="upload-zone" onclick="document.getElementById('backupFile').click()">
+                    <p>&#x1F4C2; <strong>Clicca per selezionare</strong> un file backup .json</p>
+                </div>
+                <input type="file" id="backupFile" accept=".json" style="display:none;" onchange="caricaBackup(this)">
+                <div id="backup-preview" style="margin-top:0.75rem;display:none;">
+                    <div class="warning-block" id="backup-preview-content"></div>
+                    <div style="display:flex;gap:0.5rem;margin-top:0.75rem;">
+                        <button class="btn btn-danger" onclick="confermaRipristino()">Ripristina</button>
+                        <button class="btn btn-ghost" onclick="annullaBackup()">Annulla</button>
+                    </div>
+                </div>
+                <hr class="section-divider">
+                <div class="section-label">Storico stagioni (DB)</div>
+                <div id="albo-list"><div class="empty-state">Nessun backup nel DB</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ TAB 2: LISTA GIOCATORI ══ -->
+    <div class="tab-content" id="tab-s-giocatori">
+        <div class="grid-2">
+            <!-- Upload -->
+            <div class="card">
+                <div class="card-title">Carica Lista Giocatori</div>
+                <div class="upload-zone" id="upload-zone"
+                    ondragover="event.preventDefault();this.classList.add('drag')"
+                    ondragleave="this.classList.remove('drag')"
+                    ondrop="handleDrop(event)"
+                    onclick="document.getElementById('excelFile').click()">
+                    <p>&#x1F4CA; <strong>Clicca o trascina</strong> il file Excel qui</p>
+                    <p style="margin-top:0.4rem;font-size:0.75rem;">.xlsx / .xls — colonne: Nome, Ruolo, Squadra</p>
+                </div>
+                <input type="file" id="excelFile" accept=".xlsx,.xls" style="display:none;" onchange="uploadExcel()">
+                <div class="upload-options">
+                    <div class="form-group" style="margin-bottom:0;flex:1;">
+                        <label>Soglia minima valore</label>
+                        <input type="number" id="sogliaMinima" value="0" min="0" max="100" placeholder="0">
+                    </div>
+                    <div class="toggle-row">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="riparazioneToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span style="font-size:0.8rem;">Asta di riparazione</span>
+                    </div>
+                </div>
+                <div id="upload-warnings" style="margin-top:0.75rem;display:none;"></div>
+            </div>
+
+            <!-- Lista corrente -->
+            <div class="card">
+                <div class="card-title">Giocatori in Mazzo</div>
+                <div class="players-controls">
+                    <input type="text" id="searchPlayer" placeholder="Cerca nome..." oninput="filtraGiocatori()">
+                </div>
+                <div class="role-filters">
+                    <button class="role-btn active" data-role="ALL" onclick="setRoleFilter(this,'ALL')">Tutti</button>
+                    <button class="role-btn" data-role="P" onclick="setRoleFilter(this,'P')">P</button>
+                    <button class="role-btn" data-role="D" onclick="setRoleFilter(this,'D')">D</button>
+                    <button class="role-btn" data-role="C" onclick="setRoleFilter(this,'C')">C</button>
+                    <button class="role-btn" data-role="A" onclick="setRoleFilter(this,'A')">A</button>
+                </div>
+                <div class="players-count" id="players-count">0 giocatori</div>
+                <div class="players-table-wrap">
+                    <table class="players-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Ruolo</th>
+                                <th>Squadra</th>
+                            </tr>
+                        </thead>
+                        <tbody id="players-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ TAB 3: IMPOSTAZIONI ══ -->
+    <div class="tab-content" id="tab-s-config">
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Parametri Lega SMART</div>
+                <div class="config-grid">
+                    <div class="form-group">
+                        <label>Budget per squadra (crediti)</label>
+                        <input type="number" id="cfg-budget" value="500" min="1" max="9999">
+                        <div class="config-hint">Crediti iniziali di ogni team</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Giocatori per squadra</label>
+                        <input type="number" id="cfg-maxplayers" value="25" min="1" max="50">
+                        <div class="config-hint">Slot totali nel roster</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Durata rilancio (secondi)</label>
+                        <input type="number" id="cfg-timer" value="30" min="5" max="60">
+                        <div class="config-hint">Tempo per ogni rilancio</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Rilancio minimo (crediti)</label>
+                        <input type="number" id="cfg-minbid" value="1" min="1" max="50">
+                        <div class="config-hint">Incremento minimo offerta</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Prezzo base giocatore</label>
+                        <input type="number" id="cfg-startprice" value="1" min="0" max="100">
+                        <div class="config-hint">Prezzo di partenza asta</div>
+                    </div>
+                </div>
+                <hr class="section-divider">
+                <div class="toggle-row" style="margin-bottom:1rem;">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="cfg-autoadvance" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="font-size:0.85rem;">Avanza automaticamente al prossimo giocatore</span>
+                </div>
+                <button class="btn btn-success btn-full" onclick="salvaConfig()">Salva Impostazioni</button>
+            </div>
+            <div class="card">
+                <div class="card-title">Riepilogo Configurazione</div>
+                <div id="config-summary" class="empty-state">Caricamento...</div>
+                <hr class="section-divider">
+                <div class="card-title" style="font-size:0.9rem;margin-bottom:0.75rem;">Nota SMART</div>
+                <p style="font-size:0.82rem;color:var(--text-secondary);line-height:1.6;">
+                    Nella modalità SMART i limiti per ruolo (P/D/C/A) sono preimpostati con valori standard.
+                    Se hai bisogno di personalizzarli, passa ad <button class="btn-link" onclick="apriModalPro()" style="font-size:0.82rem;display:inline;">Admin PRO &#x2605;</button>.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ TAB 4: SQUADRE ══ -->
+    <div class="tab-content" id="tab-s-squadre">
+        <div class="card" style="margin-bottom:1.25rem;">
+            <div class="card-title">Crea Nuova Squadra</div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome squadra</label>
+                    <input type="text" id="nuovaSquadra" placeholder="es. Los Galacticos">
+                </div>
+                <button class="btn btn-success" onclick="creaSquadra()" style="margin-bottom:0;">Aggiungi</button>
+            </div>
+        </div>
+        <div id="teams-grid" class="teams-grid">
+            <div class="empty-state" style="grid-column:1/-1;">Nessuna squadra — creane una sopra.</div>
+        </div>
+    </div>
+
+    <!-- ══ TAB 5: GESTIONE ASTA ══ -->
+    <div class="tab-content" id="tab-s-asta">
+        <div class="grid-2">
+            <!-- Colonna sinistra: controlli -->
+            <div>
+                <!-- Stage display -->
+                <div class="auction-stage" id="auction-stage">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                        <span class="status-badge status-idle" id="auction-status-badge">IN ATTESA</span>
+                        <span style="font-size:0.75rem;color:var(--text-secondary);" id="players-remaining">— in mazzo</span>
+                    </div>
+                    <div class="stage-player" id="disp-player">—</div>
+                    <div class="stage-sub" id="disp-sub"></div>
+                    <div class="timer-ring" id="disp-timer">—</div>
+                    <div class="stage-price" id="disp-price">—</div>
+                    <div class="stage-price-label">crediti</div>
+                    <div class="stage-bidder" id="disp-bidder"></div>
+                </div>
+
+                <!-- Start buttons -->
+                <div style="margin-bottom:1rem;">
+                    <button class="btn btn-success btn-full" id="btn-random" onclick="startRandom()" style="margin-bottom:0.5rem;">
+                        &#x1F3B2; Giocatore Casuale
+                    </button>
+                    <div class="start-row">
+                        <select id="manual-player-select" style="flex:1;padding:0.6rem 0.8rem;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:0.85rem;">
+                            <option value="">Seleziona giocatore...</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="startManual()">Avvia</button>
+                    </div>
+                </div>
+
+                <!-- Pause / Resume / Stop -->
+                <div class="auction-controls">
+                    <button class="btn btn-warning" id="btn-pause" onclick="pauseAuction()" disabled>&#x23F8; Pausa</button>
+                    <button class="btn btn-success" id="btn-resume" onclick="resumeAuction()" disabled>&#x25B6; Riprendi</button>
+                </div>
+
+                <!-- Force assign -->
+                <div class="assign-panel" id="assign-panel">
+                    <h4>&#x2713; Assegna giocatore corrente</h4>
+                    <div class="assign-row">
+                        <div class="form-group">
+                            <label>Squadra vincitrice</label>
+                            <select id="force-team"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Prezzo finale</label>
+                            <input type="number" id="force-price" min="0" value="1">
+                        </div>
+                        <button class="btn btn-success" onclick="forceAssign()">Assegna</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Colonna destra: log & revisione -->
+            <div>
+                <div class="card" style="margin-bottom:1rem;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;">
+                        <div class="card-title" style="margin-bottom:0;">Log Rilanci</div>
+                    </div>
+                    <div class="bid-log" id="bid-log">
+                        <div class="empty-state">Nessun rilancio</div>
+                    </div>
+                </div>
+
+                <!-- Post-auction review -->
+                <div class="card" id="review-card" style="display:none;">
+                    <div class="card-title" style="color:var(--success);">&#x2713; Asta Conclusa — Revisione</div>
+                    <p style="font-size:0.85rem;margin-bottom:0.75rem;" id="review-summary"></p>
+                    <div class="assign-row">
+                        <div class="form-group">
+                            <label>Riassegna a</label>
+                            <select id="reassign-team"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Prezzo</label>
+                            <input type="number" id="reassign-price" min="0">
+                        </div>
+                        <button class="btn btn-success" onclick="confermaRevisione()">Conferma</button>
+                    </div>
+                </div>
+
+                <!-- Sold summary -->
+                <div class="card" style="margin-top:1rem;">
+                    <div class="card-title">Giocatori Venduti</div>
+                    <div id="sold-count" style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:0.5rem;">0 venduti</div>
+                    <div style="max-height:220px;overflow-y:auto;" id="sold-list">
+                        <div class="empty-state">Nessuno ancora</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ TAB 6: EXPORT ══ -->
+    <div class="tab-content" id="tab-s-export">
+        <div class="grid-2">
+            <div class="export-card">
+                <h3>&#x1F4C5; Esporta Excel</h3>
+                <p>Scarica il file con le rose di tutte le squadre e i giocatori non acquistati.</p>
+                <button class="btn btn-success" onclick="esportaExcel()">&#x1F4E5; Scarica Excel</button>
+            </div>
+            <div class="card">
+                <div class="card-title">Statistiche Asta</div>
+                <div class="stats-grid" id="stats-grid">
+                    <div class="stat-box"><div class="val" id="stat-sold">0</div><div class="lbl">Venduti</div></div>
+                    <div class="stat-box"><div class="val" id="stat-unsold">0</div><div class="lbl">In mazzo</div></div>
+                    <div class="stat-box"><div class="val" id="stat-teams">0</div><div class="lbl">Squadre</div></div>
+                    <div class="stat-box"><div class="val" id="stat-avgprice">0</div><div class="lbl">Prezzo medio</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /#smart-main -->
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    // ══════════════════════════════════════════════════════
+    // STATE
+    // ══════════════════════════════════════════════════════
+    let socket;
+    let currentRoom = null;
+    let currentLeague = 'default';
+    let currentAuctionState = null;
+    let currentTeams = {};
+    let currentPlayers = [];
+    let currentSold = [];
+    let pendingBackup = null;
+    let activeRoleFilter = 'ALL';
+    let auctionActive = false;
+    let auctionPaused = false;
+    let lastAuctionData = null;
+
+    // ══════════════════════════════════════════════════════
+    // INIT
+    // ══════════════════════════════════════════════════════
+    window.addEventListener('DOMContentLoaded', () => {
+        // Desktop-only: proiettore button
+        if (!('ontouchstart' in window) && window.innerWidth > 768) {
+            document.getElementById('btn-proiettore-smart').style.display = '';
+        }
+
+        // Tab navigation
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Room from URL or session
+        const urlCode = new URLSearchParams(location.search).get('room');
+        const savedCode = sessionStorage.getItem('smartRoomCode');
+        if (urlCode) {
+            entraInStanza(urlCode);
+        } else if (savedCode) {
+            entraInStanza(savedCode);
+        } else {
+            document.getElementById('room-gate').style.display = 'flex';
+        }
+    });
+
+    // ══════════════════════════════════════════════════════
+    // GATES
+    // ══════════════════════════════════════════════════════
+    function gateJoin() {
+        const code = document.getElementById('gate-code-input').value.trim().toUpperCase();
+        if (code.length < 6) { document.getElementById('gate-error').textContent = 'Codice non valido.'; return; }
+        document.getElementById('gate-error').textContent = '';
+        entraInStanza(code);
+    }
+
+    function entraInStanza(code) {
+        fetch(`/api/room/join/${code}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.success || data.roomCode) {
+                    const rc = data.roomCode || code;
+                    sessionStorage.setItem('smartRoomCode', rc);
+                    currentRoom = rc;
+                    document.getElementById('room-gate').style.display = 'none';
+                    mostraPinGate();
+                    initSocket(rc);
+                } else {
+                    document.getElementById('gate-error').textContent = data.error || 'Stanza non trovata.';
+                    document.getElementById('room-gate').style.display = 'flex';
+                }
+            })
+            .catch(() => {
+                document.getElementById('gate-error').textContent = 'Errore di rete.';
+                document.getElementById('room-gate').style.display = 'flex';
+            });
+    }
+
+    function mostraPinGate() {
+        const savedPin = sessionStorage.getItem('smartAdminPin');
+        if (savedPin) {
+            // Try auto-auth
+            pendingPin = savedPin;
+        }
+        document.getElementById('pin-gate').style.display = 'flex';
+    }
+
+    let pendingPin = null;
+    function submitPin() {
+        const pin = document.getElementById('pin-input').value.trim();
+        if (!pin) { document.getElementById('pin-error').textContent = 'Inserisci il PIN.'; return; }
+        document.getElementById('pin-error').textContent = '';
+        pendingPin = pin;
+        socket.emit('adminAuth', { pin });
+    }
+
+    // ══════════════════════════════════════════════════════
+    // SOCKET
+    // ══════════════════════════════════════════════════════
+    function initSocket(roomCode) {
+        socket = io();
+
+        socket.on('connect', () => {
+            socket.emit('joinRoom', roomCode);
+            if (pendingPin) socket.emit('adminAuth', { pin: pendingPin });
+        });
+
+        socket.on('adminAuthResult', (data) => {
+            if (data.success) {
+                sessionStorage.setItem('smartAdminPin', pendingPin);
+                document.getElementById('pin-gate').style.display = 'none';
+                document.getElementById('smart-main').style.display = 'block';
+                document.getElementById('room-code-display').textContent = currentRoom;
+                socket.emit('getPlayers');
+                caricaAlbo();
+            } else {
+                pendingPin = null;
+                sessionStorage.removeItem('smartAdminPin');
+                document.getElementById('pin-error').textContent = 'PIN errato.';
+                document.getElementById('pin-gate').style.display = 'flex';
+            }
+        });
+
+        socket.on('currentAuctionName', name => {
+            currentLeague = name || 'default';
+            document.getElementById('lega-display').textContent = currentLeague;
+            aggiornaListaLeghe();
+        });
+
+        socket.on('configUpdate', data => {
+            if (data.CONFIG) {
+                document.getElementById('cfg-budget').value      = data.CONFIG.STARTING_BUDGET || 500;
+                document.getElementById('cfg-maxplayers').value  = data.CONFIG.MAX_TOTAL_PLAYERS || 25;
+            }
+            if (data.timerDuration) document.getElementById('cfg-timer').value = data.timerDuration;
+            aggiornaRiepilogoConfig();
+        });
+
+        socket.on('update', state => {
+            currentAuctionState = state;
+            auctionActive  = !!state.player;
+            auctionPaused  = state.isPaused;
+            aggiornaStage(state);
+            aggiornaControlli();
+            aggiornaBottonePro();
+        });
+
+        socket.on('updateTeams', teams => {
+            currentTeams = teams || {};
+            renderTeams();
+            aggiornaSelectSquadre();
+            aggiornaStatistiche();
+        });
+
+        socket.on('teamsUpdate', teams => {
+            currentTeams = teams || {};
+            renderTeams();
+            aggiornaSelectSquadre();
+            aggiornaStatistiche();
+        });
+
+        socket.on('playersList', players => {
+            currentPlayers = players || [];
+            renderPlayers();
+            aggiornaSelectManuali();
+            aggiornaStatistiche();
+        });
+
+        socket.on('updateSold', sold => {
+            currentSold = sold || [];
+            renderSold();
+            aggiornaStatistiche();
+        });
+
+        socket.on('auctionEnded', data => {
+            lastAuctionData = data;
+            auctionActive = false;
+            auctionPaused = false;
+            mostraRevisione(data);
+            aggiornaControlli();
+            aggiornaBottonePro();
+        });
+
+        socket.on('auctionSwitchedSuccess', name => {
+            currentLeague = name;
+            document.getElementById('lega-display').textContent = name;
+            showAlert('ok', `Lega "${name}" attiva.`);
+            socket.emit('getPlayers');
+            aggiornaListaLeghe();
+        });
+
+        socket.on('backupReady', ({backup, filename}) => {
+            const blob = new Blob([JSON.stringify(backup, null, 2)], {type: 'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = filename || 'backup.json';
+            a.click();
+        });
+
+        socket.on('backupImportSuccess', ({label, year}) => {
+            showAlert('ok', `Ripristino completato: ${label} (${year})`);
+            pendingBackup = null;
+            document.getElementById('backup-preview').style.display = 'none';
+            socket.emit('getPlayers');
+        });
+
+        socket.on('autoSaved', ({ts}) => {
+            const d = new Date(ts);
+            showAlert('ok', `Salvato automaticamente alle ${d.toLocaleTimeString('it-IT')}`);
+        });
+
+        socket.on('errorNotify', msg => showAlert('err', msg));
+
+        socket.on('disconnect', () => showAlert('warn', 'Connessione persa — riconnessione...'));
+        socket.on('connect',    () => { if (currentRoom) socket.emit('joinRoom', currentRoom); });
+    }
+
+    // ══════════════════════════════════════════════════════
+    // LEGHE
+    // ══════════════════════════════════════════════════════
+    const legheRecenti = new Set();
+
+    function creaLega() {
+        const name = document.getElementById('legaNome').value.trim();
+        if (!name) return showAlert('warn', 'Inserisci un nome per la lega.');
+        legheRecenti.add(name);
+        socket.emit('adminSwitchAuction', name);
+        document.getElementById('legaNome').value = '';
+    }
+
+    function aggiornaListaLeghe() {
+        legheRecenti.add(currentLeague);
+        const list = document.getElementById('leghe-list');
+        if (legheRecenti.size === 0) { list.innerHTML = '<div class="empty-state">Nessuna lega</div>'; return; }
+        list.innerHTML = [...legheRecenti].map(n => `
+            <div class="lega-item ${n === currentLeague ? 'active' : ''}">
+                <span class="lega-name">${n}</span>
+                <div class="lega-actions">
+                    <button class="btn btn-sm btn-ghost" onclick="caricaLega('${n}')">Carica</button>
+                </div>
+            </div>`).join('');
+    }
+
+    function caricaLega(name) { socket.emit('adminSwitchAuction', name); }
+    function salvaSessione()  { socket.emit('adminTriggerSave'); showAlert('ok', 'Salvataggio richiesto...'); }
+    function caricaSessione() { socket.emit('adminTriggerLoad'); showAlert('ok', 'Ricaricamento richiesto...'); }
+
+    // ══════════════════════════════════════════════════════
+    // BACKUP
+    // ══════════════════════════════════════════════════════
+    function esportaBackup() {
+        const year  = document.getElementById('backupYear').value || new Date().getFullYear();
+        const label = document.getElementById('backupLabel').value.trim() || 'backup';
+        socket.emit('adminExportBackup', { year: parseInt(year), label });
+    }
+
+    function caricaBackup(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = JSON.parse(e.target.result);
+                if (data.app !== 'DraftARENA') { showAlert('err', 'File non valido (app mismatch).'); return; }
+                pendingBackup = data;
+                const preview = document.getElementById('backup-preview');
+                const content = document.getElementById('backup-preview-content');
+                const year = data.year || '?';
+                const label = data.label || '?';
+                const teams = Object.keys(data.backup?.squadre || {}).length;
+                const players = data.backup?.rose ? Object.values(data.backup.rose).reduce((s,r)=>s+r.length,0) : '?';
+                content.innerHTML = `<strong>Pronto per il ripristino:</strong><br>
+                    Stagione ${year} — ${label}<br>
+                    ${teams} squadre, ~${players} giocatori assegnati`;
+                preview.style.display = 'block';
+            } catch { showAlert('err', 'File JSON non valido.'); }
+        };
+        reader.readAsText(file);
+    }
+
+    function confermaRipristino() {
+        if (!pendingBackup) return;
+        socket.emit('adminImportBackupConfig', pendingBackup);
+    }
+
+    function annullaBackup() {
+        pendingBackup = null;
+        document.getElementById('backup-preview').style.display = 'none';
+        document.getElementById('backupFile').value = '';
+    }
+
+    async function caricaAlbo() {
+        if (!currentRoom) return;
+        try {
+            const res = await fetch(`/api/lega/${currentRoom}/albo`);
+            const data = await res.json();
+            const seasons = data.seasons || [];
+            const list = document.getElementById('albo-list');
+            if (seasons.length === 0) { list.innerHTML = '<div class="empty-state">Nessun backup nel DB</div>'; return; }
+            list.innerHTML = seasons.map(s => `
+                <div class="backup-item">
+                    <div>
+                        <div style="font-weight:600;">${s.label || 'Stagione'} ${s.year || ''}</div>
+                        <div class="backup-meta">ID: ${s.id}</div>
+                    </div>
+                    <button class="btn btn-sm btn-ghost" onclick="ripristinaAlbo(${s.id})">Ripristina</button>
+                </div>`).join('');
+        } catch {}
+    }
+
+    function ripristinaAlbo(id) {
+        if (!confirm('Ripristinare questo backup dal DB?')) return;
+        // Backup from DB is loaded via the existing backup import system
+        showAlert('warn', 'Usa il backup scaricato per ripristinare — caricalo nella sezione sopra.');
+    }
+
+    // ══════════════════════════════════════════════════════
+    // GIOCATORI
+    // ══════════════════════════════════════════════════════
+    function uploadExcel() {
+        const file = document.getElementById('excelFile').files[0];
+        if (!file) return;
+        const soglia = document.getElementById('sogliaMinima').value || 0;
+        const riparazione = document.getElementById('riparazioneToggle').checked;
+        const formData = new FormData();
+        formData.append('file', file);
+        const url = `/upload?room=${currentRoom}&soglia=${soglia}${riparazione ? '&mode=riparazione' : ''}`;
+        fetch(url, { method: 'POST', body: formData })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    socket.emit('getPlayers');
+                    if (riparazione && data.riparazione) {
+                        const r = data.riparazione;
+                        showAlert('ok', `Asta di riparazione: ${r.added} aggiunti, ${r.alreadySold} già venduti, ${r.alreadyInList} già in lista.`);
+                    } else {
+                        showAlert('ok', `${data.count} giocatori caricati.`);
+                    }
+                    if (data.warnings && data.warnings.length > 0) {
+                        const wrap = document.getElementById('upload-warnings');
+                        wrap.style.display = 'block';
+                        wrap.innerHTML = `<div class="warning-block">
+                            <strong>&#x26A0; ${data.warnings.length} ruolo/i non riconosciuti:</strong><br>
+                            ${data.warnings.slice(0,10).map(w =>
+                                `<span style="font-size:0.8rem;">${w.nome} (ruolo: ${w.ruolo})</span>`
+                            ).join('<br>')}
+                        </div>`;
+                    }
+                } else { showAlert('err', data.error || 'Upload fallito.'); }
+            })
+            .catch(() => showAlert('err', 'Errore durante il caricamento.'));
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        document.getElementById('upload-zone').classList.remove('drag');
+        const file = e.dataTransfer.files[0];
+        if (file) {
+            const input = document.getElementById('excelFile');
+            const dt = new DataTransfer();
+            dt.items.add(file);
+            input.files = dt.files;
+            uploadExcel();
+        }
+    }
+
+    function setRoleFilter(btn, role) {
+        document.querySelectorAll('.role-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeRoleFilter = role;
+        renderPlayers();
+    }
+
+    function filtraGiocatori() { renderPlayers(); }
+
+    function renderPlayers() {
+        const search = (document.getElementById('searchPlayer').value || '').toLowerCase();
+        const tbody  = document.getElementById('players-tbody');
+        const filtered = currentPlayers.filter(p => {
+            const matchRole = activeRoleFilter === 'ALL' || getMacroRole(p.ruolo) === activeRoleFilter;
+            const matchSearch = !search || p.nome.toLowerCase().includes(search) || (p.squadra||'').toLowerCase().includes(search);
+            return matchRole && matchSearch;
+        });
+        document.getElementById('players-count').textContent = `${filtered.length} / ${currentPlayers.length} giocatori`;
+        if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-secondary);padding:1rem;">Nessun risultato</td></tr>'; return; }
+        tbody.innerHTML = filtered.map(p => {
+            const macro = getMacroRole(p.ruolo);
+            return `<tr>
+                <td>${p.nome}</td>
+                <td><span class="role-badge role-${macro}">${p.ruolo}</span></td>
+                <td style="color:var(--text-secondary);font-size:0.8rem;">${p.squadra || '—'}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    function getMacroRole(r) {
+        const map = {P:['P','POR'], D:['DC','DD','DS','B'], C:['M','C','E','T','W'], A:['A','PC']};
+        for (const [k,v] of Object.entries(map)) if (v.includes(r?.toUpperCase())) return k;
+        return r || '?';
+    }
+
+    function aggiornaSelectManuali() {
+        const sel = document.getElementById('manual-player-select');
+        const val = sel.value;
+        sel.innerHTML = '<option value="">Seleziona giocatore...</option>' +
+            currentPlayers.map(p => `<option value="${p.nome}|${p.ruolo}|${p.squadra||''}">${p.nome} (${p.ruolo})</option>`).join('');
+        if (val) sel.value = val;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // CONFIG
+    // ══════════════════════════════════════════════════════
+    function salvaConfig() {
+        const budget     = parseInt(document.getElementById('cfg-budget').value) || 500;
+        const maxplayers = parseInt(document.getElementById('cfg-maxplayers').value) || 25;
+        const timer      = parseInt(document.getElementById('cfg-timer').value) || 30;
+        const autoAdv    = document.getElementById('cfg-autoadvance').checked;
+
+        socket.emit('updateSettings', {
+            timerDuration:       timer,
+            startingBudget:      budget,
+            maxTotalPlayers:     maxplayers,
+            maxOffensivePlayers: 6,
+            limitP: 3, limitD: 10, limitC: 8, limitA: 4
+        });
+        socket.emit('toggleAutoAdvance', autoAdv);
+        showAlert('ok', 'Impostazioni salvate.');
+        aggiornaRiepilogoConfig();
+    }
+
+    function aggiornaRiepilogoConfig() {
+        const budget     = document.getElementById('cfg-budget').value     || 500;
+        const maxplayers = document.getElementById('cfg-maxplayers').value || 25;
+        const timer      = document.getElementById('cfg-timer').value      || 30;
+        const minbid     = document.getElementById('cfg-minbid').value     || 1;
+        const startprice = document.getElementById('cfg-startprice').value || 1;
+        document.getElementById('config-summary').innerHTML = `
+            <div style="display:grid;gap:0.5rem;font-size:0.85rem;">
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Budget</span><strong>${budget} cr.</strong></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Giocatori/squadra</span><strong>${maxplayers}</strong></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Timer rilancio</span><strong>${timer}s</strong></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Rilancio minimo</span><strong>${minbid} cr.</strong></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Prezzo base</span><strong>${startprice} cr.</strong></div>
+                <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary);">Limiti ruolo</span><strong style="font-size:0.75rem;">P:3 D:10 C:8 A:4</strong></div>
+            </div>`;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // SQUADRE
+    // ══════════════════════════════════════════════════════
+    function creaSquadra() {
+        const name = document.getElementById('nuovaSquadra').value.trim();
+        if (!name) return showAlert('warn', 'Inserisci il nome della squadra.');
+        socket.emit('adminCreateTeam', name);
+        document.getElementById('nuovaSquadra').value = '';
+    }
+
+    function eliminaSquadra(key, name) {
+        if (!confirm(`Eliminare "${name}"? I giocatori assegnati torneranno nel mazzo.`)) return;
+        socket.emit('adminDeleteTeam', key);
+    }
+
+    function renderTeams() {
+        const grid = document.getElementById('teams-grid');
+        const keys = Object.keys(currentTeams);
+        if (keys.length === 0) {
+            grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">Nessuna squadra — creane una sopra.</div>';
+            return;
+        }
+        grid.innerHTML = keys.map(key => {
+            const t = currentTeams[key];
+            const slots = t.slots || {};
+            const totale = (slots.P||0)+(slots.D||0)+(slots.C||0)+(slots.A||0);
+            const maxp = parseInt(document.getElementById('cfg-maxplayers')?.value) || 25;
+            const budgetPct = Math.max(0, Math.min(100, (t.budget / (parseInt(document.getElementById('cfg-budget')?.value)||500))*100));
+            const budgetColor = budgetPct > 40 ? 'var(--success)' : budgetPct > 15 ? 'var(--warning)' : 'var(--danger)';
+            return `<div class="team-card">
+                <div class="team-card-name">${t.name}</div>
+                <div class="team-budget" style="color:${budgetColor};">${t.budget}</div>
+                <div class="team-budget-label">crediti — ${totale}/${maxp} giocatori</div>
+                <div class="team-slots">
+                    <span class="slot-badge slot-P">P: ${slots.P||0}</span>
+                    <span class="slot-badge slot-D">D: ${slots.D||0}</span>
+                    <span class="slot-badge slot-C">C: ${slots.C||0}</span>
+                    <span class="slot-badge slot-A">A: ${slots.A||0}</span>
+                </div>
+                <div class="team-card-actions">
+                    <button class="btn btn-danger" onclick="eliminaSquadra('${key}','${t.name.replace(/'/g,"\\'")}')">Elimina</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function aggiornaSelectSquadre() {
+        const selects = ['force-team', 'reassign-team'];
+        const teams = Object.entries(currentTeams);
+        selects.forEach(id => {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+            const val = sel.value;
+            sel.innerHTML = teams.length
+                ? teams.map(([,t]) => `<option value="${t.name}">${t.name} (${t.budget} cr.)</option>`).join('')
+                : '<option value="">Nessuna squadra</option>';
+            if (val) sel.value = val;
+        });
+    }
+
+    // ══════════════════════════════════════════════════════
+    // ASTA
+    // ══════════════════════════════════════════════════════
+    function aggiornaStage(state) {
+        const stage = document.getElementById('auction-stage');
+        const badge = document.getElementById('auction-status-badge');
+        const timerEl = document.getElementById('disp-timer');
+
+        document.getElementById('disp-player').textContent = state.player?.nome || '—';
+        document.getElementById('disp-sub').textContent = state.player
+            ? `${state.player.ruolo} — ${state.player.squadra || ''}` : '';
+        document.getElementById('disp-price').textContent = state.player ? state.currentPrice : '—';
+        document.getElementById('disp-bidder').textContent = state.highestBidder
+            ? `Offerta da ${state.highestBidder}` : '';
+
+        const t = state.time;
+        timerEl.textContent = state.player ? t : '—';
+        timerEl.className = 'timer-ring' + (t <= 5 ? ' danger' : t <= 10 ? ' warning' : '');
+
+        if (!state.player) {
+            stage.classList.remove('active');
+            badge.textContent = 'IN ATTESA';
+            badge.className = 'status-badge status-idle';
+        } else if (state.isPaused) {
+            stage.classList.remove('active');
+            badge.textContent = 'IN PAUSA';
+            badge.className = 'status-badge status-paused';
+        } else {
+            stage.classList.add('active');
+            badge.textContent = 'ATTIVA';
+            badge.className = 'status-badge status-active';
+        }
+
+        // Bid log
+        const log = document.getElementById('bid-log');
+        if (state.history && state.history.length > 0) {
+            log.innerHTML = [...state.history].reverse().map((b, i) =>
+                `<div class="bid-row ${i === 0 ? 'bid-winner' : ''}">
+                    <span>${b.bidder}</span><span>${b.price} cr.</span>
+                </div>`).join('');
+        } else {
+            log.innerHTML = '<div class="empty-state">Nessun rilancio</div>';
+        }
+
+        // Remaining
+        document.getElementById('players-remaining').textContent = `${currentPlayers.length} in mazzo`;
+
+        // Force assign
+        document.getElementById('assign-panel').classList.toggle('show', !!state.player);
+        if (state.player) document.getElementById('force-price').value = state.currentPrice || 1;
+    }
+
+    function aggiornaControlli() {
+        document.getElementById('btn-pause').disabled  = !auctionActive || auctionPaused;
+        document.getElementById('btn-resume').disabled = !auctionActive || !auctionPaused;
+        document.getElementById('btn-random').disabled = auctionActive;
+    }
+
+    function startRandom() {
+        document.getElementById('review-card').style.display = 'none';
+        socket.emit('startRandom');
+    }
+
+    function startManual() {
+        const val = document.getElementById('manual-player-select').value;
+        if (!val) return showAlert('warn', 'Seleziona un giocatore.');
+        const [nome, ruolo, squadra] = val.split('|');
+        document.getElementById('review-card').style.display = 'none';
+        socket.emit('adminStartPlayer', { nome, ruolo, squadra });
+    }
+
+    function pauseAuction()  { socket.emit('pauseTimer'); }
+    function resumeAuction() { socket.emit('resumeTimer'); }
+
+    function forceAssign() {
+        const squadra = document.getElementById('force-team').value;
+        const prezzo  = parseInt(document.getElementById('force-price').value) || 0;
+        if (!squadra) return showAlert('warn', 'Seleziona una squadra.');
+        socket.emit('adminForceAssign', { squadra, prezzo });
+    }
+
+    function mostraRevisione(data) {
+        const card = document.getElementById('review-card');
+        card.style.display = 'block';
+        const winner = data.winner || '—';
+        const price  = data.price  || 0;
+        const nome   = data.player?.nome || data.player || '—';
+        document.getElementById('review-summary').textContent =
+            `"${nome}" assegnato a ${winner} per ${price} cr. Puoi modificare prima di confermare.`;
+        document.getElementById('reassign-price').value = price;
+        aggiornaSelectSquadre();
+        if (winner) {
+            const sel = document.getElementById('reassign-team');
+            for (const opt of sel.options) if (opt.value === winner) { sel.value = winner; break; }
+        }
+    }
+
+    function confermaRevisione() {
+        const newWinner = document.getElementById('reassign-team').value;
+        const newPrice  = parseInt(document.getElementById('reassign-price').value) || 0;
+        socket.emit('adminReassignLastSold', { newWinner, newPrice });
+        document.getElementById('review-card').style.display = 'none';
+    }
+
+    function renderSold() {
+        const list = document.getElementById('sold-list');
+        document.getElementById('sold-count').textContent = `${currentSold.length} venduti`;
+        if (currentSold.length === 0) { list.innerHTML = '<div class="empty-state">Nessuno ancora</div>'; return; }
+        list.innerHTML = [...currentSold].reverse().slice(0, 30).map(s => {
+            const macro = getMacroRole(s.ruolo);
+            return `<div style="display:flex;align-items:center;justify-content:space-between;padding:0.35rem 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+                <div style="display:flex;align-items:center;gap:0.5rem;">
+                    <span class="role-badge role-${macro}">${s.ruolo}</span>
+                    <span style="font-size:0.82rem;">${s.player}</span>
+                </div>
+                <div style="font-size:0.8rem;text-align:right;">
+                    <span style="color:var(--warning);font-weight:700;">${s.winner}</span>
+                    <span style="color:var(--text-secondary);"> ${s.price} cr.</span>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ══════════════════════════════════════════════════════
+    // EXPORT
+    // ══════════════════════════════════════════════════════
+    function esportaExcel() {
+        if (!currentRoom) return;
+        window.location.href = `/export?room=${currentRoom}`;
+    }
+
+    function aggiornaStatistiche() {
+        document.getElementById('stat-sold').textContent   = currentSold.length;
+        document.getElementById('stat-unsold').textContent = currentPlayers.length;
+        document.getElementById('stat-teams').textContent  = Object.keys(currentTeams).length;
+        const avgPrice = currentSold.length
+            ? Math.round(currentSold.reduce((s,p) => s + (p.price||0), 0) / currentSold.length)
+            : 0;
+        document.getElementById('stat-avgprice').textContent = avgPrice;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // PRO SWITCH
+    // ══════════════════════════════════════════════════════
+    function aggiornaBottonePro() {
+        const btn = document.getElementById('btn-switch-pro');
+        if (auctionActive) {
+            btn.disabled = true;
+            btn.title = 'Non puoi cambiare modalità ad asta in corso';
+        } else {
+            btn.disabled = false;
+            btn.title = 'Passa all\'admin PRO';
+        }
+    }
+
+    function apriModalPro() {
+        if (document.getElementById('btn-switch-pro').disabled) return;
+        const warn = document.getElementById('pro-switch-warning');
+        warn.textContent = auctionActive ? 'ATTENZIONE: asta in corso — il cambio è bloccato.' : '';
+        document.getElementById('modal-pro').classList.add('show');
+    }
+
+    function chiudiModalPro() {
+        document.getElementById('modal-pro').classList.remove('show');
+    }
+
+    function confermaSwitchPro() {
+        chiudiModalPro();
+        const url = `/admin?room=${currentRoom}`;
+        window.location.href = url;
+    }
+
+    // ══════════════════════════════════════════════════════
+    // PROIETTORE
+    // ══════════════════════════════════════════════════════
+    async function apriProiettore() {
+        const hostUrl = '/host?room=' + currentRoom;
+        if ('getScreenDetails' in window) {
+            try {
+                const sd = await window.getScreenDetails();
+                const target = sd.screens.find(s => s !== sd.currentScreen) || sd.screens[0];
+                const w = window.open(hostUrl, 'proiettore',
+                    `left=${target.availLeft},top=${target.availTop},width=${target.availWidth},height=${target.availHeight}`);
+                if (w) { w.focus(); return; }
+            } catch {}
+        }
+        const w = window.open(hostUrl, 'proiettore',
+            `width=${screen.availWidth},height=${screen.availHeight},left=0,top=0`);
+        if (w) w.focus();
+    }
+
+    // ══════════════════════════════════════════════════════
+    // UTILS
+    // ══════════════════════════════════════════════════════
+    let alertTimers = {};
+    function showAlert(type, msg) {
+        const map = { ok:'alert-ok', err:'alert-err', warn:'alert-warn' };
+        const el = document.getElementById(map[type]);
+        if (!el) return;
+        el.textContent = msg;
+        el.classList.add('show');
+        clearTimeout(alertTimers[type]);
+        alertTimers[type] = setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
+    function copiaCodice() {
+        navigator.clipboard?.writeText(currentRoom).then(() => showAlert('ok', 'Codice copiato!'));
+    }
+</script>
+</body>
+</html>
