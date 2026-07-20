@@ -128,22 +128,22 @@
   <div id="room-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0b0f19;z-index:9999;display:flex;align-items:center;justify-content:center;">
     <div style="background:#141b2d;border:1px solid #1f293d;border-radius:14px;padding:32px;width:340px;max-width:90%;">
       <h2 style="color:#38bdf8;margin:0 0 4px 0;">DraftARENA</h2>
-      <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;">Pannello Rose — inserisci il codice stanza</p>
+      <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;" data-i18n="rose_gate_subtitle">Pannello Rose — inserisci il codice stanza</p>
       <div style="display:flex;gap:8px;">
-        <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice stanza"
+        <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice (es: ABC123)" data-i18n-placeholder="rose_gate_ph"
           style="flex:1;padding:12px;border-radius:8px;border:1px solid #1f293d;background:#0b0f19;color:#fff;font-size:16px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
-        <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;">ENTRA</button>
+        <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;" data-i18n="rose_gate_btn">ENTRA</button>
       </div>
       <div id="gate-error" style="color:#ef4444;font-size:12px;margin-top:8px;min-height:16px;"></div>
-      <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:6px;display:none;">Connessione...</div>
-      <a href="/#hub" style="display:block;margin-top:14px;color:#475569;text-align:center;font-size:12px;text-decoration:none;">← Torna all'Hub</a>
+      <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:6px;display:none;" data-i18n="rose_gate_loading">Connessione...</div>
+      <a href="/#hub" style="display:block;margin-top:14px;color:#475569;text-align:center;font-size:12px;text-decoration:none;" data-i18n="rose_nav_hub">← Torna all'Hub</a>
     </div>
   </div>
 
   <header>
     <div style="display:flex;align-items:center;gap:12px;">
       <img src="/DraftARENAws.png" alt="DraftARENA" style="height:34px;">
-      <span style="color:#38bdf8;font-size:16px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Rose Live</span>
+      <span style="color:#38bdf8;font-size:16px;font-weight:bold;text-transform:uppercase;letter-spacing:1px;" data-i18n="rose_title">Rose Live</span>
     </div>
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
       <button onclick="apriStorico()"
@@ -152,9 +152,10 @@
                transition:all 0.2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
         📚 Storico Aste
       </button>
-      <a href="/#hub" class="btn-back">⬅️ Hub</a>
+      <a href="/#hub" class="btn-back" data-i18n="rose_nav_hub">⬅️ Hub</a>
       <a href="/admin" class="btn-back">⬅️ Torna alla Regia</a>
       <a id="btn-back-buzzer" href="#" class="btn-back" style="display:none;background:#10b981;color:#fff;border-color:#10b981;">🔔 Torna al Buzzer</a>
+      <button id="lang-toggle" onclick="I18N.toggle('rose')" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:10px 12px;font-size:13px;color:#38bdf8;font-weight:bold;cursor:pointer;">🇬🇧 EN</button>
     </div>
   </header>
 
@@ -167,8 +168,8 @@
     <div style="background:#141b2d;border:1px solid #f59e0b;border-radius:14px;
                 padding:32px;width:320px;max-width:90%;text-align:center;">
       <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
-      <h3 style="color:#f59e0b;margin:0 0 4px 0;">PIN Admin richiesto</h3>
-      <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;">
+      <h3 style="color:#f59e0b;margin:0 0 4px 0;" data-i18n="rose_pin_title">PIN Admin richiesto</h3>
+      <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;" data-i18n="rose_pin_desc">
         Per eliminare un giocatore dalla rosa devi inserire il PIN admin.
       </p>
       <input id="pin-modal-input" type="password" inputmode="numeric" maxlength="10"
@@ -181,7 +182,7 @@
       <div style="display:flex;gap:8px;">
         <button onclick="_submitPin()"
           style="flex:1;padding:12px;background:#f59e0b;color:#000;font-weight:bold;
-                 border:none;border-radius:8px;cursor:pointer;font-size:1rem;">ENTRA</button>
+                 border:none;border-radius:8px;cursor:pointer;font-size:1rem;" data-i18n="rose_pin_btn">ENTRA</button>
         <button onclick="_chiudiPinModal()"
           style="padding:12px 16px;background:transparent;color:#94a3b8;
                  border:1px solid #334155;border-radius:8px;cursor:pointer;">✕</button>
@@ -224,8 +225,10 @@
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/i18n.js"></script>
   <script>
     const socket = io({ transports: ["polling"] });
+    I18N.applyLang('rose');
     let toastTimer = null;
     let currentRoomCode = null;
     let pendingSocketRoomCode = null;
@@ -251,7 +254,7 @@
         }
       } else {
         _isAdminAuthed = false;
-        document.getElementById('pin-modal-error').textContent = 'PIN errato. Riprova.';
+        document.getElementById('pin-modal-error').textContent = I18N.t('rose','rose_pin_err');
       }
     });
 
@@ -305,8 +308,8 @@
         try {
           const res = await fetchWithTimeout('/api/room/join/' + saved, 8000);
           if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
-          else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || 'Stanza non trovata.'); }
-        } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+          else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || I18N.t('rose','rose_gate_err_notfound')); }
+        } catch(e) { gateSetError(I18N.t('rose','rose_gate_err_server')); }
         finally { gateSetLoading(false); }
       }
     })();
@@ -321,8 +324,8 @@
       try {
         const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
         if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
-        else gateSetError(res.error || 'Stanza non trovata.');
-      } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+        else gateSetError(res.error || I18N.t('rose','rose_gate_err_notfound'));
+      } catch(e) { gateSetError(I18N.t('rose','rose_gate_err_server')); }
       finally { gateSetLoading(false); }
     }
 
@@ -364,7 +367,7 @@
       container.innerHTML = "";
 
       if (soldList.length === 0) {
-        container.innerHTML = "<p style='color:#64748b; font-style:italic;'>Nessun giocatore acquistato al momento.</p>";
+        container.innerHTML = '<p style="color:#64748b; font-style:italic;">' + I18N.t('rose','rose_no_players') + '</p>';
         return;
       }
 
@@ -383,10 +386,10 @@
           <table>
             <thead>
               <tr>
-                <th>Giocatore</th>
-                <th>Ruolo</th>
-                <th>Prezzo</th>
-                <th style="text-align:right;">Azione</th>
+                <th>${I18N.t('rose','rose_th_player')}</th>
+                <th>${I18N.t('rose','rose_th_role')}</th>
+                <th>${I18N.t('rose','rose_th_price')}</th>
+                <th style="text-align:right;">${I18N.t('rose','rose_th_action')}</th>
               </tr>
             </thead>
             <tbody>
@@ -459,11 +462,11 @@
     async function apriStorico() {
       document.getElementById('storico-modal').style.display = 'flex';
       document.getElementById('storico-contenuto').innerHTML =
-        '<p style="color:#64748b;text-align:center;padding:20px;">Caricamento...</p>';
+        '<p style="color:#64748b;text-align:center;padding:20px;">' + I18N.t('rose','rose_loading') + '</p>';
 
       if (!currentRoomCode) {
         document.getElementById('storico-lista').innerHTML =
-          '<p style="color:#64748b;font-size:0.85rem;">Entra in una stanza per vedere i backup salvati sul server.</p>';
+          '<p style="color:#64748b;font-size:0.85rem;">' + I18N.t('rose','rose_no_backup_hint') + '</p>';
         document.getElementById('storico-contenuto').innerHTML = '';
         return;
       }
@@ -474,7 +477,7 @@
         const lista = document.getElementById('storico-lista');
 
         if (!data.success || !data.backups.length) {
-          lista.innerHTML = '<p style="color:#64748b;font-size:0.85rem;">Nessun backup storico salvato sul server per questa stanza.</p>';
+          lista.innerHTML = '<p style="color:#64748b;font-size:0.85rem;">' + I18N.t('rose','rose_no_backup') + '</p>';
           document.getElementById('storico-contenuto').innerHTML = '';
           return;
         }
@@ -492,14 +495,14 @@
         document.getElementById('storico-contenuto').innerHTML = '';
       } catch(e) {
         document.getElementById('storico-lista').innerHTML =
-          '<p style="color:#ef4444;font-size:0.85rem;">Errore caricamento backup: ' + e.message + '</p>';
+          '<p style="color:#ef4444;font-size:0.85rem;">' + I18N.t('rose','rose_err_backup') + e.message + '</p>';
         document.getElementById('storico-contenuto').innerHTML = '';
       }
     }
 
     async function caricaBackupServer(id) {
       document.getElementById('storico-contenuto').innerHTML =
-        '<p style="color:#64748b;text-align:center;padding:20px;">Caricamento...</p>';
+        '<p style="color:#64748b;text-align:center;padding:20px;">' + I18N.t('rose','rose_loading') + '</p>';
       try {
         const res = await fetch('/api/room/' + currentRoomCode + '/backups/' + id);
         const data = await res.json();
@@ -507,7 +510,7 @@
         renderStoricoBackup(data.backup.backup_data);
       } catch(e) {
         document.getElementById('storico-contenuto').innerHTML =
-          '<p style="color:#ef4444;">Errore: ' + e.message + '</p>';
+          '<p style="color:#ef4444;">' + I18N.t('rose','rose_err_generic') + e.message + '</p>';
       }
     }
 
@@ -536,7 +539,7 @@
     function renderStoricoBackup(b) {
       const contenuto = document.getElementById('storico-contenuto');
       if (!b.soldPlayers || !b.teams) {
-        contenuto.innerHTML = '<p style="color:#64748b;">Nessun dato disponibile in questo backup.</p>';
+        contenuto.innerHTML = '<p style="color:#64748b;">' + I18N.t('rose','rose_no_data') + '</p>';
         return;
       }
 
@@ -592,9 +595,9 @@
             <table style="width:100%;border-collapse:collapse;">
               <thead>
                 <tr>
-                  <th style="text-align:left;color:#475569;font-size:11px;padding-bottom:6px;text-transform:uppercase;">Giocatore</th>
-                  <th style="color:#475569;font-size:11px;padding-bottom:6px;text-transform:uppercase;text-align:center;">Ruolo</th>
-                  <th style="color:#475569;font-size:11px;padding-bottom:6px;text-transform:uppercase;text-align:right;">Prezzo</th>
+                  <th style="text-align:left;color:#475569;font-size:11px;padding-bottom:6px;text-transform:uppercase;">' + I18N.t('rose','rose_th_player') + '</th>
+                  <th style="color:#475569;font-size:11px;padding-bottom:6px;text-transform:uppercase;text-align:center;">' + I18N.t('rose','rose_th_role') + '</th>
+                  <th style="color:#475569;font-size:11px;padding-bottom:6px;text-transform:uppercase;text-align:right;">' + I18N.t('rose','rose_th_price') + '</th>
                 </tr>
               </thead>
               <tbody>
