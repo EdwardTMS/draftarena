@@ -18,9 +18,11 @@ const io = new Server(server, {
 
 app.use(express.json());
 
-// Traccia tutte le visite alle pagine HTML (non solo la homepage)
+// Traccia le visite alle pagine HTML (esclude solo superadmin)
 app.use((req, res, next) => {
-  if (req.method === "GET" && /\.html$/i.test(req.path)) trackPageView();
+  if (req.method === "GET" && /\.html$/i.test(req.path) && req.path.toLowerCase() !== "/superadmin.html") {
+    trackPageView();
+  }
   next();
 });
 
