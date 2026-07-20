@@ -65,15 +65,15 @@
 <div id="room-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#050914;z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div style="background:#0b132b;border:1px solid rgba(56,189,248,0.2);border-radius:14px;padding:32px;width:340px;max-width:90%;">
     <h2 style="color:#38bdf8;margin:0 0 4px 0;font-family:'Urbanist',sans-serif;">DraftARENA</h2>
-    <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;">TV Host — inserisci il codice stanza</p>
+    <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;" data-i18n="host_gate_title">TV Host — inserisci il codice stanza</p>
     <div style="display:flex;gap:8px;">
-      <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice stanza"
+      <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice stanza" data-i18n-placeholder="host_gate_ph"
         style="flex:1;padding:12px;border-radius:8px;border:1px solid #1c2541;background:#050914;color:#fff;font-size:16px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
-      <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;">ENTRA</button>
+      <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;" data-i18n="host_gate_btn">ENTRA</button>
     </div>
     <div id="gate-error" style="color:#ef4444;font-size:12px;margin-top:8px;min-height:16px;"></div>
-    <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:6px;display:none;">Connessione...</div>
-    <a href="/#hub" style="display:block;margin-top:14px;color:#475569;text-align:center;font-size:12px;text-decoration:none;">← Torna all'Hub</a>
+    <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:6px;display:none;" data-i18n="host_gate_loading">Connessione...</div>
+    <a href="/#hub" style="display:block;margin-top:14px;color:#475569;text-align:center;font-size:12px;text-decoration:none;" data-i18n="host_gate_back">← Torna all'Hub</a>
   </div>
 </div>
 
@@ -81,12 +81,12 @@
 <div id="pin-gate-tv" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;flex-direction:column;">
   <div style="background:#0b132b;border:1px solid #f59e0b;border-radius:14px;padding:32px;width:320px;max-width:90%;text-align:center;">
     <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
-    <h3 style="color:#f59e0b;margin:0 0 4px 0;font-family:'Urbanist',sans-serif;">PIN Regia TV</h3>
-    <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;">Inserisci il PIN per abilitare i controlli della TV Host.</p>
+    <h3 style="color:#f59e0b;margin:0 0 4px 0;font-family:'Urbanist',sans-serif;" data-i18n="host_pin_title">PIN Regia TV</h3>
+    <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;" data-i18n="host_pin_desc">Inserisci il PIN per abilitare i controlli della TV Host.</p>
     <input id="pin-gate-tv-input" type="text" maxlength="4" inputmode="numeric" placeholder="----"
       style="width:100%;box-sizing:border-box;padding:12px;font-size:1.5rem;text-align:center;letter-spacing:0.3em;background:#050914;border:1px solid #334155;border-radius:8px;color:#fff;margin-bottom:8px;">
     <div class="pin-gate-error" style="color:#ef4444;font-size:12px;min-height:18px;margin-bottom:8px;"></div>
-    <button onclick="submitPinGateTv()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">ENTRA</button>
+    <button onclick="submitPinGateTv()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;" data-i18n="host_pin_btn">ENTRA</button>
   </div>
 </div>
 
@@ -96,50 +96,55 @@
 <audio id="snd-lost" src="/sounds/noone.mp3" preload="auto"></audio>
 
 <div class="regia-nav">
-  <div><a href="/#hub" class="nav-hub-btn" style="color:#94a3b8; text-decoration:none; font-size:13px; padding:6px 12px; border:1px solid rgba(148,163,184,0.3); border-radius:6px; font-weight:bold; transition:all 0.2s;" onmouseover="this.style.background='rgba(148,163,184,0.1)'" onmouseout="this.style.background='transparent'">← Hub</a></div>
+  <div><a href="/#hub" class="nav-hub-btn" style="color:#94a3b8; text-decoration:none; font-size:13px; padding:6px 12px; border:1px solid rgba(148,163,184,0.3); border-radius:6px; font-weight:bold; transition:all 0.2s;" onmouseover="this.style.background='rgba(148,163,184,0.1)'" onmouseout="this.style.background='transparent'" data-i18n="host_nav_hub">← Hub</a></div>
   <div style="display:flex;align-items:center;gap:8px;"><img src="/DraftARENAws.png" alt="DraftARENA" style="height:30px;"> <span id="nav-room-badge" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:4px;padding:2px 8px;font-size:12px;color:#38bdf8;font-weight:bold;letter-spacing:1px;display:none;"></span></div>
-  <div class="mazzo-counter-tv">🏃 GIOCATORI NEL MAZZO: <span id="tv-count-disponibili">0</span></div>
-  <div><a href="/admin" target="_blank" class="btn-admin-link">🛠️ APRI PANNELLO REGOLE</a></div>
+  <div class="mazzo-counter-tv"><span data-i18n="host_nav_players">🏃 GIOCATORI NEL MAZZO:</span> <span id="tv-count-disponibili">0</span></div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button id="lang-toggle" onclick="I18N.toggle('host')" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:6px 10px;font-size:12px;color:#38bdf8;font-weight:bold;cursor:pointer;white-space:nowrap;">🇬🇧 EN</button>
+    <a href="/admin" target="_blank" class="btn-admin-link" data-i18n="host_nav_admin">🛠️ APRI PANNELLO REGOLE</a>
+  </div>
 </div>
 
 <div class="app-layout">
   <div class="main-content">
     <div id="vincitore-overlay">
-      <h1 id="overlay-titolo">🏅 AGGIUDICATO!</h1>
+      <h1 id="overlay-titolo" data-i18n="host_sold">🏅 AGGIUDICATO!</h1>
       <h2 id="overlay-dettagli">-</h2>
     </div>
 
     <div>
       <div id="time">10</div>
       <div id="player">-</div>
-      <div id="info-giocatore">Ruolo: - | Squadra: -</div>
+      <div id="info-giocatore" data-i18n="host_info_role">Ruolo: - | Squadra: -</div>
       <div id="bid">0 €</div>
-      <div id="winner">In attesa di offerte dai telefoni...</div>
+      <div id="winner" data-i18n="host_waiting">In attesa di offerte dai telefoni...</div>
     </div>
 
     <div style="margin-top:16px;">
-      <button class="btn-rose" onclick="vaiARose()">📋 LE ROSE</button>
+      <button class="btn-rose" onclick="vaiARose()" data-i18n="host_btn_rose">📋 LE ROSE</button>
     </div>
   </div>
 
   <div class="sidebar">
     <div style="background: #050914; padding: 12px; border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.2); text-align: center; flex-shrink: 0;">
-      <h4 style="margin: 0 0 8px 0; color: #ffcc00; font-size: 12px; font-family: 'Urbanist';">📱 APRI SUL TELEFONO</h4>
+      <h4 style="margin: 0 0 8px 0; color: #ffcc00; font-size: 12px; font-family: 'Urbanist';" data-i18n="host_phone_title">📱 APRI SUL TELEFONO</h4>
       <img id="qr-connect" src="" alt="QR" style="background: white; padding: 5px; display: none; margin: 0 auto 8px auto; width: 100px; height: 100px; border-radius:4px;">
-      <p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;">Indirizzo Wi-Fi:</p>
+      <p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;" data-i18n="host_phone_wifi">Indirizzo Wi-Fi:</p>
       <b id="link-connect" style="color: #10b981; font-size: 11px; word-break: break-all;">IP...</b>
     </div>
 
     <div style="flex:1;min-height:0;display:flex;flex-direction:column;">
-      <h3 style="flex-shrink:0;">📊 CLASSIFICA CREDITI & ROSE</h3>
-      <div id="teams-box" style="overflow-y:auto;flex:1;min-height:80px;"><p style="color: #64748b; text-align:center;">Nessuna fantasquadra registrata...</p></div>
+      <h3 style="flex-shrink:0;" data-i18n="host_ranking">📊 CLASSIFICA CREDITI & ROSE</h3>
+      <div id="teams-box" style="overflow-y:auto;flex:1;min-height:80px;"><p style="color: #64748b; text-align:center;" data-i18n="host_no_teams">Nessuna fantasquadra registrata...</p></div>
     </div>
   </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
+<script src="/i18n.js"></script>
 <script>
   const socket = io({ transports: ["polling"] });
+  I18N.applyLang('host');
   let listaCompletaGiocatori = [];
   let ultimoGiocatoreAttivo = null;
   let currentRoomCode = null;
@@ -221,8 +226,8 @@
       try {
         const res = await fetchWithTimeout('/api/room/join/' + saved, 8000);
         if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
-        else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || 'Stanza non trovata.'); }
-      } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+        else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || I18N.t('host','host_gate_err_notfound')); }
+      } catch(e) { gateSetError(I18N.t('host','host_gate_err_server')); }
       finally { gateSetLoading(false); }
     }
   })();
@@ -241,8 +246,8 @@
     try {
       const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
       if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
-      else gateSetError(res.error || 'Stanza non trovata.');
-    } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
+      else gateSetError(res.error || I18N.t('host','host_gate_err_notfound'));
+    } catch(e) { gateSetError(I18N.t('host','host_gate_err_server')); }
     finally { gateSetLoading(false); }
   }
 
@@ -278,24 +283,24 @@
       }
       document.getElementById("player").innerText = s.player.nome || "-";
       document.getElementById("info-giocatore").innerText =
-        "⚔️ Ruolo Mantra: " + (s.player.ruolo || "-") +
-        "   |   🏢 Squadra di A: " + (s.player.squadra || "-");
+        "⚔️ " + I18N.t('host','host_role_label').replace('Mantra:','') + " " + (s.player.ruolo || "-") +
+        "   |   🏢 " + I18N.t('host','host_team_label').replace('di A:','') + " " + (s.player.squadra || "-");
     } else {
       document.getElementById("player").innerText = "-";
-      document.getElementById("info-giocatore").innerText = "Ruolo: - | Squadra: -";
+      document.getElementById("info-giocatore").innerText = I18N.t('host','host_info_role');
       ultimoGiocatoreAttivo = null;
     }
 
     document.getElementById("bid").innerText = s.currentPrice + " €";
 
     if (s.isPaused) {
-      document.getElementById("winner").innerText = "⏸️ ASTA IN PAUSA DALLA REGIA...";
+      document.getElementById("winner").innerText = I18N.t('host','host_paused');
       document.getElementById("winner").style.color = "#ffaa00";
       document.getElementById("time").style.color = "#ffaa00";
     } else {
       document.getElementById("winner").innerText = s.highestBidder
-        ? "🔥 Offerta corrente di: " + s.highestBidder
-        : "In attesa di offerte...";
+        ? I18N.t('host','host_bid_current') + " " + s.highestBidder
+        : I18N.t('host','host_waiting_short');
       document.getElementById("winner").style.color = "#ffcc00";
       document.getElementById("time").style.color = "#ef4444";
     }
@@ -314,17 +319,17 @@
     const dettagli = document.getElementById("overlay-dettagli");
 
     if (s.winner) {
-      document.getElementById("overlay-titolo").innerText = "🏅 AGGIUDICATO!";
+      document.getElementById("overlay-titolo").innerText = I18N.t('host','host_sold');
       document.getElementById("snd-sold").play().catch(() => {});
       dettagli.innerHTML =
-        "🎯 <span style='color:#10b981;'>" + s.player + "</span> acquistato da <br><br>" +
-        "🏅 <span style='color:#ffcc00;'>" + s.winner.toUpperCase() + "</span> per " +
+        "🎯 <span style='color:#10b981;'>" + s.player + "</span> " + (I18N.lang()==='en'?'bought by':'acquistato da') + " <br><br>" +
+        "🏅 <span style='color:#ffcc00;'>" + s.winner.toUpperCase() + "</span> " + (I18N.lang()==='en'?'for':'per') + " " +
         "<span style='color:#10b981; font-weight:bold;'>" + s.price + " cr</span>";
     } else {
-      document.getElementById("overlay-titolo").innerText = "❌ INVENDUTO";
+      document.getElementById("overlay-titolo").innerText = I18N.t('host','host_unsold');
       document.getElementById("snd-lost").play().catch(() => {});
       dettagli.innerHTML =
-        "<span style='color:#ef4444;'>" + s.player + "</span> rimane INVENDUTO";
+        "<span style='color:#ef4444;'>" + s.player + "</span> " + I18N.t('host','host_unsold').toLowerCase();
     }
     overlay.style.display = "flex";
   });
@@ -341,8 +346,8 @@
       div.innerHTML =
         "<h4>" + t.name + "</h4>" +
         "<div style='font-size:18px; font-weight:bold; color:#10b981;'>" + t.budget + " cr</div>" +
-        "<div class='team-details'>Por: " + (slots.P || 0) + " | Dif: " + (slots.D || 0) +
-        " | Cen: " + (slots.C || 0) + " | Att: " + (slots.A || 0) + "</div>";
+        "<div class='team-details'>" + I18N.t('host','host_slots_p') + " " + (slots.P || 0) + " | " + I18N.t('host','host_slots_d') + " " + (slots.D || 0) +
+        " | " + I18N.t('host','host_slots_c') + " " + (slots.C || 0) + " | " + I18N.t('host','host_slots_a') + " " + (slots.A || 0) + "</div>";
       container.appendChild(div);
     });
   }
