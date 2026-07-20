@@ -141,7 +141,7 @@
     </div>
 
     <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <button onclick="vaiARose()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;">📋 Le Rose</button>
+      <button id="btn-rose" onclick="vaiARose()" disabled style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:not-allowed;border:1px solid #334155;opacity:0.5;">📋 Le Rose</button>
       <button onclick="cambiaSquadra()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;">🔄 Cambia Squadra</button>
       <a href="/guida-utenti" target="_blank" style="padding:10px 12px;border-radius:8px;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;text-decoration:none;display:flex;align-items:center;">? Guida</a>
     </div>
@@ -393,6 +393,24 @@
       }
 
       setBotoniAttivi(astaAttiva && !s.isPaused);
+
+      // Pulsante "Le Rose" attivo solo quando l'admin mette in pausa
+      const btnRose = document.getElementById("btn-rose");
+      if (s.isPaused) {
+        btnRose.disabled = false;
+        btnRose.style.cursor = "pointer";
+        btnRose.style.opacity = "1";
+        btnRose.style.color = "#38bdf8";
+        btnRose.style.borderColor = "#38bdf8";
+        btnRose.title = "";
+      } else {
+        btnRose.disabled = true;
+        btnRose.style.cursor = "not-allowed";
+        btnRose.style.opacity = "0.5";
+        btnRose.style.color = "#94a3b8";
+        btnRose.style.borderColor = "#334155";
+        btnRose.title = "Le rose sono visibili solo quando l'admin mette in pausa l'asta";
+      }
 
       document.getElementById("current-price").innerText = s.currentPrice + " cr";
       const bEl = document.getElementById("highest-bidder");
