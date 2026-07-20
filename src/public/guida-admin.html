@@ -411,23 +411,24 @@
     <img src="/DraftARENAico.png" alt="DraftARENA" />
     <span>DraftARENA</span>
   </a>
-  <a class="back-btn" href="/">&#8592; Torna alla Home</a>
+  <a class="back-btn" href="/" data-i18n="g_back">&#8592; Torna alla Home</a>
+  <button id="lang-toggle" onclick="I18N.toggle('guida')" style="background:rgba(232,184,75,0.1);border:1px solid rgba(232,184,75,0.3);border-radius:8px;padding:8px 14px;font-size:0.9rem;color:var(--primary);cursor:pointer;font-weight:bold;">🇬🇧 EN</button>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="badge">Manuale Admin</div>
-  <h1>Guida Completa per l'<span>Amministratore</span></h1>
-  <p>Tutto quello che devi sapere per creare, configurare e gestire un'asta dalla A alla Z.</p>
+  <div class="badge" data-i18n="g_admin_badge">Manuale Admin</div>
+  <h1 data-i18n-html="g_admin_title">Guida Completa per l'<span>Amministratore</span></h1>
+  <p data-i18n="g_admin_desc">Tutto quello che devi sapere per creare, configurare e gestire un'asta dalla A alla Z.</p>
   <div class="toc-grid">
-    <a class="toc-item" href="#step1"><span class="toc-num">1</span> Preparazione</a>
-    <a class="toc-item" href="#step2"><span class="toc-num">2</span> Creare la Stanza</a>
-    <a class="toc-item" href="#step3"><span class="toc-num">3</span> Caricare i Giocatori</a>
-    <a class="toc-item" href="#step4"><span class="toc-num">4</span> Aggiungere le Squadre</a>
-    <a class="toc-item" href="#step5"><span class="toc-num">5</span> Configurare l'Asta</a>
-    <a class="toc-item" href="#step6"><span class="toc-num">6</span> Condurre l'Asta</a>
-    <a class="toc-item" href="#step7"><span class="toc-num">7</span> Operazioni Speciali</a>
-    <a class="toc-item" href="#step8"><span class="toc-num">8</span> Fine Asta &amp; Export</a>
+    <a class="toc-item" href="#step1"><span class="toc-num">1</span> <span data-i18n="ga_toc1">Preparazione</span></a>
+    <a class="toc-item" href="#step2"><span class="toc-num">2</span> <span data-i18n="ga_toc2">Creare la Stanza</span></a>
+    <a class="toc-item" href="#step3"><span class="toc-num">3</span> <span data-i18n="ga_toc3">Caricare i Giocatori</span></a>
+    <a class="toc-item" href="#step4"><span class="toc-num">4</span> <span data-i18n="ga_toc4">Aggiungere le Squadre</span></a>
+    <a class="toc-item" href="#step5"><span class="toc-num">5</span> <span data-i18n="ga_toc5">Configurare l'Asta</span></a>
+    <a class="toc-item" href="#step6"><span class="toc-num">6</span> <span data-i18n="ga_toc6">Condurre l'Asta</span></a>
+    <a class="toc-item" href="#step7"><span class="toc-num">7</span> <span data-i18n="ga_toc7">Operazioni Speciali</span></a>
+    <a class="toc-item" href="#step8"><span class="toc-num">8</span> <span data-i18n="ga_toc8">Fine Asta &amp; Export</span></a>
   </div>
 </section>
 
@@ -438,18 +439,18 @@
     <div class="section-header">
       <div class="step-circle">1</div>
       <div class="section-header-text">
-        <h2>Preparazione</h2>
-        <p>Cosa fare prima di aprire l'app</p>
+        <h2 data-i18n="ga_s1_title">Preparazione</h2>
+        <p data-i18n="ga_s1_desc">Cosa fare prima di aprire l'app</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128196; Prepara il file Excel con i giocatori</div>
-      <p>Prima di tutto devi avere la lista dei giocatori in un file <strong>.xlsx</strong> (Excel). Il file deve avere esattamente queste colonne nel foglio principale:</p>
+      <div class="card-title" data-i18n="ga_s1_c1_title">&#128196; Prepara il file Excel con i giocatori</div>
+      <p data-i18n-html="ga_s1_c1_p1">Prima di tutto devi avere la lista dei giocatori in un file <strong>.xlsx</strong> (Excel). Il file deve avere esattamente queste colonne nel foglio principale:</p>
       <div class="excel-preview" style="margin-top:14px;">
         <table>
           <thead>
-            <tr><th>Nome</th><th>Ruolo</th><th>Squadra</th><th>Quotazione</th></tr>
+            <tr><th data-i18n="ga_s1_th1">Nome</th><th data-i18n="ga_s1_th2">Ruolo</th><th data-i18n="ga_s1_th3">Squadra</th><th data-i18n="ga_s1_th4">Quotazione</th></tr>
           </thead>
           <tbody>
             <tr><td>Donnarumma</td><td>P</td><td>PSG</td><td>35</td></tr>
@@ -459,33 +460,33 @@
           </tbody>
         </table>
       </div>
-      <div class="info-box tip"><strong>Suggerimento:</strong> La colonna "Quotazione" definisce il valore iniziale del giocatore ma non è obbligatoriamente il prezzo minimo — l'asta parte sempre da 1 credito.</div>
+      <div class="info-box tip" data-i18n-html="ga_s1_tip"><strong>Suggerimento:</strong> La colonna "Quotazione" definisce il valore iniziale del giocatore ma non è obbligatoriamente il prezzo minimo — l'asta parte sempre da 1 credito.</div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#127944; Ruoli Mantra supportati</div>
-      <p>I ruoli nel file devono corrispondere ai codici del sistema Mantra. Ogni codice viene tradotto automaticamente in una posizione (P, D, C, A):</p>
+      <div class="card-title" data-i18n="ga_s1_c2_title">&#127944; Ruoli Mantra supportati</div>
+      <p data-i18n="ga_s1_c2_p1">I ruoli nel file devono corrispondere ai codici del sistema Mantra. Ogni codice viene tradotto automaticamente in una posizione (P, D, C, A):</p>
       <div class="role-grid" style="margin-top:12px;">
         <div class="role-card role-p">
-          <div class="role-name">P — Portiere</div>
-          <div class="role-codes">Codice: <strong>P</strong></div>
+          <div class="role-name" data-i18n="ga_s1_role_p">P — Portiere</div>
+          <div class="role-codes"><span data-i18n="ga_s1_code">Codice:</span> <strong>P</strong></div>
         </div>
         <div class="role-card role-d">
-          <div class="role-name">D — Difensore</div>
-          <div class="role-codes">Codici: <strong>DC, DD, DS, B</strong></div>
+          <div class="role-name" data-i18n="ga_s1_role_d">D — Difensore</div>
+          <div class="role-codes"><span data-i18n="ga_s1_codes">Codici:</span> <strong>DC, DD, DS, B</strong></div>
         </div>
         <div class="role-card role-c">
-          <div class="role-name">C — Centrocampista</div>
-          <div class="role-codes">Codici: <strong>M, C, E, T, W</strong></div>
+          <div class="role-name" data-i18n="ga_s1_role_c">C — Centrocampista</div>
+          <div class="role-codes"><span data-i18n="ga_s1_codes">Codici:</span> <strong>M, C, E, T, W</strong></div>
         </div>
         <div class="role-card role-a">
-          <div class="role-name">A — Attaccante</div>
-          <div class="role-codes">Codici: <strong>A, PC</strong></div>
+          <div class="role-name" data-i18n="ga_s1_role_a">A — Attaccante</div>
+          <div class="role-codes"><span data-i18n="ga_s1_codes">Codici:</span> <strong>A, PC</strong></div>
         </div>
       </div>
     </div>
 
-    <div class="info-box note"><strong>Nota:</strong> Puoi caricare il file anche dopo aver creato la stanza e le squadre. L'ordine non è strettamente obbligatorio, ma farlo prima rende tutto più fluido.</div>
+    <div class="info-box note" data-i18n-html="ga_s1_note"><strong>Nota:</strong> Puoi caricare il file anche dopo aver creato la stanza e le squadre. L'ordine non è strettamente obbligatorio, ma farlo prima rende tutto più fluido.</div>
   </section>
 
   <!-- STEP 2 -->
@@ -493,39 +494,39 @@
     <div class="section-header">
       <div class="step-circle">2</div>
       <div class="section-header-text">
-        <h2>Creare la Stanza</h2>
-        <p>Come generare il codice stanza e il PIN admin</p>
+        <h2 data-i18n="ga_s2_title">Creare la Stanza</h2>
+        <p data-i18n="ga_s2_desc">Come generare il codice stanza e il PIN admin</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#127968; Dalla Home Page</div>
+      <div class="card-title" data-i18n="ga_s2_c1_title">&#127968; Dalla Home Page</div>
       <ul class="steps-list">
-        <li><div class="step-text">Apri DraftARENA sul tuo browser — vedrai la sezione <strong>"Entra nell'Arena"</strong> in fondo alla pagina.</div></li>
-        <li><div class="step-text">Clicca su <strong>"Crea Stanza"</strong> e inserisci il numero di squadre che parteciperanno all'asta.</div></li>
-        <li><div class="step-text">Se la tua lega ha <strong>più di 8 squadre</strong>, ti verrà chiesto un codice di accesso (Commander Plus / Pro). Per 8 squadre o meno, tutto è gratuito.</div></li>
-        <li><div class="step-text">Conferma: ti viene mostrato il <strong>Codice Stanza</strong> (6 lettere, es. <code>5UKUQ9</code>) e il <strong>PIN Admin</strong> (4 cifre). <strong>Salvali!</strong></div></li>
-        <li><div class="step-text">Clicca <strong>"REGIA"</strong> per aprire il pannello admin della tua stanza.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s2_c1_s1">Apri DraftARENA sul tuo browser — vedrai la sezione <strong>"Entra nell'Arena"</strong> in fondo alla pagina.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s2_c1_s2">Clicca su <strong>"Crea Stanza"</strong> e inserisci il numero di squadre che parteciperanno all'asta.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s2_c1_s3">Se la tua lega ha <strong>più di 8 squadre</strong>, ti verrà chiesto un codice di accesso (Commander Plus / Pro). Per 8 squadre o meno, tutto è gratuito.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s2_c1_s4">Conferma: ti viene mostrato il <strong>Codice Stanza</strong> (6 lettere, es. <code>5UKUQ9</code>) e il <strong>PIN Admin</strong> (4 cifre). <strong>Salvali!</strong></div></li>
+        <li><div class="step-text" data-i18n-html="ga_s2_c1_s5">Clicca <strong>"REGIA"</strong> per aprire il pannello admin della tua stanza.</div></li>
       </ul>
     </div>
 
-    <div class="info-box warn"><strong>Importante:</strong> Il PIN Admin è l'unica protezione contro modifiche non autorizzate. Non condividerlo con i partecipanti — solo con chi gestirà l'asta con te.</div>
+    <div class="info-box warn" data-i18n-html="ga_s2_warn"><strong>Importante:</strong> Il PIN Admin è l'unica protezione contro modifiche non autorizzate. Non condividerlo con i partecipanti — solo con chi gestirà l'asta con te.</div>
 
     <div class="card">
-      <div class="card-title">&#128279; Accedere al Pannello Admin</div>
-      <p>Puoi raggiungere il pannello admin in due modi:</p>
+      <div class="card-title" data-i18n="ga_s2_c2_title">&#128279; Accedere al Pannello Admin</div>
+      <p data-i18n="ga_s2_c2_p1">Puoi raggiungere il pannello admin in due modi:</p>
       <div class="feature-row">
         <div class="feature-icon">&#127968;</div>
         <div class="feature-body">
-          <div class="feature-label">Dalla Home</div>
-          <div class="feature-desc">Dopo aver creato la stanza, clicca sul pulsante <strong>REGIA</strong>. Verrai reindirizzato ad <code>/admin</code> con il codice stanza già precompilato.</div>
+          <div class="feature-label" data-i18n="ga_s2_c2_f1_label">Dalla Home</div>
+          <div class="feature-desc" data-i18n-html="ga_s2_c2_f1_desc">Dopo aver creato la stanza, clicca sul pulsante <strong>REGIA</strong>. Verrai reindirizzato ad <code>/admin</code> con il codice stanza già precompilato.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128279;</div>
         <div class="feature-body">
-          <div class="feature-label">Direttamente da URL</div>
-          <div class="feature-desc">Vai su <code>/admin</code>, inserisci il codice stanza e il PIN admin quando richiesto.</div>
+          <div class="feature-label" data-i18n="ga_s2_c2_f2_label">Direttamente da URL</div>
+          <div class="feature-desc" data-i18n-html="ga_s2_c2_f2_desc">Vai su <code>/admin</code>, inserisci il codice stanza e il PIN admin quando richiesto.</div>
         </div>
       </div>
     </div>
@@ -536,42 +537,42 @@
     <div class="section-header">
       <div class="step-circle">3</div>
       <div class="section-header-text">
-        <h2>Caricare i Giocatori</h2>
-        <p>Come importare la lista giocatori dall'Excel</p>
+        <h2 data-i18n="ga_s3_title">Caricare i Giocatori</h2>
+        <p data-i18n="ga_s3_desc">Come importare la lista giocatori dall'Excel</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128196; Caricare il file Excel</div>
+      <div class="card-title" data-i18n="ga_s3_c1_title">&#128196; Caricare il file Excel</div>
       <ul class="steps-list">
-        <li><div class="step-text">Nel pannello admin, vai alla scheda <strong>"Giocatori"</strong>.</div></li>
-        <li><div class="step-text">Clicca su <strong>"Carica File Excel"</strong> e seleziona il tuo file <code>.xlsx</code>.</div></li>
-        <li><div class="step-text">Scegli la modalità di caricamento: <strong>"Sostituisci"</strong> (cancella la lista esistente) oppure <strong>"Integra"</strong> (aggiunge i nuovi giocatori senza cancellare quelli già presenti).</div></li>
-        <li><div class="step-text">Conferma il caricamento. I giocatori appariranno nella lista con il loro ruolo e valore.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s3_c1_s1">Nel pannello admin, vai alla scheda <strong>"Giocatori"</strong>.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s3_c1_s2">Clicca su <strong>"Carica File Excel"</strong> e seleziona il tuo file <code>.xlsx</code>.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s3_c1_s3">Scegli la modalità di caricamento: <strong>"Sostituisci"</strong> (cancella la lista esistente) oppure <strong>"Integra"</strong> (aggiunge i nuovi giocatori senza cancellare quelli già presenti).</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s3_c1_s4">Conferma il caricamento. I giocatori appariranno nella lista con il loro ruolo e valore.</div></li>
       </ul>
     </div>
 
     <div class="card">
-      <div class="card-title">&#9998; Modifiche manuali</div>
+      <div class="card-title" data-i18n="ga_s3_c2_title">&#9998; Modifiche manuali</div>
       <div class="feature-row">
         <div class="feature-icon">&#10133;</div>
         <div class="feature-body">
-          <div class="feature-label">Aggiungere un giocatore manualmente</div>
-          <div class="feature-desc">Usa il form "Aggiungi Giocatore" con nome, ruolo e valore. Utile per svincolati o giocatori mancanti nella lista.</div>
+          <div class="feature-label" data-i18n="ga_s3_c2_f1_label">Aggiungere un giocatore manualmente</div>
+          <div class="feature-desc" data-i18n="ga_s3_c2_f1_desc">Usa il form "Aggiungi Giocatore" con nome, ruolo e valore. Utile per svincolati o giocatori mancanti nella lista.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128295;</div>
         <div class="feature-body">
-          <div class="feature-label">Correggere il ruolo di un giocatore</div>
-          <div class="feature-desc">Seleziona il giocatore dalla lista e usa "Correggi Ruolo" per aggiornare la sua posizione senza ricaricare tutto il file.</div>
+          <div class="feature-label" data-i18n="ga_s3_c2_f2_label">Correggere il ruolo di un giocatore</div>
+          <div class="feature-desc" data-i18n="ga_s3_c2_f2_desc">Seleziona il giocatore dalla lista e usa "Correggi Ruolo" per aggiornare la sua posizione senza ricaricare tutto il file.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128465;</div>
         <div class="feature-body">
-          <div class="feature-label">Scartare un giocatore dal mazzo</div>
-          <div class="feature-desc">Se un giocatore non deve entrare nell'asta (es. è ritirato), puoi rimuoverlo dal mazzo. Non sarà mai estratto come prossimo giocatore.</div>
+          <div class="feature-label" data-i18n="ga_s3_c2_f3_label">Scartare un giocatore dal mazzo</div>
+          <div class="feature-desc" data-i18n="ga_s3_c2_f3_desc">Se un giocatore non deve entrare nell'asta (es. è ritirato), puoi rimuoverlo dal mazzo. Non sarà mai estratto come prossimo giocatore.</div>
         </div>
       </div>
     </div>
@@ -582,26 +583,26 @@
     <div class="section-header">
       <div class="step-circle">4</div>
       <div class="section-header-text">
-        <h2>Aggiungere le Squadre</h2>
-        <p>Come creare le squadre che parteciperanno all'asta</p>
+        <h2 data-i18n="ga_s4_title">Aggiungere le Squadre</h2>
+        <p data-i18n="ga_s4_desc">Come creare le squadre che parteciperanno all'asta</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#127942; Creare le squadre</div>
+      <div class="card-title" data-i18n="ga_s4_c1_title">&#127942; Creare le squadre</div>
       <ul class="steps-list">
-        <li><div class="step-text">Vai alla scheda <strong>"Squadre"</strong> nel pannello admin.</div></li>
-        <li><div class="step-text">Per ogni partecipante, inserisci il <strong>nome della squadra</strong> (es. "Napoli di Marco") e il <strong>budget iniziale</strong> in crediti.</div></li>
-        <li><div class="step-text">Clicca <strong>"Aggiungi Squadra"</strong>. Ripeti per ogni partecipante.</div></li>
-        <li><div class="step-text">Puoi eliminare una squadra con l'icona del cestino accanto al suo nome, oppure aggiungere crediti extra con il tasto dedicato.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s4_c1_s1">Vai alla scheda <strong>"Squadre"</strong> nel pannello admin.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s4_c1_s2">Per ogni partecipante, inserisci il <strong>nome della squadra</strong> (es. "Napoli di Marco") e il <strong>budget iniziale</strong> in crediti.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s4_c1_s3">Clicca <strong>"Aggiungi Squadra"</strong>. Ripeti per ogni partecipante.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s4_c1_s4">Puoi eliminare una squadra con l'icona del cestino accanto al suo nome, oppure aggiungere crediti extra con il tasto dedicato.</div></li>
       </ul>
-      <div class="info-box tip" style="margin-top:14px;"><strong>Suggerimento:</strong> Il budget iniziale può essere lo stesso per tutti (es. 500 crediti) oppure diverso per ogni squadra — è una tua scelta strategica.</div>
+      <div class="info-box tip" style="margin-top:14px;" data-i18n-html="ga_s4_tip"><strong>Suggerimento:</strong> Il budget iniziale può essere lo stesso per tutti (es. 500 crediti) oppure diverso per ogni squadra — è una tua scelta strategica.</div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128179; Gestione budget in corso d'asta</div>
-      <p>Il budget di ogni squadra si aggiorna automaticamente ad ogni acquisto. Puoi vedere in tempo reale quanto crediti restano a ciascuna squadra direttamente nella scheda Squadre e nel pannello TV (host.html).</p>
-      <p>Per <strong>aggiungere crediti</strong> manualmente a una squadra (es. per correggere un errore), usa il pulsante "+" accanto al nome della squadra.</p>
+      <div class="card-title" data-i18n="ga_s4_c2_title">&#128179; Gestione budget in corso d'asta</div>
+      <p data-i18n-html="ga_s4_c2_p1">Il budget di ogni squadra si aggiorna automaticamente ad ogni acquisto. Puoi vedere in tempo reale quanto crediti restano a ciascuna squadra direttamente nella scheda Squadre e nel pannello TV (host.html).</p>
+      <p data-i18n-html="ga_s4_c2_p2">Per <strong>aggiungere crediti</strong> manualmente a una squadra (es. per correggere un errore), usa il pulsante "+" accanto al nome della squadra.</p>
     </div>
   </section>
 
@@ -610,64 +611,64 @@
     <div class="section-header">
       <div class="step-circle">5</div>
       <div class="section-header-text">
-        <h2>Configurare l'Asta</h2>
-        <p>Impostazioni di budget, rosa, timer e limiti</p>
+        <h2 data-i18n="ga_s5_title">Configurare l'Asta</h2>
+        <p data-i18n="ga_s5_desc">Impostazioni di budget, rosa, timer e limiti</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#9881; Impostazioni nella scheda "Operazioni"</div>
+      <div class="card-title" data-i18n="ga_s5_c1_title">&#9881; Impostazioni nella scheda "Operazioni"</div>
       <div style="overflow-x:auto;">
         <table class="settings-table">
           <thead>
-            <tr><th>Impostazione</th><th>Descrizione</th><th>Esempio</th></tr>
+            <tr><th data-i18n="ga_s5_th1">Impostazione</th><th data-i18n="ga_s5_th2">Descrizione</th><th data-i18n="ga_s5_th3">Esempio</th></tr>
           </thead>
           <tbody>
             <tr>
-              <td>Budget Iniziale</td>
-              <td>Crediti iniziali di ogni squadra (se non impostati singolarmente)</td>
-              <td>500 cr</td>
+              <td data-i18n="ga_s5_r1_c1">Budget Iniziale</td>
+              <td data-i18n="ga_s5_r1_c2">Crediti iniziali di ogni squadra (se non impostati singolarmente)</td>
+              <td data-i18n="ga_s5_r1_c3">500 cr</td>
             </tr>
             <tr>
-              <td>Giocatori Totali</td>
-              <td>Numero massimo di giocatori acquistabili per squadra</td>
-              <td>25</td>
+              <td data-i18n="ga_s5_r2_c1">Giocatori Totali</td>
+              <td data-i18n="ga_s5_r2_c2">Numero massimo di giocatori acquistabili per squadra</td>
+              <td data-i18n="ga_s5_r2_c3">25</td>
             </tr>
             <tr>
-              <td>Limite Portieri (P)</td>
-              <td>Quanti portieri ogni squadra può acquistare al massimo</td>
-              <td>3</td>
+              <td data-i18n="ga_s5_r3_c1">Limite Portieri (P)</td>
+              <td data-i18n="ga_s5_r3_c2">Quanti portieri ogni squadra può acquistare al massimo</td>
+              <td data-i18n="ga_s5_r3_c3">3</td>
             </tr>
             <tr>
-              <td>Limite Difensori (D)</td>
-              <td>Numero massimo di difensori per squadra</td>
-              <td>8</td>
+              <td data-i18n="ga_s5_r4_c1">Limite Difensori (D)</td>
+              <td data-i18n="ga_s5_r4_c2">Numero massimo di difensori per squadra</td>
+              <td data-i18n="ga_s5_r4_c3">8</td>
             </tr>
             <tr>
-              <td>Limite Centrocampisti (C)</td>
-              <td>Numero massimo di centrocampisti per squadra</td>
-              <td>8</td>
+              <td data-i18n="ga_s5_r5_c1">Limite Centrocampisti (C)</td>
+              <td data-i18n="ga_s5_r5_c2">Numero massimo di centrocampisti per squadra</td>
+              <td data-i18n="ga_s5_r5_c3">8</td>
             </tr>
             <tr>
-              <td>Limite Attaccanti (A)</td>
-              <td>Numero massimo di attaccanti per squadra</td>
-              <td>6</td>
+              <td data-i18n="ga_s5_r6_c1">Limite Attaccanti (A)</td>
+              <td data-i18n="ga_s5_r6_c2">Numero massimo di attaccanti per squadra</td>
+              <td data-i18n="ga_s5_r6_c3">6</td>
             </tr>
             <tr>
-              <td>Durata Timer</td>
-              <td>Secondi di countdown per ogni offerta</td>
-              <td>30 sec</td>
+              <td data-i18n="ga_s5_r7_c1">Durata Timer</td>
+              <td data-i18n="ga_s5_r7_c2">Secondi di countdown per ogni offerta</td>
+              <td data-i18n="ga_s5_r7_c3">30 sec</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div class="info-box tip" style="margin-top:14px;"><strong>Suggerimento:</strong> Imposta queste opzioni <em>prima</em> di iniziare l'asta. Cambiarle a metà asta è possibile ma potrebbe creare squilibri tra le squadre.</div>
+      <div class="info-box tip" style="margin-top:14px;" data-i18n-html="ga_s5_tip"><strong>Suggerimento:</strong> Imposta queste opzioni <em>prima</em> di iniziare l'asta. Cambiarle a metà asta è possibile ma potrebbe creare squilibri tra le squadre.</div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#127754; Auto-Avanzamento</div>
-      <p>Quando <strong>Auto-Avanzamento</strong> è attivo, dopo che un giocatore viene venduto (o rimane invenduto), il prossimo giocatore parte automaticamente senza che l'admin debba premere un pulsante. Ideale per aste veloci.</p>
-      <p>Puoi attivarlo/disattivarlo dalla scheda "Asta" in qualsiasi momento.</p>
+      <div class="card-title" data-i18n="ga_s5_c2_title">&#127754; Auto-Avanzamento</div>
+      <p data-i18n-html="ga_s5_c2_p1">Quando <strong>Auto-Avanzamento</strong> è attivo, dopo che un giocatore viene venduto (o rimane invenduto), il prossimo giocatore parte automaticamente senza che l'admin debba premere un pulsante. Ideale per aste veloci.</p>
+      <p data-i18n="ga_s5_c2_p2">Puoi attivarlo/disattivarlo dalla scheda "Asta" in qualsiasi momento.</p>
     </div>
   </section>
 
@@ -676,55 +677,55 @@
     <div class="section-header">
       <div class="step-circle blue">6</div>
       <div class="section-header-text">
-        <h2>Condurre l'Asta</h2>
-        <p>Come gestire il flusso dell'asta in tempo reale</p>
+        <h2 data-i18n="ga_s6_title">Condurre l'Asta</h2>
+        <p data-i18n="ga_s6_desc">Come gestire il flusso dell'asta in tempo reale</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#9654; Avviare l'asta</div>
+      <div class="card-title" data-i18n="ga_s6_c1_title">&#9654; Avviare l'asta</div>
       <ul class="steps-list">
-        <li><div class="step-text">Prima di avviare, assicurati che i partecipanti abbiano scansionato il QR code sul TV (o aperto il link) e abbiano scelto la loro squadra su <strong>phone.html</strong>.</div></li>
-        <li><div class="step-text">Vai alla scheda <strong>"Asta"</strong> nel pannello admin.</div></li>
-        <li><div class="step-text">Clicca <strong>"Avvia Casuale"</strong> per estrarre un giocatore a caso, oppure seleziona un giocatore specifico dalla lista e clicca <strong>"Avvia Giocatore"</strong>.</div></li>
-        <li><div class="step-text">Il countdown parte, i partecipanti possono fare offerte dal loro telefono. Le offerte arrivano in tempo reale.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s6_c1_s1">Prima di avviare, assicurati che i partecipanti abbiano scansionato il QR code sul TV (o aperto il link) e abbiano scelto la loro squadra su <strong>phone.html</strong>.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s6_c1_s2">Vai alla scheda <strong>"Asta"</strong> nel pannello admin.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s6_c1_s3">Clicca <strong>"Avvia Casuale"</strong> per estrarre un giocatore a caso, oppure seleziona un giocatore specifico dalla lista e clicca <strong>"Avvia Giocatore"</strong>.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s6_c1_s4">Il countdown parte, i partecipanti possono fare offerte dal loro telefono. Le offerte arrivano in tempo reale.</div></li>
       </ul>
     </div>
 
     <div class="card">
-      <div class="card-title">&#9203; Gestione del timer</div>
+      <div class="card-title" data-i18n="ga_s6_c2_title">&#9203; Gestione del timer</div>
       <div class="feature-row">
         <div class="feature-icon">&#9208;</div>
         <div class="feature-body">
-          <div class="feature-label">Pausa / Riprendi</div>
-          <div class="feature-desc">Puoi mettere in pausa il timer in qualsiasi momento — ad esempio se un partecipante ha un problema. Il timer riprende esattamente da dove si era fermato.</div>
+          <div class="feature-label" data-i18n="ga_s6_c2_f1_label">Pausa / Riprendi</div>
+          <div class="feature-desc" data-i18n="ga_s6_c2_f1_desc">Puoi mettere in pausa il timer in qualsiasi momento — ad esempio se un partecipante ha un problema. Il timer riprende esattamente da dove si era fermato.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128308;</div>
         <div class="feature-body">
-          <div class="feature-label">Assegnazione forzata</div>
-          <div class="feature-desc">Se il timer è scaduto ma vuoi assegnare il giocatore a una squadra specifica con un prezzo specifico (es. per correggere un errore), usa <strong>"Assegna Forzato"</strong>.</div>
+          <div class="feature-label" data-i18n="ga_s6_c2_f2_label">Assegnazione forzata</div>
+          <div class="feature-desc" data-i18n-html="ga_s6_c2_f2_desc">Se il timer è scaduto ma vuoi assegnare il giocatore a una squadra specifica con un prezzo specifico (es. per correggere un errore), usa <strong>"Assegna Forzato"</strong>.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128257;</div>
         <div class="feature-body">
-          <div class="feature-label">Ricicla invenduti</div>
-          <div class="feature-desc">I giocatori rimasti invenduti vengono automaticamente rimessi nel mazzo. Puoi riciclarli manualmente dalla scheda Asta con il pulsante "Ricicla Invenduti".</div>
+          <div class="feature-label" data-i18n="ga_s6_c2_f3_label">Ricicla invenduti</div>
+          <div class="feature-desc" data-i18n="ga_s6_c2_f3_desc">I giocatori rimasti invenduti vengono automaticamente rimessi nel mazzo. Puoi riciclarli manualmente dalla scheda Asta con il pulsante "Ricicla Invenduti".</div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128250; Vista TV (host.html)</div>
-      <p>Mentre gestisci l'asta dal pannello admin, il <strong>TV Host</strong> (<code>/host</code>) mostra ai partecipanti in sala:</p>
+      <div class="card-title" data-i18n="ga_s6_c3_title">&#128250; Vista TV (host.html)</div>
+      <p data-i18n-html="ga_s6_c3_p1">Mentre gestisci l'asta dal pannello admin, il <strong>TV Host</strong> (<code>/host</code>) mostra ai partecipanti in sala:</p>
       <ul style="margin-top:10px;padding-left:20px;color:var(--text-muted);font-size:0.9rem;display:flex;flex-direction:column;gap:6px;">
-        <li>Nome del giocatore in asta (grande)</li>
-        <li>Prezzo corrente e miglior offerente</li>
-        <li>Countdown in rosso</li>
-        <li>QR code per connettersi dal telefono</li>
-        <li>Classifica squadre con budget rimanente</li>
+        <li data-i18n="ga_s6_c3_l1">Nome del giocatore in asta (grande)</li>
+        <li data-i18n="ga_s6_c3_l2">Prezzo corrente e miglior offerente</li>
+        <li data-i18n="ga_s6_c3_l3">Countdown in rosso</li>
+        <li data-i18n="ga_s6_c3_l4">QR code per connettersi dal telefono</li>
+        <li data-i18n="ga_s6_c3_l5">Classifica squadre con budget rimanente</li>
       </ul>
     </div>
   </section>
@@ -734,58 +735,58 @@
     <div class="section-header">
       <div class="step-circle red">7</div>
       <div class="section-header-text">
-        <h2>Operazioni Speciali</h2>
-        <p>Correzioni, rimozioni e gestione di situazioni particolari</p>
+        <h2 data-i18n="ga_s7_title">Operazioni Speciali</h2>
+        <p data-i18n="ga_s7_desc">Correzioni, rimozioni e gestione di situazioni particolari</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128295; Correggere errori durante l'asta</div>
+      <div class="card-title" data-i18n="ga_s7_c1_title">&#128295; Correggere errori durante l'asta</div>
       <div class="feature-row">
         <div class="feature-icon">&#8617;</div>
         <div class="feature-body">
-          <div class="feature-label">Riassegnare l'ultimo giocatore venduto</div>
-          <div class="feature-desc">Se l'ultimo giocatore è stato assegnato alla squadra sbagliata, usa <strong>"Riassegna Ultimo Venduto"</strong> per spostarlo su un'altra squadra con il prezzo corretto. Il credito viene ricalcolato automaticamente.</div>
+          <div class="feature-label" data-i18n="ga_s7_c1_f1_label">Riassegnare l'ultimo giocatore venduto</div>
+          <div class="feature-desc" data-i18n-html="ga_s7_c1_f1_desc">Se l'ultimo giocatore è stato assegnato alla squadra sbagliata, usa <strong>"Riassegna Ultimo Venduto"</strong> per spostarlo su un'altra squadra con il prezzo corretto. Il credito viene ricalcolato automaticamente.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128465;</div>
         <div class="feature-body">
-          <div class="feature-label">Rimuovere un giocatore acquistato</div>
-          <div class="feature-desc">Dalla lista delle rose, puoi rimuovere un giocatore già acquistato. Il credito speso viene <strong>rimborsato</strong> automaticamente alla squadra.</div>
+          <div class="feature-label" data-i18n="ga_s7_c1_f2_label">Rimuovere un giocatore acquistato</div>
+          <div class="feature-desc" data-i18n-html="ga_s7_c1_f2_desc">Dalla lista delle rose, puoi rimuovere un giocatore già acquistato. Il credito speso viene <strong>rimborsato</strong> automaticamente alla squadra.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128176;</div>
         <div class="feature-body">
-          <div class="feature-label">Aggiungere crediti manualmente</div>
-          <div class="feature-desc">Dalla scheda Squadre, puoi aggiungere o sottrarre crediti a una singola squadra. Utile per correggere errori o applicare bonus/malus della lega.</div>
+          <div class="feature-label" data-i18n="ga_s7_c1_f3_label">Aggiungere crediti manualmente</div>
+          <div class="feature-desc" data-i18n="ga_s7_c1_f3_desc">Dalla scheda Squadre, puoi aggiungere o sottrarre crediti a una singola squadra. Utile per correggere errori o applicare bonus/malus della lega.</div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128190; Backup e salvataggi</div>
-      <p>DraftARENA salva automaticamente lo stato dell'asta in tempo reale. Ma puoi anche:</p>
+      <div class="card-title" data-i18n="ga_s7_c2_title">&#128190; Backup e salvataggi</div>
+      <p data-i18n="ga_s7_c2_p1">DraftARENA salva automaticamente lo stato dell'asta in tempo reale. Ma puoi anche:</p>
       <div class="feature-row">
         <div class="feature-icon">&#128190;</div>
         <div class="feature-body">
-          <div class="feature-label">Esportare un backup manuale</div>
-          <div class="feature-desc">Dalla scheda Config, usa "Esporta Backup" per scaricare un file JSON con l'intera configurazione della stanza — utile prima di operazioni rischiose.</div>
+          <div class="feature-label" data-i18n="ga_s7_c2_f1_label">Esportare un backup manuale</div>
+          <div class="feature-desc" data-i18n="ga_s7_c2_f1_desc">Dalla scheda Config, usa "Esporta Backup" per scaricare un file JSON con l'intera configurazione della stanza — utile prima di operazioni rischiose.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128228;</div>
         <div class="feature-body">
-          <div class="feature-label">Importare un backup</div>
-          <div class="feature-desc">Se qualcosa va storto, puoi ripristinare uno stato precedente importando il file JSON di backup.</div>
+          <div class="feature-label" data-i18n="ga_s7_c2_f2_label">Importare un backup</div>
+          <div class="feature-desc" data-i18n="ga_s7_c2_f2_desc">Se qualcosa va storto, puoi ripristinare uno stato precedente importando il file JSON di backup.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#127942;</div>
         <div class="feature-body">
-          <div class="feature-label">Salvare nella Hall of Fame</div>
-          <div class="feature-desc">A fine stagione, puoi archiviare i risultati nell'Albo d'Oro della lega con classifica finale, trofei e statistiche.</div>
+          <div class="feature-label" data-i18n="ga_s7_c2_f3_label">Salvare nella Hall of Fame</div>
+          <div class="feature-desc" data-i18n="ga_s7_c2_f3_desc">A fine stagione, puoi archiviare i risultati nell'Albo d'Oro della lega con classifica finale, trofei e statistiche.</div>
         </div>
       </div>
     </div>
@@ -796,51 +797,51 @@
     <div class="section-header">
       <div class="step-circle green">8</div>
       <div class="section-header-text">
-        <h2>Fine Asta &amp; Export</h2>
-        <p>Come chiudere l'asta ed esportare i risultati</p>
+        <h2 data-i18n="ga_s8_title">Fine Asta &amp; Export</h2>
+        <p data-i18n="ga_s8_desc">Come chiudere l'asta ed esportare i risultati</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128200; Esportare i risultati</div>
-      <p>Quando l'asta è terminata, esporta i risultati in formato Excel dalla scheda <strong>"Export"</strong>. Il file generato contiene:</p>
+      <div class="card-title" data-i18n="ga_s8_c1_title">&#128200; Esportare i risultati</div>
+      <p data-i18n-html="ga_s8_c1_p1">Quando l'asta è terminata, esporta i risultati in formato Excel dalla scheda <strong>"Export"</strong>. Il file generato contiene:</p>
       <div class="feature-row">
         <div class="feature-icon">&#128202;</div>
         <div class="feature-body">
-          <div class="feature-label">Riepilogo Budget</div>
-          <div class="feature-desc">Budget iniziale, totale speso, crediti residui per ogni squadra.</div>
+          <div class="feature-label" data-i18n="ga_s8_c1_f1_label">Riepilogo Budget</div>
+          <div class="feature-desc" data-i18n="ga_s8_c1_f1_desc">Budget iniziale, totale speso, crediti residui per ogni squadra.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128101;</div>
         <div class="feature-body">
-          <div class="feature-label">Rose Complete</div>
-          <div class="feature-desc">Per ogni squadra, elenco di tutti i giocatori acquistati con ruolo e prezzo pagato.</div>
+          <div class="feature-label" data-i18n="ga_s8_c1_f2_label">Rose Complete</div>
+          <div class="feature-desc" data-i18n="ga_s8_c1_f2_desc">Per ogni squadra, elenco di tutti i giocatori acquistati con ruolo e prezzo pagato.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128683;</div>
         <div class="feature-body">
-          <div class="feature-label">Giocatori Invenduti</div>
-          <div class="feature-desc">Lista completa dei giocatori rimasti senza acquirente.</div>
+          <div class="feature-label" data-i18n="ga_s8_c1_f3_label">Giocatori Invenduti</div>
+          <div class="feature-desc" data-i18n="ga_s8_c1_f3_desc">Lista completa dei giocatori rimasti senza acquirente.</div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#127942; Archiviare nella Hall of Fame</div>
+      <div class="card-title" data-i18n="ga_s8_c2_title">&#127942; Archiviare nella Hall of Fame</div>
       <ul class="steps-list">
-        <li><div class="step-text">Vai alla scheda <strong>"Config"</strong> e clicca su <strong>"Salva nell'Albo d'Oro"</strong>.</div></li>
-        <li><div class="step-text">Assegna un nome alla stagione (es. "Fantacalcio 2025/26").</div></li>
-        <li><div class="step-text">I dati vengono archiviati nella sezione <strong>/albo</strong> della tua lega, accessibile da tutti i partecipanti.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s8_c2_s1">Vai alla scheda <strong>"Config"</strong> e clicca su <strong>"Salva nell'Albo d'Oro"</strong>.</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s8_c2_s2">Assegna un nome alla stagione (es. "Fantacalcio 2025/26").</div></li>
+        <li><div class="step-text" data-i18n-html="ga_s8_c2_s3">I dati vengono archiviati nella sezione <strong>/albo</strong> della tua lega, accessibile da tutti i partecipanti.</div></li>
       </ul>
-      <div class="info-box tip" style="margin-top:14px;"><strong>Suggerimento:</strong> Fai sempre un export Excel <em>prima</em> di archiviare, così hai una copia locale dei risultati.</div>
+      <div class="info-box tip" style="margin-top:14px;" data-i18n-html="ga_s8_tip"><strong>Suggerimento:</strong> Fai sempre un export Excel <em>prima</em> di archiviare, così hai una copia locale dei risultati.</div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128260; Reset completo</div>
-      <p>Per ripartire da zero con la stessa stanza (es. per una seconda asta), usa il pulsante <strong>"Reset Completo"</strong> nella scheda Operazioni. Questo cancella tutte le rose, le offerte e i giocatori venduti, mantenendo la configurazione delle squadre e del budget.</p>
-      <div class="info-box warn"><strong>Attenzione:</strong> Il reset completo è irreversibile. Esporta sempre un backup prima di procedere.</div>
+      <div class="card-title" data-i18n="ga_s8_c3_title">&#128260; Reset completo</div>
+      <p data-i18n-html="ga_s8_c3_p1">Per ripartire da zero con la stessa stanza (es. per una seconda asta), usa il pulsante <strong>"Reset Completo"</strong> nella scheda Operazioni. Questo cancella tutte le rose, le offerte e i giocatori venduti, mantenendo la configurazione delle squadre e del budget.</p>
+      <div class="info-box warn" data-i18n-html="ga_s8_warn"><strong>Attenzione:</strong> Il reset completo è irreversibile. Esporta sempre un backup prima di procedere.</div>
     </div>
   </section>
 
@@ -849,23 +850,23 @@
     <div class="section-header">
       <div class="step-circle" style="background:var(--text-muted);color:#000;font-size:1.2rem;">&#8635;</div>
       <div class="section-header-text">
-        <h2>Riepilogo del Flusso Completo</h2>
-        <p>Tutto in ordine dalla A alla Z</p>
+        <h2 data-i18n="ga_flow_title">Riepilogo del Flusso Completo</h2>
+        <p data-i18n="ga_flow_desc">Tutto in ordine dalla A alla Z</p>
       </div>
     </div>
     <div class="card">
       <div class="timeline">
-        <div class="timeline-item"><div class="ti-title">Prepara il file Excel</div><div class="ti-desc">Colonne: Nome, Ruolo (Mantra), Squadra, Quotazione</div></div>
-        <div class="timeline-item"><div class="ti-title">Crea la stanza dalla Home</div><div class="ti-desc">Ottieni codice stanza + PIN admin e aprono il pannello admin</div></div>
-        <div class="timeline-item"><div class="ti-title">Carica i giocatori</div><div class="ti-desc">Scheda Giocatori → Carica file Excel</div></div>
-        <div class="timeline-item"><div class="ti-title">Aggiungi le squadre</div><div class="ti-desc">Scheda Squadre → Aggiungi una squadra per ogni partecipante con budget iniziale</div></div>
-        <div class="timeline-item"><div class="ti-title">Configura le impostazioni</div><div class="ti-desc">Scheda Operazioni → Timer, limiti posizione, numero totale giocatori</div></div>
-        <div class="timeline-item"><div class="ti-title">Apri il TV Host</div><div class="ti-desc">Vai su /host, inserisci codice + PIN — la schermata TV è pronta</div></div>
-        <div class="timeline-item"><div class="ti-title">I partecipanti si connettono</div><div class="ti-desc">Scansionano il QR sul TV, aprono /phone, scelgono la propria squadra</div></div>
-        <div class="timeline-item"><div class="ti-title">Avvia l'asta</div><div class="ti-desc">Scheda Asta → Avvia Casuale (o seleziona giocatore specifico)</div></div>
-        <div class="timeline-item"><div class="ti-title">Gestisci il flusso</div><div class="ti-desc">Pausa, assegna, correggi errori, ricicla invenduti</div></div>
-        <div class="timeline-item"><div class="ti-title">Fine asta → Export</div><div class="ti-desc">Scheda Export → Scarica Excel con rose e riepilogo budget</div></div>
-        <div class="timeline-item"><div class="ti-title">Archivia nella Hall of Fame</div><div class="ti-desc">Scheda Config → Salva nell'Albo d'Oro della lega</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_1_t">Prepara il file Excel</div><div class="ti-desc" data-i18n="ga_flow_1_d">Colonne: Nome, Ruolo (Mantra), Squadra, Quotazione</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_2_t">Crea la stanza dalla Home</div><div class="ti-desc" data-i18n="ga_flow_2_d">Ottieni codice stanza + PIN admin e aprono il pannello admin</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_3_t">Carica i giocatori</div><div class="ti-desc" data-i18n="ga_flow_3_d">Scheda Giocatori → Carica file Excel</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_4_t">Aggiungi le squadre</div><div class="ti-desc" data-i18n="ga_flow_4_d">Scheda Squadre → Aggiungi una squadra per ogni partecipante con budget iniziale</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_5_t">Configura le impostazioni</div><div class="ti-desc" data-i18n="ga_flow_5_d">Scheda Operazioni → Timer, limiti posizione, numero totale giocatori</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_6_t">Apri il TV Host</div><div class="ti-desc" data-i18n="ga_flow_6_d">Vai su /host, inserisci codice + PIN — la schermata TV è pronta</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_7_t">I partecipanti si connettono</div><div class="ti-desc" data-i18n="ga_flow_7_d">Scansionano il QR sul TV, aprono /phone, scelgono la propria squadra</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_8_t">Avvia l'asta</div><div class="ti-desc" data-i18n="ga_flow_8_d">Scheda Asta → Avvia Casuale (o seleziona giocatore specifico)</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_9_t">Gestisci il flusso</div><div class="ti-desc" data-i18n="ga_flow_9_d">Pausa, assegna, correggi errori, ricicla invenduti</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_10_t">Fine asta → Export</div><div class="ti-desc" data-i18n="ga_flow_10_d">Scheda Export → Scarica Excel con rose e riepilogo budget</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_11_t">Archivia nella Hall of Fame</div><div class="ti-desc" data-i18n="ga_flow_11_d">Scheda Config → Salva nell'Albo d'Oro della lega</div></div>
       </div>
     </div>
   </section>
@@ -873,13 +874,15 @@
 </div>
 
 <footer class="guide-footer">
-  <p>Hai bisogno di aiuto? Consulta anche la guida per i partecipanti.</p>
+  <p data-i18n="g_footer_admin">Hai bisogno di aiuto? Consulta anche la guida per i partecipanti.</p>
   <div class="footer-links">
-    <a href="/">Home DraftARENA</a>
-    <a href="/guida-utenti">Guida Partecipanti</a>
-    <a href="/admin">Pannello Admin</a>
+    <a href="/" data-i18n="g_home">Home DraftARENA</a>
+    <a href="/guida-utenti" data-i18n="g_user_guide">Guida Partecipanti</a>
+    <a href="/admin" data-i18n="g_panel">Pannello Admin</a>
   </div>
 </footer>
 
+<script src="/i18n.js"></script>
+<script>I18N.applyLang('guida');</script>
 </body>
 </html>
