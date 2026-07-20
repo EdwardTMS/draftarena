@@ -2080,17 +2080,28 @@
 
         function apriEditorStagione(id, stagione) {
           const s = (typeof stagione === 'string') ? JSON.parse(stagione) : stagione;
-          _stagioneCurrent = { id: s.id, label: s.label, year: s.year, backupData: s.backup_data, season_data: s.season_data || { classifica: [], competizioni: [] } };
+          _stagioneCurrent = { id: s.id, label: s.label, year: s.year, backupData: s.backup_data, season_data: s.season_data || { classifica: [], competizioni: [] }, isManual: s.auction_name === 'storico' };
 
           document.getElementById('modal-stagione-label').textContent = `${s.label} (${s.year})`;
 
           // Popola classifica
-          const teams = (s.backup_data?.teams || []).map(t => t.name || t.key);
           const savedClassifica = _stagioneCurrent.season_data.classifica || [];
-          // Merge: usa l'ordine salvato se esiste, poi aggiungi le squadre mancanti
-          const orderedNames = [...savedClassifica.map(c => c.nome)];
-          teams.forEach(n => { if (!orderedNames.includes(n)) orderedNames.push(n); });
-          _stagioneCurrent.classifica = orderedNames.map((nome, i) => ({ pos: i + 1, nome }));
+          if (_stagioneCurrent.isManual) {
+            // Stagione manuale: usa i dati completi salvati (con presidente, punti, trofeo, altro)
+            _stagioneCurrent.classifica = savedClassifica.map((c, i) => ({
+              pos: i + 1, nome: c.nome || '',
+              presidente: c.presidente || '',
+              punti: c.punti != null ? c.punti : '',
+              trofeo: c.trofeo || '',
+              altro: c.altro || ''
+            }));
+          } else {
+            // Stagione da asta: usa i nomi delle squadre dal backup
+            const teams = (s.backup_data?.teams || []).map(t => t.name || t.key);
+            const orderedNames = [...savedClassifica.map(c => c.nome)];
+            teams.forEach(n => { if (!orderedNames.includes(n)) orderedNames.push(n); });
+            _stagioneCurrent.classifica = orderedNames.map((nome, i) => ({ pos: i + 1, nome }));
+          }
 
           renderClassificaEditor();
 
@@ -2112,16 +2123,69 @@
           if (!_stagioneCurrent) return;
           const list = document.getElementById('classifica-list');
           const medals = ['🥇','🥈','🥉'];
-          list.innerHTML = _stagioneCurrent.classifica.map((item, i) => `
-            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;
-                        background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;">
-              <span style="font-size:1rem;width:24px;text-align:center;">${medals[i] || (i+1)}</span>
-              <span style="flex:1;font-size:0.88rem;color:#f1f5f9;font-weight:${i<3?'600':'400'};">${escHtml(item.nome)}</span>
-              <div style="display:flex;flex-direction:column;gap:2px;">
-                ${i > 0 ? `<button onclick="sposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
-                ${i < _stagioneCurrent.classifica.length-1 ? `<button onclick="sposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
-              </div>
-            </div>`).join('');
+          if (_stagioneCurrent.isManual) {
+            // Editor completo per stagioni manuali (con presidente, punti, trofeo, altro)
+            list.innerHTML = _stagioneCurrent.classifica.map((r, i) => `
+              <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;
+                          background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
+                <div style="width:28px;text-align:center;font-size:1rem;flex-shrink:0;">${medals[i] || `<span style="font-size:0.8rem;font-weight:700;color:#64748b;">${i+1}</span>`}</div>
+                <input value="${escHtml(r.nome)}" oninput="aggiornaRigaManuale(${i},'nome',this.value)"
+                       placeholder="Nome squadra *"
+                       style="flex:2;min-width:120px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+                <input value="${escHtml(r.presidente||'')}" oninput="aggiornaRigaManuale(${i},'presidente',this.value)"
+                       placeholder="Presidente"
+                       style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+                <input value="${escHtml(r.punti!=null?r.punti:'')}" oninput="aggiornaRigaManuale(${i},'punti',this.value)"
+                       type="number" placeholder="Punti"
+                       style="width:70px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+                <input value="${escHtml(r.trofeo||'')}" oninput="aggiornaRigaManuale(${i},'trofeo',this.value)"
+                       placeholder="Trofeo"
+                       style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+                <input value="${escHtml(r.altro||'')}" oninput="aggiornaRigaManuale(${i},'altro',this.value)"
+                       placeholder="Altro"
+                       style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+                <div style="display:flex;gap:2px;flex-shrink:0;">
+                  ${i > 0 ? `<button onclick="sposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
+                  ${i < _stagioneCurrent.classifica.length-1 ? `<button onclick="sposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
+                  <button onclick="rimuoviRigaManuale(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">✕</button>
+                </div>
+              </div>`).join('') +
+              `<button onclick="aggiungiRigaManuale()" style="margin-top:6px;font-size:11px;padding:4px 10px;background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:5px;cursor:pointer;font-weight:600;">+ Aggiungi riga</button>`;
+          } else {
+            // Editor semplice per stagioni da asta (solo ordinamento)
+            list.innerHTML = _stagioneCurrent.classifica.map((item, i) => `
+              <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;
+                          background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;">
+                <span style="font-size:1rem;width:24px;text-align:center;">${medals[i] || (i+1)}</span>
+                <span style="flex:1;font-size:0.88rem;color:#f1f5f9;font-weight:${i<3?'600':'400'};">${escHtml(item.nome)}</span>
+                <div style="display:flex;flex-direction:column;gap:2px;">
+                  ${i > 0 ? `<button onclick="sposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
+                  ${i < _stagioneCurrent.classifica.length-1 ? `<button onclick="sposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
+                </div>
+              </div>`).join('');
+          }
+        }
+
+        function aggiornaRigaManuale(i, campo, val) {
+          if (_stagioneCurrent && _stagioneCurrent.classifica[i]) _stagioneCurrent.classifica[i][campo] = val;
+        }
+
+        function aggiungiRigaManuale() {
+          if (!_stagioneCurrent) return;
+          _stagioneCurrent.classifica.push({ pos: _stagioneCurrent.classifica.length + 1, nome: '', presidente: '', punti: '', trofeo: '', altro: '' });
+          renderClassificaEditor();
+        }
+
+        function rimuoviRigaManuale(i) {
+          if (!_stagioneCurrent) return;
+          _stagioneCurrent.classifica.splice(i, 1);
+          _stagioneCurrent.classifica.forEach((item, idx) => item.pos = idx + 1);
+          renderClassificaEditor();
         }
 
         function sposta(dir, idx) {
@@ -2199,8 +2263,17 @@
           const pin = getStoredAdminPin();
           if (!pin) { showAlert('error', 'PIN admin non trovato in sessione.'); return; }
 
+          const classifica = _stagioneCurrent.isManual
+            ? _stagioneCurrent.classifica.filter(c => c.nome && c.nome.trim()).map((c, i) => ({
+                pos: i + 1, nome: c.nome.trim(),
+                presidente: c.presidente || null,
+                punti: c.punti !== '' && c.punti != null ? Number(c.punti) : null,
+                trofeo: c.trofeo || null, altro: c.altro || null
+              }))
+            : _stagioneCurrent.classifica;
+
           const body = {
-            classifica: _stagioneCurrent.classifica,
+            classifica,
             competizioni: _stagioneCurrent.competizioni.map(c => ({ id: c.id, emoji: c.emoji, nome: c.nome, vincitore: c.vincitore }))
           };
 
