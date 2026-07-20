@@ -154,6 +154,7 @@
       </button>
       <a href="/#hub" class="btn-back">⬅️ Hub</a>
       <a href="/admin" class="btn-back">⬅️ Torna alla Regia</a>
+      <a id="btn-back-buzzer" href="#" class="btn-back" style="display:none;background:#10b981;color:#fff;border-color:#10b981;">🔔 Torna al Buzzer</a>
     </div>
   </header>
 
@@ -276,6 +277,11 @@
     function onRoomJoined(code) {
       currentRoomCode = code;
       hideGate();
+      const btnBuzzer = document.getElementById('btn-back-buzzer');
+      if (btnBuzzer) {
+        btnBuzzer.href = '/phone.html?room=' + code;
+        btnBuzzer.style.display = 'inline-block';
+      }
       if (socket.connected) {
         socket.emit('joinRoom', code);
       } else {
