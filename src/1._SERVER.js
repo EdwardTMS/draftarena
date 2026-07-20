@@ -1181,6 +1181,79 @@ app.get("/api/lega/:code/albo", async (req, res) => {
   }
 });
 
+// POST /api/room/:code/albo/stagione  → crea una stagione storica manuale (richiede x-admin-pin)
+app.post("/api/room/:code/albo/stagione", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  const room = rooms.get(code);
+  const pin = String(req.headers["x-admin-pin"] || "");
+  if (!room || String(room.adminPin) !== pin) {
+    return res.status(403).json({ success: false, error: "PIN admin non valido." });
+  }
+  if (LOCAL_MODE) return res.json({ success: true, id: "local" });
+
+  const { year, label, classifica, competizioni } = req.body;
+  if (!year || !label) return res.status(400).json({ success: false, error: "Anno e nome stagione obbligatori." });
+  if (!Array.isArray(classifica) || classifica.length === 0) {
+    return res.status(400).json({ success: false, error: "Classifica non valida." });
+  }
+  const comps = Array.isArray(competizioni) ? competizioni : [];
+
+  try {
+    const teamsStub = classifica
+      .filter(c => c && c.nome && c.nome.trim())
+      .map(c => ({ name: String(c.nome).trim().slice(0, 80), presidente: String(c.presidente || "").trim().slice(0, 80) }));
+    const { data, error } = await supabase.from("auction_backups").insert({
+      room_code: code,
+      year: parseInt(year),
+      auction_name: "storico",
+      label: String(label).trim().slice(0, 120),
+      backup_data: { app: "DraftARENA", version: 1, teams: teamsStub },
+      season_data: {
+        classifica: classifica.map((c, i) => ({
+          pos: i + 1,
+          nome: String(c.nome || "").trim().slice(0, 80),
+          presidente: c.presidente ? String(c.presidente).trim().slice(0, 80) : null,
+          punti: c.punti != null && c.punti !== "" ? Number(c.punti) : null,
+          trofeo: c.trofeo ? String(c.trofeo).trim().slice(0, 80) : null,
+          altro: c.altro ? String(c.altro).trim().slice(0, 120) : null
+        })).filter(c => c.nome),
+        competizioni: comps.map(c => ({
+          id: c.id || Date.now() + Math.random(),
+          emoji: c.emoji || "🏅",
+          nome: String(c.nome || "").trim().slice(0, 80),
+          vincitore: c.vincitore ? String(c.vincitore).trim().slice(0, 80) : null
+        })).filter(c => c.nome)
+      }
+    }).select("id").single();
+    if (error) throw error;
+    res.json({ success: true, id: data.id });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// DELETE /api/room/:code/albo/stagione/:id  → elimina una stagione storica manuale (richiede x-admin-pin)
+app.delete("/api/room/:code/albo/stagione/:id", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  const room = rooms.get(code);
+  const pin = String(req.headers["x-admin-pin"] || "");
+  if (!room || String(room.adminPin) !== pin) {
+    return res.status(403).json({ success: false, error: "PIN admin non valido." });
+  }
+  if (LOCAL_MODE) return res.json({ success: true });
+  try {
+    const { error } = await supabase.from("auction_backups")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("room_code", code)
+      .eq("auction_name", "storico");
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
 // PATCH /api/room/:code/backups/:id/season  → aggiorna season_data (richiede x-admin-pin)
 app.patch("/api/room/:code/backups/:id/season", async (req, res) => {
   const code = String(req.params.code).toUpperCase().trim();
