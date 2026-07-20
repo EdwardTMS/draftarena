@@ -180,24 +180,26 @@
 <nav class="nav">
   <img src="/DraftARENA.png" alt="DraftARENA">
   <span class="nav-room" id="nav-room">---</span>
-  <a href="/#hub" class="nav-back">← Hub</a>
+  <a href="/#hub" class="nav-back" data-i18n="albo_nav_hub">← Hub</a>
 </nav>
 
 <div class="hero">
   <div class="hero-trophy">🏆</div>
-  <h1>Albo d'<span>Oro</span></h1>
-  <p>Lo storico completo della lega — classifiche, coppe e vittorie stagione dopo stagione.</p>
+  <h1 data-i18n-html="albo_title">Albo d'<span>Oro</span></h1>
+  <p data-i18n="albo_desc">Lo storico completo della lega — classifiche, coppe e vittorie stagione dopo stagione.</p>
 </div>
 
 <div class="wrap">
 
   <div id="content">
-    <div class="loader"><span class="spin">⏳</span> Caricamento in corso...</div>
+    <div class="loader"><span class="spin">⏳</span> <span data-i18n="albo_loading">Caricamento in corso...</span></div>
   </div>
 
 </div>
 
+<script src="/i18n.js"></script>
 <script>
+  I18N.applyLang('albo');
   const params = new URLSearchParams(location.search);
   const roomCode = (params.get('room') || '').toUpperCase().trim();
 
@@ -207,7 +209,7 @@
   async function loadAlbo() {
     const content = document.getElementById('content');
     if (!roomCode) {
-      content.innerHTML = `<div class="empty"><div class="icon">🔍</div>Nessun codice stanza specificato.<br>Apri questa pagina con <code>?room=XXXXXX</code></div>`;
+      content.innerHTML = `<div class="empty"><div class="icon">🔍</div>` + I18N.t('albo','albo_no_code') + `</div>`;
       return;
     }
     try {
@@ -221,8 +223,7 @@
       if (seasons.length === 0) {
         content.innerHTML = `<div class="empty">
           <div class="icon">📋</div>
-          Nessuna stagione compilata ancora.<br>
-          Il Commander può aggiungere classifiche e competizioni<br>dal pannello Regia → Storico Lega.
+          ` + I18N.t('albo','albo_no_seasons') + `
         </div>`;
         return;
       }
@@ -257,17 +258,17 @@
       <div class="med-card ${i===0?'gold':''}">
         <div class="med-team">${esc(nome)}</div>
         <div class="med-count">${tot}</div>
-        <div class="med-sub">titol${tot===1?'o':'i'}</div>
+        <div class="med-sub">` + (tot===1 ? I18N.t('albo','albo_titolo_s') : I18N.t('albo','albo_titoli_p')) + `</div>
         <div class="med-trophies">${(details[nome]||[]).join('')}</div>
       </div>`).join('');
     return `<div style="margin-bottom:40px;">
-      <div class="sec-label">Medagliere Totale</div>
+      <div class="sec-label">` + I18N.t('albo','albo_medagliere') + `</div>
       <div class="medagliere-grid">${cards}</div>
     </div>`;
   }
 
   function renderStagioni(seasons) {
-    return `<div class="sec-label">Stagioni</div>` +
+    return `<div class="sec-label">` + I18N.t('albo','albo_stagioni') + `</div>` +
       seasons.map(s => {
         const cl = s.season_data.classifica || [];
         const comps = s.season_data.competizioni || [];
@@ -275,12 +276,21 @@
         const classCol = cl.length
           ? cl.map((r, i) => {
               const cls = i===0?'first':i===1?'second':i===2?'third':'';
-              return `<div class="rank-row">
-                <div class="rank-pos">${medals[i] || `<span class="rank-pos num">${i+1}</span>`}</div>
-                <div class="rank-name ${cls}">${esc(r.nome)}</div>
+              const extra = [];
+              if (r.presidente) extra.push(`<span style="color:#94a3b8;">${esc(r.presidente)}</span>`);
+              if (r.punti != null) extra.push(`<span style="color:#38bdf8;font-weight:700;">${esc(r.punti)} ${I18N.lang()==='en'?'pts':'pt'}</span>`);
+              if (r.trofeo) extra.push(`<span style="color:#fbbf24;">${esc(r.trofeo)}</span>`);
+              if (r.altro) extra.push(`<span style="color:#64748b;font-style:italic;">${esc(r.altro)}</span>`);
+              const extraHtml = extra.length ? `<div style="font-size:0.72rem;margin-top:2px;display:flex;gap:8px;flex-wrap:wrap;">${extra.join('')}</div>` : '';
+              return `<div class="rank-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+                <div style="display:flex;align-items:center;gap:10px;width:100%;">
+                  <div class="rank-pos">${medals[i] || `<span class="rank-pos num">${i+1}</span>`}</div>
+                  <div class="rank-name ${cls}">${esc(r.nome)}</div>
+                </div>
+                ${extraHtml}
               </div>`;
             }).join('')
-          : '<p style="font-size:0.83rem;color:#475569;">Classifica non inserita.</p>';
+          : '<p style="font-size:0.83rem;color:#475569;">' + I18N.t('albo','albo_no_classifica') + '</p>';
 
         const compCol = comps.length
           ? comps.map(c => `<div class="comp-row">
@@ -290,26 +300,26 @@
                 <div class="comp-vince">${esc(c.vincitore||'—')}</div>
               </div>
             </div>`).join('')
-          : '<p style="font-size:0.83rem;color:#475569;">Nessuna competizione registrata.</p>';
+          : '<p style="font-size:0.83rem;color:#475569;">' + I18N.t('albo','albo_no_competizioni') + '</p>';
 
         const d = new Date(s.exported_at);
-        const dateStr = d.toLocaleDateString('it-IT', { year:'numeric', month:'long', day:'numeric' });
+        const dateStr = d.toLocaleDateString(I18N.lang()==='en'?'en-GB':'it-IT', { year:'numeric', month:'long', day:'numeric' });
 
         return `<div class="season-card">
           <div class="season-header">
             <div class="season-year">${s.year}</div>
             <div>
               <div class="season-label">${esc(s.label)}</div>
-              <div class="season-sub">Archiviata il ${dateStr}</div>
+              <div class="season-sub">` + I18N.t('albo','albo_archiviata') + ` ${dateStr}</div>
             </div>
           </div>
           <div class="season-body">
             <div class="season-col">
-              <div class="col-title">📊 Classifica Finale</div>
+              <div class="col-title">` + I18N.t('albo','albo_classifica') + `</div>
               ${classCol}
             </div>
             <div class="season-col">
-              <div class="col-title">🏆 Competizioni Vinte</div>
+              <div class="col-title">` + I18N.t('albo','albo_competizioni') + `</div>
               ${compCol}
             </div>
           </div>
