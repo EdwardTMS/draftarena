@@ -173,27 +173,28 @@
 
   <div class="topbar">
     <img src="/DraftARENA.png" alt="DraftARENA">
-    <a href="/">← Torna alla home</a>
+    <a href="/" data-i18n="fb_nav_home">← Torna alla home</a>
+    <button id="lang-toggle" onclick="I18N.toggle('feedback')" style="margin-left:auto;background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:6px 10px;font-size:12px;color:#38bdf8;font-weight:bold;cursor:pointer;">🇬🇧 EN</button>
   </div>
 
   <div class="main">
 
     <div class="page-header">
-      <h1>Feedback & Supporto</h1>
-      <p>Hai usato DraftARENA? Lascia una recensione per aiutare altri utenti, oppure contattaci per qualsiasi problema.</p>
+      <h1 data-i18n="fb_title">Feedback & Supporto</h1>
+      <p data-i18n="fb_desc">Hai usato DraftARENA? Lascia una recensione per aiutare altri utenti, oppure contattaci per qualsiasi problema.</p>
     </div>
 
     <!-- Selezione tipo -->
     <div class="tipo-tabs" id="tipo-tabs">
       <div class="tipo-tab feedback active" data-tipo="feedback" onclick="setTipo('feedback')">
         <span class="icon">⭐</span>
-        <span class="label">Lascia una recensione</span>
-        <span class="sub">Condividi la tua esperienza. Potra' essere pubblicata sulla homepage.</span>
+        <span class="label" data-i18n="fb_tab_review">Lascia una recensione</span>
+        <span class="sub" data-i18n="fb_tab_review_sub">Condividi la tua esperienza. Potra' essere pubblicata sulla homepage.</span>
       </div>
       <div class="tipo-tab supporto" data-tipo="supporto" onclick="setTipo('supporto')">
         <span class="icon">🛠</span>
-        <span class="label">Richiesta supporto</span>
-        <span class="sub">Hai un problema o una domanda? Scrivici, ti risponderemo via email.</span>
+        <span class="label" data-i18n="fb_tab_support">Richiesta supporto</span>
+        <span class="sub" data-i18n="fb_tab_support_sub">Hai un problema o una domanda? Scrivici, ti risponderemo via email.</span>
       </div>
     </div>
 
@@ -202,7 +203,7 @@
 
       <!-- Stelle (solo feedback) -->
       <div class="form-group" id="stars-group">
-        <label class="form-label">Valutazione</label>
+        <label class="form-label" data-i18n="fb_rating">Valutazione</label>
         <div class="stars-row" id="stars-row">
           <button class="star-btn" data-v="1" onclick="setStar(1)">☆</button>
           <button class="star-btn" data-v="2" onclick="setStar(2)">☆</button>
@@ -214,26 +215,26 @@
 
       <!-- Messaggio -->
       <div class="form-group">
-        <label class="form-label" for="msg-input">Messaggio<span>*</span></label>
-        <textarea class="form-textarea" id="msg-input" placeholder="Scrivi qui la tua recensione o descrivi il tuo problema..."></textarea>
+        <label class="form-label" for="msg-input" data-i18n="fb_message">Messaggio<span>*</span></label>
+        <textarea class="form-textarea" id="msg-input" data-i18n-placeholder="fb_msg_ph_review" placeholder="Scrivi qui la tua recensione o descrivi il tuo problema..."></textarea>
       </div>
 
       <!-- Nome -->
       <div class="form-group">
-        <label class="form-label" for="nome-input">Nome (opzionale)</label>
-        <input type="text" class="form-input" id="nome-input" placeholder="es: Mario Rossi" maxlength="80">
+        <label class="form-label" for="nome-input" data-i18n="fb_name">Nome (opzionale)</label>
+        <input type="text" class="form-input" id="nome-input" data-i18n-placeholder="fb_name_ph" placeholder="es: Mario Rossi" maxlength="80">
       </div>
 
       <!-- Email -->
       <div class="form-group" id="email-group">
-        <label class="form-label" for="email-input">Email<span id="email-required-star"></span></label>
-        <input type="email" class="form-input" id="email-input" placeholder="es: mario@email.it" maxlength="200">
+        <label class="form-label" for="email-input" data-i18n="fb_email">Email<span id="email-required-star"></span></label>
+        <input type="email" class="form-input" id="email-input" data-i18n-placeholder="fb_email_ph" placeholder="es: mario@email.it" maxlength="200">
         <div style="font-size:11px;color:var(--text-muted);margin-top:4px;" id="email-hint"></div>
       </div>
 
       <!-- Visibilita (solo feedback) -->
       <div class="form-group" id="vis-group">
-        <label class="form-label">Visibilita'</label>
+        <label class="form-label" data-i18n="fb_visibility">Visibilita'</label>
         <div class="vis-row">
           <label class="vis-opt active" id="vis-pubblico" onclick="setVis('pubblico')">
             <input type="radio" name="visibilita" value="pubblico" checked>
@@ -241,8 +242,8 @@
               <div class="vis-icon">🌐</div>
             </div>
             <div>
-              <div class="vis-label">Pubblica</div>
-              <div class="vis-sub">Potrebbe apparire sulla homepage dopo approvazione</div>
+              <div class="vis-label" data-i18n="fb_vis_public">Pubblica</div>
+              <div class="vis-sub" data-i18n="fb_vis_public_sub">Potrebbe apparire sulla homepage dopo approvazione</div>
             </div>
           </label>
           <label class="vis-opt" id="vis-privato" onclick="setVis('privato')">
@@ -251,32 +252,32 @@
               <div class="vis-icon">🔒</div>
             </div>
             <div>
-              <div class="vis-label">Privata</div>
-              <div class="vis-sub">Solo il team DraftARENA la legge, non appare sul sito</div>
+              <div class="vis-label" data-i18n="fb_vis_private">Privata</div>
+              <div class="vis-sub" data-i18n="fb_vis_private_sub">Solo il team DraftARENA la legge, non appare sul sito</div>
             </div>
           </label>
         </div>
       </div>
 
-      <button class="btn-submit" id="btn-submit" onclick="inviaFeedback()">INVIA</button>
+      <button class="btn-submit" id="btn-submit" onclick="inviaFeedback()" data-i18n="fb_submit">INVIA</button>
       <div class="form-error" id="form-error"></div>
     </div>
 
     <!-- Successo -->
     <div class="success-card" id="success-card">
       <div class="success-icon">✅</div>
-      <h2>Grazie!</h2>
-      <p id="success-msg">Il tuo feedback e' stato inviato. Lo leggeremo al piu' presto.</p>
-      <a href="/" class="btn-back">Torna alla homepage</a>
+      <h2 data-i18n="fb_success_thanks">Grazie!</h2>
+      <p id="success-msg" data-i18n="fb_success_review">Il tuo feedback e' stato inviato. Lo leggeremo al piu' presto.</p>
+      <a href="/" class="btn-back" data-i18n="fb_back_home">Torna alla homepage</a>
     </div>
 
   </div>
 
-  <footer class="footer">
-    DraftARENA &mdash; L'asta del fantacalcio in tempo reale
-  </footer>
+  <footer class="footer" data-i18n="fb_footer">DraftARENA &mdash; L'asta del fantacalcio in tempo reale</footer>
 
+  <script src="/i18n.js"></script>
   <script>
+    I18N.applyLang('feedback');
     let tipoAttuale = 'feedback';
     let visAttuale  = 'pubblico';
     let votoAttuale = 0;
@@ -291,11 +292,11 @@
       document.getElementById('vis-group').style.display    = isSupp ? 'none' : '';
       document.getElementById('email-required-star').textContent = isSupp ? '*' : '';
       document.getElementById('email-hint').textContent = isSupp
-        ? 'Necessaria per ricevere la risposta dal team.'
-        : 'Facoltativa. Non verra\u0027 pubblicata.';
+        ? I18N.t('feedback','fb_email_hint_req')
+        : I18N.t('feedback','fb_email_hint_opt');
       document.getElementById('msg-input').placeholder = isSupp
-        ? 'Descrivi il problema o la domanda...'
-        : 'Scrivi qui la tua recensione...';
+        ? I18N.t('feedback','fb_msg_ph_support')
+        : I18N.t('feedback','fb_msg_ph_review');
     }
 
     function setVis(v) {
@@ -323,16 +324,16 @@
       errEl.textContent = '';
 
       if (!messaggio || messaggio.length < 5) {
-        errEl.textContent = 'Scrivi almeno qualche parola nel messaggio.';
+        errEl.textContent = I18N.t('feedback','fb_err_short');
         return;
       }
       if (tipoAttuale === 'supporto' && !email) {
-        errEl.textContent = 'Inserisci la tua email per ricevere una risposta.';
+        errEl.textContent = I18N.t('feedback','fb_err_email');
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = 'Invio in corso...';
+      btn.textContent = I18N.t('feedback','fb_sending');
 
       const payload = {
         tipo: tipoAttuale,
@@ -355,18 +356,18 @@
           document.querySelector('.tipo-tabs').style.display = 'none';
           const sc = document.getElementById('success-card');
           document.getElementById('success-msg').textContent = tipoAttuale === 'supporto'
-            ? 'La tua richiesta e\u0027 stata inviata. Ti risponderemo all\u0027indirizzo email fornito.'
-            : 'Il tuo feedback e\u0027 stato inviato. Se lo riterremo adatto, apparira\u0027 sulla homepage.';
+            ? I18N.t('feedback','fb_success_support')
+            : I18N.t('feedback','fb_success_review');
           sc.classList.add('show');
         } else {
-          errEl.textContent = data.error || 'Errore durante l\u0027invio. Riprova.';
+          errEl.textContent = data.error || I18N.t('feedback','fb_err_send');
           btn.disabled = false;
-          btn.textContent = 'INVIA';
+          btn.textContent = I18N.t('feedback','fb_submit');
         }
       } catch (e) {
-        errEl.textContent = 'Errore di rete. Controlla la connessione e riprova.';
+        errEl.textContent = I18N.t('feedback','fb_err_net');
         btn.disabled = false;
-        btn.textContent = 'INVIA';
+        btn.textContent = I18N.t('feedback','fb_submit');
       }
     }
 
