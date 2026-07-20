@@ -100,12 +100,12 @@
   <!-- Banner installazione iOS -->
   <div id="_ios-banner">
     <p>
-      <strong>Installa DraftArena</strong><br>
-      Tocca
+      <strong data-i18n="phone_ios_install">Installa DraftArena</strong><br>
+      <span data-i18n="phone_ios_tap">Tocca</span>
       <svg style="width:16px;height:16px;vertical-align:middle;fill:#10b981;" viewBox="0 0 24 24">
         <path d="M12 2l-4 4h3v9h2V6h3L12 2zm-6 15v3h12v-3h-2v1H8v-1H6z"/>
       </svg>
-      poi <strong>"Aggiungi a schermata Home"</strong>
+      poi <strong data-i18n="phone_ios_add">"Aggiungi a schermata Home"</strong>
     </p>
     <button onclick="document.getElementById('_ios-banner').style.display='none'">✕</button>
   </div>
@@ -115,25 +115,25 @@
   </div>
 
   <div id="login-box">
-    <h2>🏟️ Spogliatoio Asta</h2>
-    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 16px;">Inserisci il codice stanza e scegli la tua fantasquadra.</p>
+    <h2 data-i18n="phone_login_title">🏟️ Spogliatoio Asta</h2>
+    <p style="color: #94a3b8; font-size: 13px; margin-bottom: 16px;" data-i18n="phone_login_desc">Inserisci il codice stanza e scegli la tua fantasquadra.</p>
 
     <div style="position:relative; margin-bottom:15px;">
-      <input id="room-code-input" type="text" maxlength="6" placeholder="Codice Stanza (es: ABC123)"
+      <input id="room-code-input" type="text" maxlength="6" placeholder="Codice Stanza (es: ABC123)" data-i18n-placeholder="phone_login_ph"
         style="width:100%;padding:13px 14px;box-sizing:border-box;border-radius:8px;border:1px solid #1c2541;background:#050914;color:#fff;font-size:16px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;text-align:center;">
     </div>
     <div id="room-error" style="color:#ef4444;font-size:12px;margin:-8px 0 10px;min-height:16px;"></div>
 
-    <select id="select-my-team" style="display:none;"><option value="">Caricamento squadre...</option></select>
-    <div id="loading-teams" style="color:#64748b;font-size:13px;margin-bottom:15px;display:none;">Connessione alla stanza...</div>
+    <select id="select-my-team" style="display:none;"><option value="" data-i18n="phone_login_loading_teams">Caricamento squadre...</option></select>
+    <div id="loading-teams" style="color:#64748b;font-size:13px;margin-bottom:15px;display:none;" data-i18n="phone_login_connecting">Connessione alla stanza...</div>
 
-    <button onclick="connettiSquadra()">ENTRA SUL TERRENO DI GIOCO 🚀</button>
-    <a href="/#hub" style="display:block; margin-top:4px; color:#64748b; text-align:center; font-size:13px; text-decoration:none;">← Torna all'Hub</a>
+    <button onclick="connettiSquadra()" data-i18n="phone_login_btn">ENTRA SUL TERRENO DI GIOCO 🚀</button>
+    <a href="/#hub" style="display:block; margin-top:4px; color:#64748b; text-align:center; font-size:13px; text-decoration:none;" data-i18n="phone_login_back">← Torna all'Hub</a>
   </div>
 
   <div id="auction-box">
     <div class="status-header" style="display: flex; justify-content: space-between; align-items: center;">
-      <div>🛡️ SQUADRA: <b id="lbl-my-team-display" style="color: #ffcc00;">-</b></div>
+      <div><span data-i18n="phone_status_team">🛡️ SQUADRA:</span> <b id="lbl-my-team-display" style="color: #ffcc00;">-</b></div>
       <div style="text-align: right;">
         <span id="lbl-my-budget" style="color: #10b981; font-weight: bold; font-size: 16px;">0 cr</span><br>
         <small id="lbl-my-slots" style="font-size: 11px; color: #94a3b8; display:block;">P:0 D:0 C:0 A:0</small>
@@ -141,14 +141,15 @@
     </div>
 
     <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <button id="btn-rose" onclick="vaiARose()" disabled style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:not-allowed;border:1px solid #334155;opacity:0.5;">📋 Le Rose</button>
-      <button onclick="cambiaSquadra()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;">🔄 Cambia Squadra</button>
-      <a href="/guida-utenti" target="_blank" style="padding:10px 12px;border-radius:8px;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;text-decoration:none;display:flex;align-items:center;">? Guida</a>
+      <button id="btn-rose" onclick="vaiARose()" disabled style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:not-allowed;border:1px solid #334155;opacity:0.5;" data-i18n="phone_btn_rose">📋 Le Rose</button>
+      <button onclick="cambiaSquadra()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;" data-i18n="phone_btn_change">🔄 Cambia Squadra</button>
+      <a href="/guida-utenti" target="_blank" style="padding:10px 12px;border-radius:8px;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;text-decoration:none;display:flex;align-items:center;" data-i18n="phone_btn_guide">? Guida</a>
+      <button id="lang-toggle" onclick="I18N.toggle('phone')" style="padding:10px 12px;border-radius:8px;background:#1e293b;color:#38bdf8;font-size:13px;cursor:pointer;border:1px solid #334155;font-weight:bold;">🇬🇧 EN</button>
     </div>
 
     <div class="player-card">
-      <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">Calciatore in chiamata</div>
-      <h2 id="player-name">IN ATTESA...</h2>
+      <div style="font-size:11px; color:#94a3b8; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;" data-i18n="phone_player_calling">Calciatore in chiamata</div>
+      <h2 id="player-name" data-i18n="phone_player_waiting">IN ATTESA...</h2>
       <div id="player-meta-box" style="display:none; justify-content:center; gap:8px;">
         <span class="badge-ruolo" id="player-ruolo">-</span>
         <span class="badge-squadra" id="player-squadra">-</span>
@@ -156,13 +157,13 @@
     </div>
 
     <div class="market-info">
-      <div class="market-stat"><span>Prezzo Attuale</span><b id="current-price">0 cr</b></div>
-      <div class="market-stat"><span>Miglior Offerente</span><b id="highest-bidder">-</b></div>
+      <div class="market-stat"><span data-i18n="phone_price">Prezzo Attuale</span><b id="current-price">0 cr</b></div>
+      <div class="market-stat"><span data-i18n="phone_bidder">Miglior Offerente</span><b id="highest-bidder">-</b></div>
     </div>
 
     <div id="timer-display">10</div>
 
-    <div class="mazzo-phone-info">📦 CALCIATORI RIMASTI NEL MAZZO: <span id="phone-count-disponibili">0</span></div>
+    <div class="mazzo-phone-info"><span data-i18n="phone_deck">📦 CALCIATORI RIMASTI NEL MAZZO:</span> <span id="phone-count-disponibili">0</span></div>
 
     <button id="btn1" class="btn-bid btn-plus1" onclick="inviaRilancio(1)">🔥 +1 cr</button>
     <button id="btn3" class="btn-bid btn-plus3" onclick="inviaRilancio(3)">👑 +3 cr</button>
@@ -172,9 +173,9 @@
     </div>
 
     <div class="my-players-card">
-      <h3 id="lbl-my-count">📋 Calciatori Acquistati (0)</h3>
+      <h3 id="lbl-my-count" data-i18n="phone_my_players">📋 Calciatori Acquistati (0)</h3>
       <div class="players-list-scroll" id="my-purchased-list">
-        <div style="color: #64748b; text-align: center; padding: 10px; font-size: 13px;">Nessun acquisto effettuato finora.</div>
+        <div style="color: #64748b; text-align: center; padding: 10px; font-size: 13px;" data-i18n="phone_no_purchases">Nessun acquisto effettuato finora.</div>
       </div>
     </div>
   </div>
@@ -186,8 +187,10 @@
   </div>
 
   <script src="/socket.io/socket.io.js"></script>
+  <script src="/i18n.js"></script>
   <script>
     const socket = io({ transports: ["polling"] });
+    I18N.applyLang('phone');
     let miaSquadraScelta = ""; let elencoGlobaleSold = []; let oggettoTutteLeSquadre = {};
     let astaAttiva = false;
     let toastTimer = null;
@@ -217,7 +220,7 @@
 
     async function joinRoom(code) {
       const upperCode = code.trim().toUpperCase();
-      if (!upperCode) { setRoomError('Inserisci un codice stanza.'); return; }
+      if (!upperCode) { setRoomError(I18N.t('phone','phone_login_err_code')); return; }
       document.getElementById('loading-teams').style.display = 'block';
       setRoomError('');
       try {
@@ -230,14 +233,14 @@
           document.getElementById('select-my-team').style.display = 'block';
           socket.emit('joinRoom', res.roomCode);
         } else {
-          setRoomError(res.error || 'Stanza non trovata.');
+          setRoomError(res.error || I18N.t('phone','phone_login_err_notfound'));
           document.getElementById('room-code-input').style.borderColor = '#ef4444';
           document.getElementById('select-my-team').style.display = 'none';
           sessionStorage.removeItem('roomCode');
         }
       } catch(e) {
         document.getElementById('loading-teams').style.display = 'none';
-        setRoomError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.');
+        setRoomError(I18N.t('phone','phone_login_err_server'));
       }
     }
 
@@ -272,12 +275,12 @@
     function popolaSelectSquadre(teams) {
       oggettoTutteLeSquadre = teams;
       const select = document.getElementById("select-my-team");
-      select.innerHTML = '<option value="">-- Scegli la tua Squadra --</option>';
+      select.innerHTML = '<option value="">' + I18N.t('phone','phone_select_default') + '</option>';
       Object.keys(teams).forEach(k => {
         const opt = document.createElement("option");
         const isTaken = takenTeamsList.includes(k) && k !== miaSquadraScelta.toLowerCase().trim();
         opt.value = teams[k].name;
-        opt.innerText = isTaken ? teams[k].name + " (occupata)" : teams[k].name;
+        opt.innerText = isTaken ? teams[k].name + " " + I18N.t('phone','phone_team_taken') : teams[k].name;
         opt.disabled = isTaken;
         opt.style.color = isTaken ? "#64748b" : "";
         select.appendChild(opt);
@@ -297,11 +300,11 @@
     function connettiSquadra() {
       if (!currentRoomCode) { joinRoom(document.getElementById('room-code-input').value); return; }
       const select = document.getElementById("select-my-team");
-      if (!select.value) { mostraToast("Seleziona prima la tua squadra!"); return; }
+      if (!select.value) { mostraToast(I18N.t('phone','phone_err_pick_team')); return; }
       const nomeSquadra = select.value;
       socket.emit("claimTeam", nomeSquadra);
       socket.once("claimTeamResult", (res) => {
-        if (!res.success) { mostraToast(res.error || "Squadra non disponibile."); return; }
+        if (!res.success) { mostraToast(res.error || I18N.t('phone','phone_err_team_unavailable')); return; }
         miaSquadraScelta = nomeSquadra;
         document.getElementById("lbl-my-team-display").innerText = miaSquadraScelta.toUpperCase();
         document.getElementById("login-box").style.display = "none";
@@ -342,9 +345,9 @@
       const container = document.getElementById("my-purchased-list");
       container.innerHTML = "";
       const miei = elencoGlobaleSold.filter(p => p.winner.toLowerCase().trim() === miaSquadraScelta.toLowerCase().trim());
-      document.getElementById("lbl-my-count").innerText = `📋 Calciatori Acquistati (${miei.length})`;
+      document.getElementById("lbl-my-count").innerText = I18N.t('phone','phone_my_players').replace(' (0)',' ('+miei.length+')');
       if (miei.length === 0) {
-        container.innerHTML = '<div style="color:#64748b; text-align:center; padding:10px;">Ancora nessun acquisto.</div>';
+        container.innerHTML = '<div style="color:#64748b; text-align:center; padding:10px;">' + I18N.t('phone','phone_no_purchases_short') + '</div>';
         return;
       }
       miei.forEach(p => {
@@ -388,7 +391,7 @@
       } else {
         astaAttiva = false;
         ultimoBidderPhone = null;
-        nameEl.innerText = "IN ATTESA...";
+        nameEl.innerText = I18N.t('phone','phone_player_waiting');
         metaBox.style.display = "none";
       }
 
@@ -409,18 +412,18 @@
         btnRose.style.opacity = "0.5";
         btnRose.style.color = "#94a3b8";
         btnRose.style.borderColor = "#334155";
-        btnRose.title = "Le rose sono visibili solo quando l'admin mette in pausa l'asta";
+        btnRose.title = I18N.t('phone','phone_rose_tooltip_pause');
       }
 
       document.getElementById("current-price").innerText = s.currentPrice + " cr";
       const bEl = document.getElementById("highest-bidder");
       const tEl = document.getElementById("timer-display");
       if (s.isPaused) {
-        bEl.innerText = "PAUSA ⏸️";
+        bEl.innerText = I18N.t('phone','phone_paused');
         bEl.style.color = "#ffaa00";
         tEl.style.color = "#ffaa00";
       } else {
-        bEl.innerText = s.highestBidder ? s.highestBidder : "Nessuno";
+        bEl.innerText = s.highestBidder ? s.highestBidder : I18N.t('phone','phone_no_bidder');
         bEl.style.color = s.highestBidder ? "#ffcc00" : "#fff";
         tEl.style.color = "#ef4444";
       }
@@ -437,11 +440,11 @@
         const eMio = s.winner.toLowerCase().trim() === miaSquadraScelta.toLowerCase().trim();
         overlay.style.borderTop = eMio ? "4px solid #10b981" : "4px solid #1c2541";
         testo.innerHTML = eMio
-          ? `🏅 HAI ACQUISTATO<br><span style="color:#10b981; font-size:1.1em;">${s.player}</span><br><span style="color:#ffcc00;">per ${s.price} cr</span>`
-          : `✅ <span style="color:#10b981;">${s.player}</span><br>acquistato da<br><b style="color:#ffcc00;">${s.winner}</b><br><small style="color:#94a3b8;">per ${s.price} cr</small>`;
+          ? `🏅 ` + I18N.t('phone','phone_bought') + `<br><span style="color:#10b981; font-size:1.1em;">${s.player}</span><br><span style="color:#ffcc00;">` + I18N.t('phone','phone_for') + ` ${s.price} cr</span>`
+          : `✅ <span style="color:#10b981;">${s.player}</span><br>` + I18N.t('phone','phone_bought_by') + `<br><b style="color:#ffcc00;">${s.winner}</b><br><small style="color:#94a3b8;">` + I18N.t('phone','phone_for') + ` ${s.price} cr</small>`;
       } else {
         overlay.style.borderTop = "4px solid #dc2626";
-        testo.innerHTML = `❌ <span style="color:#ef4444;">${s.player}</span><br>rimane INVENDUTO`;
+        testo.innerHTML = `❌ <span style="color:#ef4444;">${s.player}</span><br>` + I18N.t('phone','phone_unsold');
       }
       overlay.style.display = "flex";
     });
