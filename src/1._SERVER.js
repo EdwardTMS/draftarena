@@ -17,6 +17,13 @@ const io = new Server(server, {
 });
 
 app.use(express.json());
+
+// Traccia tutte le visite alle pagine HTML (non solo la homepage)
+app.use((req, res, next) => {
+  if (req.method === "GET" && /\.html$/i.test(req.path)) trackPageView();
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "public"), {
   setHeaders: (res) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -634,18 +641,18 @@ process.on("SIGINT",  () => gracefulShutdown("SIGINT"));
    ROTTE EXPRESS
    ========================================================================== */
 app.get("/", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "index.html")); });
-app.get("/admin", (req, res) => res.sendFile(path.join(__dirname, "public", "admin.html")));
-app.get("/admin-smart", (req, res) => res.sendFile(path.join(__dirname, "public", "admin-smart.html")));
-app.get("/host", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
+app.get("/admin", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "admin.html")); });
+app.get("/admin-smart", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "admin-smart.html")); });
+app.get("/host", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "host.html")); });
 app.get("/host.html", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
-app.get("/rose", (req, res) => res.sendFile(path.join(__dirname, "public", "rose.html")));
+app.get("/rose", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "rose.html")); });
 app.get("/rose.html", (req, res) => res.sendFile(path.join(__dirname, "public", "rose.html")));
-app.get("/superadmin", (req, res) => res.sendFile(path.join(__dirname, "public", "superadmin.html")));
-app.get("/guida-admin", (req, res) => res.sendFile(path.join(__dirname, "public", "guida-admin.html")));
-app.get("/guida-utenti", (req, res) => res.sendFile(path.join(__dirname, "public", "guida-utenti.html")));
-app.get("/video", (req, res) => res.sendFile(path.join(__dirname, "public", "video.html")));
-app.get("/feedback", (req, res) => res.sendFile(path.join(__dirname, "public", "feedback.html")));
-app.get("/richiesta-codice", (req, res) => res.sendFile(path.join(__dirname, "public", "richiesta-codice.html")));
+app.get("/superadmin", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "superadmin.html")); });
+app.get("/guida-admin", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "guida-admin.html")); });
+app.get("/guida-utenti", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "guida-utenti.html")); });
+app.get("/video", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "video.html")); });
+app.get("/feedback", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "feedback.html")); });
+app.get("/richiesta-codice", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "richiesta-codice.html")); });
 
 /* ==========================================================================
    PLATFORM SETTINGS (pubblica lettura)
@@ -1154,7 +1161,7 @@ app.delete("/api/room/:code/backups/:id", async (req, res) => {
    ALBO D'ORO
    ========================================================================== */
 
-app.get("/albo", (req, res) => res.sendFile(path.join(__dirname, "public", "albo.html")));
+app.get("/albo", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "albo.html")); });
 app.get("/albo.html", (req, res) => res.sendFile(path.join(__dirname, "public", "albo.html")));
 
 // GET /api/lega/:code/albo  → tutte le stagioni con season_data (pubblica)
