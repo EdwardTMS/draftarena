@@ -312,37 +312,37 @@
 
     <!-- FORM -->
     <div id="form-view">
-      <div class="card-title">Ottieni il tuo codice gratuito</div>
-      <div class="card-sub">Compila il modulo per ricevere il tuo codice personale.<br>
+      <div class="card-title" data-i18n="rc_title">Ottieni il tuo codice gratuito</div>
+      <div class="card-sub" data-i18n-html="rc_sub">Compila il modulo per ricevere il tuo codice personale.<br>
         <strong>Stagione 2025/26 completamente gratuita.</strong>
       </div>
 
       <div class="field-row">
         <div>
-          <label>Nome <span class="req">*</span></label>
+          <label data-i18n="rc_fname">Nome <span class="req">*</span></label>
           <input type="text" id="f-nome" placeholder="Mario" autocomplete="given-name">
         </div>
         <div>
-          <label>Cognome <span class="req">*</span></label>
+          <label data-i18n="rc_lname">Cognome <span class="req">*</span></label>
           <input type="text" id="f-cognome" placeholder="Rossi" autocomplete="family-name">
         </div>
       </div>
 
       <div class="field">
-        <label>Email <span class="req">*</span></label>
+        <label data-i18n="rc_email">Email <span class="req">*</span></label>
         <input type="email" id="f-email" placeholder="mario.rossi@email.com" autocomplete="email">
       </div>
 
       <div class="field">
-        <label>Nome della lega <span class="req">*</span></label>
-        <input type="text" id="f-lega" placeholder="es: Fantacalcio dei Campioni">
+        <label data-i18n="rc_league">Nome della lega <span class="req">*</span></label>
+        <input type="text" id="f-lega" data-i18n-placeholder="rc_league_ph" placeholder="es: Fantacalcio dei Campioni">
       </div>
 
       <div class="field-row">
         <div>
-          <label>Numero squadre <span class="req">*</span></label>
+          <label data-i18n="rc_teams">Numero squadre <span class="req">*</span></label>
           <select id="f-squadre">
-            <option value="">Seleziona</option>
+            <option value="" data-i18n="rc_select">Seleziona</option>
             <option value="4">4</option>
             <option value="6">6</option>
             <option value="8" selected>8</option>
@@ -353,13 +353,13 @@
             <option value="18">18</option>
             <option value="20">20</option>
             <option value="24">24</option>
-            <option value="altro">Altro</option>
+            <option value="altro" data-i18n="rc_other">Altro</option>
           </select>
         </div>
         <div>
-          <label>Piattaforma <span class="optional-tag">(opzionale)</span></label>
+          <label data-i18n-html="rc_platform">Piattaforma <span class="optional-tag" data-i18n="rc_platform_opt">(opzionale)</span></label>
           <select id="f-piattaforma">
-            <option value="">Seleziona</option>
+            <option value="" data-i18n="rc_select">Seleziona</option>
             <option value="Fantacalcio.it">Fantacalcio.it</option>
             <option value="Serie A Fantasy Football">Serie A Fantasy Football</option>
             <option value="Mantra">Mantra</option>
@@ -370,9 +370,9 @@
       </div>
 
       <div class="field">
-        <label>Come ci hai trovati? <span class="optional-tag">(opzionale)</span></label>
+        <label data-i18n-html="rc_found">Come ci hai trovati? <span class="optional-tag">(opzionale)</span></label>
         <select id="f-trovato">
-          <option value="">Seleziona</option>
+          <option value="" data-i18n="rc_select">Seleziona</option>
           <option value="Passaparola">Passaparola</option>
           <option value="Social media">Social media</option>
           <option value="Motore di ricerca">Motore di ricerca</option>
@@ -381,7 +381,7 @@
         </select>
       </div>
 
-      <div class="privacy-section-title">Privacy e consenso</div>
+      <div class="privacy-section-title" data-i18n="rc_privacy_title">Privacy e consenso</div>
 
       <div class="privacy-notice">
         <strong>Informativa sul trattamento dei dati personali</strong> (Reg. UE 2016/679 — GDPR)<br><br>
@@ -408,49 +408,51 @@
         </label>
       </div>
 
-      <button class="btn-submit" id="btn-submit">RICHIEDI CODICE GRATIS</button>
+      <button class="btn-submit" id="btn-submit" data-i18n="rc_btn">RICHIEDI CODICE GRATIS</button>
       <div class="form-error" id="form-error"></div>
 
       <div class="back-link">
-        <a href="/">← Torna alla homepage</a>
+        <a href="/" data-i18n="rc_back">← Torna alla homepage</a>
       </div>
     </div>
 
     <!-- SUCCESS -->
     <div id="success-view">
-      <div id="already-banner" class="already-exists-banner" style="display:none;">
+      <div id="already-banner" class="already-exists-banner" style="display:none;" data-i18n="rc_already">
         Questa email risulta già registrata. Ecco il tuo codice:
       </div>
 
       <div class="success-icon">✓</div>
-      <div class="success-title">Il tuo codice è pronto!</div>
-      <div class="success-sub">
+      <div class="success-title" data-i18n="rc_success">Il tuo codice è pronto!</div>
+      <div class="success-sub" data-i18n-html="rc_success_sub">
         Usalo ogni volta che vuoi creare una nuova stanza asta.<br>
         <strong style="color:#f59e0b;">Salvalo: ti servirà ogni volta.</strong>
       </div>
 
       <div class="code-box">
-        <div class="code-label">Il tuo codice personale</div>
+        <div class="code-label" data-i18n="rc_code_label">Il tuo codice personale</div>
         <div class="code-value" id="success-code">DRAFT-XXXXXX</div>
-        <button class="btn-copy" id="btn-copy-code">COPIA CODICE</button>
+        <button class="btn-copy" id="btn-copy-code" data-i18n="rc_copy">COPIA CODICE</button>
       </div>
-      <div class="code-hint">
+      <div class="code-hint" data-i18n-html="rc_hint">
         Conserva questo codice in un posto sicuro (note del telefono, email, ecc.).<br>
         Se lo perdi puoi contattarci e lo recuperiamo con la tua email.
       </div>
 
-      <a href="#" class="btn-crea" id="btn-crea-stanza">+ CREA LA TUA PRIMA STANZA</a>
+      <a href="#" class="btn-crea" id="btn-crea-stanza" data-i18n="rc_create">+ CREA LA TUA PRIMA STANZA</a>
 
       <div class="divider"></div>
 
       <div class="back-link" style="margin-top:0;">
-        <a href="/">← Torna alla homepage</a>
+        <a href="/" data-i18n="rc_back">← Torna alla homepage</a>
       </div>
     </div>
 
   </div>
 
+  <script src="/i18n.js"></script>
   <script>
+    I18N.applyLang('codice');
     let assignedCode = '';
     let assignedSquadre = 8;
 
@@ -476,7 +478,7 @@
       if (!privacy) { errEl.textContent = 'Devi accettare il trattamento dei dati personali per procedere.'; return; }
 
       const btn = document.getElementById('btn-submit');
-      btn.textContent = 'Registrazione in corso...';
+      btn.textContent = I18N.t('codice','rc_registering');
       btn.disabled = true;
 
       try {
@@ -492,13 +494,13 @@
           assignedSquadre = squadre === 'altro' ? 8 : parseInt(squadre);
           showSuccess(data.code, data.alreadyExists);
         } else {
-          errEl.textContent = data.error || 'Errore. Riprova più tardi.';
-          btn.textContent = 'RICHIEDI CODICE GRATIS';
+          errEl.textContent = data.error || I18N.t('codice','rc_err_generic');
+          btn.textContent = I18N.t('codice','rc_btn');
           btn.disabled = false;
         }
       } catch (e) {
-        errEl.textContent = 'Errore di rete. Controlla la connessione e riprova.';
-        btn.textContent = 'RICHIEDI CODICE GRATIS';
+        errEl.textContent = I18N.t('codice','rc_err_net');
+        btn.textContent = I18N.t('codice','rc_btn');
         btn.disabled = false;
       }
     });
@@ -514,10 +516,10 @@
     document.getElementById('btn-copy-code').addEventListener('click', () => {
       navigator.clipboard.writeText(assignedCode).then(() => {
         const btn = document.getElementById('btn-copy-code');
-        btn.textContent = '✓ COPIATO!';
+        btn.textContent = I18N.t('codice','rc_copied');
         btn.classList.add('copied');
         setTimeout(() => {
-          btn.textContent = 'COPIA CODICE';
+          btn.textContent = I18N.t('codice','rc_copy');
           btn.classList.remove('copied');
         }, 2500);
       });
