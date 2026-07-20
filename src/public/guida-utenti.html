@@ -364,21 +364,22 @@
     <img src="/DraftARENAico.png" alt="DraftARENA" />
     <span>DraftARENA</span>
   </a>
-  <a class="back-btn" href="/">&#8592; Torna alla Home</a>
+  <a class="back-btn" href="/" data-i18n="g_back">&#8592; Torna alla Home</a>
+  <button id="lang-toggle" onclick="I18N.toggle('guida')" style="background:rgba(76,143,224,0.1);border:1px solid rgba(76,143,224,0.3);border-radius:8px;padding:8px 14px;font-size:0.9rem;color:var(--blue);cursor:pointer;font-weight:bold;">🇬🇧 EN</button>
 </header>
 
 <!-- HERO -->
 <section class="hero">
-  <div class="badge">Guida Partecipanti</div>
-  <h1>Come fare l'asta con <span>DraftARENA</span></h1>
-  <p>Tutto quello che devi sapere per partecipare all'asta dal tuo telefono, fare offerte e costruire la tua rosa.</p>
+  <div class="badge" data-i18n="g_user_badge">Guida Partecipanti</div>
+  <h1 data-i18n-html="g_user_title">Come fare l'asta con <span>DraftARENA</span></h1>
+  <p data-i18n="g_user_desc">Tutto quello che devi sapere per partecipare all'asta dal tuo telefono, fare offerte e costruire la tua rosa.</p>
   <div class="toc-grid">
-    <a class="toc-item" href="#step1"><span class="toc-num">1</span> Connettersi</a>
-    <a class="toc-item" href="#step2"><span class="toc-num">2</span> Scegliere la squadra</a>
-    <a class="toc-item" href="#step3"><span class="toc-num">3</span> Fare offerte</a>
-    <a class="toc-item" href="#step4"><span class="toc-num">4</span> Gestire il budget</a>
-    <a class="toc-item" href="#step5"><span class="toc-num">5</span> Vedere le rose</a>
-    <a class="toc-item" href="#step6"><span class="toc-num">6</span> Domande frequenti</a>
+    <a class="toc-item" href="#step1"><span class="toc-num">1</span> <span data-i18n="gu_toc1">Connettersi</span></a>
+    <a class="toc-item" href="#step2"><span class="toc-num">2</span> <span data-i18n="gu_toc2">Scegliere la squadra</span></a>
+    <a class="toc-item" href="#step3"><span class="toc-num">3</span> <span data-i18n="gu_toc3">Fare offerte</span></a>
+    <a class="toc-item" href="#step4"><span class="toc-num">4</span> <span data-i18n="gu_toc4">Gestire il budget</span></a>
+    <a class="toc-item" href="#step5"><span class="toc-num">5</span> <span data-i18n="gu_toc5">Vedere le rose</span></a>
+    <a class="toc-item" href="#step6"><span class="toc-num">6</span> <span data-i18n="gu_toc6">Domande frequenti</span></a>
   </div>
 </section>
 
@@ -389,32 +390,32 @@
     <div class="section-header">
       <div class="step-circle">1</div>
       <div class="section-header-text">
-        <h2>Connettersi all'asta</h2>
-        <p>Come entrare nella stanza dal tuo telefono</p>
+        <h2 data-i18n="gu_s1_title">Connettersi all'asta</h2>
+        <p data-i18n="gu_s1_desc">Come entrare nella stanza dal tuo telefono</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128247; Metodo 1 — Scansiona il QR Code (consigliato)</div>
+      <div class="card-title" data-i18n="gu_s1_c1_title">&#128247; Metodo 1 — Scansiona il QR Code (consigliato)</div>
       <ul class="steps-list">
-        <li><div class="step-text">Guarda lo schermo TV (o il proiettore) dove è proiettata l'asta: c'è un <strong>QR code</strong> nella parte laterale dello schermo.</div></li>
-        <li><div class="step-text">Apri la <strong>fotocamera del tuo telefono</strong> (su iOS e Android basta la fotocamera nativa, senza app extra).</div></li>
-        <li><div class="step-text">Inquadra il QR code. Apparirà una notifica con un link — toccala per aprire la pagina nel browser.</div></li>
-        <li><div class="step-text">Sei dentro! Vedrai direttamente la schermata di selezione della squadra.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s1_c1_s1">Guarda lo schermo TV (o il proiettore) dove è proiettata l'asta: c'è un <strong>QR code</strong> nella parte laterale dello schermo.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s1_c1_s2">Apri la <strong>fotocamera del tuo telefono</strong> (su iOS e Android basta la fotocamera nativa, senza app extra).</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s1_c1_s3">Inquadra il QR code. Apparirà una notifica con un link — toccala per aprire la pagina nel browser.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s1_c1_s4">Sei dentro! Vedrai direttamente la schermata di selezione della squadra.</div></li>
       </ul>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128279; Metodo 2 — Inserisci il codice stanza</div>
+      <div class="card-title" data-i18n="gu_s1_c2_title">&#128279; Metodo 2 — Inserisci il codice stanza</div>
       <ul class="steps-list">
-        <li><div class="step-text">Chiedi all'admin il <strong>codice stanza</strong> (6 caratteri, es. <code>5UKUQ9</code>) — di solito è visibile anche sul TV.</div></li>
-        <li><div class="step-text">Apri il browser del tuo telefono e vai all'indirizzo che ti ha comunicato l'admin (es. <code>draftarena.up.railway.app</code>).</div></li>
-        <li><div class="step-text">Clicca <strong>"Unisciti a una Stanza"</strong>, inserisci il codice e conferma.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s1_c2_s1">Chiedi all'admin il <strong>codice stanza</strong> (6 caratteri, es. <code>5UKUQ9</code>) — di solito è visibile anche sul TV.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s1_c2_s2">Apri il browser del tuo telefono e vai all'indirizzo che ti ha comunicato l'admin (es. <code>draftarena.up.railway.app</code>).</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s1_c2_s3">Clicca <strong>"Unisciti a una Stanza"</strong>, inserisci il codice e conferma.</div></li>
       </ul>
     </div>
 
-    <div class="info-box tip"><strong>Suggerimento iOS:</strong> Quando sei nella pagina, tocca il pulsante <strong>"Aggiungi alla schermata Home"</strong> (l'icona di condivisione in Safari). Cosi la pagina si apre a schermo intero come un'app vera.</div>
-    <div class="info-box note"><strong>Nota:</strong> Non serve scaricare nessuna app. DraftARENA funziona direttamente nel browser del tuo telefono.</div>
+    <div class="info-box tip" data-i18n-html="gu_s1_tip"><strong>Suggerimento iOS:</strong> Quando sei nella pagina, tocca il pulsante <strong>"Aggiungi alla schermata Home"</strong> (l'icona di condivisione in Safari). Cosi la pagina si apre a schermo intero come un'app vera.</div>
+    <div class="info-box note" data-i18n-html="gu_s1_note"><strong>Nota:</strong> Non serve scaricare nessuna app. DraftARENA funziona direttamente nel browser del tuo telefono.</div>
   </section>
 
   <!-- STEP 2 -->
@@ -422,25 +423,25 @@
     <div class="section-header">
       <div class="step-circle">2</div>
       <div class="section-header-text">
-        <h2>Scegliere la tua squadra</h2>
-        <p>Come registrarsi e bloccare la tua squadra</p>
+        <h2 data-i18n="gu_s2_title">Scegliere la tua squadra</h2>
+        <p data-i18n="gu_s2_desc">Come registrarsi e bloccare la tua squadra</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#127942; Selezione squadra</div>
+      <div class="card-title" data-i18n="gu_s2_c1_title">&#127942; Selezione squadra</div>
       <ul class="steps-list">
-        <li><div class="step-text">Dopo esserti connesso, vedrai un menu a tendina con tutte le squadre della lega. <strong>Seleziona la tua squadra</strong> (il nome concordato con l'admin).</div></li>
-        <li><div class="step-text">Clicca <strong>"Entra come questa squadra"</strong>. La squadra ora è <strong>bloccata per te</strong> — nessun altro può fare offerte per la tua squadra finché sei connesso.</div></li>
-        <li><div class="step-text">Vedrai in alto il nome della tua squadra evidenziato in giallo e il tuo <strong>budget corrente</strong> in verde.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s2_c1_s1">Dopo esserti connesso, vedrai un menu a tendina con tutte le squadre della lega. <strong>Seleziona la tua squadra</strong> (il nome concordato con l'admin).</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s2_c1_s2">Clicca <strong>"Entra come questa squadra"</strong>. La squadra ora è <strong>bloccata per te</strong> — nessun altro può fare offerte per la tua squadra finché sei connesso.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s2_c1_s3">Vedrai in alto il nome della tua squadra evidenziato in giallo e il tuo <strong>budget corrente</strong> in verde.</div></li>
       </ul>
-      <div class="info-box warn" style="margin-top:14px;"><strong>Attenzione:</strong> Se esci dall'app o ricarichi la pagina, la tua squadra viene liberata. Rientra subito e riseleziona la tua squadra per riprendere a fare offerte.</div>
+      <div class="info-box warn" style="margin-top:14px;" data-i18n-html="gu_s2_warn"><strong>Attenzione:</strong> Se esci dall'app o ricarichi la pagina, la tua squadra viene liberata. Rientra subito e riseleziona la tua squadra per riprendere a fare offerte.</div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128260; Cambiare squadra</div>
-      <p>Se hai selezionato per errore la squadra sbagliata, tocca il pulsante <strong>"Cambia Squadra"</strong> in fondo alla schermata. La squadra attuale viene liberata e puoi selezionarne un'altra.</p>
-      <p>Puoi anche usare questa funzione per tenere d'occhio il budget di un'altra squadra durante l'asta (ma non puoi fare offerte contemporaneamente per due squadre).</p>
+      <div class="card-title" data-i18n="gu_s2_c2_title">&#128260; Cambiare squadra</div>
+      <p data-i18n-html="gu_s2_c2_p1">Se hai selezionato per errore la squadra sbagliata, tocca il pulsante <strong>"Cambia Squadra"</strong> in fondo alla schermata. La squadra attuale viene liberata e puoi selezionarne un'altra.</p>
+      <p data-i18n-html="gu_s2_c2_p2">Puoi anche usare questa funzione per tenere d'occhio il budget di un'altra squadra durante l'asta (ma non puoi fare offerte contemporaneamente per due squadre).</p>
     </div>
   </section>
 
@@ -449,14 +450,14 @@
     <div class="section-header">
       <div class="step-circle gold">3</div>
       <div class="section-header-text">
-        <h2>Fare offerte</h2>
-        <p>Come rilancere e aggiudicarti i giocatori</p>
+        <h2 data-i18n="gu_s3_title">Fare offerte</h2>
+        <p data-i18n="gu_s3_desc">Come rilancere e aggiudicarti i giocatori</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#127918; La schermata di offerta</div>
-      <p>Quando l'admin mette in asta un giocatore, vedrai questa schermata sul tuo telefono:</p>
+      <div class="card-title" data-i18n="gu_s3_c1_title">&#127918; La schermata di offerta</div>
+      <p data-i18n="gu_s3_c1_p1">Quando l'admin mette in asta un giocatore, vedrai questa schermata sul tuo telefono:</p>
 
       <div class="phone-screen">
         <div class="ps-player">Vlahovic D.</div>
@@ -465,7 +466,7 @@
           <span class="badge-team">Juventus</span>
         </div>
         <div class="ps-price">24 cr</div>
-        <div class="ps-bidder">Offerta di: FC Napoli</div>
+        <div class="ps-bidder" data-i18n="gu_s3_bidder">Offerta di: FC Napoli</div>
         <div class="ps-timer">&#9203; 18"</div>
         <div class="bid-buttons">
           <div class="bid-btn b1">+1 cr</div>
@@ -479,65 +480,65 @@
         <div class="feature-row">
           <div class="feature-icon" style="color:var(--text);">A</div>
           <div>
-            <div class="feature-label">Nome e ruolo del giocatore</div>
-            <div class="feature-desc">Il ruolo è color-coded: rosso = Attaccante, verde = Centrocampista, blu = Difensore, giallo = Portiere.</div>
+            <div class="feature-label" data-i18n="gu_s3_f1_label">Nome e ruolo del giocatore</div>
+            <div class="feature-desc" data-i18n="gu_s3_f1_desc">Il ruolo è color-coded: rosso = Attaccante, verde = Centrocampista, blu = Difensore, giallo = Portiere.</div>
           </div>
         </div>
         <div class="feature-row">
           <div class="feature-icon" style="color:var(--green);">&#128176;</div>
           <div>
-            <div class="feature-label">Prezzo corrente</div>
-            <div class="feature-desc">Il valore attuale dell'offerta più alta. Parte da 1 credito.</div>
+            <div class="feature-label" data-i18n="gu_s3_f2_label">Prezzo corrente</div>
+            <div class="feature-desc" data-i18n="gu_s3_f2_desc">Il valore attuale dell'offerta più alta. Parte da 1 credito.</div>
           </div>
         </div>
         <div class="feature-row">
           <div class="feature-icon" style="color:var(--primary);">&#128081;</div>
           <div>
-            <div class="feature-label">Miglior offerente</div>
-            <div class="feature-desc">La squadra che ha fatto l'ultima offerta. Se scade il timer, si aggiudica il giocatore.</div>
+            <div class="feature-label" data-i18n="gu_s3_f3_label">Miglior offerente</div>
+            <div class="feature-desc" data-i18n="gu_s3_f3_desc">La squadra che ha fatto l'ultima offerta. Se scade il timer, si aggiudica il giocatore.</div>
           </div>
         </div>
         <div class="feature-row">
           <div class="feature-icon" style="color:var(--red);">&#9203;</div>
           <div>
-            <div class="feature-label">Countdown</div>
-            <div class="feature-desc">Secondi rimasti. Ogni nuova offerta <strong>resetta il timer</strong>, quindi puoi fare un'offerta anche all'ultimo secondo.</div>
+            <div class="feature-label" data-i18n="gu_s3_f4_label">Countdown</div>
+            <div class="feature-desc" data-i18n-html="gu_s3_f4_desc">Secondi rimasti. Ogni nuova offerta <strong>resetta il timer</strong>, quindi puoi fare un'offerta anche all'ultimo secondo.</div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#127919; Come fare un'offerta</div>
+      <div class="card-title" data-i18n="gu_s3_c2_title">&#127919; Come fare un'offerta</div>
       <ul class="steps-list">
-        <li><div class="step-text">Tocca uno dei pulsanti colorati: <strong>+1</strong>, <strong>+3</strong>, <strong>+5</strong> o <strong>+10</strong> crediti. La tua offerta viene inviata <em>immediatamente</em>.</div></li>
-        <li><div class="step-text">Il prezzo sale del valore che hai scelto, il tuo nome appare come miglior offerente, e il <strong>timer si azzera</strong>.</div></li>
-        <li><div class="step-text">Se nessun altro rilancia prima che il timer scada, il giocatore è tuo!</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s3_c2_s1">Tocca uno dei pulsanti colorati: <strong>+1</strong>, <strong>+3</strong>, <strong>+5</strong> o <strong>+10</strong> crediti. La tua offerta viene inviata <em>immediatamente</em>.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s3_c2_s2">Il prezzo sale del valore che hai scelto, il tuo nome appare come miglior offerente, e il <strong>timer si azzera</strong>.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s3_c2_s3">Se nessun altro rilancia prima che il timer scada, il giocatore è tuo!</div></li>
       </ul>
-      <div class="info-box tip" style="margin-top:14px;"><strong>Strategia:</strong> Usa <strong>+1</strong> per superare di poco un rivale, <strong>+10</strong> per scoraggiare rilanci sugli acquisti prioritari. Non sprecare crediti su giocatori di cui non hai bisogno.</div>
+      <div class="info-box tip" style="margin-top:14px;" data-i18n-html="gu_s3_tip"><strong>Strategia:</strong> Usa <strong>+1</strong> per superare di poco un rivale, <strong>+10</strong> per scoraggiare rilanci sugli acquisti prioritari. Non sprecare crediti su giocatori di cui non hai bisogno.</div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128683; Quando non puoi fare offerte</div>
+      <div class="card-title" data-i18n="gu_s3_c3_title">&#128683; Quando non puoi fare offerte</div>
       <div class="feature-row">
         <div class="feature-icon">&#128178;</div>
         <div>
-          <div class="feature-label">Budget insufficiente</div>
-          <div class="feature-desc">I pulsanti si disabilitano se non hai abbastanza crediti per quella offerta. Devi tenere sempre almeno 1 credito per ogni rosa slot rimasto da riempire.</div>
+          <div class="feature-label" data-i18n="gu_s3_c3_f1_label">Budget insufficiente</div>
+          <div class="feature-desc" data-i18n="gu_s3_c3_f1_desc">I pulsanti si disabilitano se non hai abbastanza crediti per quella offerta. Devi tenere sempre almeno 1 credito per ogni rosa slot rimasto da riempire.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128683;</div>
         <div>
-          <div class="feature-label">Rosa piena per quel ruolo</div>
-          <div class="feature-desc">Se hai già raggiunto il limite di acquisti per un ruolo (es. max 3 portieri), non puoi fare offerte su altri giocatori di quel ruolo.</div>
+          <div class="feature-label" data-i18n="gu_s3_c3_f2_label">Rosa piena per quel ruolo</div>
+          <div class="feature-desc" data-i18n="gu_s3_c3_f2_desc">Se hai già raggiunge il limite di acquisti per un ruolo (es. max 3 portieri), non puoi fare offerte su altri giocatori di quel ruolo.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#9208;</div>
         <div>
-          <div class="feature-label">Asta in pausa</div>
-          <div class="feature-desc">L'admin ha messo in pausa il timer. I pulsanti sono disabilitati fino alla ripresa.</div>
+          <div class="feature-label" data-i18n="gu_s3_c3_f3_label">Asta in pausa</div>
+          <div class="feature-desc" data-i18n="gu_s3_c3_f3_desc">L'admin ha messo in pausa il timer. I pulsanti sono disabilitati fino alla ripresa.</div>
         </div>
       </div>
     </div>
@@ -548,46 +549,46 @@
     <div class="section-header">
       <div class="step-circle gold">4</div>
       <div class="section-header-text">
-        <h2>Gestire il budget</h2>
-        <p>Come tenere sotto controllo crediti e roster</p>
+        <h2 data-i18n="gu_s4_title">Gestire il budget</h2>
+        <p data-i18n="gu_s4_desc">Come tenere sotto controllo crediti e roster</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128200; Monitorare il budget</div>
-      <p>In alto nella schermata trovi sempre:</p>
+      <div class="card-title" data-i18n="gu_s4_c1_title">&#128200; Monitorare il budget</div>
+      <p data-i18n="gu_s4_c1_p1">In alto nella schermata trovi sempre:</p>
       <div class="feature-row">
         <div class="feature-icon" style="color:var(--primary);">&#127942;</div>
         <div>
-          <div class="feature-label">Nome squadra</div>
-          <div class="feature-desc">La squadra con cui stai giocando, evidenziata in giallo.</div>
+          <div class="feature-label" data-i18n="gu_s4_f1_label">Nome squadra</div>
+          <div class="feature-desc" data-i18n="gu_s4_f1_desc">La squadra con cui stai giocando, evidenziata in giallo.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon" style="color:var(--green);">&#128176;</div>
         <div>
-          <div class="feature-label">Budget rimanente</div>
-          <div class="feature-desc">I crediti ancora disponibili per i tuoi acquisti. Scende ad ogni acquisto.</div>
+          <div class="feature-label" data-i18n="gu_s4_f2_label">Budget rimanente</div>
+          <div class="feature-desc" data-i18n="gu_s4_f2_desc">I crediti ancora disponibili per i tuoi acquisti. Scende ad ogni acquisto.</div>
         </div>
       </div>
       <div class="feature-row">
         <div class="feature-icon">&#128101;</div>
         <div>
-          <div class="feature-label">Slot rosa</div>
-          <div class="feature-desc">Quanti giocatori per ruolo hai già acquistato e quanti slot ti restano: <strong>P | D | C | A</strong>.</div>
+          <div class="feature-label" data-i18n="gu_s4_f3_label">Slot rosa</div>
+          <div class="feature-desc" data-i18n-html="gu_s4_f3_desc">Quanti giocatori per ruolo hai già acquistato e quanti slot ti restano: <strong>P | D | C | A</strong>.</div>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128161; Calcolo del budget disponibile</div>
-      <p>Ricorda: il sistema blocca automaticamente le offerte se non hai abbastanza crediti. Per esempio, se hai <strong>10 crediti rimanenti</strong> e ti mancano ancora <strong>3 giocatori</strong>, puoi al massimo spendere <strong>7 crediti</strong> sul giocatore in asta (devi tenere 1 credito per ciascuno degli altri due).</p>
-      <div class="info-box note"><strong>Regola base:</strong> Budget residuo - (slot rosa rimasti - 1) = crediti massimi spendibili sul giocatore attuale.</div>
+      <div class="card-title" data-i18n="gu_s4_c2_title">&#128161; Calcolo del budget disponibile</div>
+      <p data-i18n-html="gu_s4_c2_p1">Ricorda: il sistema blocca automaticamente le offerte se non hai abbastanza crediti. Per esempio, se hai <strong>10 crediti rimanenti</strong> e ti mancano ancora <strong>3 giocatori</strong>, puoi al massimo spendere <strong>7 crediti</strong> sul giocatore in asta (devi tenere 1 credito per ciascuno degli altri due).</p>
+      <div class="info-box note" data-i18n-html="gu_s4_note"><strong>Regola base:</strong> Budget residuo - (slot rosa rimasti - 1) = crediti massimi spendibili sul giocatore attuale.</div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128203; I tuoi acquisti</div>
-      <p>Nella parte inferiore della schermata c'è la lista di tutti i giocatori che hai già <strong>acquistato in questa asta</strong>, con ruolo e prezzo pagato. Scorri verso il basso per vederla.</p>
+      <div class="card-title" data-i18n="gu_s4_c3_title">&#128203; I tuoi acquisti</div>
+      <p data-i18n-html="gu_s4_c3_p1">Nella parte inferiore della schermata c'è la lista di tutti i giocatori che hai già <strong>acquistato in questa asta</strong>, con ruolo e prezzo pagato. Scorri verso il basso per vederla.</p>
     </div>
   </section>
 
@@ -596,19 +597,19 @@
     <div class="section-header">
       <div class="step-circle green">5</div>
       <div class="section-header-text">
-        <h2>Vedere le rose</h2>
-        <p>Come consultare le squadre di tutti i partecipanti</p>
+        <h2 data-i18n="gu_s5_title">Vedere le rose</h2>
+        <p data-i18n="gu_s5_desc">Come consultare le squadre di tutti i partecipanti</p>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">&#128203; Pagina "Le Rose"</div>
+      <div class="card-title" data-i18n="gu_s5_c1_title">&#128203; Pagina "Le Rose"</div>
       <ul class="steps-list">
-        <li><div class="step-text">In fondo alla schermata del telefono c'è il pulsante <strong>"Le Rose"</strong>. Toccalo.</div></li>
-        <li><div class="step-text">Si apre la pagina con le rose di <strong>tutte le squadre</strong> — puoi vedere chi ha comprato cosa e a che prezzo.</div></li>
-        <li><div class="step-text">Puoi filtrare per squadra o scorrere la lista completa. Torna indietro per riprendere a fare offerte.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s5_c1_s1">In fondo alla schermata del telefono c'è il pulsante <strong>"Le Rose"</strong>. Toccalo.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s5_c1_s2">Si apre la pagina con le rose di <strong>tutte le squadre</strong> — puoi vedere chi ha comprato cosa e a che prezzo.</div></li>
+        <li><div class="step-text" data-i18n-html="gu_s5_c1_s3">Puoi filtrare per squadra o scorrere la lista completa. Torna indietro per riprendere a fare offerte.</div></li>
       </ul>
-      <div class="info-box tip"><strong>Strategia:</strong> Controlla le rose degli avversari per capire di quali ruoli hanno ancora bisogno — potrai sfruttarla per alzare il prezzo su un giocatore che a loro serve davvero.</div>
+      <div class="info-box tip" data-i18n-html="gu_s5_tip"><strong>Strategia:</strong> Controlla le rose degli avversari per capire di quali ruoli hanno ancora bisogno — potrai sfruttarla per alzare il prezzo su un giocatore che a loro serve davvero.</div>
     </div>
   </section>
 
@@ -617,39 +618,39 @@
     <div class="section-header">
       <div class="step-circle" style="background:var(--text-muted);color:#000;font-size:1rem;">?</div>
       <div class="section-header-text">
-        <h2>Domande frequenti</h2>
-        <p>Problemi comuni e come risolverli</p>
+        <h2 data-i18n="gu_s6_title">Domande frequenti</h2>
+        <p data-i18n="gu_s6_desc">Problemi comuni e come risolverli</p>
       </div>
     </div>
 
     <div class="card">
       <div class="faq-item">
-        <div class="faq-q">Ho chiuso per errore il browser. Cosa faccio?</div>
-        <div class="faq-a">Riaprilo e torna all'URL dell'asta. Riseleziona la tua squadra dal menu a tendina — <strong>la tua rosa e il budget sono salvati</strong>, non perdi nulla. Solo le offerte che potresti aver perso nel frattempo non saranno recuperabili.</div>
+        <div class="faq-q" data-i18n="gu_faq1_q">Ho chiuso per errore il browser. Cosa faccio?</div>
+        <div class="faq-a" data-i18n-html="gu_faq1_a">Riaprilo e torna all'URL dell'asta. Riseleziona la tua squadra dal menu a tendina — <strong>la tua rosa e il budget sono salvati</strong>, non perdi nulla. Solo le offerte che potresti aver perso nel frattempo non saranno recuperabili.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">Non vedo il QR code sul TV. Come mi connetto?</div>
-        <div class="faq-a">Chiedi all'admin il <strong>codice stanza</strong> (6 caratteri) e vai direttamente all'URL dell'app. Dalla home clicca "Unisciti a una Stanza" e inserisci il codice.</div>
+        <div class="faq-q" data-i18n="gu_faq2_q">Non vedo il QR code sul TV. Come mi connetto?</div>
+        <div class="faq-a" data-i18n-html="gu_faq2_a">Chiedi all'admin il <strong>codice stanza</strong> (6 caratteri) e vai direttamente all'URL dell'app. Dalla home clicca "Unisciti a una Stanza" e inserisci il codice.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">I pulsanti di offerta sono grigi e non funzionano.</div>
-        <div class="faq-a">Può succedere per tre motivi: <strong>(1)</strong> budget insufficiente per quella cifra, <strong>(2)</strong> hai già raggiunto il limite di quel ruolo nella tua rosa, <strong>(3)</strong> l'asta è in pausa. Controlla il tuo budget e gli slot rimasti in cima alla schermata.</div>
+        <div class="faq-q" data-i18n="gu_faq3_q">I pulsanti di offerta sono grigi e non funzionano.</div>
+        <div class="faq-a" data-i18n-html="gu_faq3_a">Può succedere per tre motivi: <strong>(1)</strong> budget insufficiente per quella cifra, <strong>(2)</strong> hai già raggiunge il limite di quel ruolo nella tua rosa, <strong>(3)</strong> l'asta è in pausa. Controlla il tuo budget e gli slot rimasti in cima alla schermata.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">La pagina non si aggiorna in tempo reale.</div>
-        <div class="faq-a">Prova a ricaricare la pagina e riseleziona la tua squadra. Se il problema persiste, controlla la connessione WiFi — DraftARENA usa WebSocket e ha bisogno di una connessione stabile.</div>
+        <div class="faq-q" data-i18n="gu_faq4_q">La pagina non si aggiorna in tempo reale.</div>
+        <div class="faq-a" data-i18n="gu_faq4_a">Prova a ricaricare la pagina e riseleziona la tua squadra. Se il problema persiste, controlla la connessione WiFi — DraftARENA usa WebSocket e ha bisogno di una connessione stabile.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">Ho acquistato un giocatore per errore (o l'admin l'ha assegnato alla squadra sbagliata).</div>
-        <div class="faq-a">Avvisa l'admin: può <strong>rimuovere il giocatore dalla tua rosa</strong> e rimborsarti i crediti, oppure riassegnarlo alla squadra corretta. Non puoi farlo tu direttamente dal telefono.</div>
+        <div class="faq-q" data-i18n="gu_faq5_q">Ho acquistato un giocatore per errore (o l'admin l'ha assegnato alla squadra sbagliata).</div>
+        <div class="faq-a" data-i18n-html="gu_faq5_a">Avvisa l'admin: può <strong>rimuovere il giocatore dalla tua rosa</strong> e rimborsarti i crediti, oppure riassegnarlo alla squadra corretta. Non puoi farlo tu direttamente dal telefono.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q">Posso usare DraftARENA su PC o tablet invece del telefono?</div>
-        <div class="faq-a">Sì, funziona su qualsiasi browser moderno — Chrome, Safari, Firefox. L'interfaccia è ottimizzata per il telefono ma è perfettamente usabile anche su tablet e PC.</div>
+        <div class="faq-q" data-i18n="gu_faq6_q">Posso usare DraftARENA su PC o tablet invece del telefono?</div>
+        <div class="faq-a" data-i18n="gu_faq6_a">Sì, funziona su qualsiasi browser moderno — Chrome, Safari, Firefox. L'interfaccia è ottimizzata per il telefono ma è perfettamente usabile anche su tablet e PC.</div>
       </div>
       <div class="faq-item" style="border-bottom:none;padding-bottom:0;">
-        <div class="faq-q">Quando finisce l'asta, dove vedo i risultati?</div>
-        <div class="faq-a">L'admin esporterà un file Excel con tutte le rose e i budget finali. Puoi anche consultare la pagina <strong>"Le Rose"</strong> in qualsiasi momento durante e dopo l'asta.</div>
+        <div class="faq-q" data-i18n="gu_faq7_q">Quando finisce l'asta, dove vedo i risultati?</div>
+        <div class="faq-a" data-i18n-html="gu_faq7_a">L'admin esporterà un file Excel con tutte le rose e i budget finali. Puoi anche consultare la pagina <strong>"Le Rose"</strong> in qualsiasi momento durante e dopo l'asta.</div>
       </div>
     </div>
   </section>
@@ -657,13 +658,15 @@
 </div>
 
 <footer class="guide-footer">
-  <p>Sei l'admin della lega? Consulta la guida completa per organizzare e gestire l'asta.</p>
+  <p data-i18n="g_footer_user">Sei l'admin della lega? Consulta la guida completa per organizzare e gestire l'asta.</p>
   <div class="footer-links">
-    <a href="/">Home DraftARENA</a>
-    <a href="/guida-admin">Guida Admin</a>
-    <a href="/rose">Le Rose</a>
+    <a href="/" data-i18n="g_home">Home DraftARENA</a>
+    <a href="/guida-admin" data-i18n="g_admin_guide">Guida Admin</a>
+    <a href="/rose" data-i18n="g_rose">Le Rose</a>
   </div>
 </footer>
 
+<script src="/i18n.js"></script>
+<script>I18N.applyLang('guida');</script>
 </body>
 </html>
