@@ -152,7 +152,7 @@
                transition:all 0.2s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
         📚 Storico Aste
       </button>
-      <a href="/albo.html"
+      <a id="btn-albo" href="/albo.html"
         style="background:linear-gradient(135deg,#f59e0b,#d97706);border:none;color:#fff;
                padding:10px 16px;border-radius:6px;font-weight:bold;cursor:pointer;font-size:13px;
                text-decoration:none;transition:all 0.2s;display:inline-block;"
@@ -291,6 +291,10 @@
       if (btnBuzzer) {
         btnBuzzer.href = '/phone.html?room=' + code;
         btnBuzzer.style.display = 'inline-block';
+      }
+      const btnAlbo = document.getElementById('btn-albo');
+      if (btnAlbo) {
+        btnAlbo.href = '/albo?room=' + code;
       }
       if (socket.connected) {
         socket.emit('joinRoom', code);
