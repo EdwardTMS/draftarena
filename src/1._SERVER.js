@@ -1160,6 +1160,164 @@ app.delete("/api/room/:code/backups/:id", async (req, res) => {
 });
 
 /* ==========================================================================
+   IMPORT DA STANZA PRECEDENTE (nuova stagione collegata)
+   ========================================================================== */
+
+// GET /api/legacy/:code/overview → verifica se la stanza vecchia esiste e restituisce un riepilogo
+app.get("/api/legacy/:code/overview", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  if (LOCAL_MODE) return res.json({ success: false, error: "Non disponibile in LOCAL_MODE" });
+  try {
+    const dbRoom = await trovaStanzaDB(code);
+    if (!dbRoom) return res.json({ success: false, error: "Stanza non trovata." });
+
+    // Conta i backup storici
+    const { data: backups, error: bErr } = await supabase
+      .from("auction_backups")
+      .select("id, year, label, auction_name, exported_at")
+      .eq("room_code", code)
+      .order("year", { ascending: false });
+    if (bErr) throw bErr;
+
+    // Prova a caricare la sessione "default" per vedere se ci sono dati asta
+    const tmpRoom = createRoomData(code, dbRoom.admin_pin);
+    const loaded = await caricaSessioneDB(tmpRoom);
+
+    res.json({
+      success: true,
+      roomCode: code,
+      hasAuctionData: loaded && (tmpRoom.teams.length > 0 || Object.keys(tmpRoom.teams).length > 0 || tmpRoom.soldPlayers.length > 0),
+      teamCount: Object.keys(tmpRoom.teams).length,
+      soldCount: tmpRoom.soldPlayers.length,
+      playerListCount: tmpRoom.playersList.length,
+      backups: backups || [],
+      backupCount: (backups || []).length
+    });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// GET /api/legacy/:code/export → scarica il backup JSON completo della sessione "default" della stanza vecchia
+app.get("/api/legacy/:code/export", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  if (LOCAL_MODE) return res.status(400).json({ success: false, error: "Non disponibile in LOCAL_MODE" });
+  try {
+    const dbRoom = await trovaStanzaDB(code);
+    if (!dbRoom) return res.status(404).json({ success: false, error: "Stanza non trovata." });
+
+    const tmpRoom = createRoomData(code, dbRoom.admin_pin);
+    await caricaSessioneDB(tmpRoom);
+
+    const year = parseInt(req.query.year) || new Date().getFullYear();
+    const label = String(req.query.label || "").trim() || `Asta ${year}`;
+
+    const teamsArray = Object.entries(tmpRoom.teams).map(([key, t]) => ({
+      key, name: t.name, finalBudget: t.budget, slots: t.slots
+    }));
+
+    const backup = {
+      version: 1,
+      app: "DraftARENA",
+      year,
+      label,
+      exportedAt: new Date().toISOString(),
+      auctionName: tmpRoom.auctionName,
+      config: tmpRoom.CONFIG,
+      timerDuration: tmpRoom.state.timerDuration,
+      teams: teamsArray,
+      soldPlayers: tmpRoom.soldPlayers,
+      unsoldPlayers: tmpRoom.playersList
+    };
+
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Content-Disposition", `attachment; filename=DraftARENA_backup_${code}_${year}.json`);
+    res.send(JSON.stringify(backup, null, 2));
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// POST /api/legacy/:oldCode/import-albo → copia tutti i backup storici dalla stanza vecchia a quella corrente
+// Richiede x-admin-pin della stanza CORRENTE (in cui si sta importando)
+app.post("/api/legacy/:oldCode/import-albo", async (req, res) => {
+  const oldCode = String(req.params.oldCode).toUpperCase().trim();
+  const newCode = String(req.body.newCode || "").toUpperCase().trim();
+  if (!newCode) return res.status(400).json({ success: false, error: "Codice nuova stanza mancante." });
+
+  const room = rooms.get(newCode);
+  const pin = String(req.headers["x-admin-pin"] || "");
+  if (!room || String(room.adminPin) !== pin) {
+    return res.status(403).json({ success: false, error: "PIN admin non valido." });
+  }
+  if (LOCAL_MODE) return res.json({ success: true, copied: 0 });
+  if (oldCode === newCode) return res.status(400).json({ success: false, error: "La stanza di destinazione deve essere diversa da quella di origine." });
+
+  try {
+    const { data: oldBackups, error } = await supabase
+      .from("auction_backups")
+      .select("*")
+      .eq("room_code", oldCode);
+    if (error) throw error;
+    if (!oldBackups || oldBackups.length === 0) {
+      return res.json({ success: true, copied: 0, message: "Nessun backup storico nella stanza di origine." });
+    }
+
+    // Controlla quali backup esistono già nella stanza nuova (per anno+label) per evitare duplicati
+    const { data: existing } = await supabase
+      .from("auction_backups")
+      .select("year, label, auction_name")
+      .eq("room_code", newCode);
+    const existingKeys = new Set((existing || []).map(b => `${b.year}|${b.label}|${b.auction_name}`));
+
+    const toInsert = oldBackups
+      .filter(b => !existingKeys.has(`${b.year}|${b.label}|${b.auction_name}`))
+      .map(b => ({
+        room_code: newCode,
+        year: b.year,
+        auction_name: b.auction_name,
+        label: b.label,
+        backup_data: b.backup_data,
+        season_data: b.season_data,
+        exported_at: b.exported_at
+      }));
+
+    if (toInsert.length > 0) {
+      const { error: insErr } = await supabase.from("auction_backups").insert(toInsert);
+      if (insErr) throw insErr;
+    }
+
+    // Copia anche trophy_config e team_aliases se esistenti
+    const { data: trophyCfg } = await supabase
+      .from("trophy_config")
+      .select("competitions")
+      .eq("room_code", oldCode)
+      .maybeSingle();
+    if (trophyCfg && trophyCfg.competitions) {
+      await supabase.from("trophy_config")
+        .upsert({ room_code: newCode, competitions: trophyCfg.competitions, updated_at: new Date().toISOString() }, { onConflict: "room_code" });
+    }
+
+    const { data: oldAliases } = await supabase
+      .from("team_aliases")
+      .select("canonical_name, aliases")
+      .eq("room_code", oldCode);
+    if (oldAliases && oldAliases.length > 0) {
+      const aliasRows = oldAliases.map(a => ({
+        room_code: newCode,
+        canonical_name: a.canonical_name,
+        aliases: a.aliases
+      }));
+      await supabase.from("team_aliases").insert(aliasRows);
+    }
+
+    res.json({ success: true, copied: toInsert.length, skipped: oldBackups.length - toInsert.length });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+/* ==========================================================================
    ALBO D'ORO
    ========================================================================== */
 
@@ -1283,6 +1441,118 @@ app.patch("/api/room/:code/backups/:id/season", async (req, res) => {
     res.status(500).json({ success: false, error: e.message });
   }
 });
+
+/* ==========================================================================
+   TROPHY CONFIG & TEAM ALIASES (Classifica Trofei Generale)
+   ========================================================================== */
+
+// GET /api/lega/:code/trophy-config  → leggi config coppe (pubblico)
+app.get("/api/lega/:code/trophy-config", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  if (LOCAL_MODE || !supabase) return res.json({ success: true, config: getDefaultTrophyConfig() });
+  try {
+    const { data, error } = await supabase
+      .from("trophy_config")
+      .select("competitions")
+      .eq("room_code", code)
+      .maybeSingle();
+    if (error) throw error;
+    res.json({ success: true, config: (data && data.competitions) ? data.competitions : getDefaultTrophyConfig() });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// PUT /api/room/:code/trophy-config  → salva config coppe (richiede x-admin-pin)
+app.put("/api/room/:code/trophy-config", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  const room = rooms.get(code);
+  const pin = String(req.headers["x-admin-pin"] || "");
+  if (!room || String(room.adminPin) !== pin) {
+    return res.status(403).json({ success: false, error: "PIN admin non valido." });
+  }
+  if (LOCAL_MODE || !supabase) return res.json({ success: true });
+  const { competitions } = req.body;
+  if (!Array.isArray(competitions)) {
+    return res.status(400).json({ success: false, error: "Configurazione competizioni non valida." });
+  }
+  const clean = competitions.map(c => ({
+    id: String(c.id || "").trim().slice(0, 40),
+    name: String(c.name || "").trim().slice(0, 80),
+    emoji: String(c.emoji || "🏅").slice(0, 10),
+    points: parseInt(c.points) || 0,
+    priority: parseInt(c.priority) || 99
+  })).filter(c => c.name);
+  try {
+    const { error } = await supabase
+      .from("trophy_config")
+      .upsert({ room_code: code, competitions: clean, updated_at: new Date().toISOString() }, { onConflict: "room_code" });
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// GET /api/lega/:code/team-aliases  → leggi alias squadre (pubblico)
+app.get("/api/lega/:code/team-aliases", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  if (LOCAL_MODE || !supabase) return res.json({ success: true, aliases: [] });
+  try {
+    const { data, error } = await supabase
+      .from("team_aliases")
+      .select("id, canonical_name, aliases")
+      .eq("room_code", code)
+      .order("canonical_name", { ascending: true });
+    if (error) throw error;
+    res.json({ success: true, aliases: data || [] });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+// PUT /api/room/:code/team-aliases  → salva tutte le alias (richiede x-admin-pin)
+app.put("/api/room/:code/team-aliases", async (req, res) => {
+  const code = String(req.params.code).toUpperCase().trim();
+  const room = rooms.get(code);
+  const pin = String(req.headers["x-admin-pin"] || "");
+  if (!room || String(room.adminPin) !== pin) {
+    return res.status(403).json({ success: false, error: "PIN admin non valido." });
+  }
+  if (LOCAL_MODE || !supabase) return res.json({ success: true });
+  const { aliases } = req.body;
+  if (!Array.isArray(aliases)) {
+    return res.status(400).json({ success: false, error: "Dati alias non validi." });
+  }
+  try {
+    // Delete existing, then insert fresh
+    await supabase.from("team_aliases").delete().eq("room_code", code);
+    const rows = aliases
+      .filter(a => a.canonical_name && String(a.canonical_name).trim())
+      .map(a => ({
+        room_code: code,
+        canonical_name: String(a.canonical_name).trim().slice(0, 80),
+        aliases: Array.isArray(a.aliases) ? a.aliases.map(x => String(x).trim().slice(0, 80)).filter(x => x) : [],
+        updated_at: new Date().toISOString()
+      }));
+    if (rows.length > 0) {
+      const { error } = await supabase.from("team_aliases").insert(rows);
+      if (error) throw error;
+    }
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+function getDefaultTrophyConfig() {
+  return [
+    { id: "campionato", name: "Campionato", emoji: "🏆", points: 100, priority: 1 },
+    { id: "champions",  name: "Champion's League", emoji: "⭐", points: 40, priority: 2 },
+    { id: "coppaitalia",name: "Coppa Italia", emoji: "🥈", points: 20, priority: 3 },
+    { id: "coppachiappe",name:"Coppa Chiappe", emoji: "🥿", points: 10, priority: 4 }
+  ];
+}
 
 /* ==========================================================================
    FEEDBACK & SUPPORTO
