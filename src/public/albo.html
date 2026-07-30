@@ -107,6 +107,73 @@
     .med-sub { font-size: 11px; color: var(--dim); }
     .med-trophies { font-size: 1.1rem; margin-top: 6px; letter-spacing: 2px; }
 
+    /* ── CLASSIFICA TROFEI ── */
+    .trophy-board {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      margin-bottom: 48px;
+    }
+    .trophy-board-header {
+      display: flex; align-items: center; gap: 10px;
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(245,158,11,0.03));
+    }
+    .trophy-board-header .icon { font-size: 1.6rem; }
+    .trophy-board-header h2 {
+      font-size: 1.1rem; font-weight: 900; letter-spacing: -0.01em;
+    }
+    .trophy-board-header .sub { font-size: 0.72rem; color: var(--dim); margin-top: 2px; }
+    .trophy-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 22px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+    .trophy-row:last-child { border-bottom: none; }
+    .trophy-row:hover { background: rgba(255,255,255,0.02); }
+    .trophy-row.top1 { background: rgba(251,191,36,0.06); }
+    .trophy-row.top1:hover { background: rgba(251,191,36,0.1); }
+    .trophy-rank {
+      width: 36px; text-align: center; font-size: 1.3rem; font-weight: 900;
+      flex-shrink: 0; color: var(--dim);
+    }
+    .trophy-row.top1 .trophy-rank { color: var(--gold); }
+    .trophy-row.top2 .trophy-rank { color: #d1d5db; }
+    .trophy-row.top3 .trophy-rank { color: #cd7f32; }
+    .trophy-team {
+      flex: 1; min-width: 0;
+    }
+    .trophy-team-name {
+      font-size: 0.95rem; font-weight: 700; color: var(--text);
+      word-break: break-word;
+    }
+    .trophy-row.top1 .trophy-team-name { color: var(--gold); }
+    .trophy-team-meta {
+      font-size: 0.72rem; color: var(--dim); margin-top: 3px;
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .trophy-chip {
+      display: inline-flex; align-items: center; gap: 3px;
+      font-size: 0.7rem; color: var(--muted);
+    }
+    .trophy-points {
+      flex-shrink: 0; text-align: right;
+    }
+    .trophy-points-val {
+      font-size: 1.4rem; font-weight: 900; color: var(--sky);
+      letter-spacing: -0.02em;
+    }
+    .trophy-points-lbl {
+      font-size: 0.62rem; color: var(--dim); text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    @media (max-width: 560px) {
+      .trophy-row { padding: 12px 16px; gap: 8px; }
+      .trophy-rank { width: 28px; font-size: 1.1rem; }
+      .trophy-points-val { font-size: 1.1rem; }
+    }
+
     /* ── STAGIONI ── */
     .season-card {
       background: var(--bg-card); border: 1px solid var(--border);
@@ -206,6 +273,113 @@
   document.getElementById('nav-room').textContent = roomCode || '---';
   document.title = roomCode ? `Albo d'Oro — ${roomCode}` : "Albo d'Oro — DraftARENA";
 
+  let _trophyConfig = null;
+  let _teamAliases = null;
+
+  function resolveTeamName(rawName) {
+    if (!rawName) return rawName;
+    if (!_teamAliases) return rawName;
+    for (const group of _teamAliases) {
+      if (group.canonical_name === rawName) return group.canonical_name;
+      const aliases = Array.isArray(group.aliases) ? group.aliases : [];
+      if (aliases.includes(rawName)) return group.canonical_name;
+    }
+    return rawName;
+  }
+
+  function computeTrophyLeaderboard(seasons) {
+    const config = _trophyConfig || [];
+    const byName = {};
+    config.forEach(c => { byName[c.name] = c; });
+    // Campionato is always classifica[0]
+    const campionatoCfg = config.find(c => c.id === 'campionato') || { name: 'Campionato', emoji: '🏆', points: 100, priority: 1 };
+
+    const teams = {};
+    function ensureTeam(name) {
+      const resolved = resolveTeamName(name);
+      if (!teams[resolved]) {
+        teams[resolved] = { name: resolved, totalPoints: 0, trophies: {} };
+      }
+      return teams[resolved];
+    }
+    function addTrophy(name, compName, cfg) {
+      const t = ensureTeam(name);
+      t.totalPoints += (cfg?.points || 0);
+      const key = compName;
+      if (!t.trophies[key]) t.trophies[key] = { count: 0, emoji: cfg?.emoji || '🏅', points: cfg?.points || 0, priority: cfg?.priority || 99 };
+      t.trophies[key].count++;
+    }
+
+    seasons.forEach(s => {
+      const cl = s.season_data?.classifica || [];
+      if (cl[0]?.nome) {
+        addTrophy(cl[0].nome, campionatoCfg.name, campionatoCfg);
+      }
+      const comps = s.season_data?.competizioni || [];
+      comps.forEach(c => {
+        if (!c.vincitore) return;
+        const cfg = byName[c.nome] || { name: c.nome, emoji: c.emoji || '🏅', points: 0, priority: 99 };
+        addTrophy(c.vincitore, c.nome, cfg);
+      });
+    });
+
+    const arr = Object.values(teams).filter(t => t.totalPoints > 0 || Object.keys(t.trophies).length > 0);
+    arr.sort((a, b) => {
+      if (b.totalPoints !== a.totalPoints) return b.totalPoints - a.totalPoints;
+      // Tie-break: compare trophy counts by priority order
+      const allKeys = new Set([...Object.keys(a.trophies), ...Object.keys(b.trophies)]);
+      const sortedKeys = [...allKeys].sort((k1, k2) =>
+        (a.trophies[k1]?.priority || 99) - (a.trophies[k2]?.priority || 99));
+      for (const key of sortedKeys) {
+        const aCount = a.trophies[key]?.count || 0;
+        const bCount = b.trophies[key]?.count || 0;
+        if (bCount !== aCount) return bCount - aCount;
+      }
+      return a.name.localeCompare(b.name);
+    });
+
+    return arr;
+  }
+
+  function renderTrophyBoard(seasons) {
+    const board = computeTrophyLeaderboard(seasons);
+    if (board.length === 0) return '';
+    const config = _trophyConfig || [];
+    const compLegend = config.map(c => `<span class="trophy-chip">${esc(c.emoji)} ${esc(c.name)}: ${c.points}pt</span>`).join('');
+
+    const rows = board.map((t, i) => {
+      const rankClass = i === 0 ? 'top1' : i === 1 ? 'top2' : i === 2 ? 'top3' : '';
+      const medals = ['🥇','🥈','🥉'];
+      const rankDisplay = i < 3 ? medals[i] : (i + 1);
+      const trophyChips = Object.entries(t.trophies)
+        .sort(([,a],[,b]) => (a.priority || 99) - (b.priority || 99))
+        .map(([name, info]) => `<span class="trophy-chip">${esc(info.emoji)} ${info.count}× ${esc(name)}</span>`)
+        .join('');
+      return `<div class="trophy-row ${rankClass}">
+        <div class="trophy-rank">${rankDisplay}</div>
+        <div class="trophy-team">
+          <div class="trophy-team-name">${esc(t.name)}</div>
+          <div class="trophy-team-meta">${trophyChips}</div>
+        </div>
+        <div class="trophy-points">
+          <div class="trophy-points-val">${t.totalPoints}</div>
+          <div class="trophy-points-lbl">` + I18N.t('albo','albo_points') + `</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<div class="trophy-board">
+      <div class="trophy-board-header">
+        <div class="icon">🏆</div>
+        <div>
+          <h2>` + I18N.t('albo','albo_trophy_title') + `</h2>
+          <div class="sub">${compLegend}</div>
+        </div>
+      </div>
+      ${rows}
+    </div>`;
+  }
+
   async function loadAlbo() {
     const content = document.getElementById('content');
     if (!roomCode) {
@@ -213,11 +387,16 @@
       return;
     }
     try {
-      const res = await fetch(`/api/lega/${roomCode}/albo`);
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error);
+      const [alboRes, cfgRes, aliasRes] = await Promise.all([
+        fetch(`/api/lega/${roomCode}/albo`).then(r => r.json()),
+        fetch(`/api/lega/${roomCode}/trophy-config`).then(r => r.json()),
+        fetch(`/api/lega/${roomCode}/team-aliases`).then(r => r.json())
+      ]);
+      if (!alboRes.success) throw new Error(alboRes.error);
+      if (cfgRes.success) _trophyConfig = cfgRes.config;
+      if (aliasRes.success) _teamAliases = aliasRes.aliases;
 
-      const seasons = json.seasons.filter(s => s.season_data &&
+      const seasons = alboRes.seasons.filter(s => s.season_data &&
         (s.season_data.classifica?.length || s.season_data.competizioni?.length));
 
       if (seasons.length === 0) {
@@ -228,7 +407,7 @@
         return;
       }
 
-      content.innerHTML = renderMedagliere(seasons) + renderStagioni(seasons);
+      content.innerHTML = renderTrophyBoard(seasons) + renderMedagliere(seasons) + renderStagioni(seasons);
     } catch(e) {
       content.innerHTML = `<div class="empty"><div class="icon">⚠️</div>${esc(e.message)}</div>`;
     }
