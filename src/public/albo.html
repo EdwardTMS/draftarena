@@ -268,7 +268,7 @@
 <script>
   I18N.applyLang('albo');
   const params = new URLSearchParams(location.search);
-  const roomCode = (params.get('room') || '').toUpperCase().trim();
+  const roomCode = (params.get('room') || sessionStorage.getItem('roomCode') || '').toUpperCase().trim();
 
   document.getElementById('nav-room').textContent = roomCode || '---';
   document.title = roomCode ? `Albo d'Oro — ${roomCode}` : "Albo d'Oro — DraftARENA";
