@@ -84,7 +84,9 @@ window.I18N = (function () {
         albo_competizioni: '🏆 Competizioni Vinte',
         albo_no_classifica: 'Classifica non inserita.',
         albo_no_competizioni: 'Nessuna competizione registrata.',
-        albo_archiviata: 'Archiviata il'
+        albo_archiviata: 'Archiviata il',
+        albo_trophy_title: 'Classifica Trofei Generale',
+        albo_points: 'punti'
       },
       en: {
         albo_nav_hub: '← Hub',
@@ -101,7 +103,9 @@ window.I18N = (function () {
         albo_competizioni: '🏆 Competitions Won',
         albo_no_classifica: 'Standings not entered.',
         albo_no_competizioni: 'No competition registered.',
-        albo_archiviata: 'Archived on'
+        albo_archiviata: 'Archived on',
+        albo_trophy_title: 'General Trophy Standings',
+        albo_points: 'points'
       }
     },
     feedback: {
@@ -832,6 +836,16 @@ window.I18N = (function () {
         admin_storico_empty: 'Carica i backup storici per gestire lo storico...',
         admin_storico_refresh_btn: '🔄 Aggiorna lista',
         admin_storico_create_btn: '➕ Crea stagione storica',
+        admin_trophy_title: '🏆 Classifica Trofei Generale',
+        admin_trophy_desc: 'Configura le competizioni, i punti e l\'ordine di priorit\u00e0 per la classifica trofei. A parit\u00e0 di punti vince chi ha pi\u00f9 trofei ad alta priorit\u00e0.',
+        admin_trophy_load_btn: '🔄 Carica configurazione',
+        admin_trophy_add_comp_btn: '➕ Aggiungi competizione',
+        admin_trophy_save_btn: '💾 Salva configurazione',
+        admin_alias_title: '🔗 Collega Squadre (Alias)',
+        admin_alias_desc: 'Unisci squadre con nomi diversi ma stesso presidente sotto un unico nome. Tutti i trofei verranno accorpati.',
+        admin_alias_load_btn: '🔄 Carica alias',
+        admin_alias_add_btn: '➕ Aggiungi gruppo',
+        admin_alias_save_btn: '💾 Salva alias',
         admin_teams_create_title: 'Crea Nuova Squadra',
         admin_teams_name_label: 'Nome Squadra',
         admin_teams_name_ph: 'Nome della fantasquadra',
@@ -1057,6 +1071,16 @@ window.I18N = (function () {
         admin_storico_empty: 'Load historical backups to manage history...',
         admin_storico_refresh_btn: '🔄 Refresh list',
         admin_storico_create_btn: '➕ Create historical season',
+        admin_trophy_title: '🏆 General Trophy Standings',
+        admin_trophy_desc: 'Configure competitions, points and tie-break priority. At equal points, the team with more high-priority trophies wins.',
+        admin_trophy_load_btn: '🔄 Load configuration',
+        admin_trophy_add_comp_btn: '➕ Add competition',
+        admin_trophy_save_btn: '💾 Save configuration',
+        admin_alias_title: '🔗 Link Teams (Aliases)',
+        admin_alias_desc: 'Merge teams with different names but same president under one name. All trophies will be combined.',
+        admin_alias_load_btn: '🔄 Load aliases',
+        admin_alias_add_btn: '➕ Add group',
+        admin_alias_save_btn: '💾 Save aliases',
         admin_teams_create_title: 'Create New Team',
         admin_teams_name_label: 'Team Name',
         admin_teams_name_ph: 'Fantasy team name',
