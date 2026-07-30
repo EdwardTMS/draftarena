@@ -798,6 +798,90 @@
             </div>
         </div>
 
+        <!-- IMPORT STAGIONE PRECEDENTE ─────────────────────────────────────── -->
+        <div class="card" id="card-legacy-import">
+            <h3 class="card-title" data-i18n="admin_legacy_title">🔄 Importa Stagione Precedente</h3>
+            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_legacy_desc">
+                Crea una nuova stagione collegandola a quella precedente. Inserisci il codice della stanza vecchia
+                per scaricare il backup dell'asta e importare l'Albo d'Oro. Ti consigliamo di salvare i file anche sul tuo PC.
+            </p>
+
+            <!-- Step 1: Inserisci codice stanza vecchia -->
+            <div style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);
+                        border-radius:8px;padding:14px;margin-bottom:14px;">
+                <div style="font-weight:600;color:#38bdf8;margin-bottom:6px;font-size:0.9rem;">
+                    <span class="step-badge" style="display:inline-flex;align-items:center;justify-content:center;
+                          width:22px;height:22px;border-radius:50%;background:#38bdf8;color:#000;font-size:0.75rem;margin-right:6px;">1</span>
+                    <span data-i18n="admin_legacy_step1_title">Verifica stanza precedente</span>
+                </div>
+                <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_legacy_step1_desc">
+                    Inserisci il codice della stanza della stagione scorsa per vedere cosa è disponibile.
+                </p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <input type="text" id="legacy-room-code" placeholder="Codice stanza vecchia (es. AB3X9K)"
+                           maxlength="6"
+                           style="width:200px;padding:8px 12px;border-radius:6px;border:1px solid var(--border);
+                                  background:var(--bg-input);color:var(--text-primary);font-size:0.9rem;
+                                  text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
+                    <button class="btn" style="white-space:nowrap;background:rgba(56,189,248,0.15);
+                            color:#38bdf8;border:1px solid rgba(56,189,248,0.3);" onclick="verificaStanzaLegacy()" data-i18n="admin_legacy_step1_btn">
+                        🔍 Verifica
+                    </button>
+                </div>
+                <div id="legacy-overview" style="display:none;margin-top:12px;padding:12px;
+                     background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:8px;font-size:0.85rem;">
+                </div>
+                <div id="legacy-error" style="display:none;margin-top:10px;padding:10px 12px;
+                     background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;
+                     font-size:0.82rem;color:#ef4444;"></div>
+            </div>
+
+            <!-- Step 2: Scarica backup -->
+            <div id="legacy-step-download" style="display:none;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
+                        border-radius:8px;padding:14px;margin-bottom:14px;">
+                <div style="font-weight:600;color:#10b981;margin-bottom:6px;font-size:0.9rem;">
+                    <span class="step-badge" style="display:inline-flex;align-items:center;justify-content:center;
+                          width:22px;height:22px;border-radius:50%;background:#10b981;color:#000;font-size:0.75rem;margin-right:6px;">2</span>
+                    <span data-i18n="admin_legacy_step2_title">Scarica backup asta</span>
+                </div>
+                <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_legacy_step2_desc">
+                    Scarica il file di backup con tutte le squadre e i parametri dell'asta della stagione precedente.
+                    Salvalo sul tuo PC, poi caricalo nella sezione "Importa backup" qui sotto.
+                </p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <input type="number" id="legacy-year" placeholder="Anno (es. 2026)" value="2026"
+                           style="width:120px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
+                                  background:var(--bg-input);color:var(--text-primary);font-size:0.85rem;">
+                    <input type="text" id="legacy-label" placeholder="Etichetta (es. Fantacalcio 2026)"
+                           style="flex:1;min-width:180px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
+                                  background:var(--bg-input);color:var(--text-primary);font-size:0.85rem;">
+                    <button class="btn btn-success" style="white-space:nowrap;" onclick="scaricaBackupLegacy()" data-i18n="admin_legacy_step2_btn">
+                        ⬇️ Scarica Backup
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 3: Importa Albo d'Oro -->
+            <div id="legacy-step-albo" style="display:none;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);
+                        border-radius:8px;padding:14px;">
+                <div style="font-weight:600;color:#f59e0b;margin-bottom:6px;font-size:0.9rem;">
+                    <span class="step-badge" style="display:inline-flex;align-items:center;justify-content:center;
+                          width:22px;height:22px;border-radius:50%;background:#f59e0b;color:#000;font-size:0.75rem;margin-right:6px;">3</span>
+                    <span data-i18n="admin_legacy_step3_title">Importa Albo d'Oro</span>
+                </div>
+                <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_legacy_step3_desc">
+                    Copia tutti i backup storici, le classifiche trofei e gli alias delle squadre dalla stanza vecchia
+                    a questa. I backup già esistenti non verranno duplicati.
+                </p>
+                <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaAlboLegacy()" data-i18n="admin_legacy_step3_btn">
+                    🏆 Importa Albo d'Oro
+                </button>
+                <div id="legacy-albo-result" style="display:none;margin-top:10px;padding:10px 12px;
+                     background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;
+                     font-size:0.82rem;"></div>
+            </div>
+        </div>
+
         <!-- BACKUP ASTA ─────────────────────────────────────────────────────── -->
         <div class="card">
             <h3 class="card-title" data-i18n="admin_backup_title">📦 Backup Asta</h3>
@@ -890,6 +974,66 @@
                     ➕ Crea stagione storica
                 </button>
             </div>
+        </div>
+
+        <!-- CLASSIFICA TROFEI ──────────────────────────────────────────────── -->
+        <div class="card" id="card-trophy-config">
+            <h3 class="card-title" data-i18n="admin_trophy_title">
+                🏆 Classifica Trofei Generale
+            </h3>
+            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_trophy_desc">
+                Configura le competizioni, i punti e l'ordine di priorità per la classifica trofei. A parità di punti vince chi ha più trofei ad alta priorità.
+            </p>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+                <button onclick="loadTrophyConfig()" style="flex:1;min-width:120px;padding:8px;background:rgba(56,189,248,0.1);
+                        color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;font-weight:600;
+                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_trophy_load_btn">
+                    🔄 Carica configurazione
+                </button>
+                <button onclick="addCompetitionRow()" style="flex:1;min-width:120px;padding:8px;background:rgba(16,185,129,0.12);
+                        color:#10b981;border:1px solid rgba(16,185,129,0.35);border-radius:6px;font-weight:600;
+                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_trophy_add_comp_btn">
+                    ➕ Aggiungi competizione
+                </button>
+                <button onclick="salvaTrophyConfig()" style="flex:1;min-width:120px;padding:8px;background:rgba(245,158,11,0.15);
+                        color:#f59e0b;border:1px solid rgba(245,158,11,0.35);border-radius:6px;font-weight:600;
+                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_trophy_save_btn">
+                    💾 Salva configurazione
+                </button>
+            </div>
+
+            <div id="trophy-config-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+        </div>
+
+        <!-- ALIAS SQUADRE ──────────────────────────────────────────────── -->
+        <div class="card" id="card-team-aliases">
+            <h3 class="card-title" data-i18n="admin_alias_title">
+                🔗 Collega Squadre (Alias)
+            </h3>
+            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_alias_desc">
+                Unisci squadre con nomi diversi ma stesso presidente sotto un unico nome. Tutti i trofei verranno accorpati.
+            </p>
+
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+                <button onclick="loadTeamAliases()" style="flex:1;min-width:120px;padding:8px;background:rgba(56,189,248,0.1);
+                        color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;font-weight:600;
+                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_alias_load_btn">
+                    🔄 Carica alias
+                </button>
+                <button onclick="addAliasRow()" style="flex:1;min-width:120px;padding:8px;background:rgba(16,185,129,0.12);
+                        color:#10b981;border:1px solid rgba(16,185,129,0.35);border-radius:6px;font-weight:600;
+                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_alias_add_btn">
+                    ➕ Aggiungi gruppo
+                </button>
+                <button onclick="salvaTeamAliases()" style="flex:1;min-width:120px;padding:8px;background:rgba(245,158,11,0.15);
+                        color:#f59e0b;border:1px solid rgba(245,158,11,0.35);border-radius:6px;font-weight:600;
+                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_alias_save_btn">
+                    💾 Salva alias
+                </button>
+            </div>
+
+            <div id="team-aliases-list" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
     </div>
 
@@ -2010,6 +2154,128 @@
         }
 
         // ============================================================
+        // IMPORT DA STANZA PRECEDENTE (nuova stagione collegata)
+        // ============================================================
+
+        let _legacyRoomCode = null;
+
+        async function verificaStanzaLegacy() {
+            const code = document.getElementById('legacy-room-code').value.trim().toUpperCase();
+            const errEl = document.getElementById('legacy-error');
+            const overviewEl = document.getElementById('legacy-overview');
+            errEl.style.display = 'none';
+            overviewEl.style.display = 'none';
+
+            if (!code || code.length < 4) {
+                errEl.textContent = 'Inserisci un codice stanza valido.';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            overviewEl.innerHTML = '<span style="color:#38bdf8;">Caricamento...</span>';
+            overviewEl.style.display = 'block';
+
+            try {
+                const res = await fetch(`/api/legacy/${code}/overview`);
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error || 'Stanza non trovata.');
+
+                _legacyRoomCode = code;
+                const backupsHtml = data.backups && data.backups.length > 0
+                    ? data.backups.map(b => `<div style="padding:4px 0;font-size:0.8rem;">📦 ${escHtml(b.label || b.auction_name)} (${b.year}) — export: ${b.exported_at ? new Date(b.exported_at).toLocaleDateString('it-IT') : '—'}</div>`).join('')
+                    : '<div style="font-size:0.8rem;color:#64748b;">Nessun backup storico trovato.</div>';
+
+                overviewEl.innerHTML = `
+                    <div style="color:#10b981;font-weight:600;margin-bottom:6px;">✅ Stanza trovata: ${data.roomCode}</div>
+                    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+                        <div>🏟️ Squadre: <strong>${data.teamCount}</strong></div>
+                        <div>⚽ Giocatori venduti: <strong>${data.soldCount}</strong></div>
+                        <div>📋 Giocatori in lista: <strong>${data.playerListCount}</strong></div>
+                    </div>
+                    <div style="border-top:1px solid rgba(56,189,248,0.15);padding-top:8px;margin-top:8px;">
+                        <div style="font-weight:600;margin-bottom:4px;">📚 Backup storici (${data.backupCount}):</div>
+                        ${backupsHtml}
+                    </div>
+                `;
+
+                // Mostra gli step successivi
+                document.getElementById('legacy-step-download').style.display = 'block';
+                if (data.backupCount > 0) {
+                    document.getElementById('legacy-step-albo').style.display = 'block';
+                } else {
+                    document.getElementById('legacy-step-albo').style.display = 'none';
+                }
+            } catch(e) {
+                overviewEl.style.display = 'none';
+                errEl.textContent = e.message;
+                errEl.style.display = 'block';
+                document.getElementById('legacy-step-download').style.display = 'none';
+                document.getElementById('legacy-step-albo').style.display = 'none';
+                _legacyRoomCode = null;
+            }
+        }
+
+        async function scaricaBackupLegacy() {
+            if (!_legacyRoomCode) { showAlert('error', 'Verifica prima la stanza precedente.'); return; }
+            const year = parseInt(document.getElementById('legacy-year').value) || new Date().getFullYear();
+            const label = document.getElementById('legacy-label').value.trim() || `Asta ${year}`;
+
+            try {
+                const res = await fetch(`/api/legacy/${_legacyRoomCode}/export?year=${year}&label=${encodeURIComponent(label)}`);
+                if (!res.ok) {
+                    const err = await res.json();
+                    throw new Error(err.error || 'Errore download.');
+                }
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `DraftARENA_backup_${_legacyRoomCode}_${year}.json`;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+                showAlert('success', `✅ Backup scaricato! Ora caricalo nella sezione "Importa backup" qui sotto.`);
+            } catch(e) {
+                showAlert('error', `❌ ${e.message}`);
+            }
+        }
+
+        async function importaAlboLegacy() {
+            if (!_legacyRoomCode) { showAlert('error', 'Verifica prima la stanza precedente.'); return; }
+            if (!currentRoomCode) { showAlert('error', 'Entra in una stanza prima.'); return; }
+            if (_legacyRoomCode === currentRoomCode) { showAlert('error', 'La stanza di origine e destinazione coincidono.'); return; }
+
+            if (!confirm(`Importare l'Albo d'Oro dalla stanza ${_legacyRoomCode} a questa (${currentRoomCode})?\nVerranno copiati tutti i backup storici, le classifiche trofei e gli alias delle squadre.`)) return;
+
+            const resultEl = document.getElementById('legacy-albo-result');
+            resultEl.style.display = 'none';
+
+            try {
+                const pin = sessionStorage.getItem('adminPin') || '';
+                const res = await fetch(`/api/legacy/${_legacyRoomCode}/import-albo`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
+                    body: JSON.stringify({ newCode: currentRoomCode })
+                });
+                const data = await res.json();
+                if (!data.success) throw new Error(data.error || 'Errore importazione.');
+
+                resultEl.style.display = 'block';
+                resultEl.style.color = '#10b981';
+                resultEl.innerHTML = `✅ Importazione completata! ${data.copied} backup copiati${data.skipped ? `, ${data.skipped} già presenti (saltati)` : ''}.`;
+                showAlert('success', `🏆 Albo d'Oro importato: ${data.copied} stagioni copiate.`);
+
+                // Ricarica lo storico per mostrare i nuovi dati
+                caricaStoricoLega();
+            } catch(e) {
+                resultEl.style.display = 'block';
+                resultEl.style.color = '#ef4444';
+                resultEl.textContent = `❌ ${e.message}`;
+                showAlert('error', e.message);
+            }
+        }
+
+        // ============================================================
         // STORICO LEGA & ALBO D'ORO
         // ============================================================
 
@@ -2484,6 +2750,191 @@
             if (!json.success) throw new Error(json.error);
             showAlert('success', '✅ Stagione eliminata.');
             caricaStoricoLega();
+          } catch(e) {
+            showAlert('error', '❌ Errore: ' + e.message);
+          }
+        }
+
+        // ============================================================
+        // TROPHY CONFIG (Classifica Trofei Generale)
+        // ============================================================
+
+        let _trophyCompetitions = [];
+
+        const DEFAULT_TROPHY_CONFIG = [
+          { id: 'campionato', name: 'Campionato', emoji: '🏆', points: 100, priority: 1 },
+          { id: 'champions',  name: "Champion's League", emoji: '⭐', points: 40, priority: 2 },
+          { id: 'coppaitalia',name: 'Coppa Italia', emoji: '🥈', points: 20, priority: 3 },
+          { id: 'coppachiappe',name:'Coppa Chiappe', emoji: '🥿', points: 10, priority: 4 }
+        ];
+
+        async function loadTrophyConfig() {
+          if (!currentRoomCode) { showAlert('error', 'Nessuna stanza attiva.'); return; }
+          try {
+            const res = await fetch(`/api/lega/${currentRoomCode}/trophy-config`);
+            const json = await res.json();
+            if (!json.success) throw new Error(json.error);
+            _trophyCompetitions = (json.config && json.config.length) ? json.config : JSON.parse(JSON.stringify(DEFAULT_TROPHY_CONFIG));
+            renderTrophyConfigList();
+            showAlert('success', '✅ Configurazione trofei caricata.');
+          } catch(e) {
+            showAlert('error', '❌ Errore: ' + e.message);
+          }
+        }
+
+        function renderTrophyConfigList() {
+          const list = document.getElementById('trophy-config-list');
+          if (_trophyCompetitions.length === 0) {
+            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessuna competizione — usa "Aggiungi competizione".</p>';
+            return;
+          }
+          list.innerHTML = _trophyCompetitions.map((c, i) => `
+            <div style="display:flex;align-items:center;gap:6px;padding:8px;background:rgba(255,255,255,0.04);
+                        border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
+              <input value="${escHtml(c.emoji)}" oninput="updateComp(${i},'emoji',this.value)"
+                     style="width:42px;padding:4px;background:#0f172a;border:1px solid #475569;border-radius:5px;
+                            color:#f1f5f9;text-align:center;font-size:1rem;" title="Emoji">
+              <input value="${escHtml(c.name)}" oninput="updateComp(${i},'name',this.value)"
+                     placeholder="Nome competizione *"
+                     style="flex:2;min-width:120px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+              <label style="font-size:0.7rem;color:#94a3b8;flex-shrink:0;">Punti</label>
+              <input value="${c.points}" oninput="updateComp(${i},'points',this.value)" type="number"
+                     style="width:70px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+              <label style="font-size:0.7rem;color:#94a3b8;flex-shrink:0;">Priorità</label>
+              <input value="${c.priority}" oninput="updateComp(${i},'priority',this.value)" type="number"
+                     style="width:60px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+              <div style="display:flex;gap:2px;flex-shrink:0;">
+                ${i > 0 ? `<button onclick="spostaComp('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
+                ${i < _trophyCompetitions.length-1 ? `<button onclick="spostaComp('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
+                <button onclick="rimuoviComp(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">✕</button>
+              </div>
+            </div>`).join('');
+        }
+
+        function updateComp(i, campo, val) {
+          if (campo === 'points' || campo === 'priority') val = parseInt(val) || 0;
+          _trophyCompetitions[i][campo] = val;
+        }
+
+        function addCompetitionRow() {
+          if (_trophyCompetitions.length === 0) {
+            _trophyCompetitions = JSON.parse(JSON.stringify(DEFAULT_TROPHY_CONFIG));
+          } else {
+            _trophyCompetitions.push({ id: 'comp_' + Date.now(), name: '', emoji: '🏅', points: 10, priority: _trophyCompetitions.length + 1 });
+          }
+          renderTrophyConfigList();
+        }
+
+        function spostaComp(dir, i) {
+          const swap = dir === 'su' ? i - 1 : i + 1;
+          if (swap < 0 || swap >= _trophyCompetitions.length) return;
+          [_trophyCompetitions[i], _trophyCompetitions[swap]] = [_trophyCompetitions[swap], _trophyCompetitions[i]];
+          renderTrophyConfigList();
+        }
+
+        function rimuoviComp(i) {
+          _trophyCompetitions.splice(i, 1);
+          renderTrophyConfigList();
+        }
+
+        async function salvaTrophyConfig() {
+          const pin = getStoredAdminPin();
+          if (!pin) { showAlert('error', 'PIN admin non trovato.'); return; }
+          const clean = _trophyCompetitions.filter(c => c.name && String(c.name).trim());
+          if (clean.length === 0) { showAlert('error', 'Aggiungi almeno una competizione con un nome.'); return; }
+          try {
+            const res = await fetch(`/api/room/${currentRoomCode}/trophy-config`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
+              body: JSON.stringify({ competitions: clean })
+            });
+            const json = await res.json();
+            if (!json.success) throw new Error(json.error);
+            showAlert('success', '✅ Configurazione trofei salvata!');
+          } catch(e) {
+            showAlert('error', '❌ Errore: ' + e.message);
+          }
+        }
+
+        // ============================================================
+        // TEAM ALIASES (Collegamento Squadre)
+        // ============================================================
+
+        let _teamAliasGroups = [];
+
+        async function loadTeamAliases() {
+          if (!currentRoomCode) { showAlert('error', 'Nessuna stanza attiva.'); return; }
+          try {
+            const res = await fetch(`/api/lega/${currentRoomCode}/team-aliases`);
+            const json = await res.json();
+            if (!json.success) throw new Error(json.error);
+            _teamAliasGroups = (json.aliases || []).map(a => ({
+              canonical_name: a.canonical_name,
+              aliases: Array.isArray(a.aliases) ? a.aliases : []
+            }));
+            renderTeamAliasesList();
+            showAlert('success', '✅ Alias caricati.');
+          } catch(e) {
+            showAlert('error', '❌ Errore: ' + e.message);
+          }
+        }
+
+        function renderTeamAliasesList() {
+          const list = document.getElementById('team-aliases-list');
+          if (_teamAliasGroups.length === 0) {
+            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessun gruppo alias — usa "Aggiungi gruppo".</p>';
+            return;
+          }
+          list.innerHTML = _teamAliasGroups.map((g, i) => `
+            <div style="display:flex;align-items:flex-start;gap:6px;padding:8px;background:rgba(255,255,255,0.04);
+                        border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
+              <input value="${escHtml(g.canonical_name)}" oninput="updateAliasName(${i},this.value)"
+                     placeholder="Nome ufficiale (es: Milan FC) *"
+                     style="flex:1;min-width:140px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+              <input value="${escHtml((g.aliases||[]).join(', '))}" oninput="updateAliasList(${i},this.value)"
+                     placeholder="Nomi da accorpare (separati da virgola)"
+                     style="flex:2;min-width:180px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
+                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+              <button onclick="rimuoviAlias(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
+                      color:#ef4444;border-radius:5px;padding:4px 8px;cursor:pointer;font-size:13px;flex-shrink:0;">✕</button>
+            </div>`).join('');
+        }
+
+        function updateAliasName(i, val) {
+          _teamAliasGroups[i].canonical_name = val;
+        }
+
+        function updateAliasList(i, val) {
+          _teamAliasGroups[i].aliases = val.split(',').map(s => s.trim()).filter(s => s);
+        }
+
+        function addAliasRow() {
+          _teamAliasGroups.push({ canonical_name: '', aliases: [] });
+          renderTeamAliasesList();
+        }
+
+        function rimuoviAlias(i) {
+          _teamAliasGroups.splice(i, 1);
+          renderTeamAliasesList();
+        }
+
+        async function salvaTeamAliases() {
+          const pin = getStoredAdminPin();
+          if (!pin) { showAlert('error', 'PIN admin non trovato.'); return; }
+          const clean = _teamAliasGroups.filter(g => g.canonical_name && g.canonical_name.trim());
+          try {
+            const res = await fetch(`/api/room/${currentRoomCode}/team-aliases`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
+              body: JSON.stringify({ aliases: clean })
+            });
+            const json = await res.json();
+            if (!json.success) throw new Error(json.error);
+            showAlert('success', '✅ Alias squadre salvati!');
           } catch(e) {
             showAlert('error', '❌ Errore: ' + e.message);
           }
