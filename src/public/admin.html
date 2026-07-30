@@ -757,30 +757,30 @@
     <div class="tab-content active" id="tab-leghe">
         <div class="grid-2">
             <div class="card">
-                <h3 class="card-title">Crea Nuova Lega</h3>
+                <h3 class="card-title" data-i18n="admin_leagues_create_title">Crea Nuova Lega</h3>
                 <div class="form-group">
-                    <label>Nome Lega</label>
-                    <input type="text" id="newLeagueName" placeholder="Es: lega-2024">
+                    <label data-i18n="admin_leagues_name_label">Nome Lega</label>
+                    <input type="text" id="newLeagueName" placeholder="Es: lega-2024" data-i18n-placeholder="admin_leagues_name_ph">
                 </div>
-                <button class="btn btn-primary btn-block" onclick="createNewLeague()">Crea Lega</button>
+                <button class="btn btn-primary btn-block" onclick="createNewLeague()" data-i18n="admin_leagues_create_btn">Crea Lega</button>
             </div>
 
             <div class="card">
-                <h3 class="card-title">Cambia Lega Attiva</h3>
+                <h3 class="card-title" data-i18n="admin_leagues_switch_title">Cambia Lega Attiva</h3>
                 <div class="form-group">
-                    <label>Seleziona Lega</label>
-                    <input type="text" id="switchLeagueName" placeholder="Nome lega da caricare">
+                    <label data-i18n="admin_leagues_select_label">Seleziona Lega</label>
+                    <input type="text" id="switchLeagueName" placeholder="Nome lega da caricare" data-i18n-placeholder="admin_leagues_switch_ph">
                 </div>
-                <button class="btn btn-warning btn-block" onclick="switchLeague()">Carica Lega</button>
+                <button class="btn btn-warning btn-block" onclick="switchLeague()" data-i18n="admin_leagues_load_btn">Carica Lega</button>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title">Salvataggio & Reset</h3>
+            <h3 class="card-title" data-i18n="admin_leagues_save_title">Salvataggio & Reset</h3>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-                <button class="btn btn-success" onclick="saveSession()">💾 Salva Sessione</button>
-                <button class="btn btn-secondary" onclick="loadSession()">🔄 Ricarica Sessione</button>
-                <button class="btn btn-danger" onclick="resetAll()">Reset Completo</button>
+                <button class="btn btn-success" onclick="saveSession()" data-i18n="admin_leagues_save_btn">💾 Salva Sessione</button>
+                <button class="btn btn-secondary" onclick="loadSession()" data-i18n="admin_leagues_reload_btn">🔄 Ricarica Sessione</button>
+                <button class="btn btn-danger" onclick="resetAll()" data-i18n="admin_leagues_reset_btn">Reset Completo</button>
             </div>
             <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                 <span id="auto-save-badge"
@@ -789,9 +789,9 @@
                              color:#10b981;padding:4px 10px;border-radius:20px;">
                   <span style="width:7px;height:7px;background:#10b981;border-radius:50%;
                                animation:pulse-dot 2s infinite;"></span>
-                  Auto-save attivo
+                  <span data-i18n="admin_autosave_active">Auto-save attivo</span>
                 </span>
-                <span id="last-saved-label"
+                <span id="last-saved-label" data-i18n="admin_last_save"
                       style="font-size:0.8rem;color:var(--text-secondary);">
                   Ultimo salvataggio: —
                 </span>
@@ -800,34 +800,34 @@
 
         <!-- BACKUP ASTA ─────────────────────────────────────────────────────── -->
         <div class="card">
-            <h3 class="card-title">📦 Backup Asta</h3>
+            <h3 class="card-title" data-i18n="admin_backup_title">📦 Backup Asta</h3>
 
             <!-- Esporta -->
             <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
                         border-radius:8px;padding:14px;margin-bottom:14px;">
-                <div style="font-weight:600;color:#10b981;margin-bottom:6px;font-size:0.9rem;">
+                <div style="font-weight:600;color:#10b981;margin-bottom:6px;font-size:0.9rem;" data-i18n="admin_backup_export_title">
                     Esporta backup completo
                 </div>
-                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
+                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_backup_export_desc">
                     Scarica un file JSON con tutte le squadre, rose e parametri dell'asta.
                     Conservalo sul tuo PC per riutilizzarlo l'anno prossimo.
                 </p>
                 <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <input type="number" id="backup-year" placeholder="Anno (es. 2026)"
+                    <input type="number" id="backup-year" placeholder="Anno (es. 2026)" data-i18n-placeholder="admin_backup_year_ph"
                            style="width:140px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
                                   background:var(--bg-input);color:var(--text-primary);font-size:0.88rem;">
-                    <input type="text" id="backup-label" placeholder="Etichetta (es. Fantacalcio 2026)"
+                    <input type="text" id="backup-label" placeholder="Etichetta (es. Fantacalcio 2026)" data-i18n-placeholder="admin_backup_label_ph"
                            style="flex:1;min-width:180px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
                                   background:var(--bg-input);color:var(--text-primary);font-size:0.88rem;">
-                    <button class="btn btn-success" style="white-space:nowrap;" onclick="esportaBackup()">
+                    <button class="btn btn-success" style="white-space:nowrap;" onclick="esportaBackup()" data-i18n="admin_backup_download_btn">
                         ⬇️ Scarica Backup
                     </button>
                     <button class="btn" style="white-space:nowrap;background:rgba(56,189,248,0.15);
-                            color:#38bdf8;border:1px solid rgba(56,189,248,0.3);" onclick="salvaBackupStoico()">
+                            color:#38bdf8;border:1px solid rgba(56,189,248,0.3);" onclick="salvaBackupStoico()" data-i18n="admin_backup_save_history_btn">
                         📚 Salva nello Storico
                     </button>
                 </div>
-                <p style="font-size:0.78rem;color:#64748b;margin-top:8px;">
+                <p style="font-size:0.78rem;color:#64748b;margin-top:8px;" data-i18n="admin_backup_history_hint">
                     "Salva nello Storico" carica il backup sul server così sarà visibile nella pagina Rose.
                 </p>
             </div>
@@ -835,10 +835,10 @@
             <!-- Importa -->
             <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);
                         border-radius:8px;padding:14px;">
-                <div style="font-weight:600;color:#f59e0b;margin-bottom:6px;font-size:0.9rem;">
+                <div style="font-weight:600;color:#f59e0b;margin-bottom:6px;font-size:0.9rem;" data-i18n="admin_backup_import_title">
                     Importa backup (nuovo anno)
                 </div>
-                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
+                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_backup_import_desc">
                     Carica un backup dell'anno precedente per ritrovare subito squadre e parametri già impostati.
                     Le rose vengono azzerate, il budget ripristinato al valore iniziale.
                 </p>
@@ -848,9 +848,9 @@
                                   background:var(--bg-input);cursor:pointer;font-size:0.85rem;color:var(--text-secondary);">
                         <input type="file" id="backup-file-input" accept=".json"
                                style="display:none;" onchange="previewBackupFile(this)">
-                        <span id="backup-file-label">📂 Seleziona file .json...</span>
+                        <span id="backup-file-label" data-i18n="admin_backup_select_file">📂 Seleziona file .json...</span>
                     </label>
-                    <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaBackupConfig()">
+                    <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaBackupConfig()" data-i18n="admin_backup_import_btn">
                         ⬆️ Carica Configurazione
                     </button>
                 </div>
@@ -862,31 +862,31 @@
 
         <!-- STORICO LEGA & ALBO D'ORO ──────────────────────────────────────── -->
         <div class="card" id="card-storico-lega">
-            <h3 class="card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <h3 class="card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;" data-i18n="admin_storico_title">
                 🏆 Storico Lega
                 <button onclick="apriAlbo()" style="font-size:0.78rem;padding:5px 12px;background:rgba(245,158,11,0.15);
                         color:#f59e0b;border:1px solid rgba(245,158,11,0.35);border-radius:6px;cursor:pointer;
-                        font-weight:600;transition:opacity 0.2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+                        font-weight:600;transition:opacity 0.2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" data-i18n="admin_storico_albo_btn">
                     🥇 Apri Albo d'Oro
                 </button>
             </h3>
-            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;">
+            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_storico_desc">
                 Aggiungi classifica finale e competizioni vinte a ogni backup storico per costruire l'Albo d'Oro della tua lega.
             </p>
             <div id="storico-lega-list">
-                <p style="font-size:0.85rem;color:var(--text-secondary);text-align:center;padding:10px 0;">
+                <p style="font-size:0.85rem;color:var(--text-secondary);text-align:center;padding:10px 0;" data-i18n="admin_storico_empty">
                     Carica i backup storici per gestire lo storico...
                 </p>
             </div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
                 <button onclick="caricaStoricoLega()" style="flex:1;min-width:140px;padding:8px;background:rgba(56,189,248,0.1);
                         color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+                        font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" data-i18n="admin_storico_refresh_btn">
                     🔄 Aggiorna lista
                 </button>
                 <button onclick="apriCreaStagioneStorica()" style="flex:1;min-width:140px;padding:8px;background:rgba(16,185,129,0.12);
                         color:#10b981;border:1px solid rgba(16,185,129,0.35);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+                        font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" data-i18n="admin_storico_create_btn">
                     ➕ Crea stagione storica
                 </button>
             </div>
@@ -897,64 +897,64 @@
     <div class="tab-content" id="tab-squadre">
         <div class="grid-2">
             <div class="card">
-                <h3 class="card-title">Crea Nuova Squadra</h3>
+                <h3 class="card-title" data-i18n="admin_teams_create_title">Crea Nuova Squadra</h3>
                 <div class="form-group">
-                    <label>Nome Squadra</label>
-                    <input type="text" id="newTeamName" placeholder="Nome della fantasquadra">
+                    <label data-i18n="admin_teams_name_label">Nome Squadra</label>
+                    <input type="text" id="newTeamName" placeholder="Nome della fantasquadra" data-i18n-placeholder="admin_teams_name_ph">
                 </div>
-                <button class="btn btn-primary btn-block" onclick="createTeam()">Aggiungi Squadra</button>
+                <button class="btn btn-primary btn-block" onclick="createTeam()" data-i18n="admin_teams_add_btn">Aggiungi Squadra</button>
                 <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
-                    Budget iniziale: <strong id="startingBudgetDisplay">500</strong> crediti
+                    <span data-i18n="admin_teams_budget_label">Budget iniziale:</span> <strong id="startingBudgetDisplay">500</strong> <span data-i18n="admin_teams_credits">crediti</span>
                 </p>
             </div>
 
             <div class="card">
-                <h3 class="card-title">Statistiche Lega</h3>
+                <h3 class="card-title" data-i18n="admin_teams_stats_title">Statistiche Lega</h3>
                 <div class="stats-bar" style="flex-direction: column; gap: 0.5rem;">
                     <div class="stat-item">
                         <div class="stat-value" id="statTeams">0</div>
-                        <div class="stat-label">Squadre</div>
+                        <div class="stat-label" data-i18n="admin_teams_stat_teams">Squadre</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="statSold">0</div>
-                        <div class="stat-label">Giocatori Venduti</div>
+                        <div class="stat-label" data-i18n="admin_teams_stat_sold">Giocatori Venduti</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="statRemaining">0</div>
-                        <div class="stat-label">Giocatori Rimanenti</div>
+                        <div class="stat-label" data-i18n="admin_teams_stat_remaining">Giocatori Rimanenti</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title">Elenco Squadre</h3>
+            <h3 class="card-title" data-i18n="admin_teams_list_title">Elenco Squadre</h3>
             <div class="team-grid" id="teamsContainer">
-                <p style="color: var(--text-secondary);">Nessuna squadra creata</p>
+                <p style="color: var(--text-secondary);" data-i18n="admin_teams_empty">Nessuna squadra creata</p>
             </div>
         </div>
 
         <!-- GESTIONE CREDITI ─────────────────────────────────────────────── -->
         <div class="card">
-            <h3 class="card-title">💰 Gestione Crediti (Mercato di Riparazione)</h3>
-            <p style="font-size:0.83rem;color:var(--text-secondary);margin-bottom:14px;">
+            <h3 class="card-title" data-i18n="admin_teams_credits_title">💰 Gestione Crediti (Mercato di Riparazione)</h3>
+            <p style="font-size:0.83rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_teams_credits_desc">
                 Aggiungi o sottrai crediti a una squadra in vista del mercato di riparazione. Usa un valore negativo per rimuovere crediti.
             </p>
             <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
                 <div style="flex:1;min-width:150px;">
-                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;">Squadra</label>
+                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;" data-i18n="admin_teams_credits_team">Squadra</label>
                     <select id="creditTeamSelect" style="width:100%;padding:8px 10px;background:var(--bg-input);
                             border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:0.88rem;">
-                        <option value="">Seleziona squadra...</option>
+                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div style="width:110px;">
-                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;">Crediti (±)</label>
-                    <input type="number" id="creditAmount" placeholder="es. 100"
+                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;" data-i18n="admin_teams_credits_amount">Crediti (±)</label>
+                    <input type="number" id="creditAmount" placeholder="es. 100" data-i18n-placeholder="admin_teams_credits_ph"
                            style="width:100%;padding:8px 10px;background:var(--bg-input);border:1px solid var(--border);
                                   border-radius:6px;color:var(--text-primary);font-size:0.88rem;">
                 </div>
-                <button class="btn btn-success" onclick="aggiungiCrediti()" style="white-space:nowrap;padding:8px 18px;">
+                <button class="btn btn-success" onclick="aggiungiCrediti()" style="white-space:nowrap;padding:8px 18px;" data-i18n="admin_teams_credits_apply">
                     ✔ Applica
                 </button>
             </div>
@@ -966,10 +966,10 @@
         <div class="grid-2">
             <!-- Upload Excel -->
             <div class="card">
-                <h3 class="card-title">Carica Lista Excel</h3>
+                <h3 class="card-title" data-i18n="admin_players_upload_title">Carica Lista Excel</h3>
                 <div class="form-group">
-                    <label>Soglia Minima Quotazione</label>
-                    <input type="number" id="sogliaMinima" value="0" min="0" placeholder="Filtra giocatori sotto questo valore">
+                    <label data-i18n="admin_players_threshold_label">Soglia Minima Quotazione</label>
+                    <input type="number" id="sogliaMinima" value="0" min="0" placeholder="Filtra giocatori sotto questo valore" data-i18n-placeholder="admin_players_threshold_ph">
                 </div>
 
                 <!-- Toggle modalità riparazione -->
@@ -978,8 +978,8 @@
                      border-radius:8px;margin-bottom:12px;cursor:pointer;" onclick="document.getElementById('riparazioneToggle').click()">
                     <input type="checkbox" id="riparazioneToggle" style="margin-top:3px;width:16px;height:16px;cursor:pointer;accent-color:#38bdf8;">
                     <div>
-                        <div style="font-weight:600;font-size:0.88rem;color:#38bdf8;">🔧 Modalità Riparazione</div>
-                        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;line-height:1.4;">
+                        <div style="font-weight:600;font-size:0.88rem;color:#38bdf8;" data-i18n="admin_players_riparazione_title">🔧 Modalità Riparazione</div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;line-height:1.4;" data-i18n-html="admin_players_riparazione_desc">
                             Aggiunge i nuovi giocatori a quelli già nel mazzo. I giocatori già <strong>assegnati</strong> e quelli già <strong>presenti nel mazzo</strong> vengono saltati automaticamente.
                         </div>
                     </div>
@@ -987,8 +987,8 @@
 
                 <div class="file-upload" onclick="document.getElementById('excelFile').click()">
                     <div class="upload-icon">📊</div>
-                    <p>Trascina il file Excel o clicca per selezionare</p>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
+                    <p data-i18n="admin_players_upload_zone">Trascina il file Excel o clicca per selezionare</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;" data-i18n="admin_players_upload_cols">
                         Colonne richieste: Nome, Ruolo, Squadra, Valore
                     </p>
                     <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="uploadExcel()">
@@ -1002,44 +1002,44 @@
 
             <!-- Aggiunta Manuale -->
             <div class="card">
-                <h3 class="card-title">Aggiungi Giocatore Manualmente</h3>
+                <h3 class="card-title" data-i18n="admin_players_manual_title">Aggiungi Giocatore Manualmente</h3>
                 <div class="form-group">
-                    <label>Nome Giocatore</label>
-                    <input type="text" id="manualPlayerName" placeholder="Nome e cognome">
+                    <label data-i18n="admin_players_name_label">Nome Giocatore</label>
+                    <input type="text" id="manualPlayerName" placeholder="Nome e cognome" data-i18n-placeholder="admin_players_name_ph">
                 </div>
                 <div class="form-group">
-                    <label>Ruolo Mantra</label>
+                    <label data-i18n="admin_players_role_label">Ruolo Mantra</label>
                     <select id="manualPlayerRole">
-                        <option value="P">P - Portiere</option>
-                        <option value="DC">DC - Difensore Centrale</option>
-                        <option value="DD">DD - Difensore Destro</option>
-                        <option value="DS">DS - Difensore Sinistro</option>
-                        <option value="B">B - Terzino</option>
-                        <option value="C">C - Centrocampista</option>
-                        <option value="M">M - Mediano</option>
-                        <option value="E">E - Esterno</option>
-                        <option value="T">T - Trequartista</option>
-                        <option value="W">W - Ala</option>
-                        <option value="A">A - Attaccante</option>
-                        <option value="PC">PC - Punta Centrale</option>
+                        <option value="P" data-i18n="admin_role_P">P - Portiere</option>
+                        <option value="DC" data-i18n="admin_role_DC">DC - Difensore Centrale</option>
+                        <option value="DD" data-i18n="admin_role_DD">DD - Difensore Destro</option>
+                        <option value="DS" data-i18n="admin_role_DS">DS - Difensore Sinistro</option>
+                        <option value="B" data-i18n="admin_role_B">B - Terzino</option>
+                        <option value="C" data-i18n="admin_role_C">C - Centrocampista</option>
+                        <option value="M" data-i18n="admin_role_M">M - Mediano</option>
+                        <option value="E" data-i18n="admin_role_E">E - Esterno</option>
+                        <option value="T" data-i18n="admin_role_T">T - Trequartista</option>
+                        <option value="W" data-i18n="admin_role_W">W - Ala</option>
+                        <option value="A" data-i18n="admin_role_A">A - Attaccante</option>
+                        <option value="PC" data-i18n="admin_role_PC">PC - Punta Centrale</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Squadra di Appartenenza</label>
-                    <input type="text" id="manualPlayerClub" placeholder="Serie A team">
+                    <label data-i18n="admin_players_club_label">Squadra di Appartenenza</label>
+                    <input type="text" id="manualPlayerClub" placeholder="Serie A team" data-i18n-placeholder="admin_players_club_ph">
                 </div>
-                <button class="btn btn-success btn-block" onclick="addManualPlayer()">Aggiungi al Mazzo</button>
+                <button class="btn btn-success btn-block" onclick="addManualPlayer()" data-i18n="admin_players_add_btn">Aggiungi al Mazzo</button>
             </div>
         </div>
 
         <!-- Lista Giocatori Rimanenti -->
         <div class="card">
             <h3 class="card-title">
-                Giocatori nel Mazzo (<span id="playersCount">0</span>)
-                <button class="btn btn-secondary" style="margin-left: auto; padding: 0.5rem 1rem;" onclick="refreshPlayersList()">Aggiorna</button>
+                <span data-i18n="admin_players_list_title">Giocatori nel Mazzo</span> (<span id="playersCount">0</span>)
+                <button class="btn btn-secondary" style="margin-left: auto; padding: 0.5rem 1rem;" onclick="refreshPlayersList()" data-i18n="admin_players_refresh_btn">Aggiorna</button>
             </h3>
             <div class="player-list" id="playersListContainer">
-                <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
+                <p style="color: var(--text-secondary); text-align: center; padding:  2rem;" data-i18n="admin_players_empty">
                     Carica un file Excel per popolare la lista
                 </p>
             </div>
@@ -1049,57 +1049,57 @@
     <!-- TAB 4: Controlli Asta -->
     <div class="tab-content" id="tab-asta">
         <div class="card">
-            <h3 class="card-title">Stato Asta Corrente</h3>
+            <h3 class="card-title" data-i18n="admin_auction_status_title">Stato Asta Corrente</h3>
             <div class="auction-control">
                 <div class="control-box">
                     <div class="value" id="displayPlayerName">---</div>
-                    <div class="label">Giocatore in Asta</div>
+                    <div class="label" data-i18n="admin_auction_player">Giocatore in Asta</div>
                 </div>
                 <div class="control-box">
                     <div class="value" id="displayPrice">0</div>
-                    <div class="label">Offerta Attuale</div>
+                    <div class="label" data-i18n="admin_auction_price">Offerta Attuale</div>
                 </div>
                 <div class="control-box">
                     <div class="value" id="displayTimer">--</div>
-                    <div class="label">Timer</div>
+                    <div class="label" data-i18n="admin_auction_timer">Timer</div>
                 </div>
                 <div class="control-box">
                     <div class="value" id="displayBidder">---</div>
-                    <div class="label">Miglior Offerente</div>
+                    <div class="label" data-i18n="admin_auction_bidder">Miglior Offerente</div>
                 </div>
             </div>
         </div>
 
         <div class="grid-2">
             <div class="card">
-                <h3 class="card-title">Avvia Asta</h3>
+                <h3 class="card-title" data-i18n="admin_auction_start_title">Avvia Asta</h3>
                 <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                    <button class="btn btn-success btn-block" onclick="startRandomAuction()">
+                    <button class="btn btn-success btn-block" onclick="startRandomAuction()" data-i18n="admin_auction_random_btn">
                         🎲 Estrazione Random
                     </button>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin:0;">Estrae un giocatore a caso dal mazzo</p>
-                    <label style="color: var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Selezione Manuale</label>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin:0;" data-i18n="admin_auction_random_desc">Estrae un giocatore a caso dal mazzo</p>
+                    <label style="color: var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;" data-i18n="admin_auction_manual_label">Selezione Manuale</label>
                     <select id="manualPlayerSelect">
-                        <option value="">Seleziona giocatore...</option>
+                        <option value="" data-i18n="admin_select_player">Seleziona giocatore...</option>
                     </select>
-                    <button class="btn btn-primary btn-block" onclick="startManualAuction()">Lancia Giocatore</button>
+                    <button class="btn btn-primary btn-block" onclick="startManualAuction()" data-i18n="admin_auction_launch_btn">Lancia Giocatore</button>
                 </div>
             </div>
 
             <div class="card">
-                <h3 class="card-title">Controlli</h3>
+                <h3 class="card-title" data-i18n="admin_auction_controls_title">Controlli</h3>
                 <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                    <button class="btn btn-danger btn-block" onclick="pauseAuction()">⏸ PAUSA</button>
-                    <button class="btn btn-success btn-block" onclick="resumeAuction()">▶ RIPRENDI</button>
+                    <button class="btn btn-danger btn-block" onclick="pauseAuction()" data-i18n="admin_auction_pause_btn">⏸ PAUSA</button>
+                    <button class="btn btn-success btn-block" onclick="resumeAuction()" data-i18n="admin_auction_resume_btn">▶ RIPRENDI</button>
                     <div class="toggle-container" style="margin-top:0.5rem;">
-                        <span style="font-size:0.85rem;">Flusso Manuale</span>
+                        <span style="font-size:0.85rem;" data-i18n="admin_auction_manual_flow">Flusso Manuale</span>
                         <label class="toggle-switch">
                             <input type="checkbox" id="autoAdvanceToggle" checked onchange="toggleAutoAdvance(this.checked)">
                             <span class="toggle-slider"></span>
                         </label>
-                        <span style="font-size:0.85rem;">Automatico</span>
+                        <span style="font-size:0.85rem;" data-i18n="admin_auction_auto_flow">Automatico</span>
                     </div>
-                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin:0;">
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin:0;" data-i18n="admin_auction_auto_desc">
                         Automatico: estrae il prossimo giocatore dopo ogni vendita
                     </p>
                 </div>
@@ -1109,11 +1109,11 @@
         <!-- Storico offerte live -->
         <div class="card" id="bid-history-card">
             <h3 class="card-title">
-                📋 Storico Offerte
-                <span id="bid-history-badge" style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);font-weight:normal;">in attesa di asta...</span>
+                <span data-i18n="admin_auction_history_title">📋 Storico Offerte</span>
+                <span id="bid-history-badge" style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);font-weight:normal;" data-i18n="admin_auction_history_waiting">in attesa di asta...</span>
             </h3>
             <div id="bid-history-list" style="max-height:220px;overflow-y:auto;">
-                <p style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:1rem 0;">
+                <p style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:1rem 0;" data-i18n="admin_auction_history_empty">
                     Nessuna offerta ancora — avvia un'asta per vedere lo storico in tempo reale.
                 </p>
             </div>
@@ -1122,38 +1122,38 @@
         <!-- Pannello revisione post-asta -->
         <div class="card" id="review-panel" style="display:none;border:2px solid var(--warning);">
             <h3 class="card-title" style="color:var(--warning);">
-                ⚡ Revisione Asta — <span id="review-player-name">---</span>
+                <span data-i18n="admin_auction_review_title">⚡ Revisione Asta</span> — <span id="review-player-name">---</span>
             </h3>
-            <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+            <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;" data-i18n="admin_auction_review_desc">
                 L'asta si è conclusa. Controlla lo storico e decidi se confermare l'assegnazione o modificarla.
             </p>
 
             <div style="background:var(--bg-input);border-radius:8px;padding:1rem;margin-bottom:1rem;">
-                <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;">Storico completo offerte</div>
+                <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;" data-i18n="admin_auction_review_full">Storico completo offerte</div>
                 <div id="review-history-list" style="max-height:180px;overflow-y:auto;"></div>
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.75rem;align-items:end;" class="review-grid-override">
                 <div class="form-group" style="margin:0;">
-                    <label>Assegna a squadra</label>
+                    <label data-i18n="admin_auction_review_team">Assegna a squadra</label>
                     <select id="review-team-select">
-                        <option value="">Seleziona squadra...</option>
+                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin:0;">
-                    <label>Prezzo finale (cr)</label>
+                    <label data-i18n="admin_auction_review_price">Prezzo finale (cr)</label>
                     <input type="number" id="review-price-input" min="0" value="0">
                 </div>
-                <button class="btn btn-warning" onclick="confermaRiassegnazione()" style="height:fit-content;">
+                <button class="btn btn-warning" onclick="confermaRiassegnazione()" style="height:fit-content;" data-i18n="admin_auction_review_reassign_btn">
                     ✅ Riassegna
                 </button>
             </div>
 
             <div style="margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
-                <button class="btn btn-success" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;">
+                <button class="btn btn-success" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;" data-i18n="admin_auction_review_confirm_btn">
                     ✓ Conferma assegnazione originale
                 </button>
-                <button class="btn btn-secondary" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;">
+                <button class="btn btn-secondary" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;" data-i18n="admin_auction_review_close_btn">
                     Chiudi senza modifiche
                 </button>
             </div>
@@ -1165,104 +1165,104 @@
         <div class="grid-2">
             <!-- Assegnazione Forzata -->
             <div class="card">
-                <h3 class="card-title">Assegnazione Forzata</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                <h3 class="card-title" data-i18n="admin_ops_force_title">Assegnazione Forzata</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;" data-i18n="admin_ops_force_desc">
                     Assegna il giocatore corrente a una squadra specifica
                 </p>
                 <div class="form-group">
-                    <label>Squadra Destinataria</label>
+                    <label data-i18n="admin_ops_force_team">Squadra Destinataria</label>
                     <select id="forceAssignTeam">
-                        <option value="">Seleziona squadra...</option>
+                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Prezzo di Vendita</label>
+                    <label data-i18n="admin_ops_force_price">Prezzo di Vendita</label>
                     <input type="number" id="forceAssignPrice" value="1" min="1">
                 </div>
-                <button class="btn btn-warning btn-block" onclick="forceAssignPlayer()">Assegna Forzatamente</button>
+                <button class="btn btn-warning btn-block" onclick="forceAssignPlayer()" data-i18n="admin_ops_force_btn">Assegna Forzatamente</button>
             </div>
 
             <!-- Assegnazione Manuale con Ricerca -->
             <div class="card">
-                <h3 class="card-title">Assegna Giocatore a Squadra</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                <h3 class="card-title" data-i18n="admin_ops_manual_title">Assegna Giocatore a Squadra</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;" data-i18n="admin_ops_manual_desc">
                     Cerca un giocatore dal mazzo e assegnalo direttamente a una squadra senza passare dall'asta
                 </p>
                 <div class="form-group">
-                    <label>Cerca Giocatore</label>
-                    <input type="text" id="manualAssignSearch" placeholder="Nome giocatore..." oninput="filtraGiocatoriAssegnazione()">
+                    <label data-i18n="admin_ops_search_label">Cerca Giocatore</label>
+                    <input type="text" id="manualAssignSearch" placeholder="Nome giocatore..." oninput="filtraGiocatoriAssegnazione()" data-i18n-placeholder="admin_ops_search_ph">
                 </div>
                 <div id="manualAssignResults" style="max-height:140px;overflow-y:auto;background:var(--bg-input);border-radius:8px;margin-bottom:0.75rem;border:1px solid var(--border);display:none;"></div>
                 <div class="form-group">
-                    <label>Giocatore Selezionato</label>
-                    <input type="text" id="manualAssignPlayerDisplay" placeholder="Nessun giocatore selezionato" readonly style="background:var(--bg-main);color:var(--warning);font-weight:bold;">
+                    <label data-i18n="admin_ops_selected_label">Giocatore Selezionato</label>
+                    <input type="text" id="manualAssignPlayerDisplay" placeholder="Nessun giocatore selezionato" readonly style="background:var(--bg-main);color:var(--warning);font-weight:bold;" data-i18n-placeholder="admin_ops_selected_ph">
                     <input type="hidden" id="manualAssignPlayerData">
                 </div>
                 <div class="form-group">
-                    <label>Squadra Destinataria</label>
+                    <label data-i18n="admin_ops_manual_team">Squadra Destinataria</label>
                     <select id="manualAssignTeam">
-                        <option value="">Seleziona squadra...</option>
+                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Prezzo di Vendita (cr)</label>
+                    <label data-i18n="admin_ops_manual_price">Prezzo di Vendita (cr)</label>
                     <input type="number" id="manualAssignPrice" value="1" min="1">
                 </div>
-                <button class="btn btn-success btn-block" onclick="manualAssignPlayer()">Assegna Giocatore</button>
+                <button class="btn btn-success btn-block" onclick="manualAssignPlayer()" data-i18n="admin_ops_manual_btn">Assegna Giocatore</button>
             </div>
         </div>
 
         <!-- Giro di Gara -->
         <div class="card">
-            <h3 class="card-title">Giro di Gara</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+            <h3 class="card-title" data-i18n="admin_ops_giro_title">Giro di Gara</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;" data-i18n="admin_ops_giro_desc">
                 Riporta i giocatori invenduti nel mazzo per un nuovo giro
             </p>
-            <button class="btn btn-primary btn-block" onclick="recycleUnsold()">Avvia Giro di Gara</button>
-            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning);">
+            <button class="btn btn-primary btn-block" onclick="recycleUnsold()" data-i18n="admin_ops_giro_btn">Avvia Giro di Gara</button>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning);" data-i18n="admin_ops_giro_hint">
                 Utile quando il mazzo finisce ma ci sono giocatori invenduti
             </p>
         </div>
 
         <!-- Rimozione Giocatore -->
         <div class="card">
-            <h3 class="card-title">Rimuovi Giocatore da Rosa (con Rimborso)</h3>
+            <h3 class="card-title" data-i18n="admin_ops_remove_title">Rimuovi Giocatore da Rosa (con Rimborso)</h3>
             <div class="grid-3">
                 <div class="form-group">
-                    <label>Squadra</label>
+                    <label data-i18n="admin_ops_remove_team">Squadra</label>
                     <select id="removePlayerTeam">
-                        <option value="">Seleziona squadra...</option>
+                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Giocatore</label>
+                    <label data-i18n="admin_ops_remove_player">Giocatore</label>
                     <select id="removePlayerName">
-                        <option value="">Seleziona giocatore...</option>
+                        <option value="" data-i18n="admin_select_player">Seleziona giocatore...</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Crediti da Restituire</label>
+                    <label data-i18n="admin_ops_remove_credits">Crediti da Restituire</label>
                     <input type="number" id="removePlayerCredits" value="0" min="0">
-                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;" data-i18n="admin_ops_remove_hint">
                         Il giocatore torna nel mazzo
                     </p>
                 </div>
             </div>
-            <button class="btn btn-danger" onclick="removePlayerFromTeam()">Rimuovi Giocatore</button>
+            <button class="btn btn-danger" onclick="removePlayerFromTeam()" data-i18n="admin_ops_remove_btn">Rimuovi Giocatore</button>
         </div>
 
         <!-- Scarta dal Mazzo -->
         <div class="card">
-            <h3 class="card-title">Scarta Giocatore dal Mazzo</h3>
+            <h3 class="card-title" data-i18n="admin_ops_discard_title">Scarta Giocatore dal Mazzo</h3>
             <div class="grid-2">
                 <div class="form-group">
-                    <label>Giocatore da Scartare</label>
+                    <label data-i18n="admin_ops_discard_label">Giocatore da Scartare</label>
                     <select id="discardPlayerSelect">
-                        <option value="">Seleziona giocatore...</option>
+                        <option value="" data-i18n="admin_select_player">Seleziona giocatore...</option>
                     </select>
                 </div>
                 <div style="display: flex; align-items: flex-end;">
-                    <button class="btn btn-danger btn-block" onclick="discardPlayer()">Scarta Definitivamente</button>
+                    <button class="btn btn-danger btn-block" onclick="discardPlayer()" data-i18n="admin_ops_discard_btn">Scarta Definitivamente</button>
                 </div>
             </div>
         </div>
@@ -1271,49 +1271,49 @@
     <!-- TAB 6: Configurazione -->
     <div class="tab-content" id="tab-config">
         <div class="card">
-            <h3 class="card-title">Impostazioni Timer</h3>
+            <h3 class="card-title" data-i18n="admin_config_timer_title">Impostazioni Timer</h3>
             <div class="grid-2">
                 <div class="form-group">
-                    <label>Durata Timer (secondi)</label>
+                    <label data-i18n="admin_config_timer_label">Durata Timer (secondi)</label>
                     <input type="number" id="configTimerDuration" value="10" min="5" max="60">
                 </div>
                 <div style="display: flex; align-items: flex-end;">
-                    <button class="btn btn-primary" onclick="updateTimerConfig()">Aggiorna Timer</button>
+                    <button class="btn btn-primary" onclick="updateTimerConfig()" data-i18n="admin_config_timer_btn">Aggiorna Timer</button>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title">Connessione Telefono (QR Code)</h3>
+            <h3 class="card-title" data-i18n="admin_config_qr_title">Connessione Telefono (QR Code)</h3>
             <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 0.5rem 0;">
-                URL usato per il QR: <b id="detectedIpDisplay" style="color: var(--accent);">rilevamento automatico...</b>
+                <span data-i18n="admin_config_qr_url">URL usato per il QR:</span> <b id="detectedIpDisplay" style="color: var(--accent);" data-i18n="admin_config_qr_detecting">rilevamento automatico...</b>
             </p>
-            <p style="color: #f59e0b; font-size: 11px; margin: 0 0 1rem 0; line-height: 1.5;">
+            <p style="color: #f59e0b; font-size: 11px; margin: 0 0 1rem 0; line-height: 1.5;" data-i18n-html="admin_config_qr_warning">
                 Il server gira nell'ambiente Bolt, <b>non sul tuo PC</b>. Il telefono si connette tramite l'URL pubblico del browser, non tramite IP locale. L'URL viene rilevato automaticamente quando apri questa pagina.
             </p>
             <div class="form-group">
-                <label>URL override (solo se necessario)</label>
+                <label data-i18n="admin_config_qr_override">URL override (solo se necessario)</label>
                 <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="configHostUrl" placeholder="es. https://3000-xxxx.bolt.new" style="flex: 1;">
-                    <button class="btn btn-primary" style="white-space: nowrap;" onclick="saveHostUrl()">Applica</button>
-                    <button class="btn btn-secondary" style="white-space: nowrap;" onclick="resetHostUrl()">Auto</button>
+                    <input type="text" id="configHostUrl" placeholder="es. https://3000-xxxx.bolt.new" style="flex: 1;" data-i18n-placeholder="admin_config_qr_ph">
+                    <button class="btn btn-primary" style="white-space: nowrap;" onclick="saveHostUrl()" data-i18n="admin_config_qr_apply">Applica</button>
+                    <button class="btn btn-secondary" style="white-space: nowrap;" onclick="resetHostUrl()" data-i18n="admin_config_qr_auto">Auto</button>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title">Regole Mantra</h3>
+            <h3 class="card-title" data-i18n="admin_config_rules_title">Regole Mantra</h3>
             <div class="grid-2">
                 <div class="form-group">
-                    <label>Budget Iniziale (crediti)</label>
+                    <label data-i18n="admin_config_budget_label">Budget Iniziale (crediti)</label>
                     <input type="number" id="configStartingBudget" value="500" min="100">
                 </div>
                 <div class="form-group">
-                    <label>Max Giocatori Totali</label>
+                    <label data-i18n="admin_config_max_total">Max Giocatori Totali</label>
                     <input type="number" id="configMaxTotalPlayers" value="25" min="11">
                 </div>
                 <div class="form-group">
-                    <label>Max Offensivi Puri</label>
+                    <label data-i18n="admin_config_max_off">Max Offensivi Puri</label>
                     <input type="number" id="configMaxOffensive" value="6" min="1">
                 </div>
                 <div></div>
@@ -1321,61 +1321,61 @@
         </div>
 
         <div class="card">
-            <h3 class="card-title">Limiti per Ruolo</h3>
-            <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 1rem 0;">Inserisci il numero esatto da raggiungere per completare la rosa. <strong style="color: var(--text-primary);">0 = illimitato</strong> (vincolato solo dal totale giocatori).</p>
+            <h3 class="card-title" data-i18n="admin_config_limits_title">Limiti per Ruolo</h3>
+            <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 1rem 0;" data-i18n-html="admin_config_limits_desc">Inserisci il numero esatto da raggiungere per completare la rosa. <strong style="color: var(--text-primary);">0 = illimitato</strong> (vincolato solo dal totale giocatori).</p>
             <div class="grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
                 <div class="form-group">
-                    <label>Portieri (P)</label>
+                    <label data-i18n="admin_config_limit_p">Portieri (P)</label>
                     <input type="number" id="configLimitP" value="3" min="0" placeholder="0 = ∞">
                 </div>
                 <div class="form-group">
-                    <label>Difensori (D)</label>
+                    <label data-i18n="admin_config_limit_d">Difensori (D)</label>
                     <input type="number" id="configLimitD" value="10" min="0" placeholder="0 = ∞">
                 </div>
                 <div class="form-group">
-                    <label>Centrocampisti (C)</label>
+                    <label data-i18n="admin_config_limit_c">Centrocampisti (C)</label>
                     <input type="number" id="configLimitC" value="8" min="0" placeholder="0 = ∞">
                 </div>
                 <div class="form-group">
-                    <label>Attaccanti (A)</label>
+                    <label data-i18n="admin_config_limit_a">Attaccanti (A)</label>
                     <input type="number" id="configLimitA" value="4" min="0" placeholder="0 = ∞">
                 </div>
             </div>
-            <button class="btn btn-success" style="margin-top: 1rem;" onclick="saveAllConfig()">Salva Tutte le Configurazioni</button>
+            <button class="btn btn-success" style="margin-top: 1rem;" onclick="saveAllConfig()" data-i18n="admin_config_save_all">Salva Tutte le Configurazioni</button>
         </div>
     </div>
 
     <!-- TAB 7: Export -->
     <div class="tab-content" id="tab-export">
         <div class="card">
-            <h3 class="card-title">Esporta Report Excel</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+            <h3 class="card-title" data-i18n="admin_export_title">Esporta Report Excel</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="admin_export_desc">
                 Genera un file Excel completo con tutti i dati dell'asta:
             </p>
             <ul style="color: var(--text-secondary); margin-bottom: 1.5rem; padding-left: 1.5rem;">
-                <li>Un foglio per ogni squadra con acquisti ordinati per ruolo</li>
-                <li>Foglio giocatori svincolati (invenduti)</li>
-                <li>Tabellone generale budget e slot</li>
+                <li data-i18n="admin_export_li1">Un foglio per ogni squadra con acquisti ordinati per ruolo</li>
+                <li data-i18n="admin_export_li2">Foglio giocatori svincolati (invenduti)</li>
+                <li data-i18n="admin_export_li3">Tabellone generale budget e slot</li>
             </ul>
-            <button class="btn btn-success btn-block" onclick="exportExcel()">Scarica Report Completo</button>
+            <button class="btn btn-success btn-block" onclick="exportExcel()" data-i18n="admin_export_btn">Scarica Report Completo</button>
         </div>
 
         <div class="card">
-            <h3 class="card-title">Storico Vendite</h3>
+            <h3 class="card-title" data-i18n="admin_export_history_title">Storico Vendite</h3>
             <div class="table-scroll-wrapper">
             <table id="soldPlayersTable">
                 <thead>
                     <tr>
-                        <th>Giocatore</th>
-                        <th>Ruolo</th>
-                        <th>Squadra</th>
-                        <th>Venduto a</th>
-                        <th>Prezzo</th>
+                        <th data-i18n="admin_export_th_player">Giocatore</th>
+                        <th data-i18n="admin_export_th_role">Ruolo</th>
+                        <th data-i18n="admin_export_th_team">Squadra</th>
+                        <th data-i18n="admin_export_th_sold">Venduto a</th>
+                        <th data-i18n="admin_export_th_price">Prezzo</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="5" style="text-align: center; color: var(--text-secondary);">Nessuna vendita registrata</td>
+                        <td colspan="5" style="text-align: center; color: var(--text-secondary);" data-i18n="admin_export_empty">Nessuna vendita registrata</td>
                     </tr>
                 </tbody>
             </table>
@@ -1391,7 +1391,7 @@
         <button onclick="chiudiModaleStagione()" style="position:absolute;top:14px;right:14px;background:none;
                 border:none;color:#94a3b8;font-size:1.4rem;cursor:pointer;line-height:1;">✕</button>
 
-        <h3 style="font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:4px;">
+        <h3 style="font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:4px;" data-i18n="admin_modal_edit_title">
             ✏️ Modifica Stagione
         </h3>
         <p id="modal-stagione-label" style="font-size:0.82rem;color:#94a3b8;margin-bottom:20px;"></p>
@@ -1399,7 +1399,7 @@
         <!-- CLASSIFICA -->
         <div style="margin-bottom:20px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-                      color:#38bdf8;margin-bottom:10px;">Classifica Finale</div>
+                      color:#38bdf8;margin-bottom:10px;" data-i18n="admin_modal_classifica">Classifica Finale</div>
           <div id="classifica-list" style="display:flex;flex-direction:column;gap:6px;"></div>
         </div>
 
@@ -1407,14 +1407,14 @@
         <div style="margin-bottom:20px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
                       color:#10b981;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-            Competizioni Vinte
+            <span data-i18n="admin_modal_competizioni">Competizioni Vinte</span>
             <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
               <button onclick="aggiuntaCompetizione()" style="font-size:11px;padding:3px 9px;background:rgba(16,185,129,0.15);
-                      color:#10b981;border:1px solid rgba(16,185,129,0.3);border-radius:5px;cursor:pointer;font-weight:600;">
+                      color:#10b981;border:1px solid rgba(16,185,129,0.3);border-radius:5px;cursor:pointer;font-weight:600;" data-i18n="admin_modal_add_custom">
                 + Personalizzata
               </button>
               <button onclick="apriPresetComp()" style="font-size:11px;padding:3px 9px;background:rgba(245,158,11,0.15);
-                      color:#f59e0b;border:1px solid rgba(245,158,11,0.3);border-radius:5px;cursor:pointer;font-weight:600;">
+                      color:#f59e0b;border:1px solid rgba(245,158,11,0.3);border-radius:5px;cursor:pointer;font-weight:600;" data-i18n="admin_modal_preset">
                 📋 Preset
               </button>
             </div>
@@ -1422,7 +1422,7 @@
           <div id="competizioni-list" style="display:flex;flex-direction:column;gap:6px;"></div>
           <div id="preset-comp-panel" style="display:none;margin-top:8px;padding:10px;background:rgba(245,158,11,0.06);
                border:1px solid rgba(245,158,11,0.2);border-radius:8px;">
-            <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;">Clicca per aggiungere:</div>
+            <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;" data-i18n="admin_modal_preset_hint">Clicca per aggiungere:</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;" id="preset-comp-buttons"></div>
           </div>
         </div>
@@ -1430,12 +1430,12 @@
         <!-- AZIONI -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
           <button onclick="salvaStagione()" style="flex:1;min-width:140px;padding:11px;background:linear-gradient(135deg,#2563eb,#1d4ed8);
-                  color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                  color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;" data-i18n="admin_modal_save_server">
             💾 Salva su Server
           </button>
           <button onclick="scaricaJsonConStagione()" style="flex:1;min-width:140px;padding:11px;
                   background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);
-                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;" data-i18n="admin_modal_download_json">
             ⬇️ Scarica JSON
           </button>
         </div>
@@ -1455,22 +1455,22 @@
         <button onclick="chiudiCreaStorica()" style="position:absolute;top:14px;right:14px;background:none;
                 border:none;color:#94a3b8;font-size:1.4rem;cursor:pointer;line-height:1;">✕</button>
 
-        <h3 style="font-size:1.05rem;font-weight:700;color:#f1f5f9;margin-bottom:4px;">
+        <h3 style="font-size:1.05rem;font-weight:700;color:#f1f5f9;margin-bottom:4px;" data-i18n="admin_modal_cs_title">
             ➕ Crea stagione storica
         </h3>
-        <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:20px;">
+        <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:20px;" data-i18n="admin_modal_cs_desc">
             Inserisci i dati delle stagioni passate per costruire l'Albo d'Oro della tua lega.
         </p>
 
         <!-- ANNO E LABEL -->
         <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
           <div style="flex:1;min-width:100px;">
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#38bdf8;">Anno</label>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#38bdf8;" data-i18n="admin_modal_cs_year">Anno</label>
             <input id="cs-year" type="number" placeholder="2024" style="width:100%;margin-top:4px;padding:8px 10px;
                    background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:0.9rem;" />
           </div>
           <div style="flex:2;min-width:180px;">
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#38bdf8;">Nome stagione</label>
+            <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#38bdf8;" data-i18n="admin_modal_cs_name">Nome stagione</label>
             <input id="cs-label" type="text" placeholder="Fantacalcio 2023/24" style="width:100%;margin-top:4px;padding:8px 10px;
                    background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:0.9rem;" />
           </div>
@@ -1480,14 +1480,14 @@
         <div style="margin-bottom:20px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
                       color:#38bdf8;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
-            Classifica
+            <span data-i18n="admin_modal_cs_classifica">Classifica</span>
             <button onclick="csAggiungiRiga()" style="font-size:11px;padding:3px 9px;background:rgba(56,189,248,0.15);
-                    color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:5px;cursor:pointer;font-weight:600;">
+                    color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:5px;cursor:pointer;font-weight:600;" data-i18n="admin_modal_cs_add_row">
                 + Aggiungi riga
             </button>
           </div>
           <div id="cs-classifica" style="display:flex;flex-direction:column;gap:6px;"></div>
-          <p style="font-size:0.75rem;color:#64748b;margin-top:6px;">
+          <p style="font-size:0.75rem;color:#64748b;margin-top:6px;" data-i18n="admin_modal_cs_order_hint">
             L'ordine delle righe determina la posizione (1°, 2°, 3°...). Usa le frecce per spostare.
           </p>
         </div>
@@ -1496,9 +1496,9 @@
         <div style="margin-bottom:20px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
                       color:#10b981;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-            Competizioni vinte
+            <span data-i18n="admin_modal_cs_competizioni">Competizioni vinte</span>
             <button onclick="csAggiungiComp()" style="font-size:11px;padding:3px 9px;background:rgba(16,185,129,0.15);
-                    color:#10b981;border:1px solid rgba(16,185,129,0.3);border-radius:5px;cursor:pointer;font-weight:600;">
+                    color:#10b981;border:1px solid rgba(16,185,129,0.3);border-radius:5px;cursor:pointer;font-weight:600;" data-i18n="admin_modal_cs_add">
                 + Aggiungi
             </button>
           </div>
@@ -1508,12 +1508,12 @@
         <!-- AZIONI -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
           <button onclick="salvaCreaStorica()" id="cs-save-btn" style="flex:1;min-width:140px;padding:11px;background:linear-gradient(135deg,#10b981,#059669);
-                  color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                  color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;" data-i18n="admin_modal_cs_save">
             💾 Salva stagione
           </button>
           <button onclick="chiudiCreaStorica()" style="flex:1;min-width:140px;padding:11px;
                   background:rgba(100,116,139,0.15);color:#94a3b8;border:1px solid #334155;
-                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;" data-i18n="admin_modal_cs_cancel">
             Annulla
           </button>
         </div>
@@ -1522,10 +1522,10 @@
 
     <!-- Barra di accesso rapido mobile (visibile solo su smartphone) -->
     <div id="mobile-quickbar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);padding:8px 12px;z-index:200;gap:6px;justify-content:space-around;align-items:center;">
-        <button onclick="goTab('tab-asta')" style="flex:1;padding:10px 4px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">ASTA</button>
-        <button onclick="goTab('tab-squadre')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">SQUADRE</button>
-        <button onclick="goTab('tab-operazioni')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">OPERAZ.</button>
-        <button onclick="goTab('tab-giocatori')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">GIOC.</button>
+        <button onclick="goTab('tab-asta')" style="flex:1;padding:10px 4px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;" data-i18n="admin_quickbar_auction">ASTA</button>
+        <button onclick="goTab('tab-squadre')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;" data-i18n="admin_quickbar_teams">SQUADRE</button>
+        <button onclick="goTab('tab-operazioni')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;" data-i18n="admin_quickbar_ops">OPERAZ.</button>
+        <button onclick="goTab('tab-giocatori')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;" data-i18n="admin_quickbar_players">GIOC.</button>
     </div>
 
   </div><!-- /admin-main -->
@@ -3083,30 +3083,30 @@
             <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem;">
                 <span style="font-size:2rem;line-height:1;">⚠️</span>
                 <div>
-                    <h3 style="color:#f59e0b;margin:0 0 4px;">Ruoli non riconosciuti</h3>
+                    <h3 style="color:#f59e0b;margin:0 0 4px;" data-i18n="admin_warning_title">Ruoli non riconosciuti</h3>
                     <p id="_warningSubtitle" style="color:var(--text-secondary);margin:0;font-size:0.88rem;"></p>
                 </div>
             </div>
             <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:1rem;
-                      padding:0.75rem;background:rgba(245,158,11,0.07);border-radius:8px;border-left:3px solid #f59e0b;">
+                      padding:0.75rem;background:rgba(245,158,11,0.07);border-radius:8px;border-left:3px solid #f59e0b;" data-i18n-html="admin_warning_desc">
                 Questi giocatori hanno ruoli che il sistema Mantra non riconosce: durante l'asta il controllo del limite di reparto non funzionerà correttamente.
                 Seleziona il ruolo corretto e clicca <b>Salva correzioni</b>.
             </p>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;padding:0 0.25rem 0.5rem;
                         font-size:0.78rem;color:var(--text-secondary);font-weight:600;text-transform:uppercase;">
-                <span>Giocatore</span><span>Ruolo attuale</span><span>Correggi con</span>
+                <span data-i18n="admin_warning_player">Giocatore</span><span data-i18n="admin_warning_current">Ruolo attuale</span><span data-i18n="admin_warning_fix">Correggi con</span>
             </div>
             <div id="_warningList" style="overflow-y:auto;flex:1;"></div>
             <div style="display:flex;gap:1rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
                 <button onclick="_salvaCorrezioni()"
                         style="background:#22c55e;color:white;border:none;padding:0.75rem 1.5rem;
-                               border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;">
+                               border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;" data-i18n="admin_warning_save">
                     Salva correzioni
                 </button>
                 <button onclick="_chiudiWarning()"
                         style="background:transparent;color:var(--text-secondary);
                                border:1px solid var(--border);padding:0.75rem 1.5rem;
-                               border-radius:8px;cursor:pointer;font-size:0.9rem;">
+                               border-radius:8px;cursor:pointer;font-size:0.9rem;" data-i18n="admin_warning_ignore">
                     Ignora e continua
                 </button>
             </div>
