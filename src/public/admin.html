@@ -2026,6 +2026,8 @@
             }
           }
         }
+
+        socket.on('autoSaved', (data) => {
             _aggiornaUltimoSalvataggio(data.ts);
         });
 
