@@ -39,6 +39,33 @@
       transition: background 0.2s;
     }
     .btn-back:hover { background-color: #334155; }
+    .view-toggle { display: flex; gap: 0; margin-bottom: 20px; }
+    .view-toggle button {
+      padding: 10px 24px; border: 1px solid #1f293d; background: #141b2d; color: #64748b;
+      font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.2s;
+    }
+    .view-toggle button:first-child { border-radius: 8px 0 0 8px; }
+    .view-toggle button:last-child { border-radius: 0 8px 8px 0; border-left: none; }
+    .view-toggle button:not(:first-child) { border-left: none; }
+    .view-toggle button.active { background: #10b981; color: #fff; border-color: #10b981; }
+    .discarded-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(400px, 100%), 1fr)); gap: 20px; }
+    .discarded-card { background: #141b2d; border: 1px solid #1f293d; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .discarded-card h3 { margin-top: 0; color: #f59e0b; font-size: 18px; border-bottom: 1px solid #1f293d; padding-bottom: 10px; }
+    .discarded-count { color: #64748b; font-size: 13px; margin-bottom: 10px; }
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .filter-bar input, .filter-bar select {
+      background: #141b2d; border: 1px solid #1f293d; border-radius: 8px;
+      color: #e2e8f0; padding: 8px 12px; font-size: 14px; font-family: inherit;
+    }
+    .filter-bar input:focus, .filter-bar select:focus { outline: none; border-color: #10b981; }
+    .filter-bar input { flex: 1; min-width: 180px; }
+    .filter-bar select { cursor: pointer; }
+    .filter-bar .filter-clear {
+      background: #1f293d; border: 1px solid #334155; border-radius: 8px;
+      color: #94a3b8; padding: 8px 14px; font-size: 13px; cursor: pointer; font-family: inherit;
+    }
+    .filter-bar .filter-clear:hover { background: #334155; color: #e2e8f0; }
+    .filter-result-count { color: #64748b; font-size: 13px; margin-bottom: 12px; }
     
     .grid-squadre {
       display: grid;
@@ -175,7 +202,41 @@
     </div>
   </header>
 
+  <div class="view-toggle">
+    <button id="btn-view-rose" class="active" onclick="switchView('rose')">⚽ Rose</button>
+    <button id="btn-view-scartati" onclick="switchView('scartati')">🗑️ Scartati</button>
+    <button id="btn-view-svincolati" onclick="switchView('svincolati')">📦 Svincolati</button>
+  </div>
+
+  <div id="discarded-filters" class="filter-bar" style="display:none;">
+    <input type="text" id="filter-name" placeholder="🔍 Cerca per nome..." oninput="renderDiscarded()">
+    <select id="filter-role" onchange="renderDiscarded()">
+      <option value="">Tutti i ruoli</option>
+      <option value="P">Portieri</option>
+      <option value="D">Difensori</option>
+      <option value="C">Centrocampisti</option>
+      <option value="A">Attaccanti</option>
+    </select>
+    <input type="text" id="filter-team" placeholder="🏷️ Squadra..." oninput="renderDiscarded()">
+    <button class="filter-clear" onclick="clearFilters()">✕ Reset</button>
+  </div>
+
+  <div id="svincolati-filters" class="filter-bar" style="display:none;">
+    <input type="text" id="filter-name-svin" placeholder="🔍 Cerca per nome..." oninput="renderSvincolati()">
+    <select id="filter-role-svin" onchange="renderSvincolati()">
+      <option value="">Tutti i ruoli</option>
+      <option value="P">Portieri</option>
+      <option value="D">Difensori</option>
+      <option value="C">Centrocampisti</option>
+      <option value="A">Attaccanti</option>
+    </select>
+    <input type="text" id="filter-team-svin" placeholder="🏷️ Squadra..." oninput="renderSvincolati()">
+    <button class="filter-clear" onclick="clearFiltersSvin()">✕ Reset</button>
+  </div>
+
   <div class="grid-squadre" id="tabellone-rose"></div>
+  <div class="discarded-grid" id="tabellone-scartati" style="display:none;"></div>
+  <div class="discarded-grid" id="tabellone-svincolati" style="display:none;"></div>
   <div id="toast"></div>
 
   <!-- PIN Modal per eliminazione giocatori -->
@@ -251,6 +312,12 @@
     let _isAdminAuthed = false;
     let _pendingDeletion = null; // { team, player, prezzoMax }
     let _teamsData = {}; // { teamKey: { name, budget, slots } }
+    let _discardedData = [];
+    let _svincolatiData = [];
+    let _currentView = (() => {
+      const v = new URLSearchParams(location.search).get('view');
+      return (v === 'scartati' || v === 'svincolati') ? v : 'rose';
+    })();
 
     socket.on('connect', () => {
       if (pendingSocketRoomCode) {
@@ -378,9 +445,166 @@
       rimuoviGiocatore(btn.dataset.team, btn.dataset.player, parseInt(btn.dataset.price));
     });
 
-    socket.on("connect", () => { /* getData is fetched after joinRoom via server push */ });
+    socket.on("connect", () => { if (_currentView !== 'rose') switchView(_currentView); });
 
-    function aggiorna() { socket.emit("getSoldPlayers"); }
+    function aggiorna() { socket.emit("getSoldPlayers"); socket.emit("getDiscarded"); socket.emit("getPlayers"); }
+
+    socket.on("discardedList", function(list) {
+      _discardedData = list || [];
+      if (_currentView === 'scartati') renderDiscarded();
+    });
+
+    socket.on("playersList", function(list) {
+      _svincolatiData = list || [];
+      if (_currentView === 'svincolati') renderSvincolati();
+    });
+
+    function switchView(view) {
+      _currentView = view;
+      const btnRose = document.getElementById('btn-view-rose');
+      const btnDisc = document.getElementById('btn-view-scartati');
+      const btnSvin = document.getElementById('btn-view-svincolati');
+      const gridRose = document.getElementById('tabellone-rose');
+      const gridDisc = document.getElementById('tabellone-scartati');
+      const gridSvin = document.getElementById('tabellone-svincolati');
+      const filtersDisc = document.getElementById('discarded-filters');
+      const filtersSvin = document.getElementById('svincolati-filters');
+      [btnRose, btnDisc, btnSvin].forEach(b => b.classList.remove('active'));
+      gridRose.style.display = 'none';
+      gridDisc.style.display = 'none';
+      gridSvin.style.display = 'none';
+      filtersDisc.style.display = 'none';
+      filtersSvin.style.display = 'none';
+      if (view === 'scartati') {
+        btnDisc.classList.add('active');
+        gridDisc.style.display = 'grid';
+        filtersDisc.style.display = 'flex';
+        renderDiscarded();
+      } else if (view === 'svincolati') {
+        btnSvin.classList.add('active');
+        gridSvin.style.display = 'grid';
+        filtersSvin.style.display = 'flex';
+        renderSvincolati();
+      } else {
+        btnRose.classList.add('active');
+        gridRose.style.display = 'grid';
+      }
+    }
+
+    function clearFilters() {
+      document.getElementById('filter-name').value = '';
+      document.getElementById('filter-role').value = '';
+      document.getElementById('filter-team').value = '';
+      renderDiscarded();
+    }
+
+    function getFilteredDiscarded() {
+      const nameQ = (document.getElementById('filter-name')?.value || '').toLowerCase().trim();
+      const roleQ = document.getElementById('filter-role')?.value || '';
+      const teamQ = (document.getElementById('filter-team')?.value || '').toLowerCase().trim();
+      return (_discardedData || []).filter(p => {
+        if (nameQ && !(p.nome || '').toLowerCase().includes(nameQ)) return false;
+        if (teamQ && !(p.squadra || '').toLowerCase().includes(teamQ)) return false;
+        if (roleQ && badgeClass(p.ruolo) !== roleQ) return false;
+        return true;
+      });
+    }
+
+    function renderDiscarded() {
+      const container = document.getElementById('tabellone-scartati');
+      if (!_discardedData || _discardedData.length === 0) {
+        container.innerHTML = '<p style="color:#64748b; font-style:italic;">Nessun giocatore scartato.</p>';
+        return;
+      }
+      const filtered = getFilteredDiscarded();
+      const roleLabels = { P: 'Portieri', D: 'Difensori', C: 'Centrocampisti', A: 'Attaccanti' };
+      const roleOrder = ['P','D','C','A'];
+      const roleQ = document.getElementById('filter-role')?.value || '';
+      container.innerHTML = '';
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="color:#64748b; font-style:italic;">Nessun giocatore trovato con questi filtri.</p>';
+        return;
+      }
+      const countDiv = document.createElement('div');
+      countDiv.className = 'filter-result-count';
+      countDiv.textContent = filtered.length + ' giocatori' + (filtered.length < _discardedData.length ? ' di ' + _discardedData.length : '');
+      container.appendChild(countDiv);
+      const byRole = { P: [], D: [], C: [], A: [] };
+      filtered.forEach(p => { byRole[badgeClass(p.ruolo)].push(p); });
+      roleOrder.forEach(r => {
+        if (byRole[r].length === 0) return;
+        const card = document.createElement('div');
+        card.className = 'discarded-card';
+        const players = byRole[r].sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+        let html = '<h3>📋 ' + roleLabels[r] + ' (' + players.length + ')</h3>' +
+          '<table><thead><tr><th>' + I18N.t('rose','rose_th_player') + '</th><th>' + I18N.t('rose','rose_th_role') + '</th><th>Squadra</th></tr></thead><tbody>';
+        players.forEach(p => {
+          html += '<tr><td><strong>' + (p.nome||'') + '</strong></td>' +
+            '<td><span class="badge ' + r + '">' + (p.ruolo||'') + '</span></td>' +
+            '<td style="color:#64748b;font-size:13px;">' + (p.squadra||'') + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+    }
+    function clearFiltersSvin() {
+      document.getElementById('filter-name-svin').value = '';
+      document.getElementById('filter-role-svin').value = '';
+      document.getElementById('filter-team-svin').value = '';
+      renderSvincolati();
+    }
+
+    function getFilteredSvincolati() {
+      const nameQ = (document.getElementById('filter-name-svin')?.value || '').toLowerCase().trim();
+      const roleQ = document.getElementById('filter-role-svin')?.value || '';
+      const teamQ = (document.getElementById('filter-team-svin')?.value || '').toLowerCase().trim();
+      return (_svincolatiData || []).filter(p => {
+        if (nameQ && !(p.nome || '').toLowerCase().includes(nameQ)) return false;
+        if (teamQ && !(p.squadra || '').toLowerCase().includes(teamQ)) return false;
+        if (roleQ && badgeClass(p.ruolo) !== roleQ) return false;
+        return true;
+      });
+    }
+
+    function renderSvincolati() {
+      const container = document.getElementById('tabellone-svincolati');
+      if (!_svincolatiData || _svincolatiData.length === 0) {
+        container.innerHTML = '<p style="color:#64748b; font-style:italic;">Nessun giocatore svincolato rimasto.</p>';
+        return;
+      }
+      const filtered = getFilteredSvincolati();
+      const roleLabels = { P: 'Portieri', D: 'Difensori', C: 'Centrocampisti', A: 'Attaccanti' };
+      const roleOrder = ['P','D','C','A'];
+      container.innerHTML = '';
+      if (filtered.length === 0) {
+        container.innerHTML = '<p style="color:#64748b; font-style:italic;">Nessun giocatore trovato con questi filtri.</p>';
+        return;
+      }
+      const countDiv = document.createElement('div');
+      countDiv.className = 'filter-result-count';
+      countDiv.textContent = filtered.length + ' giocatori' + (filtered.length < _svincolatiData.length ? ' di ' + _svincolatiData.length : '');
+      container.appendChild(countDiv);
+      const byRole = { P: [], D: [], C: [], A: [] };
+      filtered.forEach(p => { byRole[badgeClass(p.ruolo)].push(p); });
+      roleOrder.forEach(r => {
+        if (byRole[r].length === 0) return;
+        const card = document.createElement('div');
+        card.className = 'discarded-card';
+        const players = byRole[r].sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+        let html = '<h3>📦 ' + roleLabels[r] + ' (' + players.length + ')</h3>' +
+          '<table><thead><tr><th>' + I18N.t('rose','rose_th_player') + '</th><th>' + I18N.t('rose','rose_th_role') + '</th><th>Squadra</th></tr></thead><tbody>';
+        players.forEach(p => {
+          html += '<tr><td><strong>' + (p.nome||'') + '</strong></td>' +
+            '<td><span class="badge ' + r + '">' + (p.ruolo||'') + '</span></td>' +
+            '<td style="color:#64748b;font-size:13px;">' + (p.squadra||'') + '</td></tr>';
+        });
+        html += '</tbody></table>';
+        card.innerHTML = html;
+        container.appendChild(card);
+      });
+    }
+
     socket.on("updateTeams", function(teams) { _teamsData = teams || {}; aggiorna(); });
     socket.on("teamsUpdate", function(teams) { _teamsData = teams || {}; aggiorna(); });
 
@@ -429,7 +653,11 @@
             <tbody>
         `;
 
-        rosePerSquadra[teamName].forEach(p => {
+        rosePerSquadra[teamName].sort((a, b) => {
+          const order = {P:0,D:1,C:2,A:3};
+          const ca = badgeClass(a.ruolo), cb = badgeClass(b.ruolo);
+          return (order[ca] ?? 4) - (order[cb] ?? 4) || a.player.localeCompare(b.player);
+        }).forEach(p => {
           const cls = badgeClass(p.ruolo);
           // Usiamo data-* invece di onclick inline per gestire correttamente
           // nomi con apostrofo (es: "D'Ambrosio") e caratteri speciali
