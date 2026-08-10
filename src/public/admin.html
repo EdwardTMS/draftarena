@@ -2021,7 +2021,7 @@
           if (btnResume && btnResume.style.display !== 'none') {
             socket.emit('adminResumeAuction');
           } else {
-            if (confirm('Confermi di voler terminare l'asta? La stanza passerà in modalità riepilogo. Potrai riprenderla in qualsiasi momento.')) {
+            if (confirm('Confermi di voler terminare l\'asta? La stanza passerà in modalità riepilogo. Potrai riprenderla in qualsiasi momento.')) {
               socket.emit('adminEndAuction');
             }
           }
