@@ -781,6 +781,8 @@
                 <button class="btn btn-success" onclick="saveSession()" data-i18n="admin_leagues_save_btn">💾 Salva Sessione</button>
                 <button class="btn btn-secondary" onclick="loadSession()" data-i18n="admin_leagues_reload_btn">🔄 Ricarica Sessione</button>
                 <button class="btn btn-danger" onclick="resetAll()" data-i18n="admin_leagues_reset_btn">Reset Completo</button>
+                <button id="btn-end-auction" class="btn" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.4);font-weight:700;display:none;" onclick="toggleEndAuction()">🏁 Termina Asta</button>
+                <button id="btn-resume-auction" class="btn" style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.4);font-weight:700;display:none;" onclick="toggleEndAuction()">▶️ Riprendi Asta</button>
             </div>
             <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                 <span id="auto-save-badge"
@@ -1194,9 +1196,18 @@
                 </p>
             </div>
         </div>
-    </div>
 
-    <!-- TAB 4: Controlli Asta -->
+        <!-- Lista Giocatori Scartati -->
+        <div class="card" id="discardedCard" style="display:none;">
+            <h3 class="card-title">
+                <span>Giocatori Scartati</span> (<span id="discardedCount">0</span>)
+                <button class="btn btn-success" style="margin-left: auto; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="recallAllDiscarded()">Richiama Tutti</button>
+            </h3>
+            <div class="player-list" id="discardedListContainer">
+                <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nessun giocatore scartato</p>
+            </div>
+        </div>
+    </div>
     <div class="tab-content" id="tab-asta">
         <div class="card">
             <h3 class="card-title" data-i18n="admin_auction_status_title">Stato Asta Corrente</h3>
@@ -1508,6 +1519,7 @@
                 <li data-i18n="admin_export_li3">Tabellone generale budget e slot</li>
             </ul>
             <button class="btn btn-success btn-block" onclick="exportExcel()" data-i18n="admin_export_btn">Scarica Report Completo</button>
+            <button class="btn btn-block" style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.4);font-weight:700;margin-top:8px;" onclick="exportCSV()">📄 Esporta CSV (Squadra,ID,Prezzo)</button>
         </div>
 
         <div class="card">
@@ -1690,6 +1702,7 @@
         // Current state
         let currentTeams = {};
         let currentPlayersList = [];
+        let currentDiscardedList = [];
         let currentSoldPlayers = [];
         let currentAuctionName = 'default';
         let currentRoomCode = null;
@@ -1967,6 +1980,12 @@
             updateStats();
         });
 
+        socket.on('discardedList', (discarded) => {
+            currentDiscardedList = discarded || [];
+            renderDiscardedList();
+            updateStats();
+        });
+
         socket.on('errorNotify', (msg) => {
             showAlert('error', msg);
         });
@@ -1985,7 +2004,28 @@
         });
 
         // ── Auto-save dal server ─────────────────────────────────────────────
-        socket.on('autoSaved', (data) => {
+        socket.on('auctionEndedState', (ended) => {
+          const btnEnd = document.getElementById('btn-end-auction');
+          const btnResume = document.getElementById('btn-resume-auction');
+          if (!btnEnd || !btnResume) return;
+          if (ended) {
+            btnEnd.style.display = 'none';
+            btnResume.style.display = 'inline-flex';
+          } else {
+            btnEnd.style.display = 'inline-flex';
+            btnResume.style.display = 'none';
+          }
+        });
+        function toggleEndAuction() {
+          const btnResume = document.getElementById('btn-resume-auction');
+          if (btnResume && btnResume.style.display !== 'none') {
+            socket.emit('adminResumeAuction');
+          } else {
+            if (confirm('Confermi di voler terminare l'asta? La stanza passerà in modalità riepilogo. Potrai riprenderla in qualsiasi momento.')) {
+              socket.emit('adminEndAuction');
+            }
+          }
+        }
             _aggiornaUltimoSalvataggio(data.ts);
         });
 
@@ -3041,6 +3081,10 @@
             document.getElementById('statTeams').textContent = Object.keys(currentTeams).length;
             document.getElementById('statSold').textContent = currentSoldPlayers.length;
             document.getElementById('statRemaining').textContent = currentPlayersList.length;
+            const dc = document.getElementById('discardedCount');
+            if (dc) dc.textContent = currentDiscardedList.length;
+            const card = document.getElementById('discardedCard');
+            if (card) card.style.display = currentDiscardedList.length > 0 ? '' : 'none';
         }
 
         // ============================================================
@@ -3181,6 +3225,45 @@
 
         function refreshPlayersList() {
             socket.emit('getPlayers');
+            socket.emit('getDiscarded');
+        }
+
+        function renderDiscardedList() {
+            const container = document.getElementById('discardedListContainer');
+            if (!container) return;
+            const card = document.getElementById('discardedCard');
+            const countEl = document.getElementById('discardedCount');
+            if (countEl) countEl.textContent = currentDiscardedList.length;
+            if (card) card.style.display = currentDiscardedList.length > 0 ? '' : 'none';
+
+            if (currentDiscardedList.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nessun giocatore scartato</p>';
+                return;
+            }
+
+            container.innerHTML = currentDiscardedList.map(p => `
+                <div class="player-item">
+                    <div>
+                        <strong>${p.nome}</strong>
+                        <span class="club">${p.squadra}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span class="role">${p.ruolo}</span>
+                        <button class="btn btn-success" style="padding:0.3rem 0.7rem;font-size:0.75rem;" onclick="recallSingleDiscarded('${p.nome.replace(/'/g, "\\'")}')">Richiama</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function recallAllDiscarded() {
+            if (currentDiscardedList.length === 0) { showAlert('error', 'Nessun giocatore scartato da richiamare!'); return; }
+            if (confirm(`Richiamare tutti i ${currentDiscardedList.length} giocatori scartati nel mazzo?`)) {
+                socket.emit('adminRiciclaInvenduti');
+            }
+        }
+
+        function recallSingleDiscarded(name) {
+            socket.emit('adminRichiamaSingoloScartato', name);
         }
 
         function discardPlayer() {
@@ -3253,7 +3336,13 @@
         }
 
         function recycleUnsold() {
-            socket.emit('adminRiciclaInvenduti');
+            if (currentDiscardedList.length > 0) {
+                if (confirm(`Richiamare tutti i ${currentDiscardedList.length} giocatori scartati nel mazzo?`)) {
+                    socket.emit('adminRiciclaInvenduti');
+                }
+            } else {
+                socket.emit('adminRiciclaInvenduti');
+            }
         }
 
         function removePlayerFromTeam() {
@@ -3390,6 +3479,12 @@
         function exportExcel() {
             window.location.href = `/export?room=${currentRoomCode}`;
             showAlert('success', 'Download avviato...');
+        }
+
+        function exportCSV() {
+            if (!currentRoomCode) { showAlert('error', 'Nessuna stanza attiva.'); return; }
+            window.location.href = `/export-csv?room=${currentRoomCode}`;
+            showAlert('success', 'Download CSV avviato...');
         }
 
         function renderSoldPlayers() {
