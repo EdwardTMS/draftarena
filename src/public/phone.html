@@ -186,6 +186,15 @@
     <h2 id="esito-testo">-</h2>
   </div>
 
+  <div id="auction-ended-phone" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(5,9,20,0.97);z-index:9998;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;">
+    <div style="max-width:400px;">
+      <div style="font-size:2.5rem;margin-bottom:8px;">🏁</div>
+      <h2 style="color:#10b981;font-size:1.5rem;margin:0 0 6px 0;">ASTA CONCLUSA</h2>
+      <p style="color:#94a3b8;font-size:13px;margin:0 0 20px 0;">L'asta è terminata. Puoi vedere le rose finali qui sotto.</p>
+      <button class="btn-rose" onclick="vaiARose()" style="font-size:15px;padding:10px 24px;width:auto;">📋 VEDI LE ROSE</button>
+    </div>
+  </div>
+
   <script src="/socket.io/socket.io.js"></script>
   <script src="/i18n.js"></script>
   <script>
@@ -454,6 +463,18 @@
     });
 
     socket.on("errorNotify", msg => { mostraToast(msg); });
+
+    // ─── ASTA CONCLUSA ──────────────────────────────────────────────────────────
+    socket.on("auctionEndedState", (ended) => {
+      const el = document.getElementById("auction-ended-phone");
+      if (!el) return;
+      el.style.display = ended ? "flex" : "none";
+    });
+    function vaiARose() {
+      const code = new URLSearchParams(location.search).get("room") || currentRoomCode;
+      if (code) window.open('rose.html?room=' + code, '_blank');
+    }
+    // ─── FINE ASTA CONCLUSA ──────────────────────────────────────────────────────
 
     function inviaRilancio(valore) {
       if (!miaSquadraScelta || !astaAttiva) return;
