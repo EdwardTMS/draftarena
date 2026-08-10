@@ -154,8 +154,10 @@ function createRoomData(code, adminPin) {
     teams: {},
     playersList: [],
     soldPlayers: [],
+    discardedPlayers: [],
     claimedTeams: {},
-    CONFIG: JSON.parse(JSON.stringify(DEFAULT_CONFIG))
+    CONFIG: JSON.parse(JSON.stringify(DEFAULT_CONFIG)),
+    auctionEnded: false
   };
 }
 
@@ -219,6 +221,7 @@ function salvaFileLocale(room) {
       teams: room.teams,
       playersList: room.playersList,
       soldPlayers: room.soldPlayers,
+      discardedPlayers: room.discardedPlayers || [],
       CONFIG: room.CONFIG,
       settings: { timerDuration: room.state.timerDuration },
       currentState
@@ -237,6 +240,7 @@ function caricaFileLocale(room) {
     room.teams = data.teams || {};
     room.playersList = data.playersList || [];
     room.soldPlayers = data.soldPlayers || [];
+    room.discardedPlayers = data.discardedPlayers || [];
     if (data.settings) room.state.timerDuration = parseInt(data.settings.timerDuration) || 10;
     if (data.CONFIG) room.CONFIG = data.CONFIG;
     if (data.currentState && data.currentState.player) {
@@ -318,7 +322,7 @@ async function salvaSessioneDB(room) {
       highestBidder: room.state.highestBidder
     } : null;
     await supabase.from("auction_sessions")
-      .upsert({ room_code: rc, auction_name: an, config: room.CONFIG, timer_duration: room.state.timerDuration, current_state: currentState, updated_at: new Date().toISOString() }, { onConflict: "room_code,auction_name" });
+      .upsert({ room_code: rc, auction_name: an, config: room.CONFIG, timer_duration: room.state.timerDuration, current_state: currentState, auction_ended: room.auctionEnded || false, updated_at: new Date().toISOString() }, { onConflict: "room_code,auction_name" });
 
     // Cancella e reinserisci teams
     await supabase.from("teams").delete().eq("room_code", rc).eq("auction_name", an);
@@ -333,9 +337,15 @@ async function salvaSessioneDB(room) {
     await supabase.from("players_list").delete().eq("room_code", rc).eq("auction_name", an);
     if (room.playersList.length > 0) {
       const chunks = chunkArray(room.playersList.map(p => ({
-        room_code: rc, auction_name: an, nome: p.nome, ruolo: p.ruolo, squadra: p.squadra || "Svincolato"
+        room_code: rc, auction_name: an, nome: p.nome, ruolo: p.ruolo, squadra: p.squadra || "Svincolato", player_id: p.id || null, is_discarded: false
       })), 500);
       for (const chunk of chunks) await supabase.from("players_list").insert(chunk);
+    }
+    if (room.discardedPlayers && room.discardedPlayers.length > 0) {
+      const dChunks = chunkArray(room.discardedPlayers.map(p => ({
+        room_code: rc, auction_name: an, nome: p.nome, ruolo: p.ruolo, squadra: p.squadra || "Svincolato", player_id: p.id || null, is_discarded: true
+      })), 500);
+      for (const ch of dChunks) await supabase.from("players_list").insert(ch);
     }
 
     // Cancella e reinserisci sold_players
@@ -343,7 +353,7 @@ async function salvaSessioneDB(room) {
     if (room.soldPlayers.length > 0) {
       const soldRows = room.soldPlayers.map(sp => ({
         room_code: rc, auction_name: an, player_name: sp.player, ruolo: sp.ruolo,
-        squadra: sp.squadra || "", winner: sp.winner, price: sp.price, reparto_assegnato: sp.repartoAssegnato
+        squadra: sp.squadra || "", winner: sp.winner, price: sp.price, reparto_assegnato: sp.repartoAssegnato, player_id: sp.id || null
       }));
       await supabase.from("sold_players").insert(soldRows);
     }
@@ -368,6 +378,7 @@ async function caricaSessioneDB(room) {
     if (sessRes.data) {
       room.CONFIG = sessRes.data.config || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
       room.state.timerDuration = sessRes.data.timer_duration || 10;
+      room.auctionEnded = !!sessRes.data.auction_ended;
       const cs = sessRes.data.current_state;
       if (cs && cs.player) {
         room.state.player = cs.player;
@@ -397,13 +408,14 @@ async function caricaSessioneDB(room) {
     }
 
     if (playersRes.data) {
-      room.playersList = playersRes.data.map(p => ({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra }));
+      room.playersList = playersRes.data.filter(p => !p.is_discarded).map(p => ({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, id: p.player_id || "" }));
+      room.discardedPlayers = playersRes.data.filter(p => p.is_discarded).map(p => ({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, id: p.player_id || "" }));
     }
 
     if (soldRes.data) {
       room.soldPlayers = soldRes.data.map(sp => ({
         player: sp.player_name, ruolo: sp.ruolo, squadra: sp.squadra,
-        winner: sp.winner, price: sp.price, repartoAssegnato: sp.reparto_assegnato
+        winner: sp.winner, price: sp.price, repartoAssegnato: sp.reparto_assegnato, id: sp.player_id || ""
       }));
     }
 
@@ -543,7 +555,7 @@ function assegnaGiocatoreAVincitore(roomCode) {
   room.soldPlayers.push({
     player: p.nome, ruolo: p.ruolo, squadra: p.squadra,
     winner: room.teams[winnerKey].name, price,
-    repartoAssegnato: repartoScelto
+    repartoAssegnato: repartoScelto, id: p.id || ""
   });
 
   // Salva l'ultima asta per permettere revisione/riassegnazione
@@ -590,10 +602,20 @@ function tickRoom(roomCode) {
         }, 2000);
       }
     } else {
-      const playerName = room.state.player.nome;
+      const p = room.state.player;
+      const playerName = p.nome;
       io.to(roomCode).emit("auctionEnded", { winner: null, player: playerName, price: 0 });
+      // Sposta il giocatore non venduto nella lista scartati
+      if (!room.discardedPlayers) room.discardedPlayers = [];
+      if (!room.discardedPlayers.some(dp => dp.nome.toLowerCase() === p.nome.toLowerCase())) {
+        room.discardedPlayers.push({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, id: p.id || "" });
+      }
+      room.playersList = room.playersList.filter(item => item.nome !== p.nome);
       room.state.player = null;
       io.to(roomCode).emit("update", room.state);
+      io.to(roomCode).emit("playersList", room.playersList);
+      io.to(roomCode).emit("discardedList", room.discardedPlayers);
+      salvaSessioneDB(room);
       setTimeout(() => {
         const r = rooms.get(roomCode);
         if (r && !r.state.isPaused && r.autoAdvance) chiamaGiocatoreCasuale(roomCode);
@@ -964,7 +986,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const matrix = xlsx.utils.sheet_to_json(sheet, { header: 1, defval: "" });
 
-    let rigaIntestazione = -1, indexNome = -1, indexRuolo = -1, indexSquadra = -1, indexPrezzo = -1;
+    let rigaIntestazione = -1, indexNome = -1, indexRuolo = -1, indexSquadra = -1, indexPrezzo = -1, indexId = -1;
 
     for (let r = 0; r < matrix.length; r++) {
       const row = matrix[r];
@@ -974,6 +996,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         if (["ruolo", "rm", "r", "ruolo mantra"].includes(v)) indexRuolo = c;
         if (["squadra", "club", "team", "squadra di a"].includes(v)) indexSquadra = c;
         if (["valore", "quotazione", "prezzo", "qt", "costo"].includes(v)) indexPrezzo = c;
+        if (["id", "id giocatore", "idgiocatore", "codice", "code"].includes(v)) indexId = c;
       }
       if (indexNome !== -1 && indexRuolo !== -1) { rigaIntestazione = r; break; }
     }
@@ -993,8 +1016,9 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       const ruolo = row[indexRuolo] ? String(row[indexRuolo]).trim() : "";
       const squadra = indexSquadra !== -1 && row[indexSquadra] ? String(row[indexSquadra]).trim() : "Svincolato";
       const valoreEffettivo = indexPrezzo !== -1 && row[indexPrezzo] ? parseInt(row[indexPrezzo]) : 1;
+      const playerId = indexId !== -1 && row[indexId] ? String(row[indexId]).trim() : "";
       if (valoreEffettivo < sogliaMinima) continue;
-      if (nome && ruolo) fromFile.push({ nome, ruolo: ruolo.toUpperCase(), squadra });
+      if (nome && ruolo) fromFile.push({ nome, ruolo: ruolo.toUpperCase(), squadra, id: playerId });
     }
 
     let alreadySold = 0, alreadyInList = 0;
@@ -1024,6 +1048,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
     await salvaSessioneDB(room);
     io.to(roomCode).emit("playersList", room.playersList);
+    io.to(roomCode).emit("discardedList", room.discardedPlayers || []);
     res.json({
       success: true,
       count: room.playersList.length,
@@ -1096,6 +1121,42 @@ app.get("/export", (req, res) => {
   } catch (e) {
     console.error("[SERVER] Errore export Excel:", e);
     res.status(500).send("Errore durante la generazione del file Excel.");
+  }
+});
+
+// GET /export-csv?room=CODE → CSV con squadra,idgiocatore,prezzo separato da righe $,$,$
+app.get("/export-csv", (req, res) => {
+  const roomCode = String(req.query.room || "").toUpperCase().trim();
+  const room = rooms.get(roomCode);
+  if (!room) return res.status(404).send("Stanza non trovata.");
+
+  try {
+    const teamKeys = Object.keys(room.teams);
+    let csv = "$,$,$\n";
+
+    for (const key of teamKeys) {
+      const squadra = room.teams[key];
+      const acquisti = room.soldPlayers.filter(p =>
+        p.winner.toLowerCase().trim() === squadra.name.toLowerCase().trim()
+      );
+
+      for (const sp of acquisti) {
+        const playerId = sp.id || "";
+        const prezzo = sp.price || 0;
+        csv += `${squadra.name},${playerId},${prezzo}\n`;
+      }
+
+      if (teamKeys.indexOf(key) < teamKeys.length - 1) {
+        csv += "$,$,$\n";
+      }
+    }
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename=asta_${roomCode}.csv`);
+    res.send(csv);
+  } catch (e) {
+    console.error("[SERVER] Errore export CSV:", e);
+    res.status(500).send("Errore durante la generazione del file CSV.");
   }
 });
 
@@ -1670,8 +1731,10 @@ io.on("connection", (socket) => {
     socket.emit("teamsUpdate", room.teams);
     socket.emit("updateSold", room.soldPlayers);
     socket.emit("playersList", room.playersList);
+    socket.emit("discardedList", room.discardedPlayers || []);
     socket.emit("configUpdate", { CONFIG: room.CONFIG, timerDuration: room.state.timerDuration });
     socket.emit("takenTeams", Object.keys(room.claimedTeams || {}));
+    socket.emit("auctionEndedState", !!room.auctionEnded);
   }
 
   socket.on("viewingLanding", () => {
@@ -1774,6 +1837,7 @@ io.on("connection", (socket) => {
   socket.on("bid", (data) => {
     const room = getRoom(); if (!room) return;
     const rc = socket.roomCode;
+    if (room.auctionEnded) { socket.emit("errorNotify", "⛔ Asta conclusa. Non è più possibile fare offerte."); return; }
     if (room.state.player === null || room.state.time <= 0 || room.state.isPaused) return;
 
     const teamKey = String(data.name).toLowerCase().trim();
@@ -1854,6 +1918,40 @@ io.on("connection", (socket) => {
     room.autoAdvance = status;
   });
 
+  // ─── TERMINA / RIPRENDI ASTA ──────────────────────────────────────────────
+
+  socket.on("adminEndAuction", async () => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+    room.auctionEnded = true;
+    room.state.isPaused = true;
+    if (room.state.player) {
+      room.playersList.unshift(room.state.player);
+      room.state.player = null;
+      room.state.currentPrice = 0;
+      room.state.highestBidder = null;
+      room.state.history = [];
+    }
+    const rc = socket.roomCode;
+    await salvaSessioneDB(room);
+    io.to(rc).emit("update", room.state);
+    io.to(rc).emit("playersList", room.playersList);
+    io.to(rc).emit("auctionEndedState", true);
+    socket.emit("errorNotify", "🏁 Asta conclusa! La stanza è ora in modalità riepilogo.");
+  });
+
+  socket.on("adminResumeAuction", async () => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+    room.auctionEnded = false;
+    room.state.isPaused = false;
+    const rc = socket.roomCode;
+    await salvaSessioneDB(room);
+    io.to(rc).emit("update", room.state);
+    io.to(rc).emit("auctionEndedState", false);
+    socket.emit("errorNotify", "▶️ Asta ripresa! È ora possibile continuare con le offerte.");
+  });
+
   // ─── GESTIONE LEGHE ──────────────────────────────────────────────────────
 
   socket.on("adminSwitchAuction", async (name) => {
@@ -1869,6 +1967,7 @@ io.on("connection", (socket) => {
     io.to(rc).emit("teamsUpdate", room.teams);
     io.to(rc).emit("updateSold", room.soldPlayers);
     io.to(rc).emit("playersList", room.playersList);
+    io.to(rc).emit("discardedList", room.discardedPlayers || []);
     socket.emit("auctionSwitchedSuccess", room.auctionName);
   });
 
@@ -1933,8 +2032,17 @@ io.on("connection", (socket) => {
   socket.on("adminScartaDalMazzo", async (playerName) => {
     const room = getRoom(); if (!room) return;
     if (!requireAdmin()) return;
-    room.playersList = room.playersList.filter(pl => pl.nome.toLowerCase() !== playerName.toLowerCase().trim());
-    io.to(socket.roomCode).emit("playersList", room.playersList);
+    if (!room.discardedPlayers) room.discardedPlayers = [];
+    const idx = room.playersList.findIndex(pl => pl.nome.toLowerCase() === playerName.toLowerCase().trim());
+    if (idx !== -1) {
+      const [removed] = room.playersList.splice(idx, 1);
+      if (!room.discardedPlayers.some(dp => dp.nome.toLowerCase() === removed.nome.toLowerCase())) {
+        room.discardedPlayers.push({ nome: removed.nome, ruolo: removed.ruolo, squadra: removed.squadra, id: removed.id || "" });
+      }
+    }
+    const rc = socket.roomCode;
+    io.to(rc).emit("playersList", room.playersList);
+    io.to(rc).emit("discardedList", room.discardedPlayers);
     await salvaSessioneDB(room);
   });
 
@@ -2007,15 +2115,26 @@ io.on("connection", (socket) => {
   socket.on("adminRiciclaInvenduti", async () => {
     const room = getRoom(); if (!room) return;
     if (!requireAdmin()) return;
-    if (room.playersList.length === 0) {
-      socket.emit("errorNotify", "❌ Nessun giocatore svincolato nel mazzo!"); return;
+    if (!room.discardedPlayers || room.discardedPlayers.length === 0) {
+      if (room.playersList.length === 0) {
+        socket.emit("errorNotify", "❌ Nessun giocatore svincolato nel mazzo!"); return;
+      }
+      socket.emit("errorNotify", "❌ Nessun giocatore scartato da richiamare!"); return;
+    }
+    // Richiama tutti i giocatori scartati nel mazzo principale
+    const scartati = room.discardedPlayers.splice(0);
+    for (const p of scartati) {
+      if (!room.playersList.some(pl => pl.nome.toLowerCase() === p.nome.toLowerCase())) {
+        room.playersList.push(p);
+      }
     }
     room.state = { player: null, currentPrice: 0, highestBidder: null, time: room.state.timerDuration, timerDuration: room.state.timerDuration, isPaused: false, history: [] };
     const rc = socket.roomCode;
     io.to(rc).emit("update", room.state);
     io.to(rc).emit("playersList", room.playersList);
+    io.to(rc).emit("discardedList", room.discardedPlayers);
     await salvaSessioneDB(room);
-    socket.emit("errorNotify", `🔄 GIRO DI GARA! ${room.playersList.length} giocatori nel mazzo.`);
+    socket.emit("errorNotify", `🔄 GIRO DI GARA! ${scartati.length} giocatori scartati richiamati. ${room.playersList.length} totali nel mazzo.`);
   });
 
   socket.on("adminRemovePlayer", async (data) => {
@@ -2053,6 +2172,30 @@ io.on("connection", (socket) => {
   socket.on("getSoldPlayers", () => {
     const room = getRoom(); if (!room) return;
     socket.emit("updateSold", room.soldPlayers);
+  });
+
+  socket.on("getDiscarded", () => {
+    const room = getRoom(); if (!room) return;
+    socket.emit("discardedList", room.discardedPlayers || []);
+  });
+
+  socket.on("adminRichiamaSingoloScartato", async (playerName) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+    if (!room.discardedPlayers || room.discardedPlayers.length === 0) {
+      socket.emit("errorNotify", "❌ Nessun giocatore scartato da richiamare!"); return;
+    }
+    const idx = room.discardedPlayers.findIndex(dp => dp.nome.toLowerCase() === playerName.toLowerCase().trim());
+    if (idx === -1) { socket.emit("errorNotify", "Giocatore non trovato tra gli scartati!"); return; }
+    const [p] = room.discardedPlayers.splice(idx, 1);
+    if (!room.playersList.some(pl => pl.nome.toLowerCase() === p.nome.toLowerCase())) {
+      room.playersList.push(p);
+    }
+    const rc = socket.roomCode;
+    io.to(rc).emit("playersList", room.playersList);
+    io.to(rc).emit("discardedList", room.discardedPlayers);
+    await salvaSessioneDB(room);
+    socket.emit("errorNotify", `✅ ${p.nome} richiamato nel mazzo!`);
   });
 
   // ─── CLAIM SQUADRA (phone) ───────────────────────────────────────────────
