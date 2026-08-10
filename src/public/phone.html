@@ -142,6 +142,7 @@
 
     <div style="display:flex;gap:8px;margin-bottom:12px;">
       <button id="btn-rose" onclick="vaiARose()" disabled style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:not-allowed;border:1px solid #334155;opacity:0.5;" data-i18n="phone_btn_rose">📋 Le Rose</button>
+      <button id="btn-svincolati" onclick="vaiASvincolati()" disabled style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:not-allowed;border:1px solid #334155;opacity:0.5;">🗑️ Svincolati</button>
       <button onclick="cambiaSquadra()" style="flex:1;padding:10px;border-radius:8px;border:none;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;" data-i18n="phone_btn_change">🔄 Cambia Squadra</button>
       <a href="/guida-utenti" target="_blank" style="padding:10px 12px;border-radius:8px;background:#1e293b;color:#94a3b8;font-size:13px;cursor:pointer;border:1px solid #334155;text-decoration:none;display:flex;align-items:center;" data-i18n="phone_btn_guide">? Guida</a>
       <button id="lang-toggle" onclick="I18N.toggle('phone')" style="padding:10px 12px;border-radius:8px;background:#1e293b;color:#38bdf8;font-size:13px;cursor:pointer;border:1px solid #334155;font-weight:bold;">🇬🇧 EN</button>
@@ -334,6 +335,10 @@
       if (currentRoomCode) window.location.href = '/rose.html?room=' + currentRoomCode;
     }
 
+    function vaiASvincolati() {
+      if (currentRoomCode) window.location.href = '/rose.html?room=' + currentRoomCode + '&view=svincolati';
+    }
+
     function aggiornaDatiBudgetIntestazione() {
       if (!miaSquadraScelta) return;
       const key = miaSquadraScelta.toLowerCase().trim();
@@ -406,23 +411,27 @@
 
       setBotoniAttivi(astaAttiva && !s.isPaused);
 
-      // Pulsante "Le Rose" attivo solo quando l'admin mette in pausa
+      // Pulsanti "Le Rose" e "Svincolati" attivi solo quando l'admin mette in pausa
       const btnRose = document.getElementById("btn-rose");
-      if (s.isPaused) {
-        btnRose.disabled = false;
-        btnRose.style.cursor = "pointer";
-        btnRose.style.opacity = "1";
-        btnRose.style.color = "#38bdf8";
-        btnRose.style.borderColor = "#38bdf8";
-        btnRose.title = "";
-      } else {
-        btnRose.disabled = true;
-        btnRose.style.cursor = "not-allowed";
-        btnRose.style.opacity = "0.5";
-        btnRose.style.color = "#94a3b8";
-        btnRose.style.borderColor = "#334155";
-        btnRose.title = I18N.t('phone','phone_rose_tooltip_pause');
-      }
+      const btnSvin = document.getElementById("btn-svincolati");
+      const paused = s.isPaused;
+      [btnRose, btnSvin].forEach(btn => {
+        if (paused) {
+          btn.disabled = false;
+          btn.style.cursor = "pointer";
+          btn.style.opacity = "1";
+          btn.style.color = "#38bdf8";
+          btn.style.borderColor = "#38bdf8";
+          btn.title = "";
+        } else {
+          btn.disabled = true;
+          btn.style.cursor = "not-allowed";
+          btn.style.opacity = "0.5";
+          btn.style.color = "#94a3b8";
+          btn.style.borderColor = "#334155";
+          btn.title = I18N.t('phone','phone_rose_tooltip_pause');
+        }
+      });
 
       document.getElementById("current-price").innerText = s.currentPrice + " cr";
       const bEl = document.getElementById("highest-bidder");
