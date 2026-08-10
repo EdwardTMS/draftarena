@@ -100,6 +100,15 @@
       transition: background 0.2s;
     }
     .btn-elimina:hover { background: rgba(239, 68, 68, 0.1); }
+    .budget-bar {
+      display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+      margin-bottom: 12px; padding: 8px 12px; border-radius: 8px;
+      background: rgba(16, 185, 129, 0.07); border: 1px solid rgba(16, 185, 129, 0.15);
+      font-size: 13px;
+    }
+    .budget-bar .budget-spent { color: #10b981; font-weight: 700; }
+    .budget-bar .budget-remaining { color: #f59e0b; font-weight: 700; font-size: 15px; }
+    .budget-bar .budget-label { color: #64748b; }
     #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #dc2626; color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: bold; font-size: 14px; display: none; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
 
     @media (max-width: 768px) {
@@ -241,6 +250,7 @@
     let pendingSocketRoomCode = null;
     let _isAdminAuthed = false;
     let _pendingDeletion = null; // { team, player, prezzoMax }
+    let _teamsData = {}; // { teamKey: { name, budget, slots } }
 
     socket.on('connect', () => {
       if (pendingSocketRoomCode) {
@@ -371,8 +381,8 @@
     socket.on("connect", () => { /* getData is fetched after joinRoom via server push */ });
 
     function aggiorna() { socket.emit("getSoldPlayers"); }
-    socket.on("updateTeams", aggiorna);
-    socket.on("teamsUpdate", aggiorna);
+    socket.on("updateTeams", function(teams) { _teamsData = teams || {}; aggiorna(); });
+    socket.on("teamsUpdate", function(teams) { _teamsData = teams || {}; aggiorna(); });
 
     socket.on("updateSold", function(soldList) {
       container.innerHTML = "";
@@ -392,8 +402,21 @@
         const card = document.createElement("div");
         card.className = "squadra-card";
 
+        const teamKey = teamName.toLowerCase().trim();
+        const teamInfo = _teamsData[teamKey] || Object.values(_teamsData).find(t => (t.name||'').toLowerCase().trim() === teamKey);
+        const budget = teamInfo ? teamInfo.budget : null;
+        const totSpeso = rosePerSquadra[teamName].reduce((s, p) => s + (p.price || 0), 0);
+        const budgetHtml = (budget !== null && budget !== undefined)
+          ? `<div class="budget-bar">
+               <span class="budget-label">Speso:</span> <span class="budget-spent">${totSpeso} cr</span>
+               <span style="color:#334155;">|</span>
+               <span class="budget-label">Crediti restanti:</span> <span class="budget-remaining">${budget} cr</span>
+             </div>`
+          : `<div class="budget-bar"><span class="budget-spent">Speso: ${totSpeso} cr</span></div>`;
+
         let html = `
           <h3>⚽ ${teamName}</h3>
+          ${budgetHtml}
           <table>
             <thead>
               <tr>
