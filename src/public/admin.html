@@ -937,10 +937,16 @@
                     <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaBackupConfig()" data-i18n="admin_backup_import_btn">
                         ⬆️ Carica Configurazione
                     </button>
+                    <button class="btn btn-success" style="white-space:nowrap;" onclick="importaBackupFull()">
+                        🔄 Ripristina Asta Completa
+                    </button>
                 </div>
                 <div id="backup-preview" style="display:none;margin-top:10px;padding:10px;
                      background:rgba(245,158,11,0.08);border-radius:6px;font-size:0.82rem;">
                 </div>
+                <p style="font-size:0.78rem;color:#10b981;margin-top:8px;">
+                    "Ripristina Asta Completa" ricostruisce l'asta esattamente come conclusa: budget finali, rose compilate, giocatori venduti e svincolati, stato in pausa.
+                </p>
             </div>
         </div>
 
@@ -2151,6 +2157,26 @@
                 `Procedere?`
             )) return;
             socket.emit('adminImportBackupConfig', b);
+        }
+
+        function importaBackupFull() {
+            if (!_loadedBackupData) {
+                showAlert('error', 'Seleziona prima un file di backup .json');
+                return;
+            }
+            const b = _loadedBackupData;
+            const teamCount = b.teams ? b.teams.length : 0;
+            const soldCount = b.soldPlayers ? b.soldPlayers.length : 0;
+            const unsoldCount = b.unsoldPlayers ? b.unsoldPlayers.length : 0;
+            if (!confirm(
+                `Stai per RIPRISTINARE L'ASTA COMPLETA dal backup "${b.label || b.auctionName} (${b.year})".\n\n` +
+                `• Verranno create ${teamCount} squadre con budget FINALI dal backup\n` +
+                `• ${soldCount} giocatori venduti verranno ripristinati con team e prezzo\n` +
+                `• ${unsoldCount} giocatori svincolati verranno caricati nella lista\n` +
+                `• L'asta verrà impostata in pausa (conclusa)\n\n` +
+                `Procedere?`
+            )) return;
+            socket.emit('adminImportBackupFull', b);
         }
 
         // ============================================================
