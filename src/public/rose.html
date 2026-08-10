@@ -429,8 +429,8 @@
 
     // Mappa i ruoli Mantra alle 4 classi CSS colore
     function badgeClass(ruolo) {
-      const r = (ruolo || "").toUpperCase();
-      if (r === "P") return "P";
+      const r = (ruolo || "").toUpperCase().trim();
+      if (r === "P" || r === "POR") return "P";
       if (r === "DC" || r === "DD" || r === "DS" || r === "B") return "D";
       if (r === "A" || r === "PC" || r === "W" || r === "T") return "A";
       return "C"; // C, M, E e altri centrocampisti
