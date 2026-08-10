@@ -14,36 +14,54 @@
   <style>
     html, body { height: 100%; overflow: hidden; }
     body { font-family: 'Arial', sans-serif; background: radial-gradient(circle at center, #0b132b 0%, #050914 100%); color: #fff; padding: 10px; margin: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 8px 14px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid rgba(16, 185, 129, 0.2); flex-shrink: 0; }
+    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 8px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid rgba(16, 185, 129, 0.2); flex-shrink: 0; }
     .regia-nav span { color: #94a3b8; font-family: 'Urbanist', sans-serif; font-size: 14px; font-weight: bold; }
     .btn-admin-link { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; text-decoration: none; padding: 7px 13px; font-weight: bold; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; transition: all 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); white-space: nowrap; }
     .btn-admin-link:hover { box-shadow: 0 0 15px #10b981; }
     .mazzo-counter-tv { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4); padding: 5px 12px; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; font-weight: bold; color: #38bdf8; text-shadow: 0 0 8px rgba(56,189,248,0.3); white-space: nowrap; }
     .mazzo-counter-tv span { color: #ffffff; font-weight: 800; }
-    .teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; flex-shrink: 0; margin-bottom: 6px; max-height: 30vh; overflow-y: auto; }
-    .team-mini { background: #050914; border: 1px solid rgba(16, 185, 129, 0.12); border-radius: 6px; padding: 5px 10px; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+
+    /* ── Layout: auction center, teams right, QR below ── */
+    .host-body { flex: 1; display: flex; gap: 8px; min-height: 0; }
+    .auction-center { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6px 10px; min-height: 0; }
+    .teams-sidebar { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; padding-right: 4px; }
+    .teams-sidebar::-webkit-scrollbar { width: 4px; }
+    .teams-sidebar::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 2px; }
+    .teams-sidebar-title { font-family: 'Urbanist', sans-serif; font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; padding: 4px 0; text-align: center; flex-shrink: 0; }
+
+    .team-mini { background: #050914; border: 1px solid rgba(16, 185, 129, 0.12); border-radius: 6px; padding: 6px 10px; display: flex; flex-direction: column; gap: 3px; }
+    .team-mini-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
     .team-mini-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
     .team-mini-name { color: #ffcc00; font-weight: bold; font-size: 13px; font-family: 'Urbanist', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .team-mini-budget { color: #10b981; font-weight: bold; font-size: 14px; white-space: nowrap; }
+    .team-mini-slots { display: flex; gap: 4px; flex-wrap: wrap; font-size: 10px; font-family: 'Urbanist', sans-serif; }
+    .slot-pill { padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+    .slot-pill.por { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.2); }
+    .slot-pill.def { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+    .slot-pill.cen { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+    .slot-pill.att { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+    .slot-pill.full { opacity: 0.4; }
     .team-mini-players { color: #94a3b8; font-size: 10px; white-space: nowrap; }
-    .main-content { flex: 1; text-align: center; padding: 6px 10px; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+
     .qr-bar { display: flex; align-items: center; justify-content: center; gap: 12px; flex-shrink: 0; padding: 6px 14px; background: rgba(11, 19, 43, 0.6); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.1); margin-top: 6px; }
-    #time { font-family: 'Urbanist', sans-serif; font-size: clamp(3rem, 11vw, 8em); color: #ef4444; font-weight: 800; margin: 4px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; line-height: 1; }
-    #player { font-family: 'Urbanist', sans-serif; font-size: clamp(1.5rem, 5.5vw, 4.5em); margin: 4px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; line-height: 1.1; }
-    #info-giocatore { font-size: clamp(0.8rem, 2vw, 1.7em); color: #10b981; margin-bottom: 12px; font-family: 'Urbanist', sans-serif; font-weight: bold; }
-    #bid { font-family: 'Urbanist', sans-serif; font-size: clamp(2rem, 7.5vw, 5em); color: #10b981; font-weight: 800; text-shadow: 0 0 25px rgba(16, 185, 129, 0.4); line-height: 1; }
-    #winner { font-size: clamp(0.9rem, 2.5vw, 2.2em); color: #ffcc00; margin-top: 8px; font-family: 'Urbanist', sans-serif; font-weight: bold; text-shadow: 0 0 10px rgba(255,204,0,0.2); }
+    #time { font-family: 'Urbanist', sans-serif; font-size: clamp(3rem, 10vw, 7em); color: #ef4444; font-weight: 800; margin: 4px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; line-height: 1; }
+    #player { font-family: 'Urbanist', sans-serif; font-size: clamp(1.5rem, 5vw, 4em); margin: 4px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; line-height: 1.1; }
+    #info-giocatore { font-size: clamp(0.8rem, 2vw, 1.5em); color: #10b981; margin-bottom: 12px; font-family: 'Urbanist', sans-serif; font-weight: bold; }
+    #bid { font-family: 'Urbanist', sans-serif; font-size: clamp(2rem, 7vw, 4.5em); color: #10b981; font-weight: 800; text-shadow: 0 0 25px rgba(16, 185, 129, 0.4); line-height: 1; }
+    #winner { font-size: clamp(0.9rem, 2.5vw, 2em); color: #ffcc00; margin-top: 8px; font-family: 'Urbanist', sans-serif; font-weight: bold; text-shadow: 0 0 10px rgba(255,204,0,0.2); }
     button { padding: 10px 20px; margin: 4px; font-size: clamp(12px, 1.3vw, 15px); font-weight: bold; cursor: pointer; border-radius: 6px; border: none; transition: all 0.2s; font-family: 'Urbanist', sans-serif; text-transform: uppercase; }
     button:hover { transform: translateY(-1px); }
     .btn-rose { background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%); color: #000; font-weight: 800; }
-#vincitore-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 9, 20, 0.98); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; border: 4px solid #ffcc00; padding: 20px; box-sizing: border-box; }
+
+    #vincitore-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 9, 20, 0.98); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; border: 4px solid #ffcc00; padding: 20px; box-sizing: border-box; }
     #vincitore-overlay h1 { font-family: 'Urbanist', sans-serif; font-size: clamp(2.5rem, 8vw, 6em); color: #ffcc00; margin: 0; text-shadow: 0 0 35px rgba(255,204,0,0.4); text-align: center; }
     #vincitore-overlay h2 { font-family: 'Urbanist', sans-serif; font-size: clamp(1.2rem, 3.5vw, 3em); color: #fff; text-align: center; line-height: 1.4; }
 
     /* ── Tablet (≤ 900px) ─────────────────────────────────────── */
     @media (max-width: 900px) {
       html, body { overflow: auto; height: auto; }
-      .teams-grid { grid-template-columns: 1fr; }
+      .host-body { flex-direction: column; }
+      .teams-sidebar { width: 100%; max-height: 35vh; }
     }
 
     /* ── Mobile (≤ 600px) ─────────────────────────────────────── */
@@ -53,7 +71,7 @@
       .nav-hub-btn { font-size: 12px !important; padding: 5px 10px !important; }
       .btn-admin-link { display: none; }
       .mazzo-counter-tv { font-size: 11px; padding: 4px 9px; }
-      .main-content { padding: 6px; }
+      .auction-center { padding: 6px; }
     }
   </style>
 </head>
@@ -113,27 +131,35 @@
   </div>
 </div>
 
-<div id="teams-grid" class="teams-grid"></div>
+<div class="host-body">
+  <!-- CENTER: Auction -->
+  <div class="auction-center">
+    <div id="vincitore-overlay">
+      <h1 id="overlay-titolo" data-i18n="host_sold">🏅 AGGIUDICATO!</h1>
+      <h2 id="overlay-dettagli">-</h2>
+    </div>
 
-<div class="main-content">
-  <div id="vincitore-overlay">
-    <h1 id="overlay-titolo" data-i18n="host_sold">🏅 AGGIUDICATO!</h1>
-    <h2 id="overlay-dettagli">-</h2>
+    <div>
+      <div id="time">10</div>
+      <div id="player">-</div>
+      <div id="info-giocatore" data-i18n="host_info_role">Ruolo: - | Squadra: -</div>
+      <div id="bid">0 €</div>
+      <div id="winner" data-i18n="host_waiting">In attesa di offerte dai telefoni...</div>
+    </div>
+
+    <div style="margin-top:10px;">
+      <button class="btn-rose" onclick="vaiARose()" data-i18n="host_btn_rose">📋 LE ROSE</button>
+    </div>
   </div>
 
-  <div>
-    <div id="time">10</div>
-    <div id="player">-</div>
-    <div id="info-giocatore" data-i18n="host_info_role">Ruolo: - | Squadra: -</div>
-    <div id="bid">0 €</div>
-    <div id="winner" data-i18n="host_waiting">In attesa di offerte dai telefoni...</div>
-  </div>
-
-  <div style="margin-top:10px;">
-    <button class="btn-rose" onclick="vaiARose()" data-i18n="host_btn_rose">📋 LE ROSE</button>
+  <!-- RIGHT: Teams sidebar -->
+  <div class="teams-sidebar">
+    <div class="teams-sidebar-title">Squadre</div>
+    <div id="teams-grid" style="display:flex;flex-direction:column;gap:4px;"></div>
   </div>
 </div>
 
+<!-- BELOW: QR -->
 <div class="qr-bar">
   <img id="qr-connect" src="" alt="QR" style="background:white;padding:4px;display:none;width:60px;height:60px;border-radius:4px;">
   <div>
@@ -265,8 +291,6 @@
 
   let ultimoHighestBidder = null;
 
-  // FIX 1: l'overlay viene nascosto SOLO quando arriva un nuovo giocatore,
-  // non ad ogni tick del timer (che sennò lo cancellava immediatamente).
   socket.on("update", s => {
     if (s.player) {
       document.getElementById("vincitore-overlay").style.display = "none";
@@ -280,7 +304,6 @@
       if (s.highestBidder && s.highestBidder !== ultimoHighestBidder) {
         ultimoHighestBidder = s.highestBidder;
         document.getElementById("snd-start").play().catch(() => {});
-        // Ferma e resetta il countdown audio: ripartirà da capo quando il timer tornerà a 3
         const sndEnd = document.getElementById("snd-end");
         sndEnd.pause();
         sndEnd.currentTime = 0;
@@ -311,7 +334,6 @@
 
     document.getElementById("time").innerText = s.time;
 
-    // FIX 2: il suono countdown parte una sola volta (a 3), non a 3-2-1 sovrapposto.
     if (s.time === 3 && !s.isPaused && s.player !== null) {
       document.getElementById("snd-end").play().catch(() => {});
     }
@@ -338,32 +360,47 @@
     overlay.style.display = "flex";
   });
 
-  // FIX 3: ascolta entrambi gli eventi teams (il server emette sia updateTeams che teamsUpdate).
+  // ── Render teams with per-role counts ──
+  function slotClass(rep, taken, max) {
+    const cls = rep === 'P' ? 'por' : rep === 'D' ? 'def' : rep === 'C' ? 'cen' : 'att';
+    return cls + (taken >= max ? ' full' : '');
+  }
+
   function renderTeams(allTeams) {
     const container = document.getElementById("teams-grid");
     if (!container) return;
     container.innerHTML = "";
     const limits = (roomConfig && roomConfig.LIMITS) || { P: 3, D: 10, C: 8, A: 4 };
-    const maxTotal = (limits.P || 0) + (limits.D || 0) + (limits.C || 0) + (limits.A || 0);
+    const maxP = limits.P || 0, maxD = limits.D || 0, maxC = limits.C || 0, maxA = limits.A || 0;
+    const maxTotal = maxP + maxD + maxC + maxA;
     const keys = Object.keys(allTeams);
     if (keys.length === 0) {
-      container.innerHTML = '<p style="color:#64748b;text-align:center;grid-column:1/-1;" data-i18n="host_no_teams">Nessuna fantasquadra registrata...</p>';
+      container.innerHTML = '<p style="color:#64748b;text-align:center;" data-i18n="host_no_teams">Nessuna fantasquadra registrata...</p>';
       return;
     }
     const missingLabel = I18N.lang() === 'en' ? 'missing' : 'mancano';
     keys.forEach(k => {
       const t = allTeams[k];
       const slots = t.slots || { P: 0, D: 0, C: 0, A: 0 };
-      const taken = (slots.P || 0) + (slots.D || 0) + (slots.C || 0) + (slots.A || 0);
+      const p = slots.P || 0, d = slots.D || 0, c = slots.C || 0, a = slots.A || 0;
+      const taken = p + d + c + a;
       const missing = Math.max(0, maxTotal - taken);
       const div = document.createElement("div");
       div.className = "team-mini";
       div.innerHTML =
-        "<div class='team-mini-info'>" +
-          "<div class='team-mini-name'>" + t.name + "</div>" +
-          "<div class='team-mini-players'>" + taken + "/" + maxTotal + " · " + missingLabel + " " + missing + "</div>" +
+        "<div class='team-mini-row'>" +
+          "<div class='team-mini-info'>" +
+            "<div class='team-mini-name'>" + t.name + "</div>" +
+            "<div class='team-mini-players'>" + taken + "/" + maxTotal + " · " + missingLabel + " " + missing + "</div>" +
+          "</div>" +
+          "<div class='team-mini-budget'>" + t.budget + " cr</div>" +
         "</div>" +
-        "<div class='team-mini-budget'>" + t.budget + " cr</div>";
+        "<div class='team-mini-slots'>" +
+          "<span class='slot-pill " + slotClass('P', p, maxP) + "'>POR " + p + "/" + maxP + "</span>" +
+          "<span class='slot-pill " + slotClass('D', d, maxD) + "'>D " + d + "/" + maxD + "</span>" +
+          "<span class='slot-pill " + slotClass('C', c, maxC) + "'>C " + c + "/" + maxC + "</span>" +
+          "<span class='slot-pill " + slotClass('A', a, maxA) + "'>A " + a + "/" + maxA + "</span>" +
+        "</div>";
       container.appendChild(div);
     });
   }
@@ -410,7 +447,6 @@
       overlay.style.display = "none";
     }
   });
-  // ─── FINE ASTA CONCLUSA ──────────────────────────────────────────────────────
 
   socket.on("playersList", list => {
     listaCompletaGiocatori = list;
