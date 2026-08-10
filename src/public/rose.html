@@ -510,6 +510,18 @@
       });
     }
 
+    const MANTRA_ROLE_ORDER = ['P','DD','DC','DS','B','E','M','C','T','W','A','PC'];
+    const MANTRA_ROLE_LABELS = {
+      P:'Portieri', DD:'Terzini Destri', DC:'Difensori Centrali', DS:'Terzini Sinistri',
+      B:'Braccatori', E:'Esterni', M:'Mediani', C:'Centrocampisti',
+      T:'Trequartisti', W:'Ali', A:'Attaccanti', PC:'Punte Centrali'
+    };
+    function mantraSortKey(ruolo) {
+      const r = (ruolo || '').toUpperCase().trim();
+      const idx = MANTRA_ROLE_ORDER.indexOf(r);
+      return idx === -1 ? 99 : idx;
+    }
+
     function renderDiscarded() {
       const container = document.getElementById('tabellone-scartati');
       if (!_discardedData || _discardedData.length === 0) {
@@ -517,8 +529,6 @@
         return;
       }
       const filtered = getFilteredDiscarded();
-      const roleLabels = { P: 'Portieri', D: 'Difensori', C: 'Centrocampisti', A: 'Attaccanti' };
-      const roleOrder = ['P','D','C','A'];
       const roleQ = document.getElementById('filter-role')?.value || '';
       container.innerHTML = '';
       if (filtered.length === 0) {
@@ -529,24 +539,33 @@
       countDiv.className = 'filter-result-count';
       countDiv.textContent = filtered.length + ' giocatori' + (filtered.length < _discardedData.length ? ' di ' + _discardedData.length : '');
       container.appendChild(countDiv);
-      const byRole = { P: [], D: [], C: [], A: [] };
-      filtered.forEach(p => { byRole[badgeClass(p.ruolo)].push(p); });
-      roleOrder.forEach(r => {
-        if (byRole[r].length === 0) return;
-        const card = document.createElement('div');
-        card.className = 'discarded-card';
-        const players = byRole[r].sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
-        let html = '<h3>📋 ' + roleLabels[r] + ' (' + players.length + ')</h3>' +
-          '<table><thead><tr><th>' + I18N.t('rose','rose_th_player') + '</th><th>' + I18N.t('rose','rose_th_role') + '</th><th>Squadra</th></tr></thead><tbody>';
-        players.forEach(p => {
-          html += '<tr><td><strong>' + (p.nome||'') + '</strong></td>' +
-            '<td><span class="badge ' + r + '">' + (p.ruolo||'') + '</span></td>' +
-            '<td style="color:#64748b;font-size:13px;">' + (p.squadra||'') + '</td></tr>';
-        });
-        html += '</tbody></table>';
-        card.innerHTML = html;
-        container.appendChild(card);
+
+      // Single list ordered by detailed Mantra role
+      const sorted = filtered.slice().sort((a, b) => {
+        const ra = mantraSortKey(a.ruolo), rb = mantraSortKey(b.ruolo);
+        if (ra !== rb) return ra - rb;
+        return (a.nome||'').localeCompare(b.nome||'');
       });
+
+      const card = document.createElement('div');
+      card.className = 'discarded-card';
+      let html = '<h3>📋 Giocatori Scartati (' + sorted.length + ')</h3>' +
+        '<table><thead><tr><th>' + I18N.t('rose','rose_th_player') + '</th><th>Ruolo</th><th>Squadra</th></tr></thead><tbody>';
+      let lastRole = null;
+      sorted.forEach(p => {
+        const r = (p.ruolo || '').toUpperCase().trim();
+        if (r !== lastRole) {
+          html += '<tr style="background:rgba(56,189,248,0.06);"><td colspan="3" style="font-size:11px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;padding:6px 0;">' + (MANTRA_ROLE_LABELS[r] || r) + '</td></tr>';
+          lastRole = r;
+        }
+        const cls = badgeClass(p.ruolo);
+        html += '<tr><td><strong>' + (p.nome||'') + '</strong></td>' +
+          '<td><span class="badge ' + cls + '">' + (p.ruolo||'') + '</span></td>' +
+          '<td style="color:#64748b;font-size:13px;">' + (p.squadra||'') + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      card.innerHTML = html;
+      container.appendChild(card);
     }
     function clearFiltersSvin() {
       document.getElementById('filter-name-svin').value = '';
@@ -574,8 +593,6 @@
         return;
       }
       const filtered = getFilteredSvincolati();
-      const roleLabels = { P: 'Portieri', D: 'Difensori', C: 'Centrocampisti', A: 'Attaccanti' };
-      const roleOrder = ['P','D','C','A'];
       container.innerHTML = '';
       if (filtered.length === 0) {
         container.innerHTML = '<p style="color:#64748b; font-style:italic;">Nessun giocatore trovato con questi filtri.</p>';
@@ -585,24 +602,32 @@
       countDiv.className = 'filter-result-count';
       countDiv.textContent = filtered.length + ' giocatori' + (filtered.length < _svincolatiData.length ? ' di ' + _svincolatiData.length : '');
       container.appendChild(countDiv);
-      const byRole = { P: [], D: [], C: [], A: [] };
-      filtered.forEach(p => { byRole[badgeClass(p.ruolo)].push(p); });
-      roleOrder.forEach(r => {
-        if (byRole[r].length === 0) return;
-        const card = document.createElement('div');
-        card.className = 'discarded-card';
-        const players = byRole[r].sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
-        let html = '<h3>📦 ' + roleLabels[r] + ' (' + players.length + ')</h3>' +
-          '<table><thead><tr><th>' + I18N.t('rose','rose_th_player') + '</th><th>' + I18N.t('rose','rose_th_role') + '</th><th>Squadra</th></tr></thead><tbody>';
-        players.forEach(p => {
-          html += '<tr><td><strong>' + (p.nome||'') + '</strong></td>' +
-            '<td><span class="badge ' + r + '">' + (p.ruolo||'') + '</span></td>' +
-            '<td style="color:#64748b;font-size:13px;">' + (p.squadra||'') + '</td></tr>';
-        });
-        html += '</tbody></table>';
-        card.innerHTML = html;
-        container.appendChild(card);
+
+      const sorted = filtered.slice().sort((a, b) => {
+        const ra = mantraSortKey(a.ruolo), rb = mantraSortKey(b.ruolo);
+        if (ra !== rb) return ra - rb;
+        return (a.nome||'').localeCompare(b.nome||'');
       });
+
+      const card = document.createElement('div');
+      card.className = 'discarded-card';
+      let html = '<h3>📦 Giocatori Svincolati (' + sorted.length + ')</h3>' +
+        '<table><thead><tr><th>' + I18N.t('rose','rose_th_player') + '</th><th>Ruolo</th><th>Squadra</th></tr></thead><tbody>';
+      let lastRole = null;
+      sorted.forEach(p => {
+        const r = (p.ruolo || '').toUpperCase().trim();
+        if (r !== lastRole) {
+          html += '<tr style="background:rgba(56,189,248,0.06);"><td colspan="3" style="font-size:11px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;padding:6px 0;">' + (MANTRA_ROLE_LABELS[r] || r) + '</td></tr>';
+          lastRole = r;
+        }
+        const cls = badgeClass(p.ruolo);
+        html += '<tr><td><strong>' + (p.nome||'') + '</strong></td>' +
+          '<td><span class="badge ' + cls + '">' + (p.ruolo||'') + '</span></td>' +
+          '<td style="color:#64748b;font-size:13px;">' + (p.squadra||'') + '</td></tr>';
+      });
+      html += '</tbody></table>';
+      card.innerHTML = html;
+      container.appendChild(card);
     }
 
     socket.on("updateTeams", function(teams) { _teamsData = teams || {}; aggiorna(); });
