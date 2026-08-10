@@ -2278,6 +2278,61 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("adminImportBackupFull", async (backupData) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+
+    try {
+      const b = typeof backupData === "string" ? JSON.parse(backupData) : backupData;
+      if (!b.version || b.app !== "DraftARENA") {
+        socket.emit("errorNotify", "❌ File di backup non valido."); return;
+      }
+
+      // Ripristina config e timer
+      if (b.config) room.CONFIG = b.config;
+      if (b.timerDuration) room.state.timerDuration = b.timerDuration;
+
+      // Ricrea le squadre con budget finale e slots dal backup
+      room.teams = {};
+      if (b.teams && Array.isArray(b.teams)) {
+        b.teams.forEach(t => {
+          const key = String(t.name).toLowerCase().trim();
+          room.teams[key] = {
+            name: t.name,
+            budget: t.finalBudget != null ? t.finalBudget : room.CONFIG.STARTING_BUDGET,
+            slots: t.slots ? { ...t.slots } : { P: 0, D: 0, C: 0, A: 0 }
+          };
+        });
+      }
+
+      // Ripristina giocatori venduti esattamente come nel backup
+      room.soldPlayers = Array.isArray(b.soldPlayers) ? b.soldPlayers : [];
+
+      // Ripristina giocatori svincolati come lista disponibile
+      room.playersList = Array.isArray(b.unsoldPlayers) ? b.unsoldPlayers : [];
+
+      // Stato asta: conclusa, nessun giocatore in corso, in pausa
+      room.state.player = null;
+      room.state.currentPrice = 0;
+      room.state.highestBidder = null;
+      room.state.time = room.state.timerDuration;
+      room.state.isPaused = true;
+
+      const rc = socket.roomCode;
+      await salvaSessioneDB(room);
+      io.to(rc).emit("updateTeams", room.teams);
+      io.to(rc).emit("teamsUpdate", room.teams);
+      io.to(rc).emit("updateSold", room.soldPlayers);
+      io.to(rc).emit("playersList", room.playersList);
+      io.to(rc).emit("update", room.state);
+      io.to(rc).emit("configUpdate", { CONFIG: room.CONFIG, timerDuration: room.state.timerDuration });
+      socket.emit("backupImportSuccess", { label: b.label || b.auctionName, year: b.year });
+      socket.emit("errorNotify", `✅ Asta completa "${b.label || b.year}" ripristinata! ${Object.keys(room.teams).length} squadre, ${room.soldPlayers.length} giocatori venduti.`);
+    } catch (e) {
+      socket.emit("errorNotify", "❌ Errore ripristino asta: " + e.message);
+    }
+  });
+
   // ─── BACKUP SALVA COME STORICO ────────────────────────────────────────────
 
   socket.on("adminSaveHistoricalBackup", async (backupData) => {
