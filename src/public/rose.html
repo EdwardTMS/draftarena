@@ -516,9 +516,12 @@
       B:'Braccatori', E:'Esterni', M:'Mediani', C:'Centrocampisti',
       T:'Trequartisti', W:'Ali', A:'Attaccanti', PC:'Punte Centrali'
     };
-    function mantraSortKey(ruolo) {
+    function normalizeRole(ruolo) {
       const r = (ruolo || '').toUpperCase().trim();
-      const idx = MANTRA_ROLE_ORDER.indexOf(r);
+      return r === 'POR' ? 'P' : r;
+    }
+    function mantraSortKey(ruolo) {
+      const idx = MANTRA_ROLE_ORDER.indexOf(normalizeRole(ruolo));
       return idx === -1 ? 99 : idx;
     }
 
@@ -553,10 +556,10 @@
         '<table><thead><tr><th>' + I18N.t('rose','rose_th_player') + '</th><th>Ruolo</th><th>Squadra</th></tr></thead><tbody>';
       let lastRole = null;
       sorted.forEach(p => {
-        const r = (p.ruolo || '').toUpperCase().trim();
-        if (r !== lastRole) {
-          html += '<tr style="background:rgba(56,189,248,0.06);"><td colspan="3" style="font-size:11px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;padding:6px 0;">' + (MANTRA_ROLE_LABELS[r] || r) + '</td></tr>';
-          lastRole = r;
+        const nr = normalizeRole(p.ruolo);
+        if (nr !== lastRole) {
+          html += '<tr style="background:rgba(56,189,248,0.06);"><td colspan="3" style="font-size:11px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;padding:6px 0;">' + (MANTRA_ROLE_LABELS[nr] || nr) + '</td></tr>';
+          lastRole = nr;
         }
         const cls = badgeClass(p.ruolo);
         html += '<tr><td><strong>' + (p.nome||'') + '</strong></td>' +
@@ -615,10 +618,10 @@
         '<table><thead><tr><th>' + I18N.t('rose','rose_th_player') + '</th><th>Ruolo</th><th>Squadra</th></tr></thead><tbody>';
       let lastRole = null;
       sorted.forEach(p => {
-        const r = (p.ruolo || '').toUpperCase().trim();
-        if (r !== lastRole) {
-          html += '<tr style="background:rgba(56,189,248,0.06);"><td colspan="3" style="font-size:11px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;padding:6px 0;">' + (MANTRA_ROLE_LABELS[r] || r) + '</td></tr>';
-          lastRole = r;
+        const nr = normalizeRole(p.ruolo);
+        if (nr !== lastRole) {
+          html += '<tr style="background:rgba(56,189,248,0.06);"><td colspan="3" style="font-size:11px;font-weight:700;color:#38bdf8;text-transform:uppercase;letter-spacing:1px;padding:6px 0;">' + (MANTRA_ROLE_LABELS[nr] || nr) + '</td></tr>';
+          lastRole = nr;
         }
         const cls = badgeClass(p.ruolo);
         html += '<tr><td><strong>' + (p.nome||'') + '</strong></td>' +
