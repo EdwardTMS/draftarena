@@ -429,6 +429,7 @@
     <a class="toc-item" href="#step6"><span class="toc-num">6</span> <span data-i18n="ga_toc6">Condurre l'Asta</span></a>
     <a class="toc-item" href="#step7"><span class="toc-num">7</span> <span data-i18n="ga_toc7">Operazioni Speciali</span></a>
     <a class="toc-item" href="#step8"><span class="toc-num">8</span> <span data-i18n="ga_toc8">Fine Asta &amp; Export</span></a>
+    <a class="toc-item" href="#step-superadmin"><span class="toc-num">SA</span> <span data-i18n="ga_sa_toc">SuperAdmin</span></a>
   </div>
 </section>
 
@@ -576,6 +577,25 @@
         </div>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_s3_c3_title">&#128737; Modalità Riparazione (Mercato di Riparazione)</div>
+      <p data-i18n-html="ga_s3_c3_p1">Quando carichi i giocatori durante una sessione di mercato di riparazione, usa la modalità <strong>"Integra"</strong>. Il sistema salta automaticamente i giocatori già assegnati alle squadre e quelli già presenti nel mazzo. Questo ti permette di aggiungere nuovi giocatori (es. arrivi tardivi, svincolati) senza influenzare le rose esistenti.</p>
+      <div class="feature-row">
+        <div class="feature-icon">&#10133;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_s3_c3_f1_label">Integra mode</div>
+          <div class="feature-desc" data-i18n="ga_s3_c3_f1_desc">Aggiunge nuovi giocatori al mazzo senza duplicati, saltando quelli già assegnati alle squadre o già presenti. Ideale per il mercato di riparazione.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128465;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_s3_c3_f2_label">Scarta Giocatore</div>
+          <div class="feature-desc" data-i18n="ga_s3_c3_f2_desc">Rimuove permanentemente un giocatore dal mazzo: non verrà mai estratto durante l'asta.</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- STEP 4 -->
@@ -603,6 +623,11 @@
       <div class="card-title" data-i18n="ga_s4_c2_title">&#128179; Gestione budget in corso d'asta</div>
       <p data-i18n-html="ga_s4_c2_p1">Il budget di ogni squadra si aggiorna automaticamente ad ogni acquisto. Puoi vedere in tempo reale quanto crediti restano a ciascuna squadra direttamente nella scheda Squadre e nel pannello TV (host.html).</p>
       <p data-i18n-html="ga_s4_c2_p2">Per <strong>aggiungere crediti</strong> manualmente a una squadra (es. per correggere un errore), usa il pulsante "+" accanto al nome della squadra.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_s4_c3_title">&#128179; Gestione Crediti (Mercato di Riparazione)</div>
+      <p data-i18n-html="ga_s4_c3_p1">Durante il mercato di riparazione puoi <strong>aggiungere o sottrarre crediti</strong> a una specifica squadra. Usa un valore negativo per rimuovere crediti dal budget di una squadra.</p>
     </div>
   </section>
 
@@ -766,6 +791,38 @@
     </div>
 
     <div class="card">
+      <div class="card-title" data-i18n="ga_s7_c3_title">&#128260; Giro di Gara &amp; Assegnazioni</div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128260;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_s7_c3_f1_label">Giro di Gara</div>
+          <div class="feature-desc" data-i18n-html="ga_s7_c3_f1_desc">Quando il mazzo si svuota ma ci sono ancora giocatori invenduti, usa <strong>"Avvia Giro di Gara"</strong> per rimettere tutti i giocatori invenduti nel mazzo per un nuovo turno. Utile quando i giocatori sono rimasti invenduti perché le squadre hanno esaurito il budget o raggiunto i limiti della rosa in anticipo.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128269;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_s7_c3_f2_label">Assegnazione Manuale</div>
+          <div class="feature-desc" data-i18n-html="ga_s7_c3_f2_desc">Cerca un giocatore dal mazzo e assegnalo direttamente a una squadra senza passare dal processo d'asta. Utile per gestire <strong>accordi prefissati</strong> o acquisti pre-accordati.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128202;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_s7_c3_f3_label">Auction Review</div>
+          <div class="feature-desc" data-i18n-html="ga_s7_c3_f3_desc">Dopo la scadenza del timer, appare un pannello di revisione che mostra la <strong>cronologia completa delle offerte</strong>. Puoi confermare l'assegnazione originale o riassegnare il giocatore a una squadra diversa al prezzo corretto.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128308;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_s7_c3_f4_label">Assegnazione Forzata</div>
+          <div class="feature-desc" data-i18n-html="ga_s7_c3_f4_desc">Forza l'assegnazione del giocatore corrente a una squadra a un <strong>prezzo specifico</strong> quando il timer è scaduto o per correggere un errore.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="card-title" data-i18n="ga_s7_c2_title">&#128190; Backup e salvataggi</div>
       <p data-i18n="ga_s7_c2_p1">DraftARENA salva automaticamente lo stato dell'asta in tempo reale. Ma puoi anche:</p>
       <div class="feature-row">
@@ -843,6 +900,89 @@
       <p data-i18n-html="ga_s8_c3_p1">Per ripartire da zero con la stessa stanza (es. per una seconda asta), usa il pulsante <strong>"Reset Completo"</strong> nella scheda Operazioni. Questo cancella tutte le rose, le offerte e i giocatori venduti, mantenendo la configurazione delle squadre e del budget.</p>
       <div class="info-box warn" data-i18n-html="ga_s8_warn"><strong>Attenzione:</strong> Il reset completo è irreversibile. Esporta sempre un backup prima di procedere.</div>
     </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_s8_c4_title">&#128273; Codici di Attivazione</div>
+      <p data-i18n-html="ga_s8_c4_p1">Prima di creare una stanza, gli utenti hanno bisogno di un <strong>codice di attivazione</strong>. Possono richiederne uno gratuitamente dalla homepage tramite la pagina "Richiesta Codice".</p>
+      <div class="feature-row">
+        <div class="feature-icon">&#127881;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_s8_c4_f1_label">Codice Gratuito</div>
+          <div class="feature-desc" data-i18n="ga_s8_c4_f1_desc">Per 8 squadre o meno, il codice è gratuito e può essere richiesto dalla homepage.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#11088;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_s8_c4_f2_label">Commander Plus/Pro</div>
+          <div class="feature-desc" data-i18n="ga_s8_c4_f2_desc">Per più di 8 squadre è necessario un codice Commander Plus o Pro.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 8.5 - SUPERADMIN -->
+  <section class="guide-section" id="step-superadmin">
+    <div class="section-header">
+      <div class="step-circle">SA</div>
+      <div class="section-header-text">
+        <h2 data-i18n="ga_sa_title">Pannello SuperAdmin</h2>
+        <p data-i18n="ga_sa_desc">Gestione avanzata della piattaforma</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_sa_c1_title">&#128273; Gestione Codici</div>
+      <p data-i18n-html="ga_sa_c1_p1">Il pannello superadmin gestisce i codici di attivazione per la creazione delle stanze. Gli utenti richiedono codici gratuiti tramite la pagina <strong>"Richiesta Codice"</strong>; il superadmin può visualizzare, cercare e gestire tutte le richieste di codici. Il superadmin può anche incrementare manualmente i limiti di utilizzo dei codici.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_sa_c2_title">&#128221; Testi del Sito</div>
+      <p data-i18n="ga_sa_c2_p1">Modifica tutti i testi della homepage (sia in italiano che in inglese) direttamente dal pannello superadmin.</p>
+      <div class="feature-row">
+        <div class="feature-icon">&#127760;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_sa_c2_f1_label">Pulsanti IT/EN</div>
+          <div class="feature-desc" data-i18n="ga_sa_c2_f1_desc">Scegli la lingua con i pulsanti IT/EN per modificare i testi nella lingua desiderata.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128269;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_sa_c2_f2_label">Cerca e modifica</div>
+          <div class="feature-desc" data-i18n="ga_sa_c2_f2_desc">Cerca per chiave o contenuto, modifica i testi nei campi textarea.</div>
+        </div>
+      </div>
+      <div class="feature-row">
+        <div class="feature-icon">&#128190;</div>
+        <div class="feature-body">
+          <div class="feature-label" data-i18n="ga_sa_c2_f3_label">Salva e ripristina</div>
+          <div class="feature-desc" data-i18n="ga_sa_c2_f3_desc">Salva tutte le modifiche con il pulsante "SALVA TUTTO" oppure ripristina i singoli testi ai valori predefiniti.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_sa_c3_title">&#127909; Gestione Video</div>
+      <p data-i18n-html="ga_sa_c3_p1">Carica e gestisci i video tutorial/promo mostrati sul sito. I video vengono salvati nel database e visualizzati sulla pagina <strong>/video</strong>.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_sa_c4_title">&#128172; Feedback &amp; Recensioni</div>
+      <p data-i18n="ga_sa_c4_p1">Visualizza gli invii di feedback degli utenti (recensioni e richieste di supporto). Approva le recensioni pubbliche per mostrarle sulla homepage, rispondi alle richieste di supporto o segnale come gestite.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_sa_c5_title">&#128202; Statistiche Piattaforma</div>
+      <p data-i18n="ga_sa_c5_p1">Visualizza le visualizzazioni totali delle pagine, le stanze totali create e altre metriche a livello di piattaforma.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" data-i18n="ga_sa_c6_title">&#9881; Impostazioni Piattaforma</div>
+      <p data-i18n="ga_sa_c6_p1">Configura le impostazioni globali come l'email di contatto.</p>
+    </div>
+
+    <div class="info-box warn" data-i18n-html="ga_sa_warn"><strong>Attenzione:</strong> La password del superadmin deve essere mantenuta sicura e non condivisa con nessuno.</div>
   </section>
 
   <!-- RIEPILOGO FLUSSO -->
@@ -858,6 +998,7 @@
       <div class="timeline">
         <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_1_t">Prepara il file Excel</div><div class="ti-desc" data-i18n="ga_flow_1_d">Colonne: Nome, Ruolo (Mantra), Squadra, Quotazione</div></div>
         <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_2_t">Crea la stanza dalla Home</div><div class="ti-desc" data-i18n="ga_flow_2_d">Ottieni codice stanza + PIN admin e aprono il pannello admin</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_2b_t">Richiedi il codice di attivazione</div><div class="ti-desc" data-i18n="ga_flow_2b_d">Se hai più di 8 squadre, richiedi un codice Commander Plus/Pro</div></div>
         <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_3_t">Carica i giocatori</div><div class="ti-desc" data-i18n="ga_flow_3_d">Scheda Giocatori → Carica file Excel</div></div>
         <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_4_t">Aggiungi le squadre</div><div class="ti-desc" data-i18n="ga_flow_4_d">Scheda Squadre → Aggiungi una squadra per ogni partecipante con budget iniziale</div></div>
         <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_5_t">Configura le impostazioni</div><div class="ti-desc" data-i18n="ga_flow_5_d">Scheda Operazioni → Timer, limiti posizione, numero totale giocatori</div></div>
@@ -867,6 +1008,7 @@
         <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_9_t">Gestisci il flusso</div><div class="ti-desc" data-i18n="ga_flow_9_d">Pausa, assegna, correggi errori, ricicla invenduti</div></div>
         <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_10_t">Fine asta → Export</div><div class="ti-desc" data-i18n="ga_flow_10_d">Scheda Export → Scarica Excel con rose e riepilogo budget</div></div>
         <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_11_t">Archivia nella Hall of Fame</div><div class="ti-desc" data-i18n="ga_flow_11_d">Scheda Config → Salva nell'Albo d'Oro della lega</div></div>
+        <div class="timeline-item"><div class="ti-title" data-i18n="ga_flow_12_t">Gestisci la piattaforma</div><div class="ti-desc" data-i18n="ga_flow_12_d">Pannello SuperAdmin per codici, testi, video e statistiche</div></div>
       </div>
     </div>
   </section>
