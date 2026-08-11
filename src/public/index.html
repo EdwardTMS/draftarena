@@ -1473,8 +1473,22 @@
       } catch (_) {}
     })();
 
-    // Applica lingua salvata
-    applyLang(currentLang);
+    // Carica testi personalizzati dal superadmin e poi applica la lingua
+    (async function applySiteTexts() {
+      try {
+        const r = await fetch("/api/site-texts?page=homepage");
+        if (!r.ok) return applyLang(currentLang);
+        const overrides = await r.json();
+        ['it', 'en'].forEach(lang => {
+          if (overrides[lang]) {
+            Object.entries(overrides[lang]).forEach(([key, value]) => {
+              if (translations[lang]) translations[lang][key] = value;
+            });
+          }
+        });
+      } catch (_) {}
+      applyLang(currentLang);
+    })();
   </script>
 </body>
 </html>
