@@ -248,6 +248,84 @@
     @media (max-width: 640px) { .fb-card-header { flex-direction: column; } }
 
 
+    /* ── Video Management ── */
+    .vid-tabs { display: flex; gap: 0; margin-bottom: 16px; }
+    .vid-tab-btn {
+      padding: 8px 18px; border: 1px solid #1c2541; background: transparent;
+      color: #64748b; font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; border-bottom: none;
+    }
+    .vid-tab-btn:first-child { border-radius: 7px 0 0 7px; }
+    .vid-tab-btn:last-child  { border-radius: 0 7px 7px 0; border-left: none; }
+    .vid-tab-btn.active {
+      background: rgba(245,158,11,0.1); color: #f59e0b; border-color: rgba(245,158,11,0.3);
+    }
+    .vid-add-form {
+      background: #0b132b; border: 1px solid #1c2541; border-radius: 12px;
+      padding: 20px; margin-bottom: 16px;
+    }
+    .vid-add-form .form-row { margin-bottom: 12px; }
+    .vid-add-form label { display: block; font-size: 11px; color: #64748b; margin-bottom: 5px; }
+    .vid-add-form input, .vid-add-form select {
+      width: 100%; padding: 9px 12px; border-radius: 7px; border: 1px solid #1c2541;
+      background: #020817; color: #fff; font-size: 13px;
+    }
+    .vid-add-form input:focus { outline: none; border-color: #f59e0b; }
+    .vid-drop-zone {
+      border: 2px dashed #1c2541; border-radius: 10px; padding: 28px;
+      text-align: center; cursor: pointer; transition: all 0.2s;
+    }
+    .vid-drop-zone:hover, .vid-drop-zone.dragover {
+      border-color: #f59e0b; background: rgba(245,158,11,0.04);
+    }
+    .vid-drop-zone .dz-icon { font-size: 28px; color: #475569; margin-bottom: 8px; }
+    .vid-drop-zone .dz-text { font-size: 13px; color: #94a3b8; }
+    .vid-drop-zone .dz-hint { font-size: 11px; color: #334155; margin-top: 4px; }
+    .vid-drop-zone input[type=file] { display: none; }
+    .vid-file-name {
+      margin-top: 8px; font-size: 12px; color: #10b981;
+      background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 6px; padding: 6px 10px; display: none;
+    }
+    .vid-list { display: flex; flex-direction: column; gap: 8px; }
+    .vid-item {
+      background: #0b132b; border: 1px solid #1c2541; border-radius: 10px;
+      padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+      transition: border-color 0.2s;
+    }
+    .vid-item:hover { border-color: #334155; }
+    .vid-thumb {
+      width: 64px; height: 36px; border-radius: 6px; flex-shrink: 0;
+      background: #1c2541; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #64748b; overflow: hidden;
+    }
+    .vid-thumb video { width: 100%; height: 100%; object-fit: cover; }
+    .vid-thumb-yt {
+      width: 64px; height: 36px; border-radius: 6px; flex-shrink: 0;
+      background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; font-weight: 700; color: #ef4444;
+    }
+    .vid-info { flex: 1; min-width: 0; }
+    .vid-info-title { font-size: 13px; color: #f1f5f9; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .vid-info-meta { font-size: 11px; color: #475569; margin-top: 2px; }
+    .vid-btn-delete {
+      padding: 5px 12px; border-radius: 6px; border: 1px solid rgba(239,68,68,0.3);
+      background: rgba(239,68,68,0.08); color: #ef4444;
+      font-size: 11px; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
+      flex-shrink: 0;
+    }
+    .vid-btn-delete:hover { opacity: 0.75; }
+    .vid-empty { color: #334155; text-align: center; padding: 24px; font-size: 13px; }
+    .upload-progress {
+      height: 4px; background: #1c2541; border-radius: 2px; margin-top: 10px; overflow: hidden;
+      display: none;
+    }
+    .upload-progress-bar {
+      height: 100%; background: linear-gradient(90deg, #d97706, #f59e0b); width: 0%;
+      transition: width 0.3s;
+    }
+
     /* Toggle switch */
     .toggle-switch { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; }
     .toggle-switch input { opacity: 0; width: 0; height: 0; }
@@ -413,6 +491,14 @@
         </label>
       </div>
 
+      <!-- Email di contatto -->
+      <div style="margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #1c2541;">
+        <label style="display:block;font-size:11px;color:#64748b;margin-bottom:5px;">Email di contatto (visibile su feedback e richiesta codice)</label>
+        <input type="email" id="setting-contact-email" value="draftarena.official@gmail.com" placeholder="draftarena.official@gmail.com"
+          style="width:100%;padding:9px 12px;border-radius:7px;border:1px solid #1c2541;background:#020817;color:#fff;font-size:13px;">
+        <div style="font-size:10px;color:#475569;margin-top:4px;">Le notifiche di nuove richieste codice e feedback verranno inviate a questa email.</div>
+      </div>
+
       <!-- Prezzi futuri -->
       <div style="margin-bottom:8px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#475569;">Prezzi futuri (visibili barrati)</div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">
@@ -437,8 +523,61 @@
       <div id="platform-result" style="margin-top:10px;font-size:13px;min-height:18px;"></div>
     </div>
 
+    <!-- Video Gallery -->
+    <div class="section-title" style="margin-top:28px;">Gestione Video</div>
+    <div class="vid-tabs">
+      <button class="vid-tab-btn active" data-vid-tab="youtube">Link YouTube</button>
+      <button class="vid-tab-btn" data-vid-tab="upload">Carica file</button>
+    </div>
+
+    <!-- YouTube form -->
+    <div class="vid-add-form" id="vid-form-youtube">
+      <div class="form-row">
+        <label>Titolo video</label>
+        <input type="text" id="yt-title" placeholder="es: DraftARENA — Presentazione" maxlength="200">
+      </div>
+      <div class="form-row">
+        <label>Link YouTube (URL completo o ID video)</label>
+        <input type="text" id="yt-url" placeholder="https://www.youtube.com/watch?v=..." >
+      </div>
+      <div class="form-row">
+        <label>Ordine (numero, basso = prima)</label>
+        <input type="number" id="yt-order" value="0" min="0" style="max-width:120px;">
+      </div>
+      <button class="btn-gen" id="btn-add-youtube">+ AGGIUNGI VIDEO YOUTUBE</button>
+      <div id="yt-result" style="margin-top:10px;font-size:13px;min-height:18px;"></div>
+    </div>
+
+    <!-- Upload form -->
+    <div class="vid-add-form" id="vid-form-upload" style="display:none;">
+      <div class="form-row">
+        <label>Titolo video</label>
+        <input type="text" id="up-title" placeholder="es: DraftARENA — Presentazione" maxlength="200">
+      </div>
+      <div class="form-row">
+        <label>Ordine (numero, basso = prima)</label>
+        <input type="number" id="up-order" value="0" min="0" style="max-width:120px;">
+      </div>
+      <div class="vid-drop-zone" id="vid-drop-zone">
+        <div class="dz-icon">🎬</div>
+        <div class="dz-text">Trascina qui il video o clicca per selezionarlo</div>
+        <div class="dz-hint">Formati: mp4, webm, ogg, mov, avi, mkv — max 200MB</div>
+        <input type="file" id="vid-file-input" accept="video/*">
+      </div>
+      <div class="vid-file-name" id="vid-file-name"></div>
+      <div class="upload-progress" id="upload-progress"><div class="upload-progress-bar" id="upload-progress-bar"></div></div>
+      <button class="btn-gen" id="btn-upload-video" style="margin-top:14px;">+ CARICA VIDEO</button>
+      <div id="up-result" style="margin-top:10px;font-size:13px;min-height:18px;"></div>
+    </div>
+
+    <!-- Video list -->
+    <div style="margin-top:16px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#475569;margin-bottom:8px;">Video presenti</div>
+    <div class="vid-list" id="vid-list">
+      <div class="vid-empty">Caricamento...</div>
+    </div>
+
     <!-- Stanze recenti -->
-    <div class="section-title">Stanze create (ultime 50)</div>
+    <div class="section-title" style="margin-top:28px;">Stanze create (ultime 50)</div>
     <div class="table-wrap">
       <table>
         <thead>
@@ -937,6 +1076,7 @@
       const r = await fetch('/api/platform-settings');
       const s = await r.json();
       document.getElementById('toggle-pricing').checked = s.pricing_visible !== 'false';
+      if (s.contact_email) document.getElementById('setting-contact-email').value = s.contact_email;
       if (s.price_commander_plus) document.getElementById('price-cmd-plus').value = s.price_commander_plus;
       if (s.price_commander_pro) document.getElementById('price-cmd-pro').value = s.price_commander_pro;
       if (s.price_partecipante_premium) document.getElementById('price-part-premium').value = s.price_partecipante_premium;
@@ -950,6 +1090,7 @@
     if (!pwd) return;
     const settings = {
       pricing_visible: document.getElementById('toggle-pricing').checked ? 'true' : 'false',
+      contact_email: document.getElementById('setting-contact-email').value.trim(),
       price_commander_plus: document.getElementById('price-cmd-plus').value.trim(),
       price_commander_pro: document.getElementById('price-cmd-pro').value.trim(),
       price_partecipante_premium: document.getElementById('price-part-premium').value.trim(),
@@ -972,6 +1113,210 @@
       res.textContent = 'Errore di rete.';
     }
   });
+
+  // ── Video Gallery Management ──────────────────────────────────────────────
+  function extractYouTubeId(url) {
+    if (!url) return null;
+    url = url.trim();
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/,
+      /^([a-zA-Z0-9_-]{11})$/
+    ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m) return m[1];
+    }
+    return null;
+  }
+
+  async function loadVideos() {
+    const listEl = document.getElementById('vid-list');
+    try {
+      const r = await fetch('/api/videos');
+      const data = await r.json();
+      if (!data.success || !data.videos || data.videos.length === 0) {
+        listEl.innerHTML = '<div class="vid-empty">Nessun video presente.</div>';
+        return;
+      }
+      listEl.innerHTML = data.videos.map(v => {
+        const isYt = v.type === 'youtube';
+        const thumb = isYt
+          ? `<div class="vid-thumb-yt">YT</div>`
+          : `<div class="vid-thumb"><video src="${v.url}" preload="metadata" muted></video></div>`;
+        const meta = isYt ? 'YouTube' : 'File caricato';
+        return `<div class="vid-item" data-id="${v.id}">
+          ${thumb}
+          <div class="vid-info">
+            <div class="vid-info-title">${escapeHtml(v.title)}</div>
+            <div class="vid-info-meta">${meta} · ordine ${v.sort_order}</div>
+          </div>
+          <button class="vid-btn-delete" onclick="deleteVideo('${v.id}', '${escapeHtml(v.title)}')">ELIMINA</button>
+        </div>`;
+      }).join('');
+    } catch (e) {
+      listEl.innerHTML = '<div class="vid-empty">Errore caricamento video.</div>';
+    }
+  }
+
+  function escapeHtml(s) {
+    const d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+  }
+
+  async function deleteVideo(id, title) {
+    if (!confirm(`Eliminare il video "${title}"?`)) return;
+    const pwd = saPassword || prompt('Password superadmin:');
+    if (!pwd) return;
+    try {
+      const r = await fetch(`/api/superadmin/videos/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-sa-password': pwd }
+      });
+      const data = await r.json();
+      if (data.success) {
+        loadVideos();
+      } else {
+        alert(data.error || 'Errore durante l\'eliminazione.');
+      }
+    } catch (e) {
+      alert('Errore di rete.');
+    }
+  }
+
+  // Tab switching
+  document.querySelectorAll('.vid-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.vid-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const tab = btn.dataset.vidTab;
+      document.getElementById('vid-form-youtube').style.display = tab === 'youtube' ? 'block' : 'none';
+      document.getElementById('vid-form-upload').style.display = tab === 'upload' ? 'block' : 'none';
+    });
+  });
+
+  // Add YouTube video
+  document.getElementById('btn-add-youtube').addEventListener('click', async () => {
+    const title = document.getElementById('yt-title').value.trim();
+    const url = document.getElementById('yt-url').value.trim();
+    const sortOrder = parseInt(document.getElementById('yt-order').value) || 0;
+    const result = document.getElementById('yt-result');
+    result.textContent = ''; result.style.color = '';
+
+    if (!title || !url) {
+      result.style.color = '#ef4444'; result.textContent = 'Inserisci titolo e URL.'; return;
+    }
+    const ytId = extractYouTubeId(url);
+    if (!ytId) {
+      result.style.color = '#ef4444'; result.textContent = 'URL YouTube non valido.'; return;
+    }
+    const pwd = saPassword || prompt('Password superadmin:');
+    if (!pwd) return;
+    result.style.color = '#94a3b8'; result.textContent = 'Aggiunta in corso...';
+    try {
+      const r = await fetch('/api/superadmin/videos/youtube', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd, title, url: ytId, sortOrder })
+      });
+      const data = await r.json();
+      if (data.success) {
+        result.style.color = '#22c55e'; result.textContent = 'Video aggiunto!';
+        document.getElementById('yt-title').value = '';
+        document.getElementById('yt-url').value = '';
+        document.getElementById('yt-order').value = '0';
+        loadVideos();
+      } else {
+        result.style.color = '#ef4444'; result.textContent = data.error || 'Errore.';
+      }
+    } catch (e) {
+      result.style.color = '#ef4444'; result.textContent = 'Errore di rete.';
+    }
+  });
+
+  // Upload video
+  const dropZone = document.getElementById('vid-drop-zone');
+  const fileInput = document.getElementById('vid-file-input');
+  const fileNameEl = document.getElementById('vid-file-name');
+  let selectedFile = null;
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+      selectedFile = fileInput.files[0];
+      fileNameEl.textContent = '📋 ' + selectedFile.name + ' (' + (selectedFile.size / 1024 / 1024).toFixed(1) + ' MB)';
+      fileNameEl.style.display = 'block';
+    }
+  });
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault(); dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+      selectedFile = e.dataTransfer.files[0];
+      fileInput.files = e.dataTransfer.files;
+      fileNameEl.textContent = '📋 ' + selectedFile.name + ' (' + (selectedFile.size / 1024 / 1024).toFixed(1) + ' MB)';
+      fileNameEl.style.display = 'block';
+    }
+  });
+
+  document.getElementById('btn-upload-video').addEventListener('click', async () => {
+    const title = document.getElementById('up-title').value.trim();
+    const sortOrder = parseInt(document.getElementById('up-order').value) || 0;
+    const result = document.getElementById('up-result');
+    result.textContent = ''; result.style.color = '';
+
+    if (!selectedFile) {
+      result.style.color = '#ef4444'; result.textContent = 'Seleziona un file video.'; return;
+    }
+    const pwd = saPassword || prompt('Password superadmin:');
+    if (!pwd) return;
+
+    const formData = new FormData();
+    formData.append('video', selectedFile);
+    formData.append('title', title || selectedFile.name.replace(/\.[^.]+$/, ''));
+    formData.append('sortOrder', sortOrder);
+
+    const progressEl = document.getElementById('upload-progress');
+    const progressBar = document.getElementById('upload-progress-bar');
+    progressEl.style.display = 'block';
+    progressBar.style.width = '0%';
+    result.style.color = '#94a3b8'; result.textContent = 'Caricamento in corso...';
+
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/superadmin/videos/upload');
+    xhr.setRequestHeader('x-sa-password', pwd);
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) {
+        const pct = Math.round((e.loaded / e.total) * 100);
+        progressBar.style.width = pct + '%';
+      }
+    };
+    xhr.onload = () => {
+      progressEl.style.display = 'none';
+      try {
+        const data = JSON.parse(xhr.responseText);
+        if (data.success) {
+          result.style.color = '#22c55e'; result.textContent = 'Video caricato!';
+          document.getElementById('up-title').value = '';
+          document.getElementById('up-order').value = '0';
+          fileNameEl.style.display = 'none';
+          selectedFile = null;
+          fileInput.value = '';
+          loadVideos();
+        } else {
+          result.style.color = '#ef4444'; result.textContent = data.error || 'Errore.';
+        }
+      } catch (e) {
+        result.style.color = '#ef4444'; result.textContent = 'Errore risposta server.';
+      }
+    };
+    xhr.onerror = () => {
+      progressEl.style.display = 'none';
+      result.style.color = '#ef4444'; result.textContent = 'Errore di rete.';
+    };
+    xhr.send(formData);
+  });
+
+  // Load videos on page load
+  loadVideos();
 </script>
 </body>
 </html>
