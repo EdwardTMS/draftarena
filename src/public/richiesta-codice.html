@@ -389,7 +389,7 @@
         generare il tuo codice di accesso e gestire la tua relazione con il servizio DraftARENA.
         I dati non vengono ceduti, venduti o condivisi con terzi per alcun motivo.
         Puoi richiedere la modifica o la cancellazione dei tuoi dati in qualsiasi momento
-        contattandoci tramite la homepage.
+        scrivendoci a: <a id="privacy-contact-email" href="mailto:draftarena.official@gmail.com" style="color:#38bdf8;text-decoration:none;">draftarena.official@gmail.com</a>
       </div>
 
       <div class="privacy-row">
@@ -453,6 +453,13 @@
   <script src="/i18n.js"></script>
   <script>
     I18N.applyLang('codice');
+    // Carica email di contatto dinamica
+    fetch('/api/contact-email').then(r => r.json()).then(d => {
+      if (d && d.email) {
+        const link = document.getElementById('privacy-contact-email');
+        if (link) { link.href = 'mailto:' + d.email; link.textContent = d.email; }
+      }
+    }).catch(() => {});
     let assignedCode = '';
     let assignedSquadre = 8;
 
