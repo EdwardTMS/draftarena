@@ -45,6 +45,53 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const xlsx = require("xlsx");
 const QRCode = require("qrcode");
+const nodemailer = require("nodemailer");
+
+/* ==========================================================================
+   EMAIL — Gmail transporter per notifiche
+   ========================================================================== */
+const GMAIL_USER = process.env.GMAIL_USER || "draftarena.official@gmail.com";
+const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || "";
+
+const emailTransporter = GMAIL_APP_PASSWORD
+  ? nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: GMAIL_USER, pass: GMAIL_APP_PASSWORD },
+    })
+  : null;
+
+async function getContactEmail() {
+  if (!supabase) return GMAIL_USER;
+  try {
+    const { data } = await supabase
+      .from("platform_settings")
+      .select("value")
+      .eq("key", "contact_email")
+      .maybeSingle();
+    return (data && data.value) || GMAIL_USER;
+  } catch (e) {
+    return GMAIL_USER;
+  }
+}
+
+async function sendNotificationEmail(subject, htmlBody) {
+  if (!emailTransporter) {
+    console.warn("[EMAIL] Transporter non configurato (GMAIL_APP_PASSWORD mancante). Email non inviata:", subject);
+    return;
+  }
+  const to = await getContactEmail();
+  try {
+    await emailTransporter.sendMail({
+      from: `DraftARENA <${GMAIL_USER}>`,
+      to,
+      subject,
+      html: htmlBody,
+    });
+    console.log(`[EMAIL] Notifica inviata a ${to}: ${subject}`);
+  } catch (e) {
+    console.error("[EMAIL] Errore invio notifica:", e.message);
+  }
+}
 
 /* ==========================================================================
    SUPABASE CLIENT
@@ -694,6 +741,11 @@ app.get("/api/platform-settings", async (req, res) => {
   }
 });
 
+app.get("/api/contact-email", async (req, res) => {
+  const email = await getContactEmail();
+  res.json({ email });
+});
+
 app.post("/api/superadmin/platform-settings", async (req, res) => {
   const { password, settings } = req.body;
   if (password !== SUPERADMIN_PASSWORD) {
@@ -734,6 +786,23 @@ app.post("/api/richiesta-codice", async (req, res) => {
       codice_assegnato: codice_assegnato ? String(codice_assegnato).trim().toUpperCase() : null
     });
     if (error) throw error;
+
+    // Invia notifica email alla casella di DraftARENA
+    const fullName = `${nome}${cognome ? ' ' + cognome : ''}`;
+    sendNotificationEmail(
+      `Nuova richiesta codice — ${fullName}`,
+      `<h2>Nuova richiesta codice di accesso</h2>
+      <table style="border-collapse:collapse;font-size:14px;font-family:sans-serif;">
+        <tr><td style="padding:4px 12px;color:#64748b;">Nome:</td><td style="padding:4px 12px;">${fullName}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Email:</td><td style="padding:4px 12px;">${email}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Lega:</td><td style="padding:4px 12px;">${nome_lega}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Squadre:</td><td style="padding:4px 12px;">${num_squadre || '—'}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Piattaforma:</td><td style="padding:4px 12px;">${piattaforma || '—'}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Come trovati:</td><td style="padding:4px 12px;">${come_trovato || '—'}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Codice assegnato:</td><td style="padding:4px 12px;font-weight:700;color:#2563eb;">${codice_assegnato || '—'}</td></tr>
+      </table>`
+    ).catch(() => {});
+
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
@@ -1661,6 +1730,22 @@ app.post("/api/feedback/invia", async (req, res) => {
       status: "pending"
     });
     if (error) throw error;
+
+    // Invia notifica email per feedback/supporto
+    const tipoLabel = tipo === 'supporto' ? 'Richiesta di supporto' : 'Recensione';
+    sendNotificationEmail(
+      `${tipoLabel} da ${nome || 'Anonimo'}`,
+      `<h2>${tipoLabel}</h2>
+      <table style="border-collapse:collapse;font-size:14px;font-family:sans-serif;">
+        <tr><td style="padding:4px 12px;color:#64748b;">Tipo:</td><td style="padding:4px 12px;">${tipoLabel}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Nome:</td><td style="padding:4px 12px;">${nome || '—'}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Email:</td><td style="padding:4px 12px;">${email || '—'}</td></tr>
+        ${voto ? `<tr><td style="padding:4px 12px;color:#64748b;">Voto:</td><td style="padding:4px 12px;">${'★'.repeat(voto)}${'☆'.repeat(5-voto)}</td></tr>` : ''}
+        <tr><td style="padding:4px 12px;color:#64748b;">Visibilità:</td><td style="padding:4px 12px;">${visibilita || '—'}</td></tr>
+      </table>
+      <p style="margin-top:16px;padding:12px;background:#f8fafb;border-radius:8px;font-size:14px;line-height:1.6;">${String(messaggio).trim()}</p>`
+    ).catch(() => {});
+
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
