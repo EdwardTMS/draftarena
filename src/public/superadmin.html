@@ -340,6 +340,41 @@
     }
     .toggle-switch input:checked + .toggle-slider { background: rgba(59,130,246,0.3); }
     .toggle-switch input:checked + .toggle-slider:before { background: #3b82f6; transform: translateX(20px); }
+
+    /* ── Site Texts Editor ── */
+    .st-toolbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+    .st-toolbar select, .st-toolbar .st-lang-btn {
+      padding:8px 14px; border-radius:7px; border:1px solid #1c2541; background:#020817;
+      color:#fff; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.2s;
+    }
+    .st-toolbar select:focus { outline:none; border-color:#f59e0b; }
+    .st-lang-btn.active { background:rgba(245,158,11,0.1); color:#f59e0b; border-color:rgba(245,158,11,0.3); }
+    .st-search {
+      flex:1; min-width:140px; padding:8px 12px; border-radius:7px; border:1px solid #1c2541;
+      background:#020817; color:#fff; font-size:12px;
+    }
+    .st-search:focus { outline:none; border-color:#f59e0b; }
+    .st-list { display:flex; flex-direction:column; gap:10px; max-height:600px; overflow-y:auto; padding-right:4px; }
+    .st-item { background:#0b132b; border:1px solid #1c2541; border-radius:10px; padding:14px 16px; transition:border-color 0.2s; }
+    .st-item:hover { border-color:#334155; }
+    .st-item.modified { border-color:rgba(245,158,11,0.3); }
+    .st-item-key { font-size:11px; color:#64748b; font-family:monospace; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+    .st-item-default { font-size:10px; color:#334155; font-style:italic; margin-bottom:6px; white-space:pre-wrap; word-break:break-word; max-height:40px; overflow:hidden; }
+    .st-item textarea {
+      width:100%; min-height:60px; padding:8px 10px; border-radius:7px; border:1px solid #1c2541;
+      background:#020817; color:#e2e8f0; font-size:13px; font-family:inherit; resize:vertical;
+    }
+    .st-item textarea:focus { outline:none; border-color:#f59e0b; }
+    .st-item-actions { margin-top:6px; display:flex; gap:8px; }
+    .st-reset-btn {
+      padding:3px 10px; border-radius:5px; border:1px solid rgba(239,68,68,0.2);
+      background:rgba(239,68,68,0.06); color:#ef4444; font-size:10px; font-weight:700; cursor:pointer;
+    }
+    .st-reset-btn:hover { opacity:0.75; }
+    .st-saved-badge { font-size:10px; color:#10b981; font-weight:700; }
+    .st-empty { color:#334155; text-align:center; padding:32px; font-size:13px; }
+    .st-save-bar { position:sticky; bottom:0; background:#0b132b; border:1px solid #1c2541; border-radius:10px; padding:14px 16px; margin-top:12px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+    .st-unsaved-count { font-size:12px; color:#f59e0b; font-weight:700; }
   </style>
 </head>
 <body>
@@ -574,6 +609,26 @@
     <div style="margin-top:16px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#475569;margin-bottom:8px;">Video presenti</div>
     <div class="vid-list" id="vid-list">
       <div class="vid-empty">Caricamento...</div>
+    </div>
+
+    <!-- Testi Sito -->
+    <div class="section-title" style="margin-top:28px;">Testi del Sito (Homepage)</div>
+    <div style="background:#0b132b;border:1px solid #1c2541;border-radius:12px;padding:20px;margin-bottom:16px;">
+      <div class="st-toolbar">
+        <button class="st-lang-btn active" data-st-lang="it">IT Italiano</button>
+        <button class="st-lang-btn" data-st-lang="en">EN English</button>
+        <input type="text" class="st-search" id="st-search" placeholder="Cerca testo per chiave o contenuto...">
+      </div>
+      <div class="st-list" id="st-list">
+        <div class="st-empty">Seleziona una lingua per iniziare.</div>
+      </div>
+      <div class="st-save-bar" id="st-save-bar" style="display:none;">
+        <span class="st-unsaved-count" id="st-unsaved-count">0 modifiche</span>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-gen" id="btn-save-texts" style="padding:8px 24px;">SALVA TUTTO</button>
+        </div>
+      </div>
+      <div id="st-result" style="margin-top:10px;font-size:13px;min-height:18px;"></div>
     </div>
 
     <!-- Stanze recenti -->
@@ -1317,6 +1372,296 @@
 
   // Load videos on page load
   loadVideos();
+
+  // ── Site Texts Editor ────────────────────────────────────────────────────
+  const HOMEPAGE_KEYS = [
+    'nav_how','nav_pricing','nav_enter','nav_create',
+    'hero_badge','hero_title','hero_sub','hero_cta_primary','hero_cta_secondary','hero_scroll',
+    'how_label','how_title','how_sub','step1_tag','step1_title','step1_desc','step2_tag','step2_title','step2_desc','step3_tag','step3_title','step3_desc',
+    'feat_label','feat_title','feat_sub',
+    'f1_title','f1_desc','f2_title','f2_desc','f3_title','f3_desc','f4_title','f4_desc','f5_title','f5_desc','f6_title','f6_desc','f7_title','f7_desc',
+    'deep_label','deep_title','deep_sub','d1_title','d1_desc','d2_title','d2_desc','d3_title','d3_desc','d4_title','d4_desc',
+    'roles_label','roles_title','roles_sub','role1_name','role1_desc','role2_desc','role3_desc','role4_name','role4_desc','role5_name',
+    'pricing_label','pricing_title','pricing_sub','beta_title','beta_sub',
+    'pricing_cmd_group','p_cmd_free_desc','p_cmd_plus_desc','p_cmd_pro_desc',
+    'pricing_part_group','p_part_std_name','p_part_std_desc','p_part_prem_name','p_part_prem_desc',
+    'p_free','tag_always_free','tag_no_banner','tag_beta_free',
+    'faq_title','faq_sub','faq1_q','faq1_a','faq2_q','faq2_a','faq3_q','faq3_a','faq4_q','faq4_a','faq5_q','faq5_a',
+    'hub_title','hub_sub','hub_card_title','hub_card_desc','hub_btn_create','hub_divider','hub_input_ph','hub_btn_join','hub_loading','hub_room_label','hub_btn_copy','hub_btn_copied','hub_pin_label','hub_pin_hint','hub_change_room',
+    'modal_title','modal_desc','modal_btn_confirm','modal_btn_creating','modal_btn_cancel','modal_req_code',
+    'rev_label','rev_title','rev_sub','rev_cta','rev_author_anon',
+    'footer_tagline','footer_guide_admin','footer_guide_users','footer_feedback',
+    'err_code_required','err_code_invalid','err_room_code','err_room_not_found','err_timeout','err_network','err_server'
+  ];
+
+  const HOMEPAGE_DEFAULTS = {
+    it: {
+      nav_how:'Come funziona', nav_pricing:'Prezzi', nav_enter:'Entra in una stanza', nav_create:'+ Crea stanza',
+      hero_badge:'Asta in tempo reale', hero_title:'L\'asta del fantacalcio<br>come non l\'hai mai <span class="accent">vissuta</span>', hero_sub:'Timer live, rilanci dal telefono, schermata TV per tutti. Organizza l\'asta della tua lega in pochi secondi — gratis, senza installazioni.', hero_cta_primary:'+ Crea una stanza', hero_cta_secondary:'Entra in una stanza', hero_scroll:'Scopri di più',
+      how_label:'Come funziona', how_title:'Tre passi, un\'asta perfetta', how_sub:'Nessuna installazione. Funziona su qualsiasi dispositivo dal browser.',
+      step1_tag:'Admin — Regia', step1_title:'Crea e controlla', step1_desc:'Carica la lista giocatori, imposta i budget e gestisci l\'asta in tempo reale. Metti il giocatore all\'asta, avvia il timer, aggiudica.',
+      step2_tag:'Host — TV', step2_title:'Proietta in sala', step2_desc:'Apri la schermata TV sul grande schermo o proiettore. Mostra il giocatore in asta, il timer e le offerte in diretta a tutti i partecipanti.',
+      step3_tag:'Squadre — Buzzer', step3_title:'Rilancia dal telefono', step3_desc:'Ogni fantasquadra usa il proprio smartphone come buzzer. Un tap per rilanciare, in tempo reale, senza app da installare.',
+      feat_label:'Funzionalità', feat_title:'Tutto quello che serve per un\'asta seria', feat_sub:'Progettato per leghe vere, con le funzioni che contano davvero.',
+      f1_title:'Timer live sincronizzato', f1_desc:'Countdown visibile su tutti i dispositivi in tempo reale. Nessun "quanto manca?" in sala.',
+      f2_title:'Storico offerte in diretta', f2_desc:'Ogni rilancio appare istantaneamente su tutti gli schermi. Trasparenza totale durante l\'asta.',
+      f3_title:'Le rose aggiornate', f3_desc:'Ogni squadra vede la propria rosa e il budget residuo aggiornati dopo ogni acquisto.',
+      f4_title:'Export Excel', f4_desc:'A fine asta esporta tutti i risultati in un file Excel con un click. Pronto per il tuo foglio lega.',
+      f5_title:'Solo browser, niente app', f5_desc:'Funziona su qualsiasi smartphone dal browser. Basta aprire il link e inserire il codice stanza.',
+      f6_title:'Stanza privata con codice', f6_desc:'Ogni asta ha un codice univoco a 6 caratteri. Solo chi ha il codice può entrare nella stanza.',
+      f7_title:'Albo d\'Oro della lega', f7_desc:'Archivia classifica e coppe di ogni stagione. Il medagliere cresce anno dopo anno, accessibile a tutti.',
+      deep_label:'Sotto il cofano', deep_title:'La tecnologia che fa la differenza', deep_sub:'Architettura progettata per non sbagliare un colpo, nemmeno il giorno dell\'asta.',
+      d1_title:'Gestione Mantra', d1_desc:'DraftARENA non è solo per il Fantacalcio. La nostra architettura flessibile consente il caricamento di database personalizzati per qualsiasi sport. Grazie al sistema di "Role Mapping", puoi definire i ruoli (P, D, C, A o personalizzati) e impostare le regole della tua lega in pochi clic. Il database indicizza automaticamente i giocatori e le loro quotazioni, offrendoti un ambiente di lavoro sempre pulito e pronto all\'uso.',
+      d2_title:'Aste in Tempo Reale', d2_desc:'Dimentica i fogli di carta e gli errori manuali. Il sistema utilizza i protocolli WebSocket per garantire una sincronizzazione in millisecondi: ogni rilancio o assegnazione effettuata dal Commander viene visualizzata istantaneamente su tutti i dispositivi dei partecipanti. Questa tecnologia elimina il ritardo di comunicazione, garantendo un\'asta fluida, competitiva e priva di malintesi, ovunque tu sia.',
+      d3_title:'Export Intelligente', d3_desc:'La gestione dei dati non finisce con il martelletto dell\'asta. Al termine di ogni sessione, DraftARENA ti offre un report completo in formato Excel/CSV. Questo file include non solo le rose definitive di ogni squadra, ma anche il dettaglio dei crediti spesi e quelli rimanenti. Uno strumento indispensabile per monitorare l\'andamento finanziario della tua lega e importare le rose direttamente nei portali di gioco ufficiali.',
+      d4_title:'Storico Lega & Albo d\'Oro', d4_desc:'Ogni stagione diventa un capitolo nella storia della tua lega. Dopo l\'asta, il Commander arricchisce il backup con la classifica finale e i titoli vinti: Campionato, Champions League, Coppa Italia, Cucchiaio di Lega e qualsiasi competizione personalizzata. L\'Albo d\'Oro aggrega tutti i trionfi in un medagliere visuale accessibile a tutti — uno storico permanente che cresce anno dopo anno.',
+      roles_label:'I ruoli', roles_title:'Una stanza, quattro viste', roles_sub:'Ogni partecipante accede alla vista giusta per il proprio ruolo.',
+      role1_name:'Regia', role1_desc:'Controllo completo dell\'asta. Solo per l\'amministratore.',
+      role2_desc:'Schermata per proiettore o TV. Mostra tutto in sala.',
+      role3_desc:'Lo smartphone di ogni squadra. Un tap per rilanciare.',
+      role4_name:'Le Rose', role4_desc:'Vista rosa e budget di tutte le squadre in tempo reale.',
+      role5_name:'Albo d\'Oro',
+      pricing_label:'Piani e Prezzi', pricing_title:'Scegli il piano giusto per la tua lega', pricing_sub:'Tutto gratis per la stagione 2025/26. I prezzi entrano in vigore dalla stagione 2026/27.',
+      beta_title:'Tutto gratis per la stagione 2025/26', beta_sub:'DraftARENA e\' in fase di lancio e vogliamo che tu lo provi senza pensieri.<br>I piani a pagamento partiranno dalla stagione <strong style="color:var(--text-secondary)">2026/27</strong> — i prezzi indicati sono quelli futuri.',
+      pricing_cmd_group:'Commander — Chi organizza l\'asta', p_cmd_free_desc:'Fino a 8 squadre', p_cmd_plus_desc:'9+ squadre — asta singola', p_cmd_pro_desc:'9+ squadre — aste illimitate',
+      pricing_part_group:'Partecipante — Chi partecipa all\'asta', p_part_std_name:'Partecipante Standard', p_part_std_desc:'Accesso completo all\'asta', p_part_prem_name:'Partecipante Premium', p_part_prem_desc:'Esperienza senza interruzioni',
+      p_free:'Gratis', tag_always_free:'Sempre gratis', tag_no_banner:'Nessun banner', tag_beta_free:'Gratis 2025/26',
+      faq_title:'Domande frequenti', faq_sub:'Tutto quello che vuoi sapere prima di iniziare.',
+      faq1_q:'Perché DraftARENA è diverso dai soliti siti di aste?', faq1_a:'La maggior parte dei portali è pensata per il gioco online massivo. DraftARENA è nato con un focus diverso: l\'esperienza dal vivo. Abbiamo studiato l\'interfaccia affinché il Commander (l\'organizzatore) abbia il pieno controllo su ogni rilancio, sincronizzando istantaneamente i buzzer di ogni partecipante. Non è solo un\'app, è il sistema nervoso della tua asta, progettato per eliminare i tempi morti e gli errori umani nella gestione del foglio Excel.',
+      faq2_q:'Come funziona la sicurezza dei pagamenti?', faq2_a:'La tua tranquillità è la nostra priorità. DraftARENA non memorizza mai i dati delle tue carte di credito. Per le transazioni, ci appoggiamo ai gateway di pagamento standard del settore (come Stripe), che utilizzano protocolli di crittografia avanzati (SSL/TLS). Il tuo pagamento è protetto e immediato, permettendoti di sbloccare le funzioni premium in pochi secondi e senza attese.',
+      faq3_q:'Cosa succede se durante l\'asta cade la connessione?', faq3_a:'Sappiamo che l\'asta è un momento critico. Il nostro sistema di socket in tempo reale è progettato per la resilienza: in caso di breve caduta della linea, l\'applicazione tenta automaticamente il ricollegamento rapido. Poiché il database dell\'asta risiede nel cloud, una volta ripristinata la connessione, lo stato della stanza (offerte correnti, budget rimasti, giocatori chiamati) sarà esattamente quello che avevi prima della disconnessione.',
+      faq4_q:'Posso usare DraftARENA anche per sport diversi dal Fantacalcio?', faq4_a:'Nel prossimo futuro assolutamente sì. Abbiamo architettato DraftARENA come un motore modulare. Grazie alla possibilità di caricare file database personalizzati (CSV), potrai adattare la nostra interfaccia per gestire aste di FantaNBA, NFL, NBL o qualsiasi altra lega sportiva. La struttura "Giocatore-Ruolo-Squadra" è flessibile: basterà caricare il file Excel dello sport che vuoi. Al momento, essendo ancora in una fase iniziale, ci siamo concentrati sul calcio — ma a breve implementeremo questa possibilità.',
+      faq5_q:'Come posso ricevere assistenza in caso di problemi?', faq5_a:'Anche se DraftARENA è pensata per essere intuitiva, sappiamo che un\'asta dal vivo richiede precisione assoluta. Se riscontri problemi tecnici durante la configurazione o durante l\'asta, il nostro team di supporto è disponibile via email. Inoltre, stiamo creando una sezione "Wiki" dedicata ai Commander con tutorial passo-passo per il caricamento dei database e la gestione avanzata della stanza.',
+      hub_title:'Inizia adesso', hub_sub:'Crea una stanza in 10 secondi oppure entra in una già esistente con il codice che ti ha condiviso l\'admin.',
+      hub_card_title:'Sei l\'amministratore?', hub_card_desc:'Crea una nuova stanza e condividi il codice con i partecipanti.',
+      hub_btn_create:'+ CREAZ NUOVA STANZA', hub_divider:'oppure entra in una stanza esistente',
+      hub_input_ph:'Codice (es: ABC123)', hub_btn_join:'ENTRA',
+      hub_loading:'Connessione in corso...', hub_room_label:'Codice Stanza',
+      hub_btn_copy:'COPIA', hub_btn_copied:'COPIATO!',
+      hub_pin_label:'PIN REGIA (solo per te)', hub_pin_hint:'Conserva questo PIN — serve per aprire la Regia.',
+      hub_change_room:'Cambia stanza',
+      modal_title:'Codice di attivazione', modal_desc:'Inserisci il tuo codice personale per creare la stanza.',
+      modal_btn_confirm:'CREA STANZA', modal_btn_creating:'Creazione in corso...',
+      modal_btn_cancel:'Annulla', modal_req_code:'Non hai ancora un codice? Richiedilo gratis →',
+      rev_label:'Cosa dicono gli utenti', rev_title:'Recensioni reali', rev_sub:'Scritte da chi ha usato DraftARENA per la propria lega.',
+      rev_cta:'Lascia la tua recensione →', rev_author_anon:'Utente anonimo',
+      footer_tagline:'DraftARENA — L\'asta del fantacalcio in tempo reale',
+      footer_guide_admin:'Guida Admin', footer_guide_users:'Guida Partecipanti', footer_feedback:'Lascia un feedback',
+      err_code_required:'Inserisci un codice di attivazione.', err_code_invalid:'Codice non valido.',
+      err_room_code:'Inserisci un codice valido.', err_room_not_found:'Stanza non trovata.',
+      err_timeout:'Timeout: server non risponde.', err_network:'Errore di rete. Riprova.',
+      err_server:'Server non raggiungibile. Ricarica con Ctrl+Shift+R.'
+    },
+    en: {
+      nav_how:'How it works', nav_pricing:'Pricing', nav_enter:'Join a room', nav_create:'+ Create room',
+      hero_badge:'Live auction', hero_title:'The fantasy football auction<br>like you\'ve never <span class="accent">experienced</span> it', hero_sub:'Live timer, bids from your phone, TV screen for everyone. Set up your league auction in seconds — free, no downloads.', hero_cta_primary:'+ Create a room', hero_cta_secondary:'Join a room', hero_scroll:'Discover more',
+      how_label:'How it works', how_title:'Three steps, a perfect auction', how_sub:'No installation needed. Works on any device from the browser.',
+      step1_tag:'Admin — Control Room', step1_title:'Create & control', step1_desc:'Upload your player list, set budgets and manage the auction in real time. Put a player up for bid, start the timer, assign.',
+      step2_tag:'Host — TV', step2_title:'Project on the big screen', step2_desc:'Open the TV screen on a projector or large display. Show the player on auction, the timer and live bids to all participants.',
+      step3_tag:'Teams — Buzzer', step3_title:'Bid from your phone', step3_desc:'Each fantasy team uses their smartphone as a buzzer. One tap to bid, in real time, no app required.',
+      feat_label:'Features', feat_title:'Everything you need for a serious auction', feat_sub:'Designed for real leagues, with the features that actually matter.',
+      f1_title:'Synced live timer', f1_desc:'Countdown visible on all devices in real time. No more "how long left?" in the room.',
+      f2_title:'Live bid history', f2_desc:'Every bid appears instantly on all screens. Full transparency throughout the auction.',
+      f3_title:'Updated rosters', f3_desc:'Each team sees their roster and remaining budget updated after every purchase.',
+      f4_title:'Excel Export', f4_desc:'Export all results to an Excel file with one click at the end of the auction. Ready for your league spreadsheet.',
+      f5_title:'Browser only, no app', f5_desc:'Works on any smartphone from the browser. Just open the link and enter the room code.',
+      f6_title:'Private room with code', f6_desc:'Every auction has a unique 6-character code. Only those with the code can enter the room.',
+      f7_title:'League Hall of Fame', f7_desc:'Archive standings and trophies from every season. The trophy cabinet grows year after year, accessible to all.',
+      deep_label:'Under the hood', deep_title:'The technology that makes the difference', deep_sub:'Architecture designed to never miss a beat, not even on auction day.',
+      d1_title:'Mantra Management', d1_desc:'DraftARENA isn\'t just for Fantasy Football. Our flexible architecture allows loading custom databases for any sport. With the "Role Mapping" system, you can define roles (GK, DEF, MID, FWD or custom ones) and set your league rules in a few clicks. The database automatically indexes players and their values, giving you a clean and ready-to-use workspace at all times.',
+      d2_title:'Real-Time Auctions', d2_desc:'Forget paper sheets and manual errors. The system uses WebSocket protocols to guarantee millisecond synchronization: every bid or assignment made by the Commander is instantly displayed on all participants\' devices. This technology eliminates communication delays, ensuring a fluid, competitive and error-free auction wherever you are.',
+      d3_title:'Smart Export', d3_desc:'Data management doesn\'t end with the auctioneer\'s hammer. At the end of each session, DraftARENA provides a complete Excel/CSV report. This file includes not only the final rosters of each team, but also details of credits spent and remaining. An essential tool for tracking your league\'s financial performance and importing rosters directly into official gaming portals.',
+      d4_title:'League History & Hall of Fame', d4_desc:'Every season becomes a chapter in your league\'s history. After the auction, the Commander enriches the backup with the final standings and titles won: Championship, Champions League, Cup, Wooden Spoon and any custom competition. The Hall of Fame aggregates all triumphs in a visual trophy cabinet accessible to everyone — a permanent record that grows year after year.',
+      roles_label:'Roles', roles_title:'One room, four views', roles_sub:'Each participant accesses the right view for their role.',
+      role1_name:'CONTROL ROOM', role1_desc:'Full auction control. Admin only.',
+      role2_desc:'Screen for projector or TV. Shows everything to the room.',
+      role3_desc:'Each team\'s smartphone. One tap to bid.',
+      role4_name:'ROSTERS', role4_desc:'Roster and budget view for all teams in real time.',
+      role5_name:'Hall of Fame',
+      pricing_label:'Plans & Pricing', pricing_title:'Choose the right plan for your league', pricing_sub:'Free for the 2025/26 season. Pricing takes effect from the 2026/27 season.',
+      beta_title:'Free for the entire 2025/26 season', beta_sub:'DraftARENA is in its launch phase and we want you to try it without worries.<br>Paid plans start from the <strong style="color:var(--text-secondary)">2026/27</strong> season — prices shown are future prices.',
+      pricing_cmd_group:'Commander — The auction organizer', p_cmd_free_desc:'Up to 8 teams', p_cmd_plus_desc:'9+ teams — single auction', p_cmd_pro_desc:'9+ teams — unlimited auctions',
+      pricing_part_group:'Participant — Auction attendee', p_part_std_name:'Standard Participant', p_part_std_desc:'Full auction access', p_part_prem_name:'Premium Participant', p_part_prem_desc:'Ad-free experience',
+      p_free:'Free', tag_always_free:'Always free', tag_no_banner:'No ads', tag_beta_free:'Free 2025/26',
+      faq_title:'Frequently asked questions', faq_sub:'Everything you want to know before you start.',
+      faq1_q:'Why is DraftARENA different from other auction sites?', faq1_a:'Most platforms are designed for massive online gaming. DraftARENA was built with a different focus: the live experience. We designed the interface so the Commander (the organizer) has full control over every bid, instantly syncing all participants\' buzzers. It\'s not just an app — it\'s the nervous system of your auction, built to eliminate downtime and human errors in spreadsheet management.',
+      faq2_q:'How does payment security work?', faq2_a:'Your peace of mind is our priority. DraftARENA never stores your credit card details. For transactions, we rely on industry-standard payment gateways (like Stripe), which use advanced encryption protocols (SSL/TLS). Your payment is secure and immediate, letting you unlock premium features in seconds with no waiting.',
+      faq3_q:'What happens if the connection drops during the auction?', faq3_a:'We know the auction is a critical moment. Our real-time socket system is designed for resilience: if the connection briefly drops, the app automatically attempts a fast reconnect. Since the auction database lives in the cloud, once reconnected, the room state (current bids, remaining budgets, called players) will be exactly as you left it.',
+      faq4_q:'Can I use DraftARENA for sports other than Fantasy Football?', faq4_a:'Absolutely, in the near future. We architected DraftARENA as a modular engine. By loading custom database files (CSV), you can adapt our interface to manage FantaNBA, NFL, NBL or any other fantasy sports league. The "Player-Role-Team" structure is flexible: just load the Excel file for the sport you want. For now, being in an early stage, we focused on football — but we\'ll implement this soon.',
+      faq5_q:'How can I get support if I have problems?', faq5_a:'Even though DraftARENA is designed to be intuitive, we know a live auction requires absolute precision. If you encounter technical issues during setup or the auction itself, our support team is available via email. We\'re also building a "Wiki" section dedicated to Commanders with step-by-step tutorials for database uploads and advanced room management.',
+      hub_title:'Start now', hub_sub:'Create a room in 10 seconds or join an existing one with the code shared by the admin.',
+      hub_card_title:'Are you the admin?', hub_card_desc:'Create a new room and share the code with participants.',
+      hub_btn_create:'+ CREATE NEW ROOM', hub_divider:'or join an existing room',
+      hub_input_ph:'Code (e.g. ABC123)', hub_btn_join:'JOIN',
+      hub_loading:'Connecting...', hub_room_label:'Room Code',
+      hub_btn_copy:'COPY', hub_btn_copied:'COPIED!',
+      hub_pin_label:'CONTROL ROOM PIN (for you only)', hub_pin_hint:'Save this PIN — you need it to open the Control Room.',
+      hub_change_room:'Change room',
+      modal_title:'Activation code', modal_desc:'Enter your personal code to create the room.',
+      modal_btn_confirm:'CREATE ROOM', modal_btn_creating:'Creating...',
+      modal_btn_cancel:'Cancel', modal_req_code:'Don\'t have a code yet? Request one for free →',
+      rev_label:'What users say', rev_title:'Real reviews', rev_sub:'Written by people who used DraftARENA for their league.',
+      rev_cta:'Leave your review →', rev_author_anon:'Anonymous user',
+      footer_tagline:'DraftARENA — The fantasy football live auction',
+      footer_guide_admin:'Admin Guide', footer_guide_users:'Participant Guide', footer_feedback:'Leave feedback',
+      err_code_required:'Please enter an activation code.', err_code_invalid:'Invalid code.',
+      err_room_code:'Please enter a valid code.', err_room_not_found:'Room not found.',
+      err_timeout:'Timeout: server not responding.', err_network:'Network error. Please try again.',
+      err_server:'Server unreachable. Reload with Ctrl+Shift+R.'
+    }
+  };
+
+  let stCurrentLang = 'it';
+  let stOverrides = {};  // { lang: { key: value } }
+  let stUnsaved = {};    // { key: value } for current lang
+
+  async function loadSiteTexts() {
+    try {
+      const r = await fetch('/api/superadmin/site-texts?page=homepage');
+      const data = await r.json();
+      if (data.success && data.texts) {
+        stOverrides = data.texts;
+      }
+    } catch (e) {}
+    renderSiteTexts();
+  }
+
+  function renderSiteTexts() {
+    const listEl = document.getElementById('st-list');
+    const searchTerm = (document.getElementById('st-search').value || '').toLowerCase().trim();
+    const defaults = HOMEPAGE_DEFAULTS[stCurrentLang] || {};
+    const overrides = stOverrides[stCurrentLang] || {};
+
+    let keys = HOMEPAGE_KEYS.slice();
+    if (searchTerm) {
+      keys = keys.filter(k => {
+        const dv = (defaults[k] || '').toLowerCase();
+        const ov = (overrides[k] && overrides[k].value || '').toLowerCase();
+        return k.toLowerCase().includes(searchTerm) || dv.includes(searchTerm) || ov.includes(searchTerm);
+      });
+    }
+
+    if (keys.length === 0) {
+      listEl.innerHTML = '<div class="st-empty">Nessun testo trovato.</div>';
+      updateSaveBar();
+      return;
+    }
+
+    listEl.innerHTML = keys.map(k => {
+      const dv = defaults[k] !== undefined ? defaults[k] : '(nessun default)';
+      const ov = overrides[k] && overrides[k].value;
+      const currentVal = stUnsaved[k] !== undefined ? stUnsaved[k] : (ov !== undefined ? ov : dv);
+      const isModified = ov !== undefined || stUnsaved[k] !== undefined;
+      const escapedDefault = escapeHtml(dv).substring(0, 200);
+      return `<div class="st-item${isModified ? ' modified' : ''}" data-st-key="${k}">
+        <div class="st-item-key">${k}${isModified && stUnsaved[k] === undefined ? ' <span class="st-saved-badge">salvato</span>' : ''}</div>
+        <div class="st-item-default">Default: ${escapedDefault}</div>
+        <textarea data-st-key="${k}" rows="2">${escapeHtml(currentVal)}</textarea>
+        <div class="st-item-actions">
+          ${ov !== undefined ? `<button class="st-reset-btn" onclick="resetSiteText('${k}')">Ripristina default</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+
+    listEl.querySelectorAll('textarea[data-st-key]').forEach(ta => {
+      ta.addEventListener('input', () => {
+        const key = ta.dataset.stKey;
+        const dv = defaults[key] || '';
+        const ov = overrides[stCurrentLang] && overrides[stCurrentLang][key] && overrides[stCurrentLang][key].value;
+        const baseline = ov !== undefined ? ov : dv;
+        if (ta.value !== baseline) {
+          stUnsaved[key] = ta.value;
+        } else {
+          delete stUnsaved[key];
+        }
+        updateSaveBar();
+        const item = ta.closest('.st-item');
+        if (ta.value !== dv) item.classList.add('modified'); else item.classList.remove('modified');
+      });
+    });
+
+    updateSaveBar();
+  }
+
+  function updateSaveBar() {
+    const count = Object.keys(stUnsaved).length;
+    const bar = document.getElementById('st-save-bar');
+    const countEl = document.getElementById('st-unsaved-count');
+    if (count > 0) {
+      bar.style.display = 'flex';
+      countEl.textContent = count + (count === 1 ? ' modifica' : ' modifiche');
+    } else {
+      bar.style.display = 'none';
+    }
+  }
+
+  async function resetSiteText(key) {
+    if (!confirm(`Ripristinare il testo "${key}" al valore di default?`)) return;
+    const pwd = saPassword || prompt('Password superadmin:');
+    if (!pwd) return;
+    try {
+      const r = await fetch('/api/superadmin/site-texts/reset', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd, page: 'homepage', lang: stCurrentLang, key })
+      });
+      const data = await r.json();
+      if (data.success) {
+        delete stUnsaved[key];
+        if (stOverrides[stCurrentLang]) delete stOverrides[stCurrentLang][key];
+        renderSiteTexts();
+      } else {
+        alert(data.error || 'Errore.');
+      }
+    } catch (e) {
+      alert('Errore di rete.');
+    }
+  }
+
+  document.querySelectorAll('.st-lang-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.st-lang-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      stCurrentLang = btn.dataset.stLang;
+      stUnsaved = {};
+      renderSiteTexts();
+    });
+  });
+
+  document.getElementById('st-search').addEventListener('input', renderSiteTexts);
+
+  document.getElementById('btn-save-texts').addEventListener('click', async () => {
+    const keys = Object.keys(stUnsaved);
+    if (keys.length === 0) return;
+    const pwd = saPassword || prompt('Password superadmin:');
+    if (!pwd) return;
+    const result = document.getElementById('st-result');
+    result.textContent = 'Salvataggio in corso...'; result.style.color = '#94a3b8';
+    const texts = {};
+    keys.forEach(k => { texts[k] = stUnsaved[k]; });
+    try {
+      const r = await fetch('/api/superadmin/site-texts', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pwd, page: 'homepage', lang: stCurrentLang, texts })
+      });
+      const data = await r.json();
+      if (data.success) {
+        if (!stOverrides[stCurrentLang]) stOverrides[stCurrentLang] = {};
+        keys.forEach(k => {
+          stOverrides[stCurrentLang][k] = { value: stUnsaved[k] };
+        });
+        stUnsaved = {};
+        result.style.color = '#22c55e'; result.textContent = 'Testi salvati!';
+        setTimeout(() => { result.textContent = ''; }, 3000);
+        renderSiteTexts();
+      } else {
+        result.style.color = '#ef4444'; result.textContent = data.error || 'Errore.';
+      }
+    } catch (e) {
+      result.style.color = '#ef4444'; result.textContent = 'Errore di rete.';
+    }
+  });
+
+  loadSiteTexts();
 </script>
 </body>
 </html>
