@@ -358,7 +358,9 @@
     .st-item { background:#0b132b; border:1px solid #1c2541; border-radius:10px; padding:14px 16px; transition:border-color 0.2s; }
     .st-item:hover { border-color:#334155; }
     .st-item.modified { border-color:rgba(245,158,11,0.3); }
-    .st-item-key { font-size:11px; color:#64748b; font-family:monospace; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
+    .st-group { margin-bottom:24px; }
+    .st-group-label { font-size:14px; font-weight:600; color:#f59e0b; margin-bottom:10px; padding-bottom:6px; border-bottom:1px solid #1c2541; }
+    .st-item-key { font-size:13px; color:#94a3b8; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
     .st-item-default { font-size:10px; color:#334155; font-style:italic; margin-bottom:6px; white-space:pre-wrap; word-break:break-word; max-height:40px; overflow:hidden; }
     .st-item textarea {
       width:100%; min-height:60px; padding:8px 10px; border-radius:7px; border:1px solid #1c2541;
@@ -1375,24 +1377,52 @@
 
   // ── Site Texts Editor ────────────────────────────────────────────────────
   const HOMEPAGE_KEYS = [
-    'nav_how','nav_pricing','nav_enter','nav_create',
-    'hero_badge','hero_title','hero_sub','hero_cta_primary','hero_cta_secondary','hero_scroll',
-    'how_label','how_title','how_sub','step1_tag','step1_title','step1_desc','step2_tag','step2_title','step2_desc','step3_tag','step3_title','step3_desc',
-    'feat_label','feat_title','feat_sub',
-    'f1_title','f1_desc','f2_title','f2_desc','f3_title','f3_desc','f4_title','f4_desc','f5_title','f5_desc','f6_title','f6_desc','f7_title','f7_desc',
-    'deep_label','deep_title','deep_sub','d1_title','d1_desc','d2_title','d2_desc','d3_title','d3_desc','d4_title','d4_desc',
-    'roles_label','roles_title','roles_sub','role1_name','role1_desc','role2_desc','role3_desc','role4_name','role4_desc','role5_name',
-    'pricing_label','pricing_title','pricing_sub','beta_title','beta_sub',
-    'pricing_cmd_group','p_cmd_free_desc','p_cmd_plus_desc','p_cmd_pro_desc',
-    'pricing_part_group','p_part_std_name','p_part_std_desc','p_part_prem_name','p_part_prem_desc',
-    'p_free','tag_always_free','tag_no_banner','tag_beta_free',
-    'faq_title','faq_sub','faq1_q','faq1_a','faq2_q','faq2_a','faq3_q','faq3_a','faq4_q','faq4_a','faq5_q','faq5_a',
-    'hub_title','hub_sub','hub_card_title','hub_card_desc','hub_btn_create','hub_divider','hub_input_ph','hub_btn_join','hub_loading','hub_room_label','hub_btn_copy','hub_btn_copied','hub_pin_label','hub_pin_hint','hub_change_room',
-    'modal_title','modal_desc','modal_btn_confirm','modal_btn_creating','modal_btn_cancel','modal_req_code',
-    'rev_label','rev_title','rev_sub','rev_cta','rev_author_anon',
-    'footer_tagline','footer_guide_admin','footer_guide_users','footer_feedback',
-    'err_code_required','err_code_invalid','err_room_code','err_room_not_found','err_timeout','err_network','err_server'
+    'hero_badge','hero_title','hero_sub','hero_cta_primary','hero_cta_secondary',
+    'how_title','how_sub',
+    'feat_title','feat_sub',
+    'pricing_title','pricing_sub','beta_title','beta_sub',
+    'faq_title','faq_sub',
+    'hub_title','hub_sub','hub_card_title','hub_card_desc','hub_btn_create',
+    'rev_title','rev_sub',
+    'footer_tagline'
   ];
+
+  const HOMEPAGE_GROUPS = [
+    { label: 'Hero — Sezione principale', keys: ['hero_badge','hero_title','hero_sub','hero_cta_primary','hero_cta_secondary'] },
+    { label: 'Come funziona', keys: ['how_title','how_sub'] },
+    { label: 'Funzionalità', keys: ['feat_title','feat_sub'] },
+    { label: 'Prezzi', keys: ['pricing_title','pricing_sub','beta_title','beta_sub'] },
+    { label: 'FAQ', keys: ['faq_title','faq_sub'] },
+    { label: 'Hub — Crea / Entra stanza', keys: ['hub_title','hub_sub','hub_card_title','hub_card_desc','hub_btn_create'] },
+    { label: 'Recensioni', keys: ['rev_title','rev_sub'] },
+    { label: 'Footer', keys: ['footer_tagline'] }
+  ];
+
+  const HOMEPAGE_LABELS = {
+    hero_badge:'Badge (etichetta piccola sopra il titolo)',
+    hero_title:'Titolo principale',
+    hero_sub:'Sottotitolo descrizione',
+    hero_cta_primary:'Pulsante principale',
+    hero_cta_secondary:'Pulsante secondario',
+    how_title:'Titolo sezione "Come funziona"',
+    how_sub:'Sottotitolo "Come funziona"',
+    feat_title:'Titolo sezione funzionalità',
+    feat_sub:'Sottotitolo funzionalità',
+    pricing_title:'Titolo sezione prezzi',
+    pricing_sub:'Sottotitolo prezzi',
+    beta_title:'Titolo banner gratis',
+    beta_sub:'Sottotitolo banner gratis',
+    faq_title:'Titolo FAQ',
+    faq_sub:'Sottottitolo FAQ',
+    hub_title:'Titolo sezione entra/crea stanza',
+    hub_sub:'Sottotolo sezione entra/crea stanza',
+    hub_card_title:'Titolo card "Sei l\'amministratore?"',
+    hub_card_desc:'Descrizione card admin',
+    hub_btn_create:'Pulsante crea stanza',
+    rev_title:'Titolo sezione recensioni',
+    rev_sub:'Sottottitolo recensioni',
+    footer_tagline:'Tagline footer'
+  };
 
   const HOMEPAGE_DEFAULTS = {
     it: {
@@ -1531,37 +1561,43 @@
     const searchTerm = (document.getElementById('st-search').value || '').toLowerCase().trim();
     const defaults = HOMEPAGE_DEFAULTS[stCurrentLang] || {};
     const overrides = stOverrides[stCurrentLang] || {};
+    const labels = HOMEPAGE_LABELS || {};
 
-    let keys = HOMEPAGE_KEYS.slice();
-    if (searchTerm) {
-      keys = keys.filter(k => {
-        const dv = (defaults[k] || '').toLowerCase();
-        const ov = (overrides[k] && overrides[k].value || '').toLowerCase();
-        return k.toLowerCase().includes(searchTerm) || dv.includes(searchTerm) || ov.includes(searchTerm);
-      });
-    }
-
-    if (keys.length === 0) {
-      listEl.innerHTML = '<div class="st-empty">Nessun testo trovato.</div>';
-      updateSaveBar();
-      return;
-    }
-
-    listEl.innerHTML = keys.map(k => {
+    const renderField = (k) => {
       const dv = defaults[k] !== undefined ? defaults[k] : '(nessun default)';
       const ov = overrides[k] && overrides[k].value;
       const currentVal = stUnsaved[k] !== undefined ? stUnsaved[k] : (ov !== undefined ? ov : dv);
       const isModified = ov !== undefined || stUnsaved[k] !== undefined;
       const escapedDefault = escapeHtml(dv).substring(0, 200);
+      const friendlyLabel = labels[k] || k;
       return `<div class="st-item${isModified ? ' modified' : ''}" data-st-key="${k}">
-        <div class="st-item-key">${k}${isModified && stUnsaved[k] === undefined ? ' <span class="st-saved-badge">salvato</span>' : ''}</div>
+        <div class="st-item-key">${escapeHtml(friendlyLabel)}${isModified && stUnsaved[k] === undefined ? ' <span class="st-saved-badge">salvato</span>' : ''}</div>
         <div class="st-item-default">Default: ${escapedDefault}</div>
         <textarea data-st-key="${k}" rows="2">${escapeHtml(currentVal)}</textarea>
         <div class="st-item-actions">
           ${ov !== undefined ? `<button class="st-reset-btn" onclick="resetSiteText('${k}')">Ripristina default</button>` : ''}
         </div>
       </div>`;
-    }).join('');
+    };
+
+    if (searchTerm) {
+      const matched = HOMEPAGE_KEYS.filter(k => {
+        const dv = (defaults[k] || '').toLowerCase();
+        const ov = (overrides[k] && overrides[k].value || '').toLowerCase();
+        const lbl = (labels[k] || k).toLowerCase();
+        return k.toLowerCase().includes(searchTerm) || dv.includes(searchTerm) || ov.includes(searchTerm) || lbl.includes(searchTerm);
+      });
+      if (matched.length === 0) {
+        listEl.innerHTML = '<div class="st-empty">Nessun testo trovato.</div>';
+      } else {
+        listEl.innerHTML = matched.map(renderField).join('');
+      }
+    } else {
+      listEl.innerHTML = HOMEPAGE_GROUPS.map(group => {
+        const fields = group.keys.map(renderField).join('');
+        return `<div class="st-group"><div class="st-group-label">${escapeHtml(group.label)}</div>${fields}</div>`;
+      }).join('');
+    }
 
     listEl.querySelectorAll('textarea[data-st-key]').forEach(ta => {
       ta.addEventListener('input', () => {
