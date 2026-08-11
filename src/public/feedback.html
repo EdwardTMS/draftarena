@@ -273,11 +273,21 @@
 
   </div>
 
-  <footer class="footer" data-i18n="fb_footer">DraftARENA &mdash; L'asta del fantacalcio in tempo reale</footer>
+  <footer class="footer">
+    <span data-i18n="fb_footer">DraftARENA &mdash; L'asta del fantacalcio in tempo reale</span>
+    <br><span style="font-size:11px;color:#475569;margin-top:6px;display:inline-block;">Scrivici a: <a id="contact-email-link" href="mailto:draftarena.official@gmail.com" style="color:#38bdf8;text-decoration:none;">draftarena.official@gmail.com</a></span>
+  </footer>
 
   <script src="/i18n.js"></script>
   <script>
     I18N.applyLang('feedback');
+    // Carica email di contatto dinamica
+    fetch('/api/contact-email').then(r => r.json()).then(d => {
+      if (d && d.email) {
+        const link = document.getElementById('contact-email-link');
+        if (link) { link.href = 'mailto:' + d.email; link.textContent = d.email; }
+      }
+    }).catch(() => {});
     let tipoAttuale = 'feedback';
     let visAttuale  = 'pubblico';
     let votoAttuale = 0;
