@@ -765,6 +765,92 @@ app.post("/api/superadmin/platform-settings", async (req, res) => {
 });
 
 /* ==========================================================================
+   SITE TEXTS — testi modificabili del sito
+   ========================================================================== */
+app.get("/api/site-texts", async (req, res) => {
+  if (!supabase) return res.json({});
+  const page = String(req.query.page || "homepage");
+  try {
+    const { data, error } = await supabase
+      .from("site_texts")
+      .select("lang, key, value")
+      .eq("page", page);
+    if (error) throw error;
+    const result = {};
+    (data || []).forEach(row => {
+      if (!result[row.lang]) result[row.lang] = {};
+      result[row.lang][row.key] = row.value;
+    });
+    res.json(result);
+  } catch (e) {
+    res.status(500).json({});
+  }
+});
+
+app.get("/api/superadmin/site-texts", async (req, res) => {
+  if (!supabase) return res.json({ success: true, texts: {} });
+  const page = String(req.query.page || "homepage");
+  try {
+    const { data, error } = await supabase
+      .from("site_texts")
+      .select("lang, key, value, updated_at")
+      .eq("page", page);
+    if (error) throw error;
+    const result = {};
+    (data || []).forEach(row => {
+      if (!result[row.lang]) result[row.lang] = {};
+      result[row.lang][row.key] = { value: row.value, updated_at: row.updated_at };
+    });
+    res.json({ success: true, texts: result });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.post("/api/superadmin/site-texts", async (req, res) => {
+  const { password, page, lang, texts } = req.body;
+  if (password !== SUPERADMIN_PASSWORD) {
+    return res.status(401).json({ success: false, error: "Password errata." });
+  }
+  if (!supabase) return res.json({ success: true });
+  if (!page || !lang || !texts || typeof texts !== "object") {
+    return res.status(400).json({ success: false, error: "Parametri mancanti." });
+  }
+  try {
+    const rows = Object.entries(texts).map(([key, value]) => ({
+      page, lang, key, value: String(value), updated_at: new Date().toISOString()
+    }));
+    if (rows.length > 0) {
+      const { error } = await supabase
+        .from("site_texts")
+        .upsert(rows, { onConflict: "page,lang,key" });
+      if (error) throw error;
+    }
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.post("/api/superadmin/site-texts/reset", async (req, res) => {
+  const { password, page, lang, key } = req.body;
+  if (password !== SUPERADMIN_PASSWORD) {
+    return res.status(401).json({ success: false, error: "Password errata." });
+  }
+  if (!supabase) return res.json({ success: true });
+  try {
+    let query = supabase.from("site_texts").delete().eq("page", page || "homepage");
+    if (lang) query = query.eq("lang", lang);
+    if (key) query = query.eq("key", key);
+    const { error } = await query;
+    if (error) throw error;
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+/* ==========================================================================
    RICHIESTE CODICI
    ========================================================================== */
 app.post("/api/richiesta-codice", async (req, res) => {
