@@ -1731,7 +1731,7 @@ app.post("/api/feedback/invia", async (req, res) => {
     });
     if (error) throw error;
 
-    // Invia notifica email per feedback/supporto
+    // Invia notifica email a chi gestisce la piattaforma
     const tipoLabel = tipo === 'supporto' ? 'Richiesta di supporto' : 'Recensione';
     sendNotificationEmail(
       `${tipoLabel} da ${nome || 'Anonimo'}`,
@@ -1745,6 +1745,23 @@ app.post("/api/feedback/invia", async (req, res) => {
       </table>
       <p style="margin-top:16px;padding:12px;background:#f8fafb;border-radius:8px;font-size:14px;line-height:1.6;">${String(messaggio).trim()}</p>`
     ).catch(() => {});
+
+    // Invia email automatica di conferma a chi ha richiesto supporto
+    if (tipo === 'supporto' && email && emailTransporter) {
+      const contactEmail = await getContactEmail();
+      emailTransporter.sendMail({
+        from: `DraftARENA <${GMAIL_USER}>`,
+        to: email,
+        subject: 'Richiesta di supporto ricevuta — DraftARENA',
+        html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;">
+          <h2 style="color:#0f172a;">Ciao${nome ? ' ' + nome : ''},</h2>
+          <p style="font-size:15px;line-height:1.6;color:#334155;">Abbiamo ricevuto la tua richiesta di supporto. Il nostro team la esaminerà e ti risponderà il prima possibile a questa email.</p>
+          <p style="font-size:13px;color:#64748b;margin-top:24px;padding:12px;background:#f8fafb;border-radius:8px;line-height:1.6;"><strong>Il tuo messaggio:</strong><br>${String(messaggio).trim()}</p>
+          <p style="font-size:14px;color:#334155;margin-top:24px;">Grazie per aver scritto a DraftARENA.</p>
+          <p style="font-size:12px;color:#94a3b8;margin-top:32px;border-top:1px solid #e2e8f0;padding-top:16px;">Questa è un'email automatica, non rispondere a questo messaggio. Per ulteriori richieste scrivi a ${contactEmail}.</p>
+        </div>`
+      }).catch((e) => console.error('[EMAIL] Errore invio conferma supporto:', e.message));
+    }
 
     res.json({ success: true });
   } catch (e) {
@@ -2651,6 +2668,119 @@ io.on("connection", (socket) => {
     io.to(rc).emit("updateTeams", room.teams);
     io.to(rc).emit("teamsUpdate", room.teams);
   });
+});
+
+/* ==========================================================================
+   VIDEO GALLERY — API
+   ========================================================================== */
+const videoUpload = multer({
+  dest: "uploads/videos/",
+  limits: { fileSize: 200 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowed = /\.(mp4|webm|ogg|mov|avi|mkv)$/i;
+    if (allowed.test(path.extname(file.originalname))) cb(null, true);
+    else cb(new Error("Formato video non supportato. Usa mp4, webm, ogg, mov, avi o mkv."));
+  }
+});
+
+app.get("/api/videos", async (req, res) => {
+  if (!supabase) return res.json({ success: true, videos: [] });
+  try {
+    const { data, error } = await supabase
+      .from("videos")
+      .select("*")
+      .order("sort_order", { ascending: true });
+    if (error) throw error;
+    res.json({ success: true, videos: data || [] });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.post("/api/superadmin/videos/youtube", async (req, res) => {
+  const { password, title, url, sortOrder } = req.body;
+  if (password !== SUPERADMIN_PASSWORD) {
+    return res.status(401).json({ success: false, error: "Password errata." });
+  }
+  if (!title || !url) {
+    return res.status(400).json({ success: false, error: "Titolo e URL sono obbligatori." });
+  }
+  if (!supabase) return res.json({ success: true });
+  try {
+    const { data, error } = await supabase
+      .from("videos")
+      .insert({
+        title: String(title).trim().slice(0, 200),
+        type: "youtube",
+        url: String(url).trim().slice(0, 500),
+        sort_order: parseInt(sortOrder) || 0
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    res.json({ success: true, video: data });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.post("/api/superadmin/videos/upload", videoUpload.single("video"), async (req, res) => {
+  const password = req.headers["x-sa-password"] || "";
+  if (password !== SUPERADMIN_PASSWORD) {
+    if (req.file) fs.unlink(req.file.path, () => {});
+    return res.status(401).json({ success: false, error: "Password errata." });
+  }
+  if (!req.file) return res.status(400).json({ success: false, error: "Nessun file caricato." });
+  const title = req.body.title || req.file.originalname.replace(/\.[^.]+$/, "");
+  const sortOrder = parseInt(req.body.sortOrder) || 0;
+  if (!supabase) {
+    fs.unlink(req.file.path, () => {});
+    return res.json({ success: true });
+  }
+  try {
+    const ext = path.extname(req.file.originalname) || ".mp4";
+    const newFilename = `video_${Date.now()}${ext}`;
+    const newPath = path.join(__dirname, "..", "public", "videos", newFilename);
+    if (!fs.existsSync(path.dirname(newPath))) fs.mkdirSync(path.dirname(newPath), { recursive: true });
+    fs.renameSync(req.file.path, newPath);
+
+    const { data, error } = await supabase
+      .from("videos")
+      .insert({
+        title: String(title).trim().slice(0, 200),
+        type: "file",
+        url: `/videos/${newFilename}`,
+        sort_order: sortOrder
+      })
+      .select()
+      .single();
+    if (error) throw error;
+    res.json({ success: true, video: data });
+  } catch (e) {
+    if (req.file && fs.existsSync(req.file.path)) fs.unlink(req.file.path, () => {});
+    res.status(500).json({ success: false, error: e.message });
+  }
+});
+
+app.delete("/api/superadmin/videos/:id", async (req, res) => {
+  const password = req.headers["x-sa-password"] || "";
+  if (password !== SUPERADMIN_PASSWORD) {
+    return res.status(401).json({ success: false, error: "Password errata." });
+  }
+  const { id } = req.params;
+  if (!supabase) return res.json({ success: true });
+  try {
+    const { data: video } = await supabase.from("videos").select("type, url").eq("id", id).maybeSingle();
+    const { error } = await supabase.from("videos").delete().eq("id", id);
+    if (error) throw error;
+    if (video && video.type === "file" && video.url && video.url.startsWith("/videos/")) {
+      const filePath = path.join(__dirname, "..", "public", video.url);
+      if (fs.existsSync(filePath)) fs.unlink(filePath, () => {});
+    }
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
 });
 
 /* ==========================================================================
