@@ -855,23 +855,53 @@ app.post("/api/superadmin/site-texts/reset", async (req, res) => {
    ========================================================================== */
 app.post("/api/richiesta-codice", async (req, res) => {
   if (!supabase) return res.json({ success: true });
-  const { nome, cognome, email, nome_lega, num_squadre, piattaforma, telefono, come_trovato, codice_assegnato } = req.body;
+  const { nome, cognome, email, nome_lega, num_squadre, piattaforma, telefono, come_trovato } = req.body;
   if (!nome || !email || !nome_lega) {
     return res.status(400).json({ success: false, error: "Campi obbligatori mancanti." });
   }
   try {
-    const { error } = await supabase.from("code_requests").insert({
-      nome: String(nome).trim().slice(0, 80),
-      cognome: cognome ? String(cognome).trim().slice(0, 80) : null,
-      email: String(email).trim().slice(0, 200),
-      nome_lega: String(nome_lega).trim().slice(0, 200),
-      num_squadre: num_squadre ? parseInt(num_squadre) : null,
-      piattaforma: piattaforma ? String(piattaforma).trim().slice(0, 100) : null,
-      telefono: telefono ? String(telefono).trim().slice(0, 50) : null,
-      come_trovato: come_trovato ? String(come_trovato).trim().slice(0, 500) : null,
-      codice_assegnato: codice_assegnato ? String(codice_assegnato).trim().toUpperCase() : null
-    });
-    if (error) throw error;
+    // Verifica se esiste già una richiesta con questa email
+    const { data: existing } = await supabase
+      .from("code_requests")
+      .select("codice_assegnato")
+      .eq("email", String(email).trim().toLowerCase())
+      .maybeSingle();
+
+    let assignedCode = existing?.codice_assegnato || null;
+
+    // Se non esiste, genera un nuovo codice e registralo
+    if (!assignedCode) {
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let newCode = "DRAFT-";
+      for (let i = 0; i < 6; i++) newCode += chars[Math.floor(Math.random() * chars.length)];
+
+      // Inserisci il codice in access_codes (utile per creare stanze)
+      const { error: codeErr } = await supabase.from("access_codes").insert({
+        code: newCode,
+        type: "promo",
+        max_uses: null,
+        expires_at: null,
+        note: `Auto-generato per ${nome} ${cognome || ''} (${email})`,
+        is_active: true
+      });
+      if (codeErr) throw codeErr;
+
+      assignedCode = newCode;
+
+      // Salva la richiesta con il codice assegnato
+      const { error } = await supabase.from("code_requests").insert({
+        nome: String(nome).trim().slice(0, 80),
+        cognome: cognome ? String(cognome).trim().slice(0, 80) : null,
+        email: String(email).trim().slice(0, 200),
+        nome_lega: String(nome_lega).trim().slice(0, 200),
+        num_squadre: num_squadre ? parseInt(num_squadre) : null,
+        piattaforma: piattaforma ? String(piattaforma).trim().slice(0, 100) : null,
+        telefono: telefono ? String(telefono).trim().slice(0, 50) : null,
+        come_trovato: come_trovato ? String(come_trovato).trim().slice(0, 500) : null,
+        codice_assegnato: assignedCode
+      });
+      if (error) throw error;
+    }
 
     // Invia notifica email alla casella di DraftARENA
     const fullName = `${nome}${cognome ? ' ' + cognome : ''}`;
@@ -885,11 +915,11 @@ app.post("/api/richiesta-codice", async (req, res) => {
         <tr><td style="padding:4px 12px;color:#64748b;">Squadre:</td><td style="padding:4px 12px;">${num_squadre || '—'}</td></tr>
         <tr><td style="padding:4px 12px;color:#64748b;">Piattaforma:</td><td style="padding:4px 12px;">${piattaforma || '—'}</td></tr>
         <tr><td style="padding:4px 12px;color:#64748b;">Come trovati:</td><td style="padding:4px 12px;">${come_trovato || '—'}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Codice assegnato:</td><td style="padding:4px 12px;font-weight:700;color:#2563eb;">${codice_assegnato || '—'}</td></tr>
+        <tr><td style="padding:4px 12px;color:#64748b;">Codice assegnato:</td><td style="padding:4px 12px;font-weight:700;color:#2563eb;">${assignedCode}</td></tr>
       </table>`
     ).catch(() => {});
 
-    res.json({ success: true });
+    res.json({ success: true, code: assignedCode, alreadyExists: !!existing });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
