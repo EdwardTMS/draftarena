@@ -1169,9 +1169,13 @@ app.get("/qr", async (req, res) => {
    ========================================================================== */
 // Preview colonne Excel — restituisce le prime righe per far scegliere all'utente quale colonna è il valore
 app.post("/preview-columns", upload.single("file"), async (req, res) => {
-  if (!req.file) return res.status(400).json({ success: false, error: "Nessun file caricato" });
+  if (!req.file) {
+    console.error("[SERVER] preview-columns: nessun file ricevuto da multer");
+    return res.status(400).json({ success: false, error: "Nessun file caricato. Verifica che il file non sia vuoto e riprova." });
+  }
+  console.log("[SERVER] preview-columns: file ricevuto:", req.file.originalname, "size:", req.file.size, "path:", req.file.path);
   try {
-    const workbook = xlsx.readFile(req.file.path);
+    const workbook = xlsx.readFile(req.file.path, { cellDates: true, cellNF: false, cellText: false });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const matrix = xlsx.utils.sheet_to_json(sheet, { header: 1, defval: "" });
 
@@ -1209,7 +1213,11 @@ app.post("/preview-columns", upload.single("file"), async (req, res) => {
     res.json({ success: true, headerRow, headers, sampleRows, detected });
   } catch (e) {
     console.error("[SERVER] Errore preview colonne:", e);
-    res.status(500).json({ success: false, error: "Errore nella lettura del file" });
+    res.status(500).json({ success: false, error: "Errore nella lettura del file: " + e.message });
+  } finally {
+    if (req.file && req.file.path) {
+      try { require("fs").unlinkSync(req.file.path); } catch(_) {}
+    }
   }
 });
 
@@ -1222,7 +1230,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   const modeRiparazione = req.query.mode === "riparazione";
 
   try {
-    const workbook = xlsx.readFile(req.file.path);
+    const workbook = xlsx.readFile(req.file.path, { cellDates: true, cellNF: false, cellText: false });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const matrix = xlsx.utils.sheet_to_json(sheet, { header: 1, defval: "" });
 
@@ -1303,7 +1311,11 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     });
   } catch (e) {
     console.error("[SERVER] Errore parsing Excel:", e);
-    res.status(500).send("Errore nel parsing del file Excel");
+    res.status(500).send("Errore nel parsing del file Excel: " + e.message);
+  } finally {
+    if (req.file && req.file.path) {
+      try { fs.unlinkSync(req.file.path); } catch(_) {}
+    }
   }
 });
 
@@ -3048,6 +3060,19 @@ app.delete("/api/superadmin/videos/:id", async (req, res) => {
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
+});
+
+// Error handler per errori multer (file troppo grande, formato errato, ecc.)
+app.use((err, req, res, next) => {
+  if (err && err.code && err.code.startsWith("LIMIT_")) {
+    console.error("[SERVER] Multer error:", err.code, err.message);
+    return res.status(400).json({ success: false, error: "Errore nel caricamento del file: " + err.message });
+  }
+  if (err) {
+    console.error("[SERVER] Errore generico middleware:", err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+  next();
 });
 
 /* ==========================================================================
