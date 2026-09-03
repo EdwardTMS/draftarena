@@ -14,44 +14,34 @@
   <style>
     html, body { height: 100%; overflow: hidden; }
     body { font-family: 'Arial', sans-serif; background: radial-gradient(circle at center, #0b132b 0%, #050914 100%); color: #fff; padding: 10px; margin: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 8px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid rgba(16, 185, 129, 0.2); flex-shrink: 0; }
+    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 8px 14px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid rgba(16, 185, 129, 0.2); flex-shrink: 0; }
     .regia-nav span { color: #94a3b8; font-family: 'Urbanist', sans-serif; font-size: 14px; font-weight: bold; }
     .btn-admin-link { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; text-decoration: none; padding: 7px 13px; font-weight: bold; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; transition: all 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); white-space: nowrap; }
     .btn-admin-link:hover { box-shadow: 0 0 15px #10b981; }
     .mazzo-counter-tv { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4); padding: 5px 12px; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; font-weight: bold; color: #38bdf8; text-shadow: 0 0 8px rgba(56,189,248,0.3); white-space: nowrap; }
     .mazzo-counter-tv span { color: #ffffff; font-weight: 800; }
-
-    /* ── Layout: auction center, teams right, QR below ── */
-    .host-body { flex: 1; display: flex; gap: 8px; min-height: 0; }
-    .auction-center { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6px 10px; min-height: 0; max-width: calc(100% - 320px); }
-    .teams-sidebar { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; padding: 6px 8px; background: rgba(11,19,43,0.4); border: 1px solid rgba(16,185,129,0.12); border-radius: 8px; }
-    .teams-sidebar::-webkit-scrollbar { width: 4px; }
-    .teams-sidebar::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 2px; }
-    .teams-sidebar-title { font-family: 'Urbanist', sans-serif; font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; padding: 4px 0; text-align: center; flex-shrink: 0; }
-
-    .team-mini { background: #050914; border: 1px solid rgba(16, 185, 129, 0.12); border-radius: 6px; padding: 6px 10px; display: flex; flex-direction: column; gap: 3px; }
-    .team-mini-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-    .team-mini-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-    .team-mini-name { color: #ffcc00; font-weight: bold; font-size: 13px; font-family: 'Urbanist', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .team-mini-budget { color: #10b981; font-weight: bold; font-size: 14px; white-space: nowrap; }
-    .team-mini-slots { display: flex; gap: 4px; flex-wrap: wrap; font-size: 10px; font-family: 'Urbanist', sans-serif; }
-    .slot-pill { padding: 1px 6px; border-radius: 4px; font-weight: 700; }
-    .slot-pill.por { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.2); }
-    .slot-pill.def { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
-    .slot-pill.cen { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
-    .slot-pill.att { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
-    .slot-pill.full { opacity: 0.4; }
-    .team-mini-players { color: #94a3b8; font-size: 10px; white-space: nowrap; }
-
-    .qr-bar { display: flex; align-items: center; justify-content: center; gap: 12px; flex-shrink: 0; padding: 6px 14px; background: rgba(11, 19, 43, 0.6); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.1); margin-top: 6px; }
-    #time { font-family: 'Urbanist', sans-serif; font-size: clamp(3rem, 10vw, 7em); color: #ef4444; font-weight: 800; margin: 4px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; line-height: 1; }
-    #player { font-family: 'Urbanist', sans-serif; font-size: clamp(1.5rem, 5vw, 4em); margin: 4px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; line-height: 1.1; }
-    #info-giocatore { font-size: clamp(0.8rem, 2vw, 1.5em); color: #10b981; margin-bottom: 12px; font-family: 'Urbanist', sans-serif; font-weight: bold; }
-    #bid { font-family: 'Urbanist', sans-serif; font-size: clamp(2rem, 7vw, 4.5em); color: #10b981; font-weight: 800; text-shadow: 0 0 25px rgba(16, 185, 129, 0.4); line-height: 1; }
-    #winner { font-size: clamp(0.9rem, 2.5vw, 2em); color: #ffcc00; margin-top: 8px; font-family: 'Urbanist', sans-serif; font-weight: bold; text-shadow: 0 0 10px rgba(255,204,0,0.2); }
+    .mazzo-counter-tv .counter-sub { color: #f59e0b; font-weight: 700; font-size: 12px; }
+    .app-layout { display: flex; flex: 1; width: 100%; gap: 12px; min-height: 0; }
+    .main-content { flex: 2.2; text-align: center; padding: 6px 10px; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+    .sidebar { flex: 1; background: #0b132b; padding: 10px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.15); box-sizing: border-box; overflow: hidden; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+    .sidebar h3 { font-family: 'Urbanist', sans-serif; color: #ffcc00; margin: 0 0 4px 0; border-bottom: 1px solid #1c2541; padding-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-size: 13px; flex-shrink: 0; }
+    #time { font-family: 'Urbanist', sans-serif; font-size: clamp(2.5rem, 9vw, 7em); color: #ef4444; font-weight: 800; margin: 4px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; line-height: 1; }
+    #player { font-family: 'Urbanist', sans-serif; font-size: clamp(1.2rem, 4.5vw, 3.5em); margin: 4px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; line-height: 1.1; }
+    #info-giocatore { font-size: clamp(0.7rem, 1.8vw, 1.4em); color: #10b981; margin-bottom: 12px; font-family: 'Urbanist', sans-serif; font-weight: bold; }
+    #bid { font-family: 'Urbanist', sans-serif; font-size: clamp(1.8rem, 6.5vw, 4.5em); color: #10b981; font-weight: 800; text-shadow: 0 0 25px rgba(16, 185, 129, 0.4); line-height: 1; }
+    #winner { font-size: clamp(0.8rem, 2.2vw, 1.8em); color: #ffcc00; margin-top: 8px; font-family: 'Urbanist', sans-serif; font-weight: bold; text-shadow: 0 0 10px rgba(255,204,0,0.2); }
     button { padding: 10px 20px; margin: 4px; font-size: clamp(12px, 1.3vw, 15px); font-weight: bold; cursor: pointer; border-radius: 6px; border: none; transition: all 0.2s; font-family: 'Urbanist', sans-serif; text-transform: uppercase; }
     button:hover { transform: translateY(-1px); }
     .btn-rose { background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%); color: #000; font-weight: 800; }
+
+    /* ── Teams grid: all teams on one page, no scroll ── */
+    #teams-box { overflow: hidden; flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; align-content: start; }
+    .team-card { background: #050914; padding: 5px 7px; border-radius: 5px; border: 1px solid rgba(16, 185, 129, 0.1); display: flex; flex-direction: column; gap: 2px; }
+    .team-card .tc-header { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; }
+    .team-card .tc-name { margin: 0; color: #ffcc00; font-size: 11px; font-family: 'Urbanist', sans-serif; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+    .team-card .tc-budget { font-size: 12px; font-weight: bold; color: #10b981; flex-shrink: 0; }
+    .team-card .tc-slots { font-size: 9px; color: #94a3b8; font-weight: bold; letter-spacing: 0.3px; line-height: 1.3; }
+    .team-card .tc-slots .tc-total { color: #38bdf8; }
 
     #vincitore-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 9, 20, 0.98); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; border: 4px solid #ffcc00; padding: 20px; box-sizing: border-box; }
     #vincitore-overlay h1 { font-family: 'Urbanist', sans-serif; font-size: clamp(2.5rem, 8vw, 6em); color: #ffcc00; margin: 0; text-shadow: 0 0 35px rgba(255,204,0,0.4); text-align: center; }
@@ -60,8 +50,10 @@
     /* ── Tablet (≤ 900px) ─────────────────────────────────────── */
     @media (max-width: 900px) {
       html, body { overflow: auto; height: auto; }
-      .host-body { flex-direction: column; }
-      .teams-sidebar { width: 100%; max-height: 35vh; }
+      .app-layout { flex-direction: column; gap: 10px; }
+      .sidebar { min-height: 200px; }
+      .sidebar h3 { font-size: 12px; }
+      #teams-box { grid-template-columns: 1fr 1fr; }
     }
 
     /* ── Mobile (≤ 600px) ─────────────────────────────────────── */
@@ -71,7 +63,8 @@
       .nav-hub-btn { font-size: 12px !important; padding: 5px 10px !important; }
       .btn-admin-link { display: none; }
       .mazzo-counter-tv { font-size: 11px; padding: 4px 9px; }
-      .auction-center { padding: 6px; }
+      .main-content { padding: 6px; }
+      #teams-box { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -81,15 +74,15 @@
 <div id="room-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#050914;z-index:9999;display:flex;align-items:center;justify-content:center;">
   <div style="background:#0b132b;border:1px solid rgba(56,189,248,0.2);border-radius:14px;padding:32px;width:340px;max-width:90%;">
     <h2 style="color:#38bdf8;margin:0 0 4px 0;font-family:'Urbanist',sans-serif;">DraftARENA</h2>
-    <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;" data-i18n="host_gate_title">TV Host — inserisci il codice stanza</p>
+    <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;">TV Host — inserisci il codice stanza</p>
     <div style="display:flex;gap:8px;">
-      <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice stanza" data-i18n-placeholder="host_gate_ph"
+      <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice stanza"
         style="flex:1;padding:12px;border-radius:8px;border:1px solid #1c2541;background:#050914;color:#fff;font-size:16px;text-transform:uppercase;letter-spacing:3px;font-weight:bold;">
-      <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;" data-i18n="host_gate_btn">ENTRA</button>
+      <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;">ENTRA</button>
     </div>
     <div id="gate-error" style="color:#ef4444;font-size:12px;margin-top:8px;min-height:16px;"></div>
-    <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:6px;display:none;" data-i18n="host_gate_loading">Connessione...</div>
-    <a href="/#hub" style="display:block;margin-top:14px;color:#475569;text-align:center;font-size:12px;text-decoration:none;" data-i18n="host_gate_back">← Torna all'Hub</a>
+    <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:6px;display:none;">Connessione...</div>
+    <a href="/#hub" style="display:block;margin-top:14px;color:#475569;text-align:center;font-size:12px;text-decoration:none;">← Torna all'Hub</a>
   </div>
 </div>
 
@@ -97,12 +90,12 @@
 <div id="pin-gate-tv" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;flex-direction:column;">
   <div style="background:#0b132b;border:1px solid #f59e0b;border-radius:14px;padding:32px;width:320px;max-width:90%;text-align:center;">
     <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
-    <h3 style="color:#f59e0b;margin:0 0 4px 0;font-family:'Urbanist',sans-serif;" data-i18n="host_pin_title">PIN Regia TV</h3>
-    <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;" data-i18n="host_pin_desc">Inserisci il PIN per abilitare i controlli della TV Host.</p>
+    <h3 style="color:#f59e0b;margin:0 0 4px 0;font-family:'Urbanist',sans-serif;">PIN Regia TV</h3>
+    <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;">Inserisci il PIN per abilitare i controlli della TV Host.</p>
     <input id="pin-gate-tv-input" type="text" maxlength="4" inputmode="numeric" placeholder="----"
       style="width:100%;box-sizing:border-box;padding:12px;font-size:1.5rem;text-align:center;letter-spacing:0.3em;background:#050914;border:1px solid #334155;border-radius:8px;color:#fff;margin-bottom:8px;">
     <div class="pin-gate-error" style="color:#ef4444;font-size:12px;min-height:18px;margin-bottom:8px;"></div>
-    <button onclick="submitPinGateTv()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;" data-i18n="host_pin_btn">ENTRA</button>
+    <button onclick="submitPinGateTv()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">ENTRA</button>
   </div>
 </div>
 
@@ -112,74 +105,52 @@
 <audio id="snd-lost" src="/sounds/noone.mp3" preload="auto"></audio>
 
 <div class="regia-nav">
-  <div><a href="/#hub" class="nav-hub-btn" style="color:#94a3b8; text-decoration:none; font-size:13px; padding:6px 12px; border:1px solid rgba(148,163,184,0.3); border-radius:6px; font-weight:bold; transition:all 0.2s;" onmouseover="this.style.background='rgba(148,163,184,0.1)'" onmouseout="this.style.background='transparent'" data-i18n="host_nav_hub">← Hub</a></div>
+  <div><a href="/#hub" class="nav-hub-btn" style="color:#94a3b8; text-decoration:none; font-size:13px; padding:6px 12px; border:1px solid rgba(148,163,184,0.3); border-radius:6px; font-weight:bold; transition:all 0.2s;" onmouseover="this.style.background='rgba(148,163,184,0.1)'" onmouseout="this.style.background='transparent'">← Hub</a></div>
   <div style="display:flex;align-items:center;gap:8px;"><img src="/DraftARENAws.png" alt="DraftARENA" style="height:30px;"> <span id="nav-room-badge" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:4px;padding:2px 8px;font-size:12px;color:#38bdf8;font-weight:bold;letter-spacing:1px;display:none;"></span></div>
-  <div class="mazzo-counter-tv"><span data-i18n="host_nav_players">🏃 GIOCATORI NEL MAZZO:</span> <span id="tv-count-disponibili">0</span></div>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <button id="lang-toggle" onclick="I18N.toggle('host')" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:6px 10px;font-size:12px;color:#38bdf8;font-weight:bold;cursor:pointer;white-space:nowrap;">🇬🇧 EN</button>
-    <a href="/admin" target="_blank" class="btn-admin-link" data-i18n="host_nav_admin">🛠️ APRI PANNELLO REGOLE</a>
-  </div>
+  <div class="mazzo-counter-tv">🏃 MAZZO: <span id="tv-count-disponibili">0</span> <span class="counter-sub">| ❌ SCARTATI: <span id="tv-count-scartati">0</span></span></div>
+  <div><a href="/admin" target="_blank" class="btn-admin-link">🛠️ APRI PANNELLO REGOLE</a></div>
 </div>
 
-<div class="host-body">
-  <!-- CENTER: Auction -->
-  <div class="auction-center">
-    <div id="auction-ended-overlay" style="display:none;flex:1;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;width:100%;box-sizing:border-box;">
-      <div style="max-width:600px;">
-        <div style="font-size:3rem;margin-bottom:12px;">🏁</div>
-        <h1 style="color:#10b981;font-size:2rem;margin:0 0 8px 0;">ASTA CONCLUSA</h1>
-        <p style="color:#94a3b8;font-size:14px;margin:0 0 24px 0;">Questa stanza è in modalità riepilogo. Le rose finali sono visibili sulla destra.</p>
-        <button class="btn-rose" onclick="vaiARose()" style="font-size:16px;padding:12px 28px;">📋 VEDI LE ROSE COMPLETE</button>
-      </div>
+<div class="app-layout">
+  <div class="main-content">
+    <div id="vincitore-overlay">
+      <h1 id="overlay-titolo">🏅 AGGIUDICATO!</h1>
+      <h2 id="overlay-dettagli">-</h2>
     </div>
 
-    <div id="auction-live-content" style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;width:100%;">
-      <div id="vincitore-overlay">
-        <h1 id="overlay-titolo" data-i18n="host_sold">🏅 AGGIUDICATO!</h1>
-        <h2 id="overlay-dettagli">-</h2>
-      </div>
+    <div>
+      <div id="time">10</div>
+      <div id="player">-</div>
+      <div id="info-giocatore">Ruolo: - | Squadra: -</div>
+      <div id="bid">0 €</div>
+      <div id="winner">In attesa di offerte dai telefoni...</div>
+    </div>
 
-      <div>
-        <div id="time">10</div>
-        <div id="player">-</div>
-        <div id="info-giocatore" data-i18n="host_info_role">Ruolo: - | Squadra: -</div>
-        <div id="bid">0 €</div>
-        <div id="winner" data-i18n="host_waiting">In attesa di offerte dai telefoni...</div>
-      </div>
-
-      <div style="margin-top:10px;">
-        <button class="btn-rose" onclick="vaiARose()" data-i18n="host_btn_rose">📋 LE ROSE</button>
-      </div>
+    <div style="margin-top:16px;">
+      <button class="btn-rose" onclick="vaiARose()">📋 LE ROSE</button>
     </div>
   </div>
 
-  <!-- RIGHT: Teams sidebar -->
-  <div class="teams-sidebar">
-    <div class="teams-sidebar-title">Squadre</div>
-    <div id="teams-grid" style="display:flex;flex-direction:column;gap:4px;"></div>
-  </div>
-</div>
+  <div class="sidebar">
+    <h3>📊 CLASSIFICA CREDITI & ROSE</h3>
+    <div id="teams-box"><p style="color: #64748b; text-align:center; font-size: 11px;">Nessuna fantasquadra registrata...</p></div>
 
-<!-- BELOW: QR -->
-<div class="qr-bar">
-  <img id="qr-connect" src="" alt="QR" style="background:white;padding:4px;display:none;width:60px;height:60px;border-radius:4px;">
-  <div>
-    <p style="font-size:10px;color:#64748b;margin:0;" data-i18n="host_phone_wifi">Indirizzo Wi-Fi:</p>
-    <b id="link-connect" style="color:#10b981;font-size:11px;word-break:break-all;">IP...</b>
+    <!-- QR Code per collegamento telefoni -->
+    <div style="margin-top:auto;text-align:center;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;">
+      <div style="font-size:9px;color:#64748b;margin-bottom:4px;letter-spacing:0.03em;">📷 Inquadra per offrire</div>
+      <img id="qr-phone" src="" alt="QR" style="width:80px;height:80px;border-radius:6px;background:#fff;padding:3px;display:none;">
+      <div id="qr-placeholder" style="width:80px;height:80px;margin:0 auto;display:flex;align-items:center;justify-content:center;color:#64748b;font-size:8px;border-radius:6px;border:1px dashed rgba(255,255,255,0.08);">...</div>
+    </div>
   </div>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script src="/i18n.js"></script>
 <script>
   const socket = io({ transports: ["polling"] });
-  I18N.applyLang('host');
   let listaCompletaGiocatori = [];
   let ultimoGiocatoreAttivo = null;
   let currentRoomCode = null;
   let pendingSocketRoomCode = null;
-  let roomConfig = { LIMITS: { P: 3, D: 10, C: 8, A: 4 } };
-  let _hostTeams = {};
 
   function getStoredAdminPin() { return sessionStorage.getItem('adminPin') || ''; }
 
@@ -228,6 +199,18 @@
     badge.textContent = code;
     badge.style.display = 'inline';
     hideGate();
+
+    // Genera QR code per telefoni
+    const phoneUrl = window.location.origin + '/phone.html?room=' + code;
+    const qrImg = document.getElementById('qr-phone');
+    const qrPh = document.getElementById('qr-placeholder');
+    const qrSrc = '/qr?data=' + encodeURIComponent(phoneUrl);
+    qrImg.src = qrSrc;
+    qrImg.onload = () => {
+      qrImg.style.display = 'inline-block';
+      qrPh.style.display = 'none';
+    };
+
     if (socket.connected) {
       socket.emit('joinRoom', code);
       const pin = getStoredAdminPin();
@@ -257,8 +240,8 @@
       try {
         const res = await fetchWithTimeout('/api/room/join/' + saved, 8000);
         if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
-        else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || I18N.t('host','host_gate_err_notfound')); }
-      } catch(e) { gateSetError(I18N.t('host','host_gate_err_server')); }
+        else { sessionStorage.removeItem('roomCode'); gateSetError(res.error || 'Stanza non trovata.'); }
+      } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
       finally { gateSetLoading(false); }
     }
   })();
@@ -277,21 +260,17 @@
     try {
       const res = await fetchWithTimeout('/api/room/join/' + code, 8000);
       if (res.success) { sessionStorage.setItem('roomCode', res.roomCode); onRoomJoined(res.roomCode); }
-      else gateSetError(res.error || I18N.t('host','host_gate_err_notfound'));
-    } catch(e) { gateSetError(I18N.t('host','host_gate_err_server')); }
+      else gateSetError(res.error || 'Stanza non trovata.');
+    } catch(e) { gateSetError('Server non raggiungibile. Ricarica con Ctrl+Shift+R.'); }
     finally { gateSetLoading(false); }
   }
 
   // ── Game logic ────────────────────────────────────────────────────────
-  socket.on('connectionData', (data) => {
-    const qrImg = document.getElementById("qr-connect");
-    if (qrImg) { qrImg.src = data.qr; qrImg.style.display = "block"; }
-    const linkText = document.getElementById("link-connect");
-    if (linkText) linkText.innerText = data.url;
-  });
 
   let ultimoHighestBidder = null;
 
+  // FIX 1: l'overlay viene nascosto SOLO quando arriva un nuovo giocatore,
+  // non ad ogni tick del timer (che sennò lo cancellava immediatamente).
   socket.on("update", s => {
     if (s.player) {
       document.getElementById("vincitore-overlay").style.display = "none";
@@ -305,36 +284,38 @@
       if (s.highestBidder && s.highestBidder !== ultimoHighestBidder) {
         ultimoHighestBidder = s.highestBidder;
         document.getElementById("snd-start").play().catch(() => {});
+        // Ferma e resetta il countdown audio: ripartirà da capo quando il timer tornerà a 3
         const sndEnd = document.getElementById("snd-end");
         sndEnd.pause();
         sndEnd.currentTime = 0;
       }
       document.getElementById("player").innerText = s.player.nome || "-";
       document.getElementById("info-giocatore").innerText =
-        "⚔️ " + I18N.t('host','host_role_label').replace('Mantra:','') + " " + (s.player.ruolo || "-") +
-        "   |   🏢 " + I18N.t('host','host_team_label').replace('di A:','') + " " + (s.player.squadra || "-");
+        "⚔️ Ruolo Mantra: " + (s.player.ruolo || "-") +
+        "   |   🏢 Squadra di A: " + (s.player.squadra || "-");
     } else {
       document.getElementById("player").innerText = "-";
-      document.getElementById("info-giocatore").innerText = I18N.t('host','host_info_role');
+      document.getElementById("info-giocatore").innerText = "Ruolo: - | Squadra: -";
       ultimoGiocatoreAttivo = null;
     }
 
     document.getElementById("bid").innerText = s.currentPrice + " €";
 
     if (s.isPaused) {
-      document.getElementById("winner").innerText = I18N.t('host','host_paused');
+      document.getElementById("winner").innerText = "⏸️ ASTA IN PAUSA DALLA REGIA...";
       document.getElementById("winner").style.color = "#ffaa00";
       document.getElementById("time").style.color = "#ffaa00";
     } else {
       document.getElementById("winner").innerText = s.highestBidder
-        ? I18N.t('host','host_bid_current') + " " + s.highestBidder
-        : I18N.t('host','host_waiting_short');
+        ? "🔥 Offerta corrente di: " + s.highestBidder
+        : "In attesa di offerte...";
       document.getElementById("winner").style.color = "#ffcc00";
       document.getElementById("time").style.color = "#ef4444";
     }
 
     document.getElementById("time").innerText = s.time;
 
+    // FIX 2: il suono countdown parte una sola volta (a 3), non a 3-2-1 sovrapposto.
     if (s.time === 3 && !s.isPaused && s.player !== null) {
       document.getElementById("snd-end").play().catch(() => {});
     }
@@ -346,97 +327,63 @@
     const dettagli = document.getElementById("overlay-dettagli");
 
     if (s.winner) {
-      document.getElementById("overlay-titolo").innerText = I18N.t('host','host_sold');
+      document.getElementById("overlay-titolo").innerText = "🏅 AGGIUDICATO!";
       document.getElementById("snd-sold").play().catch(() => {});
       dettagli.innerHTML =
-        "🎯 <span style='color:#10b981;'>" + s.player + "</span> " + (I18N.lang()==='en'?'bought by':'acquistato da') + " <br><br>" +
-        "🏅 <span style='color:#ffcc00;'>" + s.winner.toUpperCase() + "</span> " + (I18N.lang()==='en'?'for':'per') + " " +
+        "🎯 <span style='color:#10b981;'>" + s.player + "</span> acquistato da <br><br>" +
+        "🏅 <span style='color:#ffcc00;'>" + s.winner.toUpperCase() + "</span> per " +
         "<span style='color:#10b981; font-weight:bold;'>" + s.price + " cr</span>";
     } else {
-      document.getElementById("overlay-titolo").innerText = I18N.t('host','host_unsold');
+      document.getElementById("overlay-titolo").innerText = "❌ INVENDUTO";
       document.getElementById("snd-lost").play().catch(() => {});
       dettagli.innerHTML =
-        "<span style='color:#ef4444;'>" + s.player + "</span> " + I18N.t('host','host_unsold').toLowerCase();
+        "<span style='color:#ef4444;'>" + s.player + "</span> rimane INVENDUTO";
     }
     overlay.style.display = "flex";
   });
 
-  // ── Render teams with per-role counts ──
-  function slotClass(rep, taken, max) {
-    const cls = rep === 'P' ? 'por' : rep === 'D' ? 'def' : rep === 'C' ? 'cen' : 'att';
-    return cls + (taken >= max ? ' full' : '');
-  }
-
+  // FIX 3: ascolta entrambi gli eventi teams (il server emette sia updateTeams che teamsUpdate).
   function renderTeams(allTeams) {
-    const container = document.getElementById("teams-grid");
-    if (!container) return;
-    container.innerHTML = "";
-    const limits = (roomConfig && roomConfig.LIMITS) || { P: 3, D: 10, C: 8, A: 4 };
-    const maxP = limits.P || 0, maxD = limits.D || 0, maxC = limits.C || 0, maxA = limits.A || 0;
-    const maxTotal = maxP + maxD + maxC + maxA;
+    const container = document.getElementById("teams-box");
     const keys = Object.keys(allTeams);
     if (keys.length === 0) {
-      container.innerHTML = '<p style="color:#64748b;text-align:center;" data-i18n="host_no_teams">Nessuna fantasquadra registrata...</p>';
+      container.innerHTML = '<p style="color: #64748b; text-align:center; font-size: 11px;">Nessuna fantasquadra registrata...</p>';
       return;
     }
-    const missingLabel = I18N.lang() === 'en' ? 'missing' : 'mancano';
+    container.innerHTML = "";
     keys.forEach(k => {
       const t = allTeams[k];
       const slots = t.slots || { P: 0, D: 0, C: 0, A: 0 };
-      const p = slots.P || 0, d = slots.D || 0, c = slots.C || 0, a = slots.A || 0;
-      const taken = p + d + c + a;
-      const missing = Math.max(0, maxTotal - taken);
+      const totalPlayers = (slots.P || 0) + (slots.D || 0) + (slots.C || 0) + (slots.A || 0);
       const div = document.createElement("div");
-      div.className = "team-mini";
+      div.className = "team-card";
       div.innerHTML =
-        "<div class='team-mini-row'>" +
-          "<div class='team-mini-info'>" +
-            "<div class='team-mini-name'>" + t.name + "</div>" +
-            "<div class='team-mini-players'>" + taken + "/" + maxTotal + " · " + missingLabel + " " + missing + "</div>" +
-          "</div>" +
-          "<div class='team-mini-budget'>" + t.budget + " cr</div>" +
+        "<div class='tc-header'>" +
+          "<h4 class='tc-name'>" + t.name + "</h4>" +
+          "<span class='tc-budget'>" + t.budget + " cr</span>" +
         "</div>" +
-        "<div class='team-mini-slots'>" +
-          "<span class='slot-pill " + slotClass('P', p, maxP) + "'>POR " + p + "/" + maxP + "</span>" +
-          "<span class='slot-pill " + slotClass('D', d, maxD) + "'>D " + d + "/" + maxD + "</span>" +
-          "<span class='slot-pill " + slotClass('C', c, maxC) + "'>C " + c + "/" + maxC + "</span>" +
-          "<span class='slot-pill " + slotClass('A', a, maxA) + "'>A " + a + "/" + maxA + "</span>" +
+        "<div class='tc-slots'>" +
+          "P:" + (slots.P || 0) + " D:" + (slots.D || 0) + " C:" + (slots.C || 0) + " A:" + (slots.A || 0) +
+          " <span class='tc-total'>(" + totalPlayers + ")</span>" +
         "</div>";
       container.appendChild(div);
     });
   }
 
-  socket.on("updateTeams", t => { _hostTeams = t || {}; renderTeams(t); });
-  socket.on("teamsUpdate", t => { _hostTeams = t || {}; renderTeams(t); });
-  socket.on("configUpdate", (data) => {
-    if (data && data.CONFIG) {
-      roomConfig = data.CONFIG;
-      renderTeams(_hostTeams);
-    }
-  });
-
-  // ─── ASTA CONCLUSA ──────────────────────────────────────────────────────────
-  socket.on("auctionEndedState", (ended) => {
-    const overlay = document.getElementById("auction-ended-overlay");
-    const liveContent = document.getElementById("auction-live-content");
-    if (!overlay) return;
-    if (ended) {
-      overlay.style.display = "flex";
-      if (liveContent) liveContent.style.display = "none";
-    } else {
-      overlay.style.display = "none";
-      if (liveContent) liveContent.style.display = "flex";
-    }
-  });
+  socket.on("updateTeams", renderTeams);
+  socket.on("teamsUpdate", renderTeams);
 
   socket.on("playersList", list => {
     listaCompletaGiocatori = list;
     document.getElementById("tv-count-disponibili").innerText = list.length;
   });
 
+  socket.on("discardedCount", count => {
+    document.getElementById("tv-count-scartati").innerText = count;
+  });
+
   function vaiARose() {
-    const code = new URLSearchParams(location.search).get("room") || currentRoomCode;
-    if (code) window.open('rose.html?room=' + code, '_blank');
+    if (currentRoomCode) window.location.href = '/rose.html?room=' + currentRoomCode;
   }
 </script>
 </body>
