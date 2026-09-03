@@ -674,29 +674,29 @@
   <div id="pin-gate" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:10000;align-items:center;justify-content:center;flex-direction:column;">
     <div style="background:#1e293b;border:1px solid #f59e0b;border-radius:14px;padding:32px;width:320px;max-width:90%;text-align:center;">
       <div style="font-size:2rem;margin-bottom:8px;">🔒</div>
-      <h3 style="color:#f59e0b;margin:0 0 4px 0;" data-i18n="admin_pin_title">PIN Regia</h3>
-      <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;" data-i18n="admin_pin_desc">Inserisci il PIN che hai ricevuto alla creazione della stanza.</p>
+      <h3 style="color:#f59e0b;margin:0 0 4px 0;">PIN Regia</h3>
+      <p style="color:#94a3b8;font-size:12px;margin:0 0 16px 0;">Inserisci il PIN che hai ricevuto alla creazione della stanza.</p>
       <input id="pin-gate-input" type="text" maxlength="4" inputmode="numeric" placeholder="----"
         style="width:100%;box-sizing:border-box;padding:12px;font-size:1.5rem;text-align:center;letter-spacing:0.3em;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#fff;margin-bottom:8px;">
       <div class="pin-gate-error" style="color:#ef4444;font-size:12px;min-height:18px;margin-bottom:8px;"></div>
-      <button onclick="submitPinGate()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;" data-i18n="admin_pin_btn">ENTRA</button>
+      <button onclick="submitPinGate()" style="width:100%;padding:12px;background:#f59e0b;color:#000;font-weight:bold;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">ENTRA</button>
     </div>
   </div>
   <!-- ROOM GATE ─────────────────────────────────────────────────────────── -->
   <div id="room-gate" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0f172a;z-index:9999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0;">
     <div style="background:#1e293b;border:1px solid #334155;border-radius:14px;padding:32px;width:360px;max-width:90%;">
       <h2 style="color:#38bdf8;margin:0 0 4px 0;font-size:1.4rem;">DraftARENA</h2>
-      <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;" data-i18n="admin_gate_subtitle">Pannello Amministratore</p>
+      <p style="color:#64748b;font-size:12px;margin:0 0 20px 0;">Pannello Amministratore</p>
 
       <div style="display:flex;gap:8px;margin-bottom:12px;">
-        <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice (es: ABC123)" data-i18n-placeholder="admin_gate_ph"
+        <input id="gate-code-input" type="text" maxlength="6" placeholder="Codice (es: ABC123)"
           style="flex:1;padding:11px 12px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:15px;text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
-        <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;white-space:nowrap;" data-i18n="admin_gate_btn">ENTRA</button>
+        <button id="gate-btn-join" style="padding:10px 16px;border-radius:8px;border:none;background:#10b981;color:#fff;font-weight:bold;font-size:14px;cursor:pointer;white-space:nowrap;">ENTRA</button>
       </div>
       <div id="gate-error" style="color:#ef4444;font-size:12px;margin-top:4px;min-height:16px;"></div>
-      <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:4px;display:none;" data-i18n="admin_gate_loading">Connessione in corso...</div>
+      <div id="gate-loading" style="color:#38bdf8;font-size:12px;margin-top:4px;display:none;">Connessione in corso...</div>
       <div style="border-top:1px solid #1c2541;margin-top:14px;padding-top:12px;text-align:center;">
-        <a href="/#hub" style="color:#475569;font-size:12px;text-decoration:none;" data-i18n="admin_gate_link">Non hai ancora una stanza? <span style="color:#38bdf8;font-weight:bold;">Creane una dall'Hub →</span></a>
+        <a href="/#hub" style="color:#475569;font-size:12px;text-decoration:none;">Non hai ancora una stanza? <span style="color:#38bdf8;font-weight:bold;">Creane una dall'Hub →</span></a>
       </div>
     </div>
   </div>
@@ -710,7 +710,7 @@
       ⚠️ Connessione persa — riconnessione in corso...
       <button onclick="location.reload()"
         style="margin-left:16px;background:#ef4444;border:none;color:#fff;
-               padding:3px 10px;border-radius:4px;cursor:pointer;font-weight:bold;font-size:0.8rem;" data-i18n="admin_conn_reload">
+               padding:3px 10px;border-radius:4px;cursor:pointer;font-weight:bold;font-size:0.8rem;">
         Ricarica
       </button>
     </div>
@@ -718,32 +718,31 @@
     <!-- Header -->
     <header class="header">
         <div style="display:flex; align-items:center; gap:1rem;">
-            <a href="/#hub" class="btn-hub-mobile" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border:1px solid var(--border); border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'" data-i18n="admin_nav_hub">← Hub</a>
+            <a href="/#hub" class="btn-hub-mobile" style="color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border:1px solid var(--border); border-radius:6px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'">← Hub</a>
             <img src="/DraftARENAws.png" alt="DraftARENA" style="height:30px;max-height:30px;">
-            <a href="/guida-admin" target="_blank" title="Guida Admin" style="color:var(--text-secondary); text-decoration:none; font-size:0.8rem; padding:0.35rem 0.75rem; border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'" data-i18n="admin_nav_guide">? Guida</a>
-            <button id="lang-toggle" onclick="I18N.toggle('admin')" style="color:#38bdf8; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.3); font-size:0.8rem; padding:0.35rem 0.75rem; border-radius:6px; cursor:pointer; font-weight:bold; transition:all 0.2s;" onmouseover="this.style.background='rgba(56,189,248,0.2)'" onmouseout="this.style.background='rgba(56,189,248,0.1)'">🇬🇧 EN</button>
-            <button id="btn-proiettore" onclick="apriProiettore()" title="Apri schermata proiettore/TV" style="display:none; color:#f59e0b; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); font-size:0.8rem; padding:0.35rem 0.75rem; border-radius:6px; cursor:pointer; transition:all 0.2s; font-weight:600;" onmouseover="this.style.background='rgba(245,158,11,0.2)'" onmouseout="this.style.background='rgba(245,158,11,0.1)'" data-i18n="admin_nav_projector">🖥️ Proiettore</button>
+            <a href="/guida-admin" target="_blank" title="Guida Admin" style="color:var(--text-secondary); text-decoration:none; font-size:0.8rem; padding:0.35rem 0.75rem; border:1px solid var(--border); border-radius:6px; display:flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.background='var(--bg-input)'" onmouseout="this.style.background='transparent'">? Guida</a>
+            <button id="btn-proiettore" onclick="apriProiettore()" title="Apri schermata proiettore/TV" style="display:none; color:#f59e0b; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.4); font-size:0.8rem; padding:0.35rem 0.75rem; border-radius:6px; cursor:pointer; transition:all 0.2s; font-weight:600;" onmouseover="this.style.background='rgba(245,158,11,0.2)'" onmouseout="this.style.background='rgba(245,158,11,0.1)'">&#x1F4FA; Proiettore</button>
         </div>
         <div class="league-info">
             <div style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);border-radius:6px;padding:0.3rem 0.8rem;display:flex;align-items:center;gap:8px;">
-              <span style="font-size:11px;color:#64748b;" data-i18n="admin_room_label">STANZA</span>
+              <span style="font-size:11px;color:#64748b;">STANZA</span>
               <span id="room-code-display" style="font-weight:bold;color:#38bdf8;letter-spacing:2px;font-size:1rem;">---</span>
-              <button onclick="copiaCodice()" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-size:11px;padding:0;font-weight:bold;" title="Copia codice" data-i18n="admin_copy">COPIA</button>
+              <button onclick="copiaCodice()" style="background:none;border:none;color:#38bdf8;cursor:pointer;font-size:11px;padding:0;font-weight:bold;" title="Copia codice">COPIA</button>
             </div>
-            <span data-i18n="admin_league_label">Lega:</span>
+            <span>Lega:</span>
             <span class="league-name" id="currentLeagueName">default</span>
         </div>
     </header>
 
     <!-- Tabs Navigation -->
     <nav class="tabs-nav">
-        <button class="tab-btn active" data-tab="tab-leghe" data-i18n="admin_tab_leagues">Gestione Leghe</button>
-        <button class="tab-btn" data-tab="tab-giocatori" data-i18n="admin_tab_players">Lista Giocatori</button>
-        <button class="tab-btn" data-tab="tab-config" data-i18n="admin_tab_config">Configurazione</button>
-        <button class="tab-btn" data-tab="tab-squadre" data-i18n="admin_tab_teams">Squadre</button>
-        <button class="tab-btn" data-tab="tab-asta" data-i18n="admin_tab_auction">Controlli Asta</button>
-        <button class="tab-btn" data-tab="tab-operazioni" data-i18n="admin_tab_ops">Operazioni Speciali</button>
-        <button class="tab-btn" data-tab="tab-export" data-i18n="admin_tab_export">Export</button>
+        <button class="tab-btn active" data-tab="tab-leghe">Gestione Leghe</button>
+        <button class="tab-btn" data-tab="tab-giocatori">Lista Giocatori</button>
+        <button class="tab-btn" data-tab="tab-config">Configurazione</button>
+        <button class="tab-btn" data-tab="tab-squadre">Squadre</button>
+        <button class="tab-btn" data-tab="tab-asta">Controlli Asta</button>
+        <button class="tab-btn" data-tab="tab-operazioni">Operazioni Speciali</button>
+        <button class="tab-btn" data-tab="tab-export">Export</button>
     </nav>
 
     <!-- Alert Container -->
@@ -757,32 +756,30 @@
     <div class="tab-content active" id="tab-leghe">
         <div class="grid-2">
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_leagues_create_title">Crea Nuova Lega</h3>
+                <h3 class="card-title">Crea Nuova Lega</h3>
                 <div class="form-group">
-                    <label data-i18n="admin_leagues_name_label">Nome Lega</label>
-                    <input type="text" id="newLeagueName" placeholder="Es: lega-2024" data-i18n-placeholder="admin_leagues_name_ph">
+                    <label>Nome Lega</label>
+                    <input type="text" id="newLeagueName" placeholder="Es: lega-2024">
                 </div>
-                <button class="btn btn-primary btn-block" onclick="createNewLeague()" data-i18n="admin_leagues_create_btn">Crea Lega</button>
+                <button class="btn btn-primary btn-block" onclick="createNewLeague()">Crea Lega</button>
             </div>
 
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_leagues_switch_title">Cambia Lega Attiva</h3>
+                <h3 class="card-title">Cambia Lega Attiva</h3>
                 <div class="form-group">
-                    <label data-i18n="admin_leagues_select_label">Seleziona Lega</label>
-                    <input type="text" id="switchLeagueName" placeholder="Nome lega da caricare" data-i18n-placeholder="admin_leagues_switch_ph">
+                    <label>Seleziona Lega</label>
+                    <input type="text" id="switchLeagueName" placeholder="Nome lega da caricare">
                 </div>
-                <button class="btn btn-warning btn-block" onclick="switchLeague()" data-i18n="admin_leagues_load_btn">Carica Lega</button>
+                <button class="btn btn-warning btn-block" onclick="switchLeague()">Carica Lega</button>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_leagues_save_title">Salvataggio & Reset</h3>
+            <h3 class="card-title">Salvataggio & Reset</h3>
             <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-                <button class="btn btn-success" onclick="saveSession()" data-i18n="admin_leagues_save_btn">💾 Salva Sessione</button>
-                <button class="btn btn-secondary" onclick="loadSession()" data-i18n="admin_leagues_reload_btn">🔄 Ricarica Sessione</button>
-                <button class="btn btn-danger" onclick="resetAll()" data-i18n="admin_leagues_reset_btn">Reset Completo</button>
-                <button id="btn-end-auction" class="btn" style="background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.4);font-weight:700;display:none;" onclick="toggleEndAuction()">🏁 Termina Asta</button>
-                <button id="btn-resume-auction" class="btn" style="background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.4);font-weight:700;display:none;" onclick="toggleEndAuction()">▶️ Riprendi Asta</button>
+                <button class="btn btn-success" onclick="saveSession()">💾 Salva Sessione</button>
+                <button class="btn btn-secondary" onclick="loadSession()">🔄 Ricarica Sessione</button>
+                <button class="btn btn-danger" onclick="resetAll()">Reset Completo</button>
             </div>
             <div style="margin-top: 0.75rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
                 <span id="auto-save-badge"
@@ -791,129 +788,45 @@
                              color:#10b981;padding:4px 10px;border-radius:20px;">
                   <span style="width:7px;height:7px;background:#10b981;border-radius:50%;
                                animation:pulse-dot 2s infinite;"></span>
-                  <span data-i18n="admin_autosave_active">Auto-save attivo</span>
+                  Auto-save attivo
                 </span>
-                <span id="last-saved-label" data-i18n="admin_last_save"
+                <span id="last-saved-label"
                       style="font-size:0.8rem;color:var(--text-secondary);">
                   Ultimo salvataggio: —
                 </span>
             </div>
         </div>
 
-        <!-- IMPORT STAGIONE PRECEDENTE ─────────────────────────────────────── -->
-        <div class="card" id="card-legacy-import">
-            <h3 class="card-title" data-i18n="admin_legacy_title">🔄 Importa Stagione Precedente</h3>
-            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_legacy_desc">
-                Crea una nuova stagione collegandola a quella precedente. Inserisci il codice della stanza vecchia
-                per scaricare il backup dell'asta e importare l'Albo d'Oro. Ti consigliamo di salvare i file anche sul tuo PC.
-            </p>
-
-            <!-- Step 1: Inserisci codice stanza vecchia -->
-            <div style="background:rgba(56,189,248,0.06);border:1px solid rgba(56,189,248,0.2);
-                        border-radius:8px;padding:14px;margin-bottom:14px;">
-                <div style="font-weight:600;color:#38bdf8;margin-bottom:6px;font-size:0.9rem;">
-                    <span class="step-badge" style="display:inline-flex;align-items:center;justify-content:center;
-                          width:22px;height:22px;border-radius:50%;background:#38bdf8;color:#000;font-size:0.75rem;margin-right:6px;">1</span>
-                    <span data-i18n="admin_legacy_step1_title">Verifica stanza precedente</span>
-                </div>
-                <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_legacy_step1_desc">
-                    Inserisci il codice della stanza della stagione scorsa per vedere cosa è disponibile.
-                </p>
-                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <input type="text" id="legacy-room-code" placeholder="Codice stanza vecchia (es. AB3X9K)"
-                           maxlength="6"
-                           style="width:200px;padding:8px 12px;border-radius:6px;border:1px solid var(--border);
-                                  background:var(--bg-input);color:var(--text-primary);font-size:0.9rem;
-                                  text-transform:uppercase;letter-spacing:2px;font-weight:bold;">
-                    <button class="btn" style="white-space:nowrap;background:rgba(56,189,248,0.15);
-                            color:#38bdf8;border:1px solid rgba(56,189,248,0.3);" onclick="verificaStanzaLegacy()" data-i18n="admin_legacy_step1_btn">
-                        🔍 Verifica
-                    </button>
-                </div>
-                <div id="legacy-overview" style="display:none;margin-top:12px;padding:12px;
-                     background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.2);border-radius:8px;font-size:0.85rem;">
-                </div>
-                <div id="legacy-error" style="display:none;margin-top:10px;padding:10px 12px;
-                     background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;
-                     font-size:0.82rem;color:#ef4444;"></div>
-            </div>
-
-            <!-- Step 2: Scarica backup -->
-            <div id="legacy-step-download" style="display:none;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
-                        border-radius:8px;padding:14px;margin-bottom:14px;">
-                <div style="font-weight:600;color:#10b981;margin-bottom:6px;font-size:0.9rem;">
-                    <span class="step-badge" style="display:inline-flex;align-items:center;justify-content:center;
-                          width:22px;height:22px;border-radius:50%;background:#10b981;color:#000;font-size:0.75rem;margin-right:6px;">2</span>
-                    <span data-i18n="admin_legacy_step2_title">Scarica backup asta</span>
-                </div>
-                <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_legacy_step2_desc">
-                    Scarica il file di backup con tutte le squadre e i parametri dell'asta della stagione precedente.
-                    Salvalo sul tuo PC, poi caricalo nella sezione "Importa backup" qui sotto.
-                </p>
-                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <input type="number" id="legacy-year" placeholder="Anno (es. 2026)" value="2026"
-                           style="width:120px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
-                                  background:var(--bg-input);color:var(--text-primary);font-size:0.85rem;">
-                    <input type="text" id="legacy-label" placeholder="Etichetta (es. Fantacalcio 2026)"
-                           style="flex:1;min-width:180px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
-                                  background:var(--bg-input);color:var(--text-primary);font-size:0.85rem;">
-                    <button class="btn btn-success" style="white-space:nowrap;" onclick="scaricaBackupLegacy()" data-i18n="admin_legacy_step2_btn">
-                        ⬇️ Scarica Backup
-                    </button>
-                </div>
-            </div>
-
-            <!-- Step 3: Importa Albo d'Oro -->
-            <div id="legacy-step-albo" style="display:none;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);
-                        border-radius:8px;padding:14px;">
-                <div style="font-weight:600;color:#f59e0b;margin-bottom:6px;font-size:0.9rem;">
-                    <span class="step-badge" style="display:inline-flex;align-items:center;justify-content:center;
-                          width:22px;height:22px;border-radius:50%;background:#f59e0b;color:#000;font-size:0.75rem;margin-right:6px;">3</span>
-                    <span data-i18n="admin_legacy_step3_title">Importa Albo d'Oro</span>
-                </div>
-                <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_legacy_step3_desc">
-                    Copia tutti i backup storici, le classifiche trofei e gli alias delle squadre dalla stanza vecchia
-                    a questa. I backup già esistenti non verranno duplicati.
-                </p>
-                <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaAlboLegacy()" data-i18n="admin_legacy_step3_btn">
-                    🏆 Importa Albo d'Oro
-                </button>
-                <div id="legacy-albo-result" style="display:none;margin-top:10px;padding:10px 12px;
-                     background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:8px;
-                     font-size:0.82rem;"></div>
-            </div>
-        </div>
-
         <!-- BACKUP ASTA ─────────────────────────────────────────────────────── -->
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_backup_title">📦 Backup Asta</h3>
+            <h3 class="card-title">📦 Backup Asta</h3>
 
             <!-- Esporta -->
             <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);
                         border-radius:8px;padding:14px;margin-bottom:14px;">
-                <div style="font-weight:600;color:#10b981;margin-bottom:6px;font-size:0.9rem;" data-i18n="admin_backup_export_title">
+                <div style="font-weight:600;color:#10b981;margin-bottom:6px;font-size:0.9rem;">
                     Esporta backup completo
                 </div>
-                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_backup_export_desc">
+                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
                     Scarica un file JSON con tutte le squadre, rose e parametri dell'asta.
                     Conservalo sul tuo PC per riutilizzarlo l'anno prossimo.
                 </p>
                 <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <input type="number" id="backup-year" placeholder="Anno (es. 2026)" data-i18n-placeholder="admin_backup_year_ph"
+                    <input type="number" id="backup-year" placeholder="Anno (es. 2026)"
                            style="width:140px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
                                   background:var(--bg-input);color:var(--text-primary);font-size:0.88rem;">
-                    <input type="text" id="backup-label" placeholder="Etichetta (es. Fantacalcio 2026)" data-i18n-placeholder="admin_backup_label_ph"
+                    <input type="text" id="backup-label" placeholder="Etichetta (es. Fantacalcio 2026)"
                            style="flex:1;min-width:180px;padding:7px 10px;border-radius:6px;border:1px solid var(--border);
                                   background:var(--bg-input);color:var(--text-primary);font-size:0.88rem;">
-                    <button class="btn btn-success" style="white-space:nowrap;" onclick="esportaBackup()" data-i18n="admin_backup_download_btn">
+                    <button class="btn btn-success" style="white-space:nowrap;" onclick="esportaBackup()">
                         ⬇️ Scarica Backup
                     </button>
                     <button class="btn" style="white-space:nowrap;background:rgba(56,189,248,0.15);
-                            color:#38bdf8;border:1px solid rgba(56,189,248,0.3);" onclick="salvaBackupStoico()" data-i18n="admin_backup_save_history_btn">
+                            color:#38bdf8;border:1px solid rgba(56,189,248,0.3);" onclick="salvaBackupStoico()">
                         📚 Salva nello Storico
                     </button>
                 </div>
-                <p style="font-size:0.78rem;color:#64748b;margin-top:8px;" data-i18n="admin_backup_history_hint">
+                <p style="font-size:0.78rem;color:#64748b;margin-top:8px;">
                     "Salva nello Storico" carica il backup sul server così sarà visibile nella pagina Rose.
                 </p>
             </div>
@@ -921,10 +834,10 @@
             <!-- Importa -->
             <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.2);
                         border-radius:8px;padding:14px;">
-                <div style="font-weight:600;color:#f59e0b;margin-bottom:6px;font-size:0.9rem;" data-i18n="admin_backup_import_title">
+                <div style="font-weight:600;color:#f59e0b;margin-bottom:6px;font-size:0.9rem;">
                     Importa backup (nuovo anno)
                 </div>
-                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;" data-i18n="admin_backup_import_desc">
+                <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
                     Carica un backup dell'anno precedente per ritrovare subito squadre e parametri già impostati.
                     Le rose vengono azzerate, il budget ripristinato al valore iniziale.
                 </p>
@@ -934,114 +847,48 @@
                                   background:var(--bg-input);cursor:pointer;font-size:0.85rem;color:var(--text-secondary);">
                         <input type="file" id="backup-file-input" accept=".json"
                                style="display:none;" onchange="previewBackupFile(this)">
-                        <span id="backup-file-label" data-i18n="admin_backup_select_file">📂 Seleziona file .json...</span>
+                        <span id="backup-file-label">📂 Seleziona file .json...</span>
                     </label>
-                    <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaBackupConfig()" data-i18n="admin_backup_import_btn">
+                    <button class="btn btn-warning" style="white-space:nowrap;" onclick="importaBackupConfig()">
                         ⬆️ Carica Configurazione
-                    </button>
-                    <button class="btn btn-success" style="white-space:nowrap;" onclick="importaBackupFull()">
-                        🔄 Ripristina Asta Completa
                     </button>
                 </div>
                 <div id="backup-preview" style="display:none;margin-top:10px;padding:10px;
                      background:rgba(245,158,11,0.08);border-radius:6px;font-size:0.82rem;">
                 </div>
-                <p style="font-size:0.78rem;color:#10b981;margin-top:8px;">
-                    "Ripristina Asta Completa" ricostruisce l'asta esattamente come conclusa: budget finali, rose compilate, giocatori venduti e svincolati, stato in pausa.
-                </p>
             </div>
         </div>
 
         <!-- STORICO LEGA & ALBO D'ORO ──────────────────────────────────────── -->
         <div class="card" id="card-storico-lega">
-            <h3 class="card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;" data-i18n="admin_storico_title">
+            <h3 class="card-title" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
                 🏆 Storico Lega
                 <button onclick="apriAlbo()" style="font-size:0.78rem;padding:5px 12px;background:rgba(245,158,11,0.15);
                         color:#f59e0b;border:1px solid rgba(245,158,11,0.35);border-radius:6px;cursor:pointer;
-                        font-weight:600;transition:opacity 0.2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" data-i18n="admin_storico_albo_btn">
+                        font-weight:600;transition:opacity 0.2s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
                     🥇 Apri Albo d'Oro
                 </button>
             </h3>
-            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_storico_desc">
+            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;">
                 Aggiungi classifica finale e competizioni vinte a ogni backup storico per costruire l'Albo d'Oro della tua lega.
             </p>
             <div id="storico-lega-list">
-                <p style="font-size:0.85rem;color:var(--text-secondary);text-align:center;padding:10px 0;" data-i18n="admin_storico_empty">
+                <p style="font-size:0.85rem;color:var(--text-secondary);text-align:center;padding:10px 0;">
                     Carica i backup storici per gestire lo storico...
                 </p>
             </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
-                <button onclick="caricaStoricoLega()" style="flex:1;min-width:140px;padding:8px;background:rgba(56,189,248,0.1);
+            <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+                <button onclick="caricaStoricoLega()" style="flex:1;min-width:120px;padding:8px;background:rgba(56,189,248,0.1);
                         color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" data-i18n="admin_storico_refresh_btn">
+                        font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
                     🔄 Aggiorna lista
                 </button>
-                <button onclick="apriCreaStagioneStorica()" style="flex:1;min-width:140px;padding:8px;background:rgba(16,185,129,0.12);
-                        color:#10b981;border:1px solid rgba(16,185,129,0.35);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'" data-i18n="admin_storico_create_btn">
-                    ➕ Crea stagione storica
+                <button onclick="apriEditorStagioneManuale()" style="flex:1;min-width:120px;padding:8px;background:rgba(245,158,11,0.12);
+                        color:#f59e0b;border:1px solid rgba(245,158,11,0.3);border-radius:6px;font-weight:600;
+                        font-size:0.85rem;cursor:pointer;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+                    ➕ Aggiungi Stagione Manuale
                 </button>
             </div>
-        </div>
-
-        <!-- CLASSIFICA TROFEI ──────────────────────────────────────────────── -->
-        <div class="card" id="card-trophy-config">
-            <h3 class="card-title" data-i18n="admin_trophy_title">
-                🏆 Classifica Trofei Generale
-            </h3>
-            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_trophy_desc">
-                Configura le competizioni, i punti e l'ordine di priorità per la classifica trofei. A parità di punti vince chi ha più trofei ad alta priorità.
-            </p>
-
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
-                <button onclick="loadTrophyConfig()" style="flex:1;min-width:120px;padding:8px;background:rgba(56,189,248,0.1);
-                        color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_trophy_load_btn">
-                    🔄 Carica configurazione
-                </button>
-                <button onclick="addCompetitionRow()" style="flex:1;min-width:120px;padding:8px;background:rgba(16,185,129,0.12);
-                        color:#10b981;border:1px solid rgba(16,185,129,0.35);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_trophy_add_comp_btn">
-                    ➕ Aggiungi competizione
-                </button>
-                <button onclick="salvaTrophyConfig()" style="flex:1;min-width:120px;padding:8px;background:rgba(245,158,11,0.15);
-                        color:#f59e0b;border:1px solid rgba(245,158,11,0.35);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_trophy_save_btn">
-                    💾 Salva configurazione
-                </button>
-            </div>
-
-            <div id="trophy-config-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-        </div>
-
-        <!-- ALIAS SQUADRE ──────────────────────────────────────────────── -->
-        <div class="card" id="card-team-aliases">
-            <h3 class="card-title" data-i18n="admin_alias_title">
-                🔗 Collega Squadre (Alias)
-            </h3>
-            <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_alias_desc">
-                Unisci squadre con nomi diversi ma stesso presidente sotto un unico nome. Tutti i trofei verranno accorpati.
-            </p>
-
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
-                <button onclick="loadTeamAliases()" style="flex:1;min-width:120px;padding:8px;background:rgba(56,189,248,0.1);
-                        color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_alias_load_btn">
-                    🔄 Carica alias
-                </button>
-                <button onclick="addAliasRow()" style="flex:1;min-width:120px;padding:8px;background:rgba(16,185,129,0.12);
-                        color:#10b981;border:1px solid rgba(16,185,129,0.35);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_alias_add_btn">
-                    ➕ Aggiungi gruppo
-                </button>
-                <button onclick="salvaTeamAliases()" style="flex:1;min-width:120px;padding:8px;background:rgba(245,158,11,0.15);
-                        color:#f59e0b;border:1px solid rgba(245,158,11,0.35);border-radius:6px;font-weight:600;
-                        font-size:0.85rem;cursor:pointer;" data-i18n="admin_alias_save_btn">
-                    💾 Salva alias
-                </button>
-            </div>
-
-            <div id="team-aliases-list" style="display:flex;flex-direction:column;gap:8px;"></div>
         </div>
     </div>
 
@@ -1049,64 +896,68 @@
     <div class="tab-content" id="tab-squadre">
         <div class="grid-2">
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_teams_create_title">Crea Nuova Squadra</h3>
+                <h3 class="card-title">Crea Nuova Squadra</h3>
                 <div class="form-group">
-                    <label data-i18n="admin_teams_name_label">Nome Squadra</label>
-                    <input type="text" id="newTeamName" placeholder="Nome della fantasquadra" data-i18n-placeholder="admin_teams_name_ph">
+                    <label>Nome Squadra</label>
+                    <input type="text" id="newTeamName" placeholder="Nome della fantasquadra">
                 </div>
-                <button class="btn btn-primary btn-block" onclick="createTeam()" data-i18n="admin_teams_add_btn">Aggiungi Squadra</button>
+                <button class="btn btn-primary btn-block" onclick="createTeam()">Aggiungi Squadra</button>
                 <p style="margin-top: 0.5rem; color: var(--text-secondary); font-size: 0.85rem;">
-                    <span data-i18n="admin_teams_budget_label">Budget iniziale:</span> <strong id="startingBudgetDisplay">500</strong> <span data-i18n="admin_teams_credits">crediti</span>
+                    Budget iniziale: <strong id="startingBudgetDisplay">500</strong> crediti
                 </p>
             </div>
 
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_teams_stats_title">Statistiche Lega</h3>
+                <h3 class="card-title">Statistiche Lega</h3>
                 <div class="stats-bar" style="flex-direction: column; gap: 0.5rem;">
                     <div class="stat-item">
                         <div class="stat-value" id="statTeams">0</div>
-                        <div class="stat-label" data-i18n="admin_teams_stat_teams">Squadre</div>
+                        <div class="stat-label">Squadre</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="statSold">0</div>
-                        <div class="stat-label" data-i18n="admin_teams_stat_sold">Giocatori Venduti</div>
+                        <div class="stat-label">Giocatori Venduti</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-value" id="statRemaining">0</div>
-                        <div class="stat-label" data-i18n="admin_teams_stat_remaining">Giocatori Rimanenti</div>
+                        <div class="stat-label">Giocatori Rimanenti</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="statDiscarded">0</div>
+                        <div class="stat-label">Scartati</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_teams_list_title">Elenco Squadre</h3>
+            <h3 class="card-title">Elenco Squadre</h3>
             <div class="team-grid" id="teamsContainer">
-                <p style="color: var(--text-secondary);" data-i18n="admin_teams_empty">Nessuna squadra creata</p>
+                <p style="color: var(--text-secondary);">Nessuna squadra creata</p>
             </div>
         </div>
 
         <!-- GESTIONE CREDITI ─────────────────────────────────────────────── -->
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_teams_credits_title">💰 Gestione Crediti (Mercato di Riparazione)</h3>
-            <p style="font-size:0.83rem;color:var(--text-secondary);margin-bottom:14px;" data-i18n="admin_teams_credits_desc">
+            <h3 class="card-title">💰 Gestione Crediti (Mercato di Riparazione)</h3>
+            <p style="font-size:0.83rem;color:var(--text-secondary);margin-bottom:14px;">
                 Aggiungi o sottrai crediti a una squadra in vista del mercato di riparazione. Usa un valore negativo per rimuovere crediti.
             </p>
             <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
                 <div style="flex:1;min-width:150px;">
-                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;" data-i18n="admin_teams_credits_team">Squadra</label>
+                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;">Squadra</label>
                     <select id="creditTeamSelect" style="width:100%;padding:8px 10px;background:var(--bg-input);
                             border:1px solid var(--border);border-radius:6px;color:var(--text-primary);font-size:0.88rem;">
-                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
+                        <option value="">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div style="width:110px;">
-                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;" data-i18n="admin_teams_credits_amount">Crediti (±)</label>
-                    <input type="number" id="creditAmount" placeholder="es. 100" data-i18n-placeholder="admin_teams_credits_ph"
+                    <label style="font-size:0.78rem;color:var(--text-secondary);display:block;margin-bottom:5px;">Crediti (±)</label>
+                    <input type="number" id="creditAmount" placeholder="es. 100"
                            style="width:100%;padding:8px 10px;background:var(--bg-input);border:1px solid var(--border);
                                   border-radius:6px;color:var(--text-primary);font-size:0.88rem;">
                 </div>
-                <button class="btn btn-success" onclick="aggiungiCrediti()" style="white-space:nowrap;padding:8px 18px;" data-i18n="admin_teams_credits_apply">
+                <button class="btn btn-success" onclick="aggiungiCrediti()" style="white-space:nowrap;padding:8px 18px;">
                     ✔ Applica
                 </button>
             </div>
@@ -1118,10 +969,10 @@
         <div class="grid-2">
             <!-- Upload Excel -->
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_players_upload_title">Carica Lista Excel</h3>
+                <h3 class="card-title">Carica Lista Excel</h3>
                 <div class="form-group">
-                    <label data-i18n="admin_players_threshold_label">Soglia Minima Quotazione</label>
-                    <input type="number" id="sogliaMinima" value="0" min="0" placeholder="Filtra giocatori sotto questo valore" data-i18n-placeholder="admin_players_threshold_ph">
+                    <label>Soglia Minima Quotazione</label>
+                    <input type="number" id="sogliaMinima" value="0" min="0" placeholder="Filtra giocatori sotto questo valore">
                 </div>
 
                 <!-- Toggle modalità riparazione -->
@@ -1130,17 +981,30 @@
                      border-radius:8px;margin-bottom:12px;cursor:pointer;" onclick="document.getElementById('riparazioneToggle').click()">
                     <input type="checkbox" id="riparazioneToggle" style="margin-top:3px;width:16px;height:16px;cursor:pointer;accent-color:#38bdf8;">
                     <div>
-                        <div style="font-weight:600;font-size:0.88rem;color:#38bdf8;" data-i18n="admin_players_riparazione_title">🔧 Modalità Riparazione</div>
-                        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;line-height:1.4;" data-i18n-html="admin_players_riparazione_desc">
-                            Aggiunge i nuovi giocatori a quelli già nel mazzo. I giocatori già <strong>assegnati</strong> e quelli già <strong>presenti nel mazzo</strong> vengono saltati automaticamente.
+                        <div style="font-weight:600;font-size:0.88rem;color:#38bdf8;">🔧 Modalità Riparazione</div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;line-height:1.4;">
+                            Aggiunge i nuovi giocatori a quelli già nel mazzo. I giocatori già <strong>assegnati</strong> e quelli già <strong>presenti nel mazzo</strong> vengono saltati automaticamente. I giocatori <strong>non più presenti</strong> nella nuova lista vengono rimossi dal mazzo.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toggle modalità aggiorna valori -->
+                <div id="aggiornavalori-toggle-wrap" style="display:flex;align-items:flex-start;gap:10px;
+                     padding:12px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.2);
+                     border-radius:8px;margin-bottom:12px;cursor:pointer;" onclick="document.getElementById('aggiornaValoriToggle').click()">
+                    <input type="checkbox" id="aggiornaValoriToggle" style="margin-top:3px;width:16px;height:16px;cursor:pointer;accent-color:#22c55e;">
+                    <div>
+                        <div style="font-weight:600;font-size:0.88rem;color:#22c55e;">💰 Aggiorna Valori</div>
+                        <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px;line-height:1.4;">
+                            Rilegge l'Excel e <strong>corregge i valori</strong> di tutti i giocatori già presenti nel mazzo. Aggiunge anche i giocatori nuovi non ancora in lista. Non rimuove nessuno. Utile se i valori sono stati caricati sbagliati.
                         </div>
                     </div>
                 </div>
 
                 <div class="file-upload" onclick="document.getElementById('excelFile').click()">
                     <div class="upload-icon">📊</div>
-                    <p data-i18n="admin_players_upload_zone">Trascina il file Excel o clicca per selezionare</p>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;" data-i18n="admin_players_upload_cols">
+                    <p>Trascina il file Excel o clicca per selezionare</p>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">
                         Colonne richieste: Nome, Ruolo, Squadra, Valore
                     </p>
                     <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="uploadExcel()">
@@ -1150,117 +1014,181 @@
                 <div id="riparazione-report" style="display:none;margin-top:10px;padding:10px 12px;
                      background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.25);border-radius:8px;
                      font-size:0.82rem;line-height:1.8;"></div>
+
+                <!-- Modal selezione colonna valore -->
+                <div id="col-valore-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10001;align-items:center;justify-content:center;">
+                    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;width:460px;max-width:92%;max-height:85vh;overflow-y:auto;">
+                        <h3 style="margin:0 0 0.5rem;font-size:1.1rem;color:var(--warning);">Seleziona colonna del Valore</h3>
+                        <p style="font-size:0.82rem;color:var(--text-secondary);margin:0 0 1rem;line-height:1.5;">
+                            Il file Excel non ha una colonna "Valore" riconosciuta automaticamente.
+                            Scegli quale colonna contiene il valore (quotazione) dei giocatori.
+                        </p>
+                        <div id="col-valore-list" style="display:flex;flex-direction:column;gap:0.4rem;margin-bottom:1rem;"></div>
+                        <div style="display:flex;gap:0.5rem;justify-content:flex-end;">
+                            <button class="btn btn-secondary" style="font-size:0.85rem;padding:0.5rem 1rem;" onclick="chiudiColValoreModal()">Annulla</button>
+                            <button class="btn btn-success" style="font-size:0.85rem;padding:0.5rem 1rem;" onclick="confermaColValore()">Conferma e carica</button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Aggiunta Manuale -->
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_players_manual_title">Aggiungi Giocatore Manualmente</h3>
+                <h3 class="card-title">Aggiungi Giocatore Manualmente</h3>
                 <div class="form-group">
-                    <label data-i18n="admin_players_name_label">Nome Giocatore</label>
-                    <input type="text" id="manualPlayerName" placeholder="Nome e cognome" data-i18n-placeholder="admin_players_name_ph">
+                    <label>Nome Giocatore</label>
+                    <input type="text" id="manualPlayerName" placeholder="Nome e cognome">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_players_role_label">Ruolo Mantra</label>
+                    <label>Ruolo Mantra</label>
                     <select id="manualPlayerRole">
-                        <option value="P" data-i18n="admin_role_P">P - Portiere</option>
-                        <option value="DC" data-i18n="admin_role_DC">DC - Difensore Centrale</option>
-                        <option value="DD" data-i18n="admin_role_DD">DD - Difensore Destro</option>
-                        <option value="DS" data-i18n="admin_role_DS">DS - Difensore Sinistro</option>
-                        <option value="B" data-i18n="admin_role_B">B - Terzino</option>
-                        <option value="C" data-i18n="admin_role_C">C - Centrocampista</option>
-                        <option value="M" data-i18n="admin_role_M">M - Mediano</option>
-                        <option value="E" data-i18n="admin_role_E">E - Esterno</option>
-                        <option value="T" data-i18n="admin_role_T">T - Trequartista</option>
-                        <option value="W" data-i18n="admin_role_W">W - Ala</option>
-                        <option value="A" data-i18n="admin_role_A">A - Attaccante</option>
-                        <option value="PC" data-i18n="admin_role_PC">PC - Punta Centrale</option>
+                        <option value="P">P - Portiere</option>
+                        <option value="DC">DC - Difensore Centrale</option>
+                        <option value="DD">DD - Difensore Destro</option>
+                        <option value="DS">DS - Difensore Sinistro</option>
+                        <option value="B">B - Terzino</option>
+                        <option value="C">C - Centrocampista</option>
+                        <option value="M">M - Mediano</option>
+                        <option value="E">E - Esterno</option>
+                        <option value="T">T - Trequartista</option>
+                        <option value="W">W - Ala</option>
+                        <option value="A">A - Attaccante</option>
+                        <option value="PC">PC - Punta Centrale</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_players_club_label">Squadra di Appartenenza</label>
-                    <input type="text" id="manualPlayerClub" placeholder="Serie A team" data-i18n-placeholder="admin_players_club_ph">
+                    <label>Squadra di Appartenenza</label>
+                    <input type="text" id="manualPlayerClub" placeholder="Serie A team">
                 </div>
-                <button class="btn btn-success btn-block" onclick="addManualPlayer()" data-i18n="admin_players_add_btn">Aggiungi al Mazzo</button>
+                <button class="btn btn-success btn-block" onclick="addManualPlayer()">Aggiungi al Mazzo</button>
             </div>
         </div>
 
         <!-- Lista Giocatori Rimanenti -->
         <div class="card">
             <h3 class="card-title">
-                <span data-i18n="admin_players_list_title">Giocatori nel Mazzo</span> (<span id="playersCount">0</span>)
-                <button class="btn btn-secondary" style="margin-left: auto; padding: 0.5rem 1rem;" onclick="refreshPlayersList()" data-i18n="admin_players_refresh_btn">Aggiorna</button>
+                Giocatori nel Mazzo (<span id="playersCount">0</span>)
+                <button class="btn btn-secondary" style="margin-left: auto; padding: 0.5rem 1rem;" onclick="refreshPlayersList()">Aggiorna</button>
             </h3>
+
+            <!-- Pannello Filtri -->
+            <div id="filterPanel" style="background:var(--bg-input);border-radius:10px;padding:1rem;margin-bottom:1rem;border:1px solid var(--border);">
+                <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.05em;font-weight:600;">🔍 Filtra e Ordina</div>
+                <div class="grid-2" style="gap:0.75rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label>Ruolo</label>
+                        <select id="filterRuolo" onchange="renderPlayersList()">
+                            <option value="">Tutti i ruoli</option>
+                            <option value="P">P - Portiere</option>
+                            <option value="POR">POR</option>
+                            <option value="DC">DC - Dif. Centrale</option>
+                            <option value="DD">DD - Dif. Destro</option>
+                            <option value="DS">DS - Dif. Sinistro</option>
+                            <option value="B">B - Terzino</option>
+                            <option value="C">C - Centrocampista</option>
+                            <option value="M">M - Mediano</option>
+                            <option value="E">E - Esterno</option>
+                            <option value="T">T - Trequartista</option>
+                            <option value="W">W - Ala</option>
+                            <option value="A">A - Attaccante</option>
+                            <option value="PC">PC - Punta Centrale</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>Squadra</label>
+                        <select id="filterSquadra" onchange="renderPlayersList()">
+                            <option value="">Tutte le squadre</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid-2" style="gap:0.75rem;margin-top:0.75rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label>Valore Minimo</label>
+                        <input type="number" id="filterValoreMin" value="0" min="0" placeholder="Es. 10" oninput="renderPlayersList()">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>Ordina per</label>
+                        <select id="filterOrdine" onchange="renderPlayersList()">
+                            <option value="default">Ordine originale</option>
+                            <option value="az">Alfabetico (A-Z)</option>
+                            <option value="za">Alfabetico (Z-A)</option>
+                            <option value="ruolo">Per ruolo</option>
+                            <option value="valoreDesc">Valore (alto → basso)</option>
+                            <option value="valoreAsc">Valore (basso → alto)</option>
+                            <option value="squadra">Per squadra</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;gap:0.5rem;margin-top:0.75rem;flex-wrap:wrap;">
+                    <button class="btn btn-secondary" style="font-size:0.8rem;padding:0.4rem 0.9rem;" onclick="resetFiltri()">Reset filtri</button>
+                    <span id="filterResultCount" style="font-size:0.82rem;color:var(--text-secondary);align-self:center;"></span>
+                </div>
+            </div>
+
             <div class="player-list" id="playersListContainer">
-                <p style="color: var(--text-secondary); text-align: center; padding:  2rem;" data-i18n="admin_players_empty">
+                <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">
                     Carica un file Excel per popolare la lista
                 </p>
             </div>
         </div>
-
-        <!-- Lista Giocatori Scartati -->
-        <div class="card" id="discardedCard" style="display:none;">
-            <h3 class="card-title">
-                <span>Giocatori Scartati</span> (<span id="discardedCount">0</span>)
-                <button class="btn btn-success" style="margin-left: auto; padding: 0.5rem 1rem; font-size: 0.85rem;" onclick="recallAllDiscarded()">Richiama Tutti</button>
-            </h3>
-            <div class="player-list" id="discardedListContainer">
-                <p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nessun giocatore scartato</p>
-            </div>
-        </div>
     </div>
+
+    <!-- TAB 4: Controlli Asta -->
     <div class="tab-content" id="tab-asta">
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_auction_status_title">Stato Asta Corrente</h3>
+            <h3 class="card-title">Stato Asta Corrente</h3>
             <div class="auction-control">
                 <div class="control-box">
                     <div class="value" id="displayPlayerName">---</div>
-                    <div class="label" data-i18n="admin_auction_player">Giocatore in Asta</div>
+                    <div class="label">Giocatore in Asta</div>
                 </div>
                 <div class="control-box">
                     <div class="value" id="displayPrice">0</div>
-                    <div class="label" data-i18n="admin_auction_price">Offerta Attuale</div>
+                    <div class="label">Offerta Attuale</div>
                 </div>
                 <div class="control-box">
                     <div class="value" id="displayTimer">--</div>
-                    <div class="label" data-i18n="admin_auction_timer">Timer</div>
+                    <div class="label">Timer</div>
                 </div>
                 <div class="control-box">
                     <div class="value" id="displayBidder">---</div>
-                    <div class="label" data-i18n="admin_auction_bidder">Miglior Offerente</div>
+                    <div class="label">Miglior Offerente</div>
                 </div>
             </div>
         </div>
 
         <div class="grid-2">
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_auction_start_title">Avvia Asta</h3>
+                <h3 class="card-title">Avvia Asta</h3>
                 <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                    <button class="btn btn-success btn-block" onclick="startRandomAuction()" data-i18n="admin_auction_random_btn">
+                    <button class="btn btn-success btn-block" onclick="startRandomAuction()">
                         🎲 Estrazione Random
                     </button>
-                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin:0;" data-i18n="admin_auction_random_desc">Estrae un giocatore a caso dal mazzo</p>
-                    <label style="color: var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;" data-i18n="admin_auction_manual_label">Selezione Manuale</label>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin:0;">
+                        Estrae un giocatore a caso dal mazzo. Se hai attivato dei filtri (ruolo, squadra, valore), li rispetta automaticamente.
+                    </p>
+                    <label style="color: var(--text-secondary); font-size:0.85rem; margin-top:0.5rem;">Selezione Manuale</label>
                     <select id="manualPlayerSelect">
-                        <option value="" data-i18n="admin_select_player">Seleziona giocatore...</option>
+                        <option value="">Seleziona giocatore...</option>
                     </select>
-                    <button class="btn btn-primary btn-block" onclick="startManualAuction()" data-i18n="admin_auction_launch_btn">Lancia Giocatore</button>
+                    <button class="btn btn-primary btn-block" onclick="startManualAuction()">Lancia Giocatore</button>
                 </div>
             </div>
 
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_auction_controls_title">Controlli</h3>
+                <h3 class="card-title">Controlli</h3>
                 <div style="display:flex;flex-direction:column;gap:0.75rem;">
-                    <button class="btn btn-danger btn-block" onclick="pauseAuction()" data-i18n="admin_auction_pause_btn">⏸ PAUSA</button>
-                    <button class="btn btn-success btn-block" onclick="resumeAuction()" data-i18n="admin_auction_resume_btn">▶ RIPRENDI</button>
+                    <button class="btn btn-danger btn-block" onclick="pauseAuction()">⏸ PAUSA</button>
+                    <button class="btn btn-success btn-block" onclick="resumeAuction()">▶ RIPRENDI</button>
                     <div class="toggle-container" style="margin-top:0.5rem;">
-                        <span style="font-size:0.85rem;" data-i18n="admin_auction_manual_flow">Flusso Manuale</span>
+                        <span style="font-size:0.85rem;">Flusso Manuale</span>
                         <label class="toggle-switch">
                             <input type="checkbox" id="autoAdvanceToggle" checked onchange="toggleAutoAdvance(this.checked)">
                             <span class="toggle-slider"></span>
                         </label>
-                        <span style="font-size:0.85rem;" data-i18n="admin_auction_auto_flow">Automatico</span>
+                        <span style="font-size:0.85rem;">Automatico</span>
                     </div>
-                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin:0;" data-i18n="admin_auction_auto_desc">
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin:0;">
                         Automatico: estrae il prossimo giocatore dopo ogni vendita
                     </p>
                 </div>
@@ -1270,11 +1198,11 @@
         <!-- Storico offerte live -->
         <div class="card" id="bid-history-card">
             <h3 class="card-title">
-                <span data-i18n="admin_auction_history_title">📋 Storico Offerte</span>
-                <span id="bid-history-badge" style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);font-weight:normal;" data-i18n="admin_auction_history_waiting">in attesa di asta...</span>
+                📋 Storico Offerte
+                <span id="bid-history-badge" style="margin-left:auto;font-size:0.75rem;color:var(--text-secondary);font-weight:normal;">in attesa di asta...</span>
             </h3>
             <div id="bid-history-list" style="max-height:220px;overflow-y:auto;">
-                <p style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:1rem 0;" data-i18n="admin_auction_history_empty">
+                <p style="color:var(--text-secondary);font-size:0.85rem;text-align:center;padding:1rem 0;">
                     Nessuna offerta ancora — avvia un'asta per vedere lo storico in tempo reale.
                 </p>
             </div>
@@ -1283,38 +1211,38 @@
         <!-- Pannello revisione post-asta -->
         <div class="card" id="review-panel" style="display:none;border:2px solid var(--warning);">
             <h3 class="card-title" style="color:var(--warning);">
-                <span data-i18n="admin_auction_review_title">⚡ Revisione Asta</span> — <span id="review-player-name">---</span>
+                ⚡ Revisione Asta — <span id="review-player-name">---</span>
             </h3>
-            <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;" data-i18n="admin_auction_review_desc">
+            <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
                 L'asta si è conclusa. Controlla lo storico e decidi se confermare l'assegnazione o modificarla.
             </p>
 
             <div style="background:var(--bg-input);border-radius:8px;padding:1rem;margin-bottom:1rem;">
-                <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;" data-i18n="admin_auction_review_full">Storico completo offerte</div>
+                <div style="font-size:0.8rem;color:var(--text-secondary);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;">Storico completo offerte</div>
                 <div id="review-history-list" style="max-height:180px;overflow-y:auto;"></div>
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:0.75rem;align-items:end;" class="review-grid-override">
                 <div class="form-group" style="margin:0;">
-                    <label data-i18n="admin_auction_review_team">Assegna a squadra</label>
+                    <label>Assegna a squadra</label>
                     <select id="review-team-select">
-                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
+                        <option value="">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div class="form-group" style="margin:0;">
-                    <label data-i18n="admin_auction_review_price">Prezzo finale (cr)</label>
+                    <label>Prezzo finale (cr)</label>
                     <input type="number" id="review-price-input" min="0" value="0">
                 </div>
-                <button class="btn btn-warning" onclick="confermaRiassegnazione()" style="height:fit-content;" data-i18n="admin_auction_review_reassign_btn">
+                <button class="btn btn-warning" onclick="confermaRiassegnazione()" style="height:fit-content;">
                     ✅ Riassegna
                 </button>
             </div>
 
             <div style="margin-top:0.75rem;display:flex;gap:0.5rem;flex-wrap:wrap;">
-                <button class="btn btn-success" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;" data-i18n="admin_auction_review_confirm_btn">
+                <button class="btn btn-success" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;">
                     ✓ Conferma assegnazione originale
                 </button>
-                <button class="btn btn-secondary" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;" data-i18n="admin_auction_review_close_btn">
+                <button class="btn btn-secondary" onclick="chiudiRevisione()" style="font-size:0.85rem;padding:0.5rem 1rem;">
                     Chiudi senza modifiche
                 </button>
             </div>
@@ -1326,155 +1254,194 @@
         <div class="grid-2">
             <!-- Assegnazione Forzata -->
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_ops_force_title">Assegnazione Forzata</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;" data-i18n="admin_ops_force_desc">
+                <h3 class="card-title">Assegnazione Forzata</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
                     Assegna il giocatore corrente a una squadra specifica
                 </p>
                 <div class="form-group">
-                    <label data-i18n="admin_ops_force_team">Squadra Destinataria</label>
+                    <label>Squadra Destinataria</label>
                     <select id="forceAssignTeam">
-                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
+                        <option value="">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_ops_force_price">Prezzo di Vendita</label>
+                    <label>Prezzo di Vendita</label>
                     <input type="number" id="forceAssignPrice" value="1" min="1">
                 </div>
-                <button class="btn btn-warning btn-block" onclick="forceAssignPlayer()" data-i18n="admin_ops_force_btn">Assegna Forzatamente</button>
+                <button class="btn btn-warning btn-block" onclick="forceAssignPlayer()">Assegna Forzatamente</button>
             </div>
 
             <!-- Assegnazione Manuale con Ricerca -->
             <div class="card">
-                <h3 class="card-title" data-i18n="admin_ops_manual_title">Assegna Giocatore a Squadra</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;" data-i18n="admin_ops_manual_desc">
+                <h3 class="card-title">Assegna Giocatore a Squadra</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
                     Cerca un giocatore dal mazzo e assegnalo direttamente a una squadra senza passare dall'asta
                 </p>
                 <div class="form-group">
-                    <label data-i18n="admin_ops_search_label">Cerca Giocatore</label>
-                    <input type="text" id="manualAssignSearch" placeholder="Nome giocatore..." oninput="filtraGiocatoriAssegnazione()" data-i18n-placeholder="admin_ops_search_ph">
+                    <label>Cerca Giocatore</label>
+                    <input type="text" id="manualAssignSearch" placeholder="Nome giocatore..." oninput="filtraGiocatoriAssegnazione()">
                 </div>
                 <div id="manualAssignResults" style="max-height:140px;overflow-y:auto;background:var(--bg-input);border-radius:8px;margin-bottom:0.75rem;border:1px solid var(--border);display:none;"></div>
                 <div class="form-group">
-                    <label data-i18n="admin_ops_selected_label">Giocatore Selezionato</label>
-                    <input type="text" id="manualAssignPlayerDisplay" placeholder="Nessun giocatore selezionato" readonly style="background:var(--bg-main);color:var(--warning);font-weight:bold;" data-i18n-placeholder="admin_ops_selected_ph">
+                    <label>Giocatore Selezionato</label>
+                    <input type="text" id="manualAssignPlayerDisplay" placeholder="Nessun giocatore selezionato" readonly style="background:var(--bg-main);color:var(--warning);font-weight:bold;">
                     <input type="hidden" id="manualAssignPlayerData">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_ops_manual_team">Squadra Destinataria</label>
+                    <label>Squadra Destinataria</label>
                     <select id="manualAssignTeam">
-                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
+                        <option value="">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_ops_manual_price">Prezzo di Vendita (cr)</label>
+                    <label>Prezzo di Vendita (cr)</label>
                     <input type="number" id="manualAssignPrice" value="1" min="1">
                 </div>
-                <button class="btn btn-success btn-block" onclick="manualAssignPlayer()" data-i18n="admin_ops_manual_btn">Assegna Giocatore</button>
+                <button class="btn btn-success btn-block" onclick="manualAssignPlayer()">Assegna Giocatore</button>
             </div>
         </div>
 
         <!-- Giro di Gara -->
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_ops_giro_title">Giro di Gara</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;" data-i18n="admin_ops_giro_desc">
+            <h3 class="card-title">Giro di Gara</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
                 Riporta i giocatori invenduti nel mazzo per un nuovo giro
             </p>
-            <button class="btn btn-primary btn-block" onclick="recycleUnsold()" data-i18n="admin_ops_giro_btn">Avvia Giro di Gara</button>
-            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning);" data-i18n="admin_ops_giro_hint">
+            <button class="btn btn-primary btn-block" onclick="recycleUnsold()">Avvia Giro di Gara</button>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: var(--warning);">
                 Utile quando il mazzo finisce ma ci sono giocatori invenduti
             </p>
         </div>
 
         <!-- Rimozione Giocatore -->
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_ops_remove_title">Rimuovi Giocatore da Rosa (con Rimborso)</h3>
+            <h3 class="card-title">Rimuovi Giocatore da Rosa (con Rimborso)</h3>
             <div class="grid-3">
                 <div class="form-group">
-                    <label data-i18n="admin_ops_remove_team">Squadra</label>
+                    <label>Squadra</label>
                     <select id="removePlayerTeam">
-                        <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
+                        <option value="">Seleziona squadra...</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_ops_remove_player">Giocatore</label>
+                    <label>Giocatore</label>
                     <select id="removePlayerName">
-                        <option value="" data-i18n="admin_select_player">Seleziona giocatore...</option>
+                        <option value="">Seleziona giocatore...</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_ops_remove_credits">Crediti da Restituire</label>
+                    <label>Crediti da Restituire</label>
                     <input type="number" id="removePlayerCredits" value="0" min="0">
-                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;" data-i18n="admin_ops_remove_hint">
+                    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
                         Il giocatore torna nel mazzo
                     </p>
                 </div>
             </div>
-            <button class="btn btn-danger" onclick="removePlayerFromTeam()" data-i18n="admin_ops_remove_btn">Rimuovi Giocatore</button>
+            <button class="btn btn-danger" onclick="removePlayerFromTeam()">Rimuovi Giocatore</button>
         </div>
 
         <!-- Scarta dal Mazzo -->
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_ops_discard_title">Scarta Giocatore dal Mazzo</h3>
+            <h3 class="card-title">Scarta Giocatore dal Mazzo</h3>
             <div class="grid-2">
                 <div class="form-group">
-                    <label data-i18n="admin_ops_discard_label">Giocatore da Scartare</label>
+                    <label>Giocatore da Scartare</label>
                     <select id="discardPlayerSelect">
-                        <option value="" data-i18n="admin_select_player">Seleziona giocatore...</option>
+                        <option value="">Seleziona giocatore...</option>
                     </select>
                 </div>
                 <div style="display: flex; align-items: flex-end;">
-                    <button class="btn btn-danger btn-block" onclick="discardPlayer()" data-i18n="admin_ops_discard_btn">Scarta Definitivamente</button>
+                    <button class="btn btn-danger btn-block" onclick="discardPlayer()">Scarta Definitivamente</button>
                 </div>
             </div>
+        </div>
+
+        <!-- Scambio Giocatori tra Squadre -->
+        <div class="card">
+            <h3 class="card-title">🔄 Scambio Giocatori tra Squadre</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+                Scambia due giocatori tra due squadre. Il prezzo di acquisto resta associato alla squadra originaria (i crediti non si modificano).
+            </p>
+            <div class="grid-2" style="gap:1.5rem;">
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label>Squadra A</label>
+                        <select id="swapTeamA" onchange="aggiornaSwapPlayersA()">
+                            <option value="">Seleziona squadra...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>Giocatore da cedere (Squadra A)</label>
+                        <select id="swapPlayerA">
+                            <option value="">Seleziona prima la squadra...</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.75rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label>Squadra B</label>
+                        <select id="swapTeamB" onchange="aggiornaSwapPlayersB()">
+                            <option value="">Seleziona squadra...</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label>Giocatore da cedere (Squadra B)</label>
+                        <select id="swapPlayerB">
+                            <option value="">Seleziona prima la squadra...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-warning btn-block" style="margin-top:1rem;" onclick="eseguiScambio()">🔄 Conferma Scambio</button>
         </div>
     </div>
 
     <!-- TAB 6: Configurazione -->
     <div class="tab-content" id="tab-config">
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_config_timer_title">Impostazioni Timer</h3>
+            <h3 class="card-title">Impostazioni Timer</h3>
             <div class="grid-2">
                 <div class="form-group">
-                    <label data-i18n="admin_config_timer_label">Durata Timer (secondi)</label>
+                    <label>Durata Timer (secondi)</label>
                     <input type="number" id="configTimerDuration" value="10" min="5" max="60">
                 </div>
                 <div style="display: flex; align-items: flex-end;">
-                    <button class="btn btn-primary" onclick="updateTimerConfig()" data-i18n="admin_config_timer_btn">Aggiorna Timer</button>
+                    <button class="btn btn-primary" onclick="updateTimerConfig()">Aggiorna Timer</button>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_config_qr_title">Connessione Telefono (QR Code)</h3>
+            <h3 class="card-title">Connessione Telefono (QR Code)</h3>
             <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 0.5rem 0;">
-                <span data-i18n="admin_config_qr_url">URL usato per il QR:</span> <b id="detectedIpDisplay" style="color: var(--accent);" data-i18n="admin_config_qr_detecting">rilevamento automatico...</b>
+                URL usato per il QR: <b id="detectedIpDisplay" style="color: var(--accent);">rilevamento automatico...</b>
             </p>
-            <p style="color: #f59e0b; font-size: 11px; margin: 0 0 1rem 0; line-height: 1.5;" data-i18n-html="admin_config_qr_warning">
+            <p style="color: #f59e0b; font-size: 11px; margin: 0 0 1rem 0; line-height: 1.5;">
                 Il server gira nell'ambiente Bolt, <b>non sul tuo PC</b>. Il telefono si connette tramite l'URL pubblico del browser, non tramite IP locale. L'URL viene rilevato automaticamente quando apri questa pagina.
             </p>
             <div class="form-group">
-                <label data-i18n="admin_config_qr_override">URL override (solo se necessario)</label>
+                <label>URL override (solo se necessario)</label>
                 <div style="display: flex; gap: 0.5rem;">
-                    <input type="text" id="configHostUrl" placeholder="es. https://3000-xxxx.bolt.new" style="flex: 1;" data-i18n-placeholder="admin_config_qr_ph">
-                    <button class="btn btn-primary" style="white-space: nowrap;" onclick="saveHostUrl()" data-i18n="admin_config_qr_apply">Applica</button>
-                    <button class="btn btn-secondary" style="white-space: nowrap;" onclick="resetHostUrl()" data-i18n="admin_config_qr_auto">Auto</button>
+                    <input type="text" id="configHostUrl" placeholder="es. https://3000-xxxx.bolt.new" style="flex: 1;">
+                    <button class="btn btn-primary" style="white-space: nowrap;" onclick="saveHostUrl()">Applica</button>
+                    <button class="btn btn-secondary" style="white-space: nowrap;" onclick="resetHostUrl()">Auto</button>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_config_rules_title">Regole Mantra</h3>
+            <h3 class="card-title">Regole Mantra</h3>
             <div class="grid-2">
                 <div class="form-group">
-                    <label data-i18n="admin_config_budget_label">Budget Iniziale (crediti)</label>
+                    <label>Budget Iniziale (crediti)</label>
                     <input type="number" id="configStartingBudget" value="500" min="100">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_config_max_total">Max Giocatori Totali</label>
+                    <label>Max Giocatori Totali</label>
                     <input type="number" id="configMaxTotalPlayers" value="25" min="11">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_config_max_off">Max Offensivi Puri</label>
+                    <label>Max Offensivi Puri</label>
                     <input type="number" id="configMaxOffensive" value="6" min="1">
                 </div>
                 <div></div>
@@ -1482,62 +1449,67 @@
         </div>
 
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_config_limits_title">Limiti per Ruolo</h3>
-            <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 1rem 0;" data-i18n-html="admin_config_limits_desc">Inserisci il numero esatto da raggiungere per completare la rosa. <strong style="color: var(--text-primary);">0 = illimitato</strong> (vincolato solo dal totale giocatori).</p>
+            <h3 class="card-title">Limiti per Ruolo</h3>
+            <p style="color: var(--text-secondary); font-size: 12px; margin: 0 0 1rem 0;">Inserisci il numero esatto da raggiungere per completare la rosa. <strong style="color: var(--text-primary);">0 = illimitato</strong> (vincolato solo dal totale giocatori).</p>
             <div class="grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
                 <div class="form-group">
-                    <label data-i18n="admin_config_limit_p">Portieri (P)</label>
+                    <label>Portieri (P)</label>
                     <input type="number" id="configLimitP" value="3" min="0" placeholder="0 = ∞">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_config_limit_d">Difensori (D)</label>
+                    <label>Difensori (D)</label>
                     <input type="number" id="configLimitD" value="10" min="0" placeholder="0 = ∞">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_config_limit_c">Centrocampisti (C)</label>
+                    <label>Centrocampisti (C)</label>
                     <input type="number" id="configLimitC" value="8" min="0" placeholder="0 = ∞">
                 </div>
                 <div class="form-group">
-                    <label data-i18n="admin_config_limit_a">Attaccanti (A)</label>
+                    <label>Attaccanti (A)</label>
                     <input type="number" id="configLimitA" value="4" min="0" placeholder="0 = ∞">
                 </div>
             </div>
-            <button class="btn btn-success" style="margin-top: 1rem;" onclick="saveAllConfig()" data-i18n="admin_config_save_all">Salva Tutte le Configurazioni</button>
+            <button class="btn btn-success" style="margin-top: 1rem;" onclick="saveAllConfig()">Salva Tutte le Configurazioni</button>
         </div>
     </div>
 
     <!-- TAB 7: Export -->
     <div class="tab-content" id="tab-export">
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_export_title">Esporta Report Excel</h3>
-            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;" data-i18n="admin_export_desc">
+            <h3 class="card-title">Esporta Report Excel</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
                 Genera un file Excel completo con tutti i dati dell'asta:
             </p>
             <ul style="color: var(--text-secondary); margin-bottom: 1.5rem; padding-left: 1.5rem;">
-                <li data-i18n="admin_export_li1">Un foglio per ogni squadra con acquisti ordinati per ruolo</li>
-                <li data-i18n="admin_export_li2">Foglio giocatori svincolati (invenduti)</li>
-                <li data-i18n="admin_export_li3">Tabellone generale budget e slot</li>
+                <li>Un foglio per ogni squadra con acquisti ordinati per ruolo</li>
+                <li>Foglio giocatori svincolati (invenduti)</li>
+                <li>Tabellone generale budget e slot</li>
             </ul>
-            <button class="btn btn-success btn-block" onclick="exportExcel()" data-i18n="admin_export_btn">Scarica Report Completo</button>
-            <button class="btn btn-block" style="background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.4);font-weight:700;margin-top:8px;" onclick="exportCSV()">📄 Esporta CSV (Squadra,ID,Prezzo)</button>
+            <button class="btn btn-success btn-block" onclick="exportExcel()">Scarica Report Completo</button>
+            <button class="btn btn-block" style="margin-top:0.75rem;background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);font-weight:700;" onclick="exportSAV()">Scarica File SAV (salvataggio asta)</button>
+            <button class="btn btn-block" style="margin-top:0.75rem;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);font-weight:700;" onclick="exportCSV()">Scarica Rose CSV (Leghe Fantacalcio)</button>
+            <p style="color: var(--text-secondary); font-size: 0.82rem; margin-top: 0.75rem;">
+                Il file SAV contiene tutti i dati dell'asta (squadre, giocatori acquistati e svincolati, budget, configurazione) e permette di riprendere l'asta in un secondo momento.<br>
+                Il file CSV esporta le rose nel formato compatibile con Leghe Fantacalcio.
+            </p>
         </div>
 
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_export_history_title">Storico Vendite</h3>
+            <h3 class="card-title">Storico Vendite</h3>
             <div class="table-scroll-wrapper">
             <table id="soldPlayersTable">
                 <thead>
                     <tr>
-                        <th data-i18n="admin_export_th_player">Giocatore</th>
-                        <th data-i18n="admin_export_th_role">Ruolo</th>
-                        <th data-i18n="admin_export_th_team">Squadra</th>
-                        <th data-i18n="admin_export_th_sold">Venduto a</th>
-                        <th data-i18n="admin_export_th_price">Prezzo</th>
+                        <th>Giocatore</th>
+                        <th>Ruolo</th>
+                        <th>Squadra</th>
+                        <th>Venduto a</th>
+                        <th>Prezzo</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="5" style="text-align: center; color: var(--text-secondary);" data-i18n="admin_export_empty">Nessuna vendita registrata</td>
+                        <td colspan="5" style="text-align: center; color: var(--text-secondary);">Nessuna vendita registrata</td>
                     </tr>
                 </tbody>
             </table>
@@ -1553,15 +1525,41 @@
         <button onclick="chiudiModaleStagione()" style="position:absolute;top:14px;right:14px;background:none;
                 border:none;color:#94a3b8;font-size:1.4rem;cursor:pointer;line-height:1;">✕</button>
 
-        <h3 style="font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:4px;" data-i18n="admin_modal_edit_title">
+        <h3 style="font-size:1rem;font-weight:700;color:#f1f5f9;margin-bottom:4px;">
             ✏️ Modifica Stagione
         </h3>
         <p id="modal-stagione-label" style="font-size:0.82rem;color:#94a3b8;margin-bottom:20px;"></p>
 
+        <!-- CAMPI STAGIONE MANUALE (anno, label, presidenti) -->
+        <div id="stagione-manual-fields" style="display:none;margin-bottom:20px;flex-direction:column;gap:10px;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div style="flex:0 0 100px;">
+              <label style="font-size:0.75rem;color:#94a3b8;display:block;margin-bottom:4px;">Anno</label>
+              <input type="number" id="stagione-manual-year" placeholder="2018" min="1990" max="2099"
+                     style="width:100%;padding:7px 8px;background:#0f172a;border:1px solid #475569;border-radius:6px;color:#f1f5f9;font-size:0.88rem;">
+            </div>
+            <div style="flex:1;min-width:160px;">
+              <label style="font-size:0.75rem;color:#94a3b8;display:block;margin-bottom:4px;">Etichetta stagione</label>
+              <input type="text" id="stagione-manual-label" placeholder="es. Fantacalcio 2018/19" maxlength="200"
+                     style="width:100%;padding:7px 8px;background:#0f172a;border:1px solid #475569;border-radius:6px;color:#f1f5f9;font-size:0.88rem;">
+            </div>
+          </div>
+          <div>
+            <label style="font-size:0.75rem;color:#94a3b8;display:block;margin-bottom:4px;">Presidenti / Squadre (opzionale)</label>
+            <input type="text" id="stagione-manual-presidents" placeholder="es. Rossi, Bianchi, Verdi..." maxlength="500"
+                   style="width:100%;padding:7px 8px;background:#0f172a;border:1px solid #475569;border-radius:6px;color:#f1f5f9;font-size:0.88rem;">
+          </div>
+        </div>
+
         <!-- CLASSIFICA -->
         <div style="margin-bottom:20px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-                      color:#38bdf8;margin-bottom:10px;" data-i18n="admin_modal_classifica">Classifica Finale</div>
+                      color:#38bdf8;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
+            Classifica Finale
+            <button onclick="aggiungiRigaClassifica()" id="btn-add-classifica-row" style="display:none;font-size:11px;padding:3px 9px;
+                    background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);
+                    border-radius:5px;cursor:pointer;font-weight:600;">+ Riga</button>
+          </div>
           <div id="classifica-list" style="display:flex;flex-direction:column;gap:6px;"></div>
         </div>
 
@@ -1569,14 +1567,14 @@
         <div style="margin-bottom:20px;">
           <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
                       color:#10b981;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-            <span data-i18n="admin_modal_competizioni">Competizioni Vinte</span>
+            Competizioni Vinte
             <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
               <button onclick="aggiuntaCompetizione()" style="font-size:11px;padding:3px 9px;background:rgba(16,185,129,0.15);
-                      color:#10b981;border:1px solid rgba(16,185,129,0.3);border-radius:5px;cursor:pointer;font-weight:600;" data-i18n="admin_modal_add_custom">
+                      color:#10b981;border:1px solid rgba(16,185,129,0.3);border-radius:5px;cursor:pointer;font-weight:600;">
                 + Personalizzata
               </button>
               <button onclick="apriPresetComp()" style="font-size:11px;padding:3px 9px;background:rgba(245,158,11,0.15);
-                      color:#f59e0b;border:1px solid rgba(245,158,11,0.3);border-radius:5px;cursor:pointer;font-weight:600;" data-i18n="admin_modal_preset">
+                      color:#f59e0b;border:1px solid rgba(245,158,11,0.3);border-radius:5px;cursor:pointer;font-weight:600;">
                 📋 Preset
               </button>
             </div>
@@ -1584,21 +1582,32 @@
           <div id="competizioni-list" style="display:flex;flex-direction:column;gap:6px;"></div>
           <div id="preset-comp-panel" style="display:none;margin-top:8px;padding:10px;background:rgba(245,158,11,0.06);
                border:1px solid rgba(245,158,11,0.2);border-radius:8px;">
-            <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;" data-i18n="admin_modal_preset_hint">Clicca per aggiungere:</div>
+            <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;">Clicca per aggiungere:</div>
             <div style="display:flex;flex-wrap:wrap;gap:6px;" id="preset-comp-buttons"></div>
+          </div>
+          <!-- TROPHY ICON PICKER -->
+          <div id="trophy-picker-panel" style="display:none;margin-top:8px;padding:12px;background:rgba(16,185,129,0.06);
+               border:1px solid rgba(16,185,129,0.2);border-radius:8px;">
+            <div style="font-size:11px;color:#94a3b8;margin-bottom:8px;">Scegli un'icona trofeo:</div>
+            <div id="trophy-picker-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(42px,1fr));gap:6px;"></div>
           </div>
         </div>
 
         <!-- AZIONI -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
           <button onclick="salvaStagione()" style="flex:1;min-width:140px;padding:11px;background:linear-gradient(135deg,#2563eb,#1d4ed8);
-                  color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;" data-i18n="admin_modal_save_server">
+                  color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
             💾 Salva su Server
           </button>
           <button onclick="scaricaJsonConStagione()" style="flex:1;min-width:140px;padding:11px;
                   background:rgba(16,185,129,0.15);color:#10b981;border:1px solid rgba(16,185,129,0.3);
-                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;" data-i18n="admin_modal_download_json">
+                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
             ⬇️ Scarica JSON
+          </button>
+          <button onclick="eliminaStagioneManuale()" id="btn-delete-stagione-manuale" style="display:none;min-width:140px;padding:11px;
+                  background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);
+                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;">
+            🗑️ Elimina
           </button>
         </div>
       </div>
@@ -1609,100 +1618,24 @@
         <span id="toastMessage"></span>
     </div>
 
-    <!-- MODAL CREA STAGIONE STORICA -->
-    <div id="modal-crea-storica" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);
-         backdrop-filter:blur(4px);z-index:3000;align-items:center;justify-content:center;padding:16px;">
-      <div style="background:#1e293b;border:1px solid #475569;border-radius:16px;width:100%;max-width:620px;
-                  max-height:92vh;overflow-y:auto;padding:24px;position:relative;">
-        <button onclick="chiudiCreaStorica()" style="position:absolute;top:14px;right:14px;background:none;
-                border:none;color:#94a3b8;font-size:1.4rem;cursor:pointer;line-height:1;">✕</button>
-
-        <h3 style="font-size:1.05rem;font-weight:700;color:#f1f5f9;margin-bottom:4px;" data-i18n="admin_modal_cs_title">
-            ➕ Crea stagione storica
-        </h3>
-        <p style="font-size:0.82rem;color:#94a3b8;margin-bottom:20px;" data-i18n="admin_modal_cs_desc">
-            Inserisci i dati delle stagioni passate per costruire l'Albo d'Oro della tua lega.
-        </p>
-
-        <!-- ANNO E LABEL -->
-        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
-          <div style="flex:1;min-width:100px;">
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#38bdf8;" data-i18n="admin_modal_cs_year">Anno</label>
-            <input id="cs-year" type="number" placeholder="2024" style="width:100%;margin-top:4px;padding:8px 10px;
-                   background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:0.9rem;" />
-          </div>
-          <div style="flex:2;min-width:180px;">
-            <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#38bdf8;" data-i18n="admin_modal_cs_name">Nome stagione</label>
-            <input id="cs-label" type="text" placeholder="Fantacalcio 2023/24" style="width:100%;margin-top:4px;padding:8px 10px;
-                   background:#0f172a;border:1px solid #334155;border-radius:6px;color:#f1f5f9;font-size:0.9rem;" />
-          </div>
-        </div>
-
-        <!-- CLASSIFICA -->
-        <div style="margin-bottom:20px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-                      color:#38bdf8;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">
-            <span data-i18n="admin_modal_cs_classifica">Classifica</span>
-            <button onclick="csAggiungiRiga()" style="font-size:11px;padding:3px 9px;background:rgba(56,189,248,0.15);
-                    color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:5px;cursor:pointer;font-weight:600;" data-i18n="admin_modal_cs_add_row">
-                + Aggiungi riga
-            </button>
-          </div>
-          <div id="cs-classifica" style="display:flex;flex-direction:column;gap:6px;"></div>
-          <p style="font-size:0.75rem;color:#64748b;margin-top:6px;" data-i18n="admin_modal_cs_order_hint">
-            L'ordine delle righe determina la posizione (1°, 2°, 3°...). Usa le frecce per spostare.
-          </p>
-        </div>
-
-        <!-- COMPETIZIONI -->
-        <div style="margin-bottom:20px;">
-          <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
-                      color:#10b981;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;">
-            <span data-i18n="admin_modal_cs_competizioni">Competizioni vinte</span>
-            <button onclick="csAggiungiComp()" style="font-size:11px;padding:3px 9px;background:rgba(16,185,129,0.15);
-                    color:#10b981;border:1px solid rgba(16,185,129,0.3);border-radius:5px;cursor:pointer;font-weight:600;" data-i18n="admin_modal_cs_add">
-                + Aggiungi
-            </button>
-          </div>
-          <div id="cs-competizioni" style="display:flex;flex-direction:column;gap:6px;"></div>
-        </div>
-
-        <!-- AZIONI -->
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
-          <button onclick="salvaCreaStorica()" id="cs-save-btn" style="flex:1;min-width:140px;padding:11px;background:linear-gradient(135deg,#10b981,#059669);
-                  color:#fff;border:none;border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;" data-i18n="admin_modal_cs_save">
-            💾 Salva stagione
-          </button>
-          <button onclick="chiudiCreaStorica()" style="flex:1;min-width:140px;padding:11px;
-                  background:rgba(100,116,139,0.15);color:#94a3b8;border:1px solid #334155;
-                  border-radius:8px;font-weight:700;font-size:0.88rem;cursor:pointer;" data-i18n="admin_modal_cs_cancel">
-            Annulla
-          </button>
-        </div>
-      </div>
-    </div>
-
     <!-- Barra di accesso rapido mobile (visibile solo su smartphone) -->
     <div id="mobile-quickbar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg-card);border-top:1px solid var(--border);padding:8px 12px;z-index:200;gap:6px;justify-content:space-around;align-items:center;">
-        <button onclick="goTab('tab-asta')" style="flex:1;padding:10px 4px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;" data-i18n="admin_quickbar_auction">ASTA</button>
-        <button onclick="goTab('tab-squadre')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;" data-i18n="admin_quickbar_teams">SQUADRE</button>
-        <button onclick="goTab('tab-operazioni')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;" data-i18n="admin_quickbar_ops">OPERAZ.</button>
-        <button onclick="goTab('tab-giocatori')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;" data-i18n="admin_quickbar_players">GIOC.</button>
+        <button onclick="goTab('tab-asta')" style="flex:1;padding:10px 4px;background:var(--success);color:#fff;border:none;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">ASTA</button>
+        <button onclick="goTab('tab-squadre')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">SQUADRE</button>
+        <button onclick="goTab('tab-operazioni')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">OPERAZ.</button>
+        <button onclick="goTab('tab-giocatori')" style="flex:1;padding:10px 4px;background:var(--bg-input);color:var(--text-primary);border:1px solid var(--border);border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;min-height:44px;">GIOC.</button>
     </div>
 
   </div><!-- /admin-main -->
 
     <!-- Socket.IO -->
     <script src="/socket.io/socket.io.js"></script>
-    <script src="/i18n.js"></script>
     <script>
         const socket = io({ transports: ["polling"] });
-        I18N.applyLang('admin');
 
         // Current state
         let currentTeams = {};
         let currentPlayersList = [];
-        let currentDiscardedList = [];
         let currentSoldPlayers = [];
         let currentAuctionName = 'default';
         let currentRoomCode = null;
@@ -1931,10 +1864,10 @@
                 document.getElementById('configMaxTotalPlayers').value = c.MAX_TOTAL_PLAYERS || 25;
                 document.getElementById('configMaxOffensive').value = c.MAX_OFFENSIVE_PLAYERS || 6;
                 if (c.LIMITS) {
-                    document.getElementById('configLimitP').value = c.LIMITS.P || 3;
-                    document.getElementById('configLimitD').value = c.LIMITS.D || 10;
-                    document.getElementById('configLimitC').value = c.LIMITS.C || 8;
-                    document.getElementById('configLimitA').value = c.LIMITS.A || 4;
+                    document.getElementById('configLimitP').value = (c.LIMITS.P ?? 3);
+                    document.getElementById('configLimitD').value = (c.LIMITS.D ?? 10);
+                    document.getElementById('configLimitC').value = (c.LIMITS.C ?? 8);
+                    document.getElementById('configLimitA').value = (c.LIMITS.A ?? 4);
                 }
             }
         });
@@ -1980,10 +1913,9 @@
             updateStats();
         });
 
-        socket.on('discardedList', (discarded) => {
-            currentDiscardedList = discarded || [];
-            renderDiscardedList();
-            updateStats();
+        socket.on('discardedCount', (count) => {
+            const el = document.getElementById('statDiscarded');
+            if (el) el.textContent = count;
         });
 
         socket.on('errorNotify', (msg) => {
@@ -2004,29 +1936,6 @@
         });
 
         // ── Auto-save dal server ─────────────────────────────────────────────
-        socket.on('auctionEndedState', (ended) => {
-          const btnEnd = document.getElementById('btn-end-auction');
-          const btnResume = document.getElementById('btn-resume-auction');
-          if (!btnEnd || !btnResume) return;
-          if (ended) {
-            btnEnd.style.display = 'none';
-            btnResume.style.display = 'inline-flex';
-          } else {
-            btnEnd.style.display = 'inline-flex';
-            btnResume.style.display = 'none';
-          }
-        });
-        function toggleEndAuction() {
-          const btnResume = document.getElementById('btn-resume-auction');
-          if (btnResume && btnResume.style.display !== 'none') {
-            socket.emit('adminResumeAuction');
-          } else {
-            if (confirm('Confermi di voler terminare l\'asta? La stanza passerà in modalità riepilogo. Potrai riprenderla in qualsiasi momento.')) {
-              socket.emit('adminEndAuction');
-            }
-          }
-        }
-
         socket.on('autoSaved', (data) => {
             _aggiornaUltimoSalvataggio(data.ts);
         });
@@ -2201,148 +2110,6 @@
             socket.emit('adminImportBackupConfig', b);
         }
 
-        function importaBackupFull() {
-            if (!_loadedBackupData) {
-                showAlert('error', 'Seleziona prima un file di backup .json');
-                return;
-            }
-            const b = _loadedBackupData;
-            const teamCount = b.teams ? b.teams.length : 0;
-            const soldCount = b.soldPlayers ? b.soldPlayers.length : 0;
-            const unsoldCount = b.unsoldPlayers ? b.unsoldPlayers.length : 0;
-            if (!confirm(
-                `Stai per RIPRISTINARE L'ASTA COMPLETA dal backup "${b.label || b.auctionName} (${b.year})".\n\n` +
-                `• Verranno create ${teamCount} squadre con budget FINALI dal backup\n` +
-                `• ${soldCount} giocatori venduti verranno ripristinati con team e prezzo\n` +
-                `• ${unsoldCount} giocatori svincolati verranno caricati nella lista\n` +
-                `• L'asta verrà impostata in pausa (conclusa)\n\n` +
-                `Procedere?`
-            )) return;
-            socket.emit('adminImportBackupFull', b);
-        }
-
-        // ============================================================
-        // IMPORT DA STANZA PRECEDENTE (nuova stagione collegata)
-        // ============================================================
-
-        let _legacyRoomCode = null;
-
-        async function verificaStanzaLegacy() {
-            const code = document.getElementById('legacy-room-code').value.trim().toUpperCase();
-            const errEl = document.getElementById('legacy-error');
-            const overviewEl = document.getElementById('legacy-overview');
-            errEl.style.display = 'none';
-            overviewEl.style.display = 'none';
-
-            if (!code || code.length < 4) {
-                errEl.textContent = 'Inserisci un codice stanza valido.';
-                errEl.style.display = 'block';
-                return;
-            }
-
-            overviewEl.innerHTML = '<span style="color:#38bdf8;">Caricamento...</span>';
-            overviewEl.style.display = 'block';
-
-            try {
-                const res = await fetch(`/api/legacy/${code}/overview`);
-                const data = await res.json();
-                if (!data.success) throw new Error(data.error || 'Stanza non trovata.');
-
-                _legacyRoomCode = code;
-                const backupsHtml = data.backups && data.backups.length > 0
-                    ? data.backups.map(b => `<div style="padding:4px 0;font-size:0.8rem;">📦 ${escHtml(b.label || b.auction_name)} (${b.year}) — export: ${b.exported_at ? new Date(b.exported_at).toLocaleDateString('it-IT') : '—'}</div>`).join('')
-                    : '<div style="font-size:0.8rem;color:#64748b;">Nessun backup storico trovato.</div>';
-
-                overviewEl.innerHTML = `
-                    <div style="color:#10b981;font-weight:600;margin-bottom:6px;">✅ Stanza trovata: ${data.roomCode}</div>
-                    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
-                        <div>🏟️ Squadre: <strong>${data.teamCount}</strong></div>
-                        <div>⚽ Giocatori venduti: <strong>${data.soldCount}</strong></div>
-                        <div>📋 Giocatori in lista: <strong>${data.playerListCount}</strong></div>
-                    </div>
-                    <div style="border-top:1px solid rgba(56,189,248,0.15);padding-top:8px;margin-top:8px;">
-                        <div style="font-weight:600;margin-bottom:4px;">📚 Backup storici (${data.backupCount}):</div>
-                        ${backupsHtml}
-                    </div>
-                `;
-
-                // Mostra gli step successivi
-                document.getElementById('legacy-step-download').style.display = 'block';
-                if (data.backupCount > 0) {
-                    document.getElementById('legacy-step-albo').style.display = 'block';
-                } else {
-                    document.getElementById('legacy-step-albo').style.display = 'none';
-                }
-            } catch(e) {
-                overviewEl.style.display = 'none';
-                errEl.textContent = e.message;
-                errEl.style.display = 'block';
-                document.getElementById('legacy-step-download').style.display = 'none';
-                document.getElementById('legacy-step-albo').style.display = 'none';
-                _legacyRoomCode = null;
-            }
-        }
-
-        async function scaricaBackupLegacy() {
-            if (!_legacyRoomCode) { showAlert('error', 'Verifica prima la stanza precedente.'); return; }
-            const year = parseInt(document.getElementById('legacy-year').value) || new Date().getFullYear();
-            const label = document.getElementById('legacy-label').value.trim() || `Asta ${year}`;
-
-            try {
-                const res = await fetch(`/api/legacy/${_legacyRoomCode}/export?year=${year}&label=${encodeURIComponent(label)}`);
-                if (!res.ok) {
-                    const err = await res.json();
-                    throw new Error(err.error || 'Errore download.');
-                }
-                const blob = await res.blob();
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `DraftARENA_backup_${_legacyRoomCode}_${year}.json`;
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
-                showAlert('success', `✅ Backup scaricato! Ora caricalo nella sezione "Importa backup" qui sotto.`);
-            } catch(e) {
-                showAlert('error', `❌ ${e.message}`);
-            }
-        }
-
-        async function importaAlboLegacy() {
-            if (!_legacyRoomCode) { showAlert('error', 'Verifica prima la stanza precedente.'); return; }
-            if (!currentRoomCode) { showAlert('error', 'Entra in una stanza prima.'); return; }
-            if (_legacyRoomCode === currentRoomCode) { showAlert('error', 'La stanza di origine e destinazione coincidono.'); return; }
-
-            if (!confirm(`Importare l'Albo d'Oro dalla stanza ${_legacyRoomCode} a questa (${currentRoomCode})?\nVerranno copiati tutti i backup storici, le classifiche trofei e gli alias delle squadre.`)) return;
-
-            const resultEl = document.getElementById('legacy-albo-result');
-            resultEl.style.display = 'none';
-
-            try {
-                const pin = sessionStorage.getItem('adminPin') || '';
-                const res = await fetch(`/api/legacy/${_legacyRoomCode}/import-albo`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
-                    body: JSON.stringify({ newCode: currentRoomCode })
-                });
-                const data = await res.json();
-                if (!data.success) throw new Error(data.error || 'Errore importazione.');
-
-                resultEl.style.display = 'block';
-                resultEl.style.color = '#10b981';
-                resultEl.innerHTML = `✅ Importazione completata! ${data.copied} backup copiati${data.skipped ? `, ${data.skipped} già presenti (saltati)` : ''}.`;
-                showAlert('success', `🏆 Albo d'Oro importato: ${data.copied} stagioni copiate.`);
-
-                // Ricarica lo storico per mostrare i nuovi dati
-                caricaStoricoLega();
-            } catch(e) {
-                resultEl.style.display = 'block';
-                resultEl.style.color = '#ef4444';
-                resultEl.textContent = `❌ ${e.message}`;
-                showAlert('error', e.message);
-            }
-        }
-
         // ============================================================
         // STORICO LEGA & ALBO D'ORO
         // ============================================================
@@ -2375,29 +2142,25 @@
             }
             list.innerHTML = seasons.map(s => {
               const hasSeason = s.season_data && (s.season_data.classifica?.length || s.season_data.competizioni?.length);
-              const isManual = s.auction_name === 'storico';
+              const isManual = s.source === 'manuale';
+              const badge = isManual
+                ? '<span style="font-size:0.68rem;padding:1px 6px;background:rgba(245,158,11,0.15);color:#f59e0b;border-radius:4px;font-weight:600;">Manuale</span>'
+                : '<span style="font-size:0.68rem;padding:1px 6px;background:rgba(56,189,248,0.15);color:#38bdf8;border-radius:4px;font-weight:600;">Backup</span>';
+              const editFn = isManual ? 'apriEditorStagioneManualeEsistente' : 'apriEditorStagione';
               return `
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;
                             padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:8px;
                             border:1px solid #334155;flex-wrap:wrap;">
                   <div style="flex:1;min-width:120px;">
-                    <div style="font-weight:600;font-size:0.88rem;color:#f1f5f9;">${escHtml(s.label)}</div>
-                    <div style="font-size:0.75rem;color:#64748b;">${s.year} · ${hasSeason ? '✅ Stagione compilata' : '⬜ Stagione da compilare'}${isManual ? ' · <span style="color:#10b981;">📜 Manuale</span>' : ''}</div>
+                    <div style="font-weight:600;font-size:0.88rem;color:#f1f5f9;display:flex;align-items:center;gap:6px;">${escHtml(s.label)} ${badge}</div>
+                    <div style="font-size:0.75rem;color:#64748b;">${s.year} · ${hasSeason ? '✅ Stagione compilata' : '⬜ Stagione da compilare'}</div>
                   </div>
-                  <div style="display:flex;gap:6px;align-items:center;flex-shrink:0;">
-                    <button onclick="apriEditorStagione('${s.id}', ${JSON.stringify(s).replace(/'/g,"&#39;").replace(/"/g,'&quot;')})"
-                            style="font-size:0.78rem;padding:5px 12px;background:rgba(56,189,248,0.12);
-                                   color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;
-                                   cursor:pointer;font-weight:600;white-space:nowrap;">
-                      ✏️ Modifica Stagione
-                    </button>
-                    ${isManual ? `<button onclick="eliminaStagioneStorica('${s.id}', ${JSON.stringify(s.label).replace(/'/g,"&#39;").replace(/"/g,'&quot;')})"
-                            style="font-size:0.78rem;padding:5px 10px;background:rgba(239,68,68,0.12);
-                                   color:#ef4444;border:1px solid rgba(239,68,68,0.3);border-radius:6px;
-                                   cursor:pointer;font-weight:600;white-space:nowrap;" title="Elimina stagione">
-                      🗑️
-                    </button>` : ''}
-                  </div>
+                  <button onclick="${editFn}('${s.id}', ${JSON.stringify(s).replace(/'/g,"&#39;").replace(/"/g,'&quot;')})"
+                          style="font-size:0.78rem;padding:5px 12px;background:rgba(56,189,248,0.12);
+                                 color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:6px;
+                                 cursor:pointer;font-weight:600;white-space:nowrap;">
+                    ✏️ Modifica Stagione
+                  </button>
                 </div>`;
             }).join('');
           } catch(e) {
@@ -2414,28 +2177,20 @@
 
         function apriEditorStagione(id, stagione) {
           const s = (typeof stagione === 'string') ? JSON.parse(stagione) : stagione;
-          _stagioneCurrent = { id: s.id, label: s.label, year: s.year, backupData: s.backup_data, season_data: s.season_data || { classifica: [], competizioni: [] }, isManual: s.auction_name === 'storico' };
+          _stagioneCurrent = { id: s.id, label: s.label, year: s.year, backupData: s.backup_data, season_data: s.season_data || { classifica: [], competizioni: [] }, source: 'backup' };
 
           document.getElementById('modal-stagione-label').textContent = `${s.label} (${s.year})`;
+          document.getElementById('stagione-manual-fields').style.display = 'none';
+          document.getElementById('btn-add-classifica-row').style.display = 'none';
+          document.getElementById('btn-delete-stagione-manuale').style.display = 'none';
 
           // Popola classifica
+          const teams = (s.backup_data?.teams || []).map(t => t.name || t.key);
           const savedClassifica = _stagioneCurrent.season_data.classifica || [];
-          if (_stagioneCurrent.isManual) {
-            // Stagione manuale: usa i dati completi salvati (con presidente, punti, trofeo, altro)
-            _stagioneCurrent.classifica = savedClassifica.map((c, i) => ({
-              pos: i + 1, nome: c.nome || '',
-              presidente: c.presidente || '',
-              punti: c.punti != null ? c.punti : '',
-              trofeo: c.trofeo || '',
-              altro: c.altro || ''
-            }));
-          } else {
-            // Stagione da asta: usa i nomi delle squadre dal backup
-            const teams = (s.backup_data?.teams || []).map(t => t.name || t.key);
-            const orderedNames = [...savedClassifica.map(c => c.nome)];
-            teams.forEach(n => { if (!orderedNames.includes(n)) orderedNames.push(n); });
-            _stagioneCurrent.classifica = orderedNames.map((nome, i) => ({ pos: i + 1, nome }));
-          }
+          // Merge: usa l'ordine salvato se esiste, poi aggiungi le squadre mancanti
+          const orderedNames = [...savedClassifica.map(c => c.nome)];
+          teams.forEach(n => { if (!orderedNames.includes(n)) orderedNames.push(n); });
+          _stagioneCurrent.classifica = orderedNames.map((nome, i) => ({ pos: i + 1, nome }));
 
           renderClassificaEditor();
 
@@ -2457,69 +2212,16 @@
           if (!_stagioneCurrent) return;
           const list = document.getElementById('classifica-list');
           const medals = ['🥇','🥈','🥉'];
-          if (_stagioneCurrent.isManual) {
-            // Editor completo per stagioni manuali (con presidente, punti, trofeo, altro)
-            list.innerHTML = _stagioneCurrent.classifica.map((r, i) => `
-              <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;
-                          background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
-                <div style="width:28px;text-align:center;font-size:1rem;flex-shrink:0;">${medals[i] || `<span style="font-size:0.8rem;font-weight:700;color:#64748b;">${i+1}</span>`}</div>
-                <input value="${escHtml(r.nome)}" oninput="aggiornaRigaManuale(${i},'nome',this.value)"
-                       placeholder="Nome squadra *"
-                       style="flex:2;min-width:120px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-                <input value="${escHtml(r.presidente||'')}" oninput="aggiornaRigaManuale(${i},'presidente',this.value)"
-                       placeholder="Presidente"
-                       style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-                <input value="${escHtml(r.punti!=null?r.punti:'')}" oninput="aggiornaRigaManuale(${i},'punti',this.value)"
-                       type="number" placeholder="Punti"
-                       style="width:70px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-                <input value="${escHtml(r.trofeo||'')}" oninput="aggiornaRigaManuale(${i},'trofeo',this.value)"
-                       placeholder="Trofeo"
-                       style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-                <input value="${escHtml(r.altro||'')}" oninput="aggiornaRigaManuale(${i},'altro',this.value)"
-                       placeholder="Altro"
-                       style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                              border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-                <div style="display:flex;gap:2px;flex-shrink:0;">
-                  ${i > 0 ? `<button onclick="sposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
-                  ${i < _stagioneCurrent.classifica.length-1 ? `<button onclick="sposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
-                  <button onclick="rimuoviRigaManuale(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">✕</button>
-                </div>
-              </div>`).join('') +
-              `<button onclick="aggiungiRigaManuale()" style="margin-top:6px;font-size:11px;padding:4px 10px;background:rgba(56,189,248,0.15);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);border-radius:5px;cursor:pointer;font-weight:600;">+ Aggiungi riga</button>`;
-          } else {
-            // Editor semplice per stagioni da asta (solo ordinamento)
-            list.innerHTML = _stagioneCurrent.classifica.map((item, i) => `
-              <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;
-                          background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;">
-                <span style="font-size:1rem;width:24px;text-align:center;">${medals[i] || (i+1)}</span>
-                <span style="flex:1;font-size:0.88rem;color:#f1f5f9;font-weight:${i<3?'600':'400'};">${escHtml(item.nome)}</span>
-                <div style="display:flex;flex-direction:column;gap:2px;">
-                  ${i > 0 ? `<button onclick="sposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
-                  ${i < _stagioneCurrent.classifica.length-1 ? `<button onclick="sposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
-                </div>
-              </div>`).join('');
-          }
-        }
-
-        function aggiornaRigaManuale(i, campo, val) {
-          if (_stagioneCurrent && _stagioneCurrent.classifica[i]) _stagioneCurrent.classifica[i][campo] = val;
-        }
-
-        function aggiungiRigaManuale() {
-          if (!_stagioneCurrent) return;
-          _stagioneCurrent.classifica.push({ pos: _stagioneCurrent.classifica.length + 1, nome: '', presidente: '', punti: '', trofeo: '', altro: '' });
-          renderClassificaEditor();
-        }
-
-        function rimuoviRigaManuale(i) {
-          if (!_stagioneCurrent) return;
-          _stagioneCurrent.classifica.splice(i, 1);
-          _stagioneCurrent.classifica.forEach((item, idx) => item.pos = idx + 1);
-          renderClassificaEditor();
+          list.innerHTML = _stagioneCurrent.classifica.map((item, i) => `
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;
+                        background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;">
+              <span style="font-size:1rem;width:24px;text-align:center;">${medals[i] || (i+1)}</span>
+              <span style="flex:1;font-size:0.88rem;color:#f1f5f9;font-weight:${i<3?'600':'400'};">${escHtml(item.nome)}</span>
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                ${i > 0 ? `<button onclick="sposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
+                ${i < _stagioneCurrent.classifica.length-1 ? `<button onclick="sposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
+              </div>
+            </div>`).join('');
         }
 
         function sposta(dir, idx) {
@@ -2528,7 +2230,7 @@
           if (swap < 0 || swap >= cl.length) return;
           [cl[idx], cl[swap]] = [cl[swap], cl[idx]];
           cl.forEach((item, i) => item.pos = i + 1);
-          renderClassificaEditor();
+          if (_stagioneCurrent.source === 'manuale') renderClassificaEditorManuale(); else renderClassificaEditor();
         }
 
         function renderCompetizioniEditor() {
@@ -2568,13 +2270,13 @@
 
         function rimuoviComp(i) {
           _stagioneCurrent.competizioni.splice(i, 1);
-          renderCompetizioniEditor();
+          if (_stagioneCurrent.source === 'manuale') renderCompetizioniEditorManuale(); else renderCompetizioniEditor();
         }
 
         function aggiuntaCompetizione(preset) {
           if (!_stagioneCurrent) return;
           _stagioneCurrent.competizioni.push(preset ? { ...preset, id: Date.now().toString(), vincitore: '' } : { id: Date.now().toString(), emoji: '🏅', nome: '', vincitore: '' });
-          renderCompetizioniEditor();
+          if (_stagioneCurrent.source === 'manuale') renderCompetizioniEditorManuale(); else renderCompetizioniEditor();
           document.getElementById('preset-comp-panel').style.display = 'none';
         }
 
@@ -2594,20 +2296,12 @@
 
         async function salvaStagione() {
           if (!_stagioneCurrent) return;
+          if (_stagioneCurrent.source === 'manuale') { salvaStagioneManuale(); return; }
           const pin = getStoredAdminPin();
           if (!pin) { showAlert('error', 'PIN admin non trovato in sessione.'); return; }
 
-          const classifica = _stagioneCurrent.isManual
-            ? _stagioneCurrent.classifica.filter(c => c.nome && c.nome.trim()).map((c, i) => ({
-                pos: i + 1, nome: c.nome.trim(),
-                presidente: c.presidente || null,
-                punti: c.punti !== '' && c.punti != null ? Number(c.punti) : null,
-                trofeo: c.trofeo || null, altro: c.altro || null
-              }))
-            : _stagioneCurrent.classifica;
-
           const body = {
-            classifica,
+            classifica: _stagioneCurrent.classifica,
             competizioni: _stagioneCurrent.competizioni.map(c => ({ id: c.id, emoji: c.emoji, nome: c.nome, vincitore: c.vincitore }))
           };
 
@@ -2620,6 +2314,7 @@
             const json = await res.json();
             if (!json.success) throw new Error(json.error);
             showAlert('success', '✅ Stagione salvata nell\'Albo d\'Oro!');
+            chiudiModaleStagione();
             caricaStoricoLega();
           } catch(e) {
             showAlert('error', '❌ Errore: ' + e.message);
@@ -2645,367 +2340,235 @@
         }
 
         // ============================================================
-        // CREA STAGIONE STORICA (manuale)
+        // STAGIONI MANUALI — Creazione, editing, eliminazione
         // ============================================================
-        let _csClassifica = [];
-        let _csCompetizioni = [];
 
-        function apriCreaStagioneStorica() {
-          _csClassifica = [{ nome: '', presidente: '', punti: '', trofeo: '', altro: '' }];
-          _csCompetizioni = [];
-          document.getElementById('cs-year').value = new Date().getFullYear() - 1;
-          document.getElementById('cs-label').value = '';
-          document.getElementById('modal-crea-storica').style.display = 'flex';
-          csRenderClassifica();
-          csRenderCompetizioni();
+        const TROPHY_ICONS = [
+          '🏆','🥇','🥈','🥉','🏅','🎖️','👑','⭐','💎','🛡️',
+          '⚽','🥄','📊','📉','💰','🤦','🔥','⚡','🎯','🎪',
+          '🇮🇹','🌎','🦅','🐺','🦁','🐉','🦈','🐂','👑','📜'
+        ];
+
+        let _trophyPickerTargetIdx = null;
+
+        function apriEditorStagioneManuale() {
+          if (!currentRoomCode) { showAlert('error', 'Entra in una stanza prima.'); return; }
+          _stagioneCurrent = {
+            id: null,
+            label: '',
+            year: new Date().getFullYear() - 1,
+            backupData: null,
+            season_data: { classifica: [], competizioni: [] },
+            classifica: [],
+            competizioni: [],
+            source: 'manuale',
+            presidents: '',
+            notes: ''
+          };
+          document.getElementById('modal-stagione-label').textContent = 'Nuova stagione manuale';
+          document.getElementById('stagione-manual-fields').style.display = 'flex';
+          document.getElementById('stagione-manual-year').value = _stagioneCurrent.year;
+          document.getElementById('stagione-manual-label').value = '';
+          document.getElementById('stagione-manual-presidents').value = '';
+          document.getElementById('btn-add-classifica-row').style.display = 'inline-block';
+          document.getElementById('btn-delete-stagione-manuale').style.display = 'none';
+
+          renderClassificaEditorManuale();
+          renderCompetizioniEditorManuale();
+
+          const modal = document.getElementById('modal-stagione');
+          modal.style.display = 'flex';
+          document.getElementById('preset-comp-panel').style.display = 'none';
+          document.getElementById('trophy-picker-panel').style.display = 'none';
         }
 
-        function chiudiCreaStorica() {
-          document.getElementById('modal-crea-storica').style.display = 'none';
+        function aggiungiRigaClassifica() {
+          if (!_stagioneCurrent) return;
+          _stagioneCurrent.classifica.push({ pos: _stagioneCurrent.classifica.length + 1, nome: '' });
+          renderClassificaEditorManuale();
         }
 
-        function csAggiungiRiga() {
-          _csClassifica.push({ nome: '', presidente: '', punti: '', trofeo: '', altro: '' });
-          csRenderClassifica();
-        }
-
-        function csRimuoviRiga(i) {
-          _csClassifica.splice(i, 1);
-          csRenderClassifica();
-        }
-
-        function csSposta(dir, i) {
-          const swap = dir === 'su' ? i - 1 : i + 1;
-          if (swap < 0 || swap >= _csClassifica.length) return;
-          [_csClassifica[i], _csClassifica[swap]] = [_csClassifica[swap], _csClassifica[i]];
-          csRenderClassifica();
-        }
-
-        function csAggiornaRiga(i, campo, val) {
-          _csClassifica[i][campo] = val;
-        }
-
-        function csRenderClassifica() {
-          const list = document.getElementById('cs-classifica');
-          if (_csClassifica.length === 0) {
-            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessuna riga — usa "+ Aggiungi riga".</p>';
+        function renderClassificaEditorManuale() {
+          if (!_stagioneCurrent) return;
+          const list = document.getElementById('classifica-list');
+          const medals = ['🥇','🥈','🥉'];
+          if (_stagioneCurrent.classifica.length === 0) {
+            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessuna riga — usa "+ Riga" per aggiungere.</p>';
             return;
           }
-          const medals = ['🥇','🥈','🥉'];
-          list.innerHTML = _csClassifica.map((r, i) => `
-            <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;
-                        background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
-              <div style="width:28px;text-align:center;font-size:1rem;flex-shrink:0;">${medals[i] || `<span style="font-size:0.8rem;font-weight:700;color:#64748b;">${i+1}</span>`}</div>
-              <input value="${escHtml(r.nome)}" oninput="csAggiornaRiga(${i},'nome',this.value)"
-                     placeholder="Nome squadra *"
-                     style="flex:2;min-width:120px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <input value="${escHtml(r.presidente)}" oninput="csAggiornaRiga(${i},'presidente',this.value)"
-                     placeholder="Presidente"
-                     style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <input value="${escHtml(r.punti)}" oninput="csAggiornaRiga(${i},'punti',this.value)"
-                     type="number" placeholder="Punti"
-                     style="width:70px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <input value="${escHtml(r.trofeo)}" oninput="csAggiornaRiga(${i},'trofeo',this.value)"
-                     placeholder="Trofeo"
-                     style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <input value="${escHtml(r.altro)}" oninput="csAggiornaRiga(${i},'altro',this.value)"
-                     placeholder="Altro"
-                     style="flex:1;min-width:80px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <div style="display:flex;gap:2px;flex-shrink:0;">
-                ${i > 0 ? `<button onclick="csSposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
-                ${i < _csClassifica.length-1 ? `<button onclick="csSposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
-                <button onclick="csRimuoviRiga(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">✕</button>
+          list.innerHTML = _stagioneCurrent.classifica.map((item, i) => `
+            <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;
+                        background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;">
+              <span style="font-size:1rem;width:24px;text-align:center;">${medals[i] || (i+1)}</span>
+              <input value="${escHtml(item.nome)}" oninput="_stagioneCurrent.classifica[${i}].nome=this.value"
+                     placeholder="Nome squadra"
+                     style="flex:1;padding:5px 8px;background:#0f172a;border:1px solid #475569;border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
+              <div style="display:flex;flex-direction:column;gap:2px;">
+                ${i > 0 ? `<button onclick="sposta('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
+                ${i < _stagioneCurrent.classifica.length-1 ? `<button onclick="sposta('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
               </div>
+              <button onclick="rimuoviRigaClassifica(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:13px;">✕</button>
             </div>`).join('');
         }
 
-        function csAggiungiComp() {
-          _csCompetizioni.push({ emoji: '🏅', nome: '', vincitore: '' });
-          csRenderCompetizioni();
+        function rimuoviRigaClassifica(i) {
+          _stagioneCurrent.classifica.splice(i, 1);
+          _stagioneCurrent.classifica.forEach((item, idx) => item.pos = idx + 1);
+          renderClassificaEditorManuale();
         }
 
-        function csRimuoviComp(i) {
-          _csCompetizioni.splice(i, 1);
-          csRenderCompetizioni();
-        }
-
-        function csAggiornaComp(i, campo, val) {
-          _csCompetizioni[i][campo] = val;
-        }
-
-        function csRenderCompetizioni() {
-          const list = document.getElementById('cs-competizioni');
-          if (_csCompetizioni.length === 0) {
-            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessuna competizione — usa "+ Aggiungi".</p>';
+        function renderCompetizioniEditorManuale() {
+          if (!_stagioneCurrent) return;
+          const squadreDisp = _stagioneCurrent.classifica.map(c => c.nome).filter(n => n);
+          const list = document.getElementById('competizioni-list');
+          if (_stagioneCurrent.competizioni.length === 0) {
+            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessuna competizione — usa i pulsanti sopra per aggiungere.</p>';
             return;
           }
-          const squadreDisp = _csClassifica.map(c => c.nome).filter(n => n && n.trim());
-          list.innerHTML = _csCompetizioni.map((c, i) => `
+          list.innerHTML = _stagioneCurrent.competizioni.map((c, i) => `
             <div style="display:flex;align-items:center;gap:6px;padding:6px 8px;
                         background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
-              <input value="${escHtml(c.emoji)}" oninput="csAggiornaComp(${i},'emoji',this.value)"
-                     style="width:42px;padding:4px;background:#0f172a;border:1px solid #475569;border-radius:5px;
-                            color:#f1f5f9;text-align:center;font-size:1rem;">
-              <input value="${escHtml(c.nome)}" oninput="csAggiornaComp(${i},'nome',this.value)"
+              <button onclick="apriTrophyPicker(${i})" title="Scegli icona trofeo"
+                      style="width:42px;padding:4px;background:#0f172a;border:1px solid #475569;border-radius:5px;
+                             color:#f1f5f9;text-align:center;font-size:1rem;cursor:pointer;">${escHtml(c.emoji)}</button>
+              <input value="${escHtml(c.nome)}" oninput="aggiornaComp(${i},'nome',this.value)"
                      placeholder="Nome competizione"
                      style="flex:1;min-width:100px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
                             border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <input value="${escHtml(c.vincitore)}" oninput="csAggiornaComp(${i},'vincitore',this.value)"
-                     list="cs-squadre-list" placeholder="Vincitore"
+              <input value="${escHtml(c.vincitore||'')}" oninput="aggiornaComp(${i},'vincitore',this.value)"
+                     list="squadre-datalist"
+                     placeholder="Vincitore"
                      style="flex:1;min-width:100px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <button onclick="csRimuoviComp(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
+                            border-radius:5px;color:#f1f5f9;font-size:0.83rem;">
+              <button onclick="rimuoviComp(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
                       color:#ef4444;border-radius:5px;padding:4px 8px;cursor:pointer;font-size:13px;">✕</button>
-            </div>`).join('') +
-            `<datalist id="cs-squadre-list">${squadreDisp.map(n => `<option value="${escHtml(n)}">`).join('')}</datalist>`;
+            </div>`).join('');
+          let dl = document.getElementById('squadre-datalist');
+          if (!dl) {
+            dl = document.createElement('datalist');
+            dl.id = 'squadre-datalist';
+            document.body.appendChild(dl);
+          }
+          dl.innerHTML = squadreDisp.map(n => `<option value="${escHtml(n)}">`).join('');
         }
 
-        async function salvaCreaStorica() {
-          const year = parseInt(document.getElementById('cs-year').value);
-          const label = document.getElementById('cs-label').value.trim();
-          if (!year || !label) { showAlert('error', 'Anno e nome stagione sono obbligatori.'); return; }
-          const classifica = _csClassifica.filter(c => c.nome && c.nome.trim());
-          if (classifica.length === 0) { showAlert('error', 'Inserisci almeno una squadra in classifica.'); return; }
-
-          const pin = getStoredAdminPin();
-          if (!pin) { showAlert('error', 'PIN admin non trovato in sessione.'); return; }
-
-          const btn = document.getElementById('cs-save-btn');
-          btn.disabled = true; btn.textContent = 'Salvataggio...';
-
-          try {
-            const res = await fetch(`/api/room/${currentRoomCode}/albo/stagione`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
-              body: JSON.stringify({
-                year, label,
-                classifica: classifica.map(c => ({
-                  nome: c.nome, presidente: c.presidente || '',
-                  punti: c.punti, trofeo: c.trofeo || '', altro: c.altro || ''
-                })),
-                competizioni: _csCompetizioni.filter(c => c.nome && c.nome.trim()).map(c => ({
-                  emoji: c.emoji, nome: c.nome, vincitore: c.vincitore || ''
-                }))
-              })
-            });
-            const json = await res.json();
-            if (!json.success) throw new Error(json.error);
-            showAlert('success', '✅ Stagione storica creata!');
-            chiudiCreaStorica();
-            caricaStoricoLega();
-          } catch(e) {
-            showAlert('error', '❌ Errore: ' + e.message);
-          } finally {
-            btn.disabled = false; btn.textContent = '💾 Salva stagione';
+        function apriTrophyPicker(idx) {
+          _trophyPickerTargetIdx = idx;
+          const panel = document.getElementById('trophy-picker-panel');
+          const visible = panel.style.display !== 'none';
+          panel.style.display = visible ? 'none' : 'block';
+          if (!visible) {
+            document.getElementById('trophy-picker-grid').innerHTML = TROPHY_ICONS.map(icon =>
+              `<button onclick="scegliTrophy('${icon}')"
+                       style="padding:6px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);
+                              border-radius:6px;cursor:pointer;font-size:1.2rem;line-height:1;">${icon}</button>`
+            ).join('');
           }
         }
 
-        async function eliminaStagioneStorica(id, label) {
-          if (!confirm(`Eliminare la stagione "${label}" dall'Albo d'Oro? L'operazione non è reversibile.`)) return;
+        function scegliTrophy(icon) {
+          if (_stagioneCurrent && _trophyPickerTargetIdx !== null && _stagioneCurrent.competizioni[_trophyPickerTargetIdx]) {
+            _stagioneCurrent.competizioni[_trophyPickerTargetIdx].emoji = icon;
+            renderCompetizioniEditorManuale();
+          }
+          document.getElementById('trophy-picker-panel').style.display = 'none';
+          _trophyPickerTargetIdx = null;
+        }
+
+        async function salvaStagioneManuale() {
+          if (!_stagioneCurrent) return;
+          const pin = getStoredAdminPin();
+          if (!pin) { showAlert('error', 'PIN admin non trovato in sessione.'); return; }
+
+          const year = parseInt(document.getElementById('stagione-manual-year').value);
+          const label = document.getElementById('stagione-manual-label').value.trim();
+          const presidents = document.getElementById('stagione-manual-presidents').value.trim();
+
+          if (!year || isNaN(year)) { showAlert('error', 'Inserisci un anno valido.'); return; }
+          if (!label) { showAlert('error', 'Inserisci un\'etichetta per la stagione.'); return; }
+
+          const body = {
+            year,
+            label,
+            presidents,
+            classifica: _stagioneCurrent.classifica.filter(c => c.nome && c.nome.trim()),
+            competizioni: _stagioneCurrent.competizioni.map(c => ({ id: c.id, emoji: c.emoji, nome: c.nome, vincitore: c.vincitore || '' })).filter(c => c.nome)
+          };
+
+          try {
+            let res;
+            if (_stagioneCurrent.id) {
+              res = await fetch(`/api/room/${currentRoomCode}/albo-storico/${_stagioneCurrent.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
+                body: JSON.stringify(body)
+              });
+            } else {
+              res = await fetch(`/api/room/${currentRoomCode}/albo-storico`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
+                body: JSON.stringify(body)
+              });
+            }
+            const json = await res.json();
+            if (!json.success) throw new Error(json.error);
+            showAlert('success', '✅ Stagione manuale salvata nell\'Albo d\'Oro!');
+            chiudiModaleStagione();
+            caricaStoricoLega();
+          } catch(e) {
+            showAlert('error', '❌ Errore: ' + e.message);
+          }
+        }
+
+        async function eliminaStagioneManuale() {
+          if (!_stagioneCurrent || !_stagioneCurrent.id) return;
+          if (!confirm('Eliminare questa stagione manuale? L\'operazione non è reversibile.')) return;
           const pin = getStoredAdminPin();
           if (!pin) { showAlert('error', 'PIN admin non trovato.'); return; }
           try {
-            const res = await fetch(`/api/room/${currentRoomCode}/albo/stagione/${id}`, {
+            const res = await fetch(`/api/room/${currentRoomCode}/albo-storico/${_stagioneCurrent.id}`, {
               method: 'DELETE',
               headers: { 'x-admin-pin': pin }
             });
             const json = await res.json();
             if (!json.success) throw new Error(json.error);
-            showAlert('success', '✅ Stagione eliminata.');
+            showAlert('success', '🗑️ Stagione eliminata.');
+            chiudiModaleStagione();
             caricaStoricoLega();
           } catch(e) {
             showAlert('error', '❌ Errore: ' + e.message);
           }
         }
 
-        // ============================================================
-        // TROPHY CONFIG (Classifica Trofei Generale)
-        // ============================================================
+        function apriEditorStagioneManualeEsistente(id, stagione) {
+          const s = (typeof stagione === 'string') ? JSON.parse(stagione) : stagione;
+          _stagioneCurrent = {
+            id: s.id,
+            label: s.label || '',
+            year: s.year || new Date().getFullYear(),
+            backupData: null,
+            season_data: s.season_data || { classifica: [], competizioni: [] },
+            classifica: (s.season_data?.classifica || []).map(c => ({ pos: c.pos, nome: c.nome })),
+            competizioni: [...(s.season_data?.competizioni || [])],
+            source: 'manuale',
+            presidents: s.presidents || '',
+            notes: s.notes || ''
+          };
+          document.getElementById('modal-stagione-label').textContent = `Modifica stagione manuale — ${s.label} (${s.year})`;
+          document.getElementById('stagione-manual-fields').style.display = 'flex';
+          document.getElementById('stagione-manual-year').value = s.year;
+          document.getElementById('stagione-manual-label').value = s.label || '';
+          document.getElementById('stagione-manual-presidents').value = s.presidents || '';
+          document.getElementById('btn-add-classifica-row').style.display = 'inline-block';
+          document.getElementById('btn-delete-stagione-manuale').style.display = 'inline-block';
 
-        let _trophyCompetitions = [];
+          renderClassificaEditorManuale();
+          renderCompetizioniEditorManuale();
 
-        const DEFAULT_TROPHY_CONFIG = [
-          { id: 'campionato', name: 'Campionato', emoji: '🏆', points: 100, priority: 1 },
-          { id: 'champions',  name: "Champion's League", emoji: '⭐', points: 40, priority: 2 },
-          { id: 'coppaitalia',name: 'Coppa Italia', emoji: '🥈', points: 20, priority: 3 },
-          { id: 'coppachiappe',name:'Coppa Chiappe', emoji: '🥿', points: 10, priority: 4 }
-        ];
-
-        async function loadTrophyConfig() {
-          if (!currentRoomCode) { showAlert('error', 'Nessuna stanza attiva.'); return; }
-          try {
-            const res = await fetch(`/api/lega/${currentRoomCode}/trophy-config`);
-            const json = await res.json();
-            if (!json.success) throw new Error(json.error);
-            _trophyCompetitions = (json.config && json.config.length) ? json.config : JSON.parse(JSON.stringify(DEFAULT_TROPHY_CONFIG));
-            renderTrophyConfigList();
-            showAlert('success', '✅ Configurazione trofei caricata.');
-          } catch(e) {
-            showAlert('error', '❌ Errore: ' + e.message);
-          }
-        }
-
-        function renderTrophyConfigList() {
-          const list = document.getElementById('trophy-config-list');
-          if (_trophyCompetitions.length === 0) {
-            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessuna competizione — usa "Aggiungi competizione".</p>';
-            return;
-          }
-          list.innerHTML = _trophyCompetitions.map((c, i) => `
-            <div style="display:flex;align-items:center;gap:6px;padding:8px;background:rgba(255,255,255,0.04);
-                        border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
-              <input value="${escHtml(c.emoji)}" oninput="updateComp(${i},'emoji',this.value)"
-                     style="width:42px;padding:4px;background:#0f172a;border:1px solid #475569;border-radius:5px;
-                            color:#f1f5f9;text-align:center;font-size:1rem;" title="Emoji">
-              <input value="${escHtml(c.name)}" oninput="updateComp(${i},'name',this.value)"
-                     placeholder="Nome competizione *"
-                     style="flex:2;min-width:120px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <label style="font-size:0.7rem;color:#94a3b8;flex-shrink:0;">Punti</label>
-              <input value="${c.points}" oninput="updateComp(${i},'points',this.value)" type="number"
-                     style="width:70px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <label style="font-size:0.7rem;color:#94a3b8;flex-shrink:0;">Priorità</label>
-              <input value="${c.priority}" oninput="updateComp(${i},'priority',this.value)" type="number"
-                     style="width:60px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <div style="display:flex;gap:2px;flex-shrink:0;">
-                ${i > 0 ? `<button onclick="spostaComp('su',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▲</button>` : '<span style="width:28px;"></span>'}
-                ${i < _trophyCompetitions.length-1 ? `<button onclick="spostaComp('giu',${i})" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.3);color:#38bdf8;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">▼</button>` : '<span style="width:28px;"></span>'}
-                <button onclick="rimuoviComp(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:4px;padding:1px 7px;cursor:pointer;font-size:11px;line-height:1.6;">✕</button>
-              </div>
-            </div>`).join('');
-        }
-
-        function updateComp(i, campo, val) {
-          if (campo === 'points' || campo === 'priority') val = parseInt(val) || 0;
-          _trophyCompetitions[i][campo] = val;
-        }
-
-        function addCompetitionRow() {
-          if (_trophyCompetitions.length === 0) {
-            _trophyCompetitions = JSON.parse(JSON.stringify(DEFAULT_TROPHY_CONFIG));
-          } else {
-            _trophyCompetitions.push({ id: 'comp_' + Date.now(), name: '', emoji: '🏅', points: 10, priority: _trophyCompetitions.length + 1 });
-          }
-          renderTrophyConfigList();
-        }
-
-        function spostaComp(dir, i) {
-          const swap = dir === 'su' ? i - 1 : i + 1;
-          if (swap < 0 || swap >= _trophyCompetitions.length) return;
-          [_trophyCompetitions[i], _trophyCompetitions[swap]] = [_trophyCompetitions[swap], _trophyCompetitions[i]];
-          renderTrophyConfigList();
-        }
-
-        function rimuoviComp(i) {
-          _trophyCompetitions.splice(i, 1);
-          renderTrophyConfigList();
-        }
-
-        async function salvaTrophyConfig() {
-          const pin = getStoredAdminPin();
-          if (!pin) { showAlert('error', 'PIN admin non trovato.'); return; }
-          const clean = _trophyCompetitions.filter(c => c.name && String(c.name).trim());
-          if (clean.length === 0) { showAlert('error', 'Aggiungi almeno una competizione con un nome.'); return; }
-          try {
-            const res = await fetch(`/api/room/${currentRoomCode}/trophy-config`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
-              body: JSON.stringify({ competitions: clean })
-            });
-            const json = await res.json();
-            if (!json.success) throw new Error(json.error);
-            showAlert('success', '✅ Configurazione trofei salvata!');
-          } catch(e) {
-            showAlert('error', '❌ Errore: ' + e.message);
-          }
-        }
-
-        // ============================================================
-        // TEAM ALIASES (Collegamento Squadre)
-        // ============================================================
-
-        let _teamAliasGroups = [];
-
-        async function loadTeamAliases() {
-          if (!currentRoomCode) { showAlert('error', 'Nessuna stanza attiva.'); return; }
-          try {
-            const res = await fetch(`/api/lega/${currentRoomCode}/team-aliases`);
-            const json = await res.json();
-            if (!json.success) throw new Error(json.error);
-            _teamAliasGroups = (json.aliases || []).map(a => ({
-              canonical_name: a.canonical_name,
-              aliases: Array.isArray(a.aliases) ? a.aliases : []
-            }));
-            renderTeamAliasesList();
-            showAlert('success', '✅ Alias caricati.');
-          } catch(e) {
-            showAlert('error', '❌ Errore: ' + e.message);
-          }
-        }
-
-        function renderTeamAliasesList() {
-          const list = document.getElementById('team-aliases-list');
-          if (_teamAliasGroups.length === 0) {
-            list.innerHTML = '<p style="font-size:0.82rem;color:#64748b;text-align:center;padding:6px;">Nessun gruppo alias — usa "Aggiungi gruppo".</p>';
-            return;
-          }
-          list.innerHTML = _teamAliasGroups.map((g, i) => `
-            <div style="display:flex;align-items:flex-start;gap:6px;padding:8px;background:rgba(255,255,255,0.04);
-                        border-radius:6px;border:1px solid #334155;flex-wrap:wrap;">
-              <input value="${escHtml(g.canonical_name)}" oninput="updateAliasName(${i},this.value)"
-                     placeholder="Nome ufficiale (es: Milan FC) *"
-                     style="flex:1;min-width:140px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <input value="${escHtml((g.aliases||[]).join(', '))}" oninput="updateAliasList(${i},this.value)"
-                     placeholder="Nomi da accorpare (separati da virgola)"
-                     style="flex:2;min-width:180px;padding:5px 8px;background:#0f172a;border:1px solid #475569;
-                            border-radius:5px;color:#f1f5f9;font-size:0.85rem;">
-              <button onclick="rimuoviAlias(${i})" style="background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
-                      color:#ef4444;border-radius:5px;padding:4px 8px;cursor:pointer;font-size:13px;flex-shrink:0;">✕</button>
-            </div>`).join('');
-        }
-
-        function updateAliasName(i, val) {
-          _teamAliasGroups[i].canonical_name = val;
-        }
-
-        function updateAliasList(i, val) {
-          _teamAliasGroups[i].aliases = val.split(',').map(s => s.trim()).filter(s => s);
-        }
-
-        function addAliasRow() {
-          _teamAliasGroups.push({ canonical_name: '', aliases: [] });
-          renderTeamAliasesList();
-        }
-
-        function rimuoviAlias(i) {
-          _teamAliasGroups.splice(i, 1);
-          renderTeamAliasesList();
-        }
-
-        async function salvaTeamAliases() {
-          const pin = getStoredAdminPin();
-          if (!pin) { showAlert('error', 'PIN admin non trovato.'); return; }
-          const clean = _teamAliasGroups.filter(g => g.canonical_name && g.canonical_name.trim());
-          try {
-            const res = await fetch(`/api/room/${currentRoomCode}/team-aliases`, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json', 'x-admin-pin': pin },
-              body: JSON.stringify({ aliases: clean })
-            });
-            const json = await res.json();
-            if (!json.success) throw new Error(json.error);
-            showAlert('success', '✅ Alias squadre salvati!');
-          } catch(e) {
-            showAlert('error', '❌ Errore: ' + e.message);
-          }
+          const modal = document.getElementById('modal-stagione');
+          modal.style.display = 'flex';
+          document.getElementById('preset-comp-panel').style.display = 'none';
+          document.getElementById('trophy-picker-panel').style.display = 'none';
         }
 
         // ============================================================
@@ -3083,10 +2646,6 @@
             document.getElementById('statTeams').textContent = Object.keys(currentTeams).length;
             document.getElementById('statSold').textContent = currentSoldPlayers.length;
             document.getElementById('statRemaining').textContent = currentPlayersList.length;
-            const dc = document.getElementById('discardedCount');
-            if (dc) dc.textContent = currentDiscardedList.length;
-            const card = document.getElementById('discardedCard');
-            if (card) card.style.display = currentDiscardedList.length > 0 ? '' : 'none';
         }
 
         // ============================================================
@@ -3095,26 +2654,141 @@
 
         let _pendingWarnings = [];
 
+        let _pendingExcelFile = null;
+        let _pendingExcelHeaders = null;
+        let _selectedColValore = -1;
+
         function uploadExcel() {
             const fileInput = document.getElementById('excelFile');
             const file = fileInput.files[0];
             if (!file) return;
 
+            const riparazione = document.getElementById('riparazioneToggle').checked;
+            const aggiornaValori = document.getElementById('aggiornaValoriToggle').checked;
+            const soldCount = currentSoldPlayers.length;
+            const hasExistingList = currentPlayersList.length > 0;
+
+            if (!riparazione && !aggiornaValori && (soldCount > 0 || hasExistingList)) {
+                const parts = [];
+                if (soldCount > 0) parts.push(`${soldCount} giocatori già assegnati alle squadre`);
+                if (hasExistingList) parts.push(`${currentPlayersList.length} giocatori già nel mazzo`);
+                const msg =
+                    `⚠️ ATTENZIONE — Rilevato: ${parts.join(', ')}.\n\n` +
+                    `Stai per sostituire l'intera lista dei giocatori disponibili.\n\n` +
+                    `I giocatori già assegnati alle squadre verranno AUTOMATICAMENTE ESCLUSI (non creano duplicati).\n` +
+                    `I giocatori già scartati verranno anch'essi esclusi.\n\n` +
+                    `Vuoi continuare?`;
+
+                if (!confirm(msg)) {
+                    fileInput.value = '';
+                    return;
+                }
+            }
+
+            // Step 1: preview per rilevare le colonne
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('/upload/preview', { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if (!data.found) {
+                    showAlert('error', 'Impossibile trovare le colonne Nome e Ruolo nel file Excel.');
+                    fileInput.value = '';
+                    return;
+                }
+
+                if (data.autoValoreIndex !== -1) {
+                    // Colonna valore trovata automaticamente, procedi direttamente
+                    _pendingExcelFile = null;
+                    eseguiUploadReale(file, data.autoValoreIndex);
+                } else {
+                    // Mostra modal per selezione manuale
+                    _pendingExcelFile = file;
+                    _pendingExcelHeaders = data.headers;
+                    _selectedColValore = -1;
+                    mostraColValoreModal(data.headers);
+                }
+            })
+            .catch(() => {
+                showAlert('error', 'Errore nella lettura del file Excel');
+                fileInput.value = '';
+            });
+        }
+
+        function mostraColValoreModal(headers) {
+            const list = document.getElementById('col-valore-list');
+            list.innerHTML = headers.map(h => `
+                <label style="display:flex;align-items:center;gap:0.6rem;padding:0.6rem 0.75rem;
+                       background:var(--bg-input);border:1px solid var(--border);border-radius:8px;cursor:pointer;
+                       transition:border-color 0.15s;" onmouseover="this.style.borderColor='var(--warning)'"
+                       onmouseout="if(!this.querySelector('input').checked)this.style.borderColor='var(--border)'">
+                    <input type="radio" name="colValoreRadio" value="${h.index}"
+                           onchange="_selectedColValore=${h.index};this.closest('label').style.borderColor='var(--warning)'"
+                           style="width:18px;height:18px;accent-color:var(--warning);flex-shrink:0;">
+                    <div style="flex:1;min-width:0;">
+                        <div style="font-weight:600;font-size:0.9rem;">Colonna ${h.index + 1}: ${h.name || '(vuota)'}</div>
+                        ${h.sample ? `<div style="font-size:0.75rem;color:var(--text-secondary);">Esempio: ${h.sample}</div>` : ''}
+                    </div>
+                </label>
+            `).join('');
+            document.getElementById('col-valore-modal').style.display = 'flex';
+        }
+
+        function chiudiColValoreModal() {
+            document.getElementById('col-valore-modal').style.display = 'none';
+            _pendingExcelFile = null;
+            _pendingExcelHeaders = null;
+            _selectedColValore = -1;
+            document.getElementById('excelFile').value = '';
+        }
+
+        function confermaColValore() {
+            if (_selectedColValore === -1) {
+                showAlert('warning', 'Seleziona una colonna per il valore');
+                return;
+            }
+            document.getElementById('col-valore-modal').style.display = 'none';
+            const file = _pendingExcelFile;
+            const colIdx = _selectedColValore;
+            _pendingExcelFile = null;
+            _pendingExcelHeaders = null;
+            _selectedColValore = -1;
+            eseguiUploadReale(file, colIdx);
+        }
+
+        function eseguiUploadReale(file, colValoreIdx) {
             const soglia = document.getElementById('sogliaMinima').value || 0;
             const riparazione = document.getElementById('riparazioneToggle').checked;
+            const aggiornaValori = document.getElementById('aggiornaValoriToggle').checked;
+
+            let mode = '';
+            if (aggiornaValori) mode = '&mode=aggiornavalori';
+            else if (riparazione) mode = '&mode=riparazione';
+
             const formData = new FormData();
             formData.append('file', file);
 
             const report = document.getElementById('riparazione-report');
             report.style.display = 'none';
 
-            const url = `/upload?room=${currentRoomCode}&soglia=${soglia}${riparazione ? '&mode=riparazione' : ''}`;
+            const url = `/upload?room=${currentRoomCode}&soglia=${soglia}&colValore=${colValoreIdx}${mode}`;
 
             fetch(url, { method: 'POST', body: formData })
             .then(res => res.json())
             .then(data => {
                 socket.emit('getPlayers');
-                if (riparazione && data.riparazione) {
+                if (aggiornaValori && data.aggiornavalori) {
+                    const a = data.aggiornavalori;
+                    report.style.display = 'block';
+                    report.innerHTML =
+                        `<strong style="color:#22c55e;">💰 Riepilogo Aggiornamento Valori</strong><br>` +
+                        `💲 <strong>${a.valoriAggiornati}</strong> valori corretti<br>` +
+                        `✅ <strong>${a.nuoviAggiunti}</strong> nuovi giocatori aggiunti<br>` +
+                        `⏭️ <strong>${a.giaPresenti}</strong> già presenti (valori allineati)<br>` +
+                        (data.skippedSold ? `🚫 <strong>${data.skippedSold}</strong> già assegnati (saltati)<br>` : '') +
+                        `📦 Totale giocatori nel mazzo: <strong>${data.count}</strong>`;
+                } else if (riparazione && data.riparazione) {
                     const r = data.riparazione;
                     report.style.display = 'block';
                     report.innerHTML =
@@ -3122,15 +2796,20 @@
                         `✅ <strong>${r.added}</strong> nuovi giocatori aggiunti al mazzo<br>` +
                         `🚫 <strong>${r.alreadySold}</strong> già assegnati (saltati)<br>` +
                         `⏭️ <strong>${r.alreadyInList}</strong> già presenti nel mazzo (saltati)<br>` +
+                        (r.removedFromList && r.removedFromList.length > 0
+                            ? `🗑️ <strong>${r.removedFromList.length}</strong> rimossi dal mazzo (non più nella nuova lista)<br>`
+                            : '') +
                         `📦 Totale giocatori nel mazzo: <strong>${data.count}</strong>`;
                 }
                 if (data.warnings && data.warnings.length > 0) {
                     _mostraWarningRuoli(data.warnings, data.count);
-                } else if (!riparazione || !data.riparazione) {
-                    showAlert('success', `${data.count} giocatori caricati con successo!`);
+                } else if (!riparazione && !aggiornaValori) {
+                    const skipped = data.skippedSold ? ` · ${data.skippedSold} già assegnati (saltati)` : '';
+                    showAlert('success', `${data.count} giocatori caricati${skipped}!`);
                 }
             })
-            .catch(() => showAlert('error', 'Errore nel caricamento del file'));
+            .catch(() => showAlert('error', 'Errore nel caricamento del file'))
+            .finally(() => { document.getElementById('excelFile').value = ''; });
         }
 
         function _mostraWarningRuoli(warnings, count) {
@@ -3193,32 +2872,82 @@
             document.getElementById('manualPlayerClub').value = '';
         }
 
+        function getFilteredPlayers() {
+            let list = currentPlayersList;
+            const fRuolo = document.getElementById('filterRuolo')?.value || '';
+            const fSquadra = document.getElementById('filterSquadra')?.value || '';
+            const fValoreMin = parseInt(document.getElementById('filterValoreMin')?.value) || 0;
+            const fOrdine = document.getElementById('filterOrdine')?.value || 'default';
+
+            if (fRuolo) list = list.filter(p => p.ruolo === fRuolo);
+            if (fSquadra) list = list.filter(p => (p.squadra || '').toLowerCase() === fSquadra.toLowerCase());
+            if (fValoreMin > 0) list = list.filter(p => (p.valore || 0) >= fValoreMin);
+
+            if (fOrdine === 'az') list = [...list].sort((a,b) => a.nome.localeCompare(b.nome));
+            else if (fOrdine === 'za') list = [...list].sort((a,b) => b.nome.localeCompare(a.nome));
+            else if (fOrdine === 'ruolo') list = [...list].sort((a,b) => a.ruolo.localeCompare(b.ruolo) || a.nome.localeCompare(b.nome));
+            else if (fOrdine === 'valoreDesc') list = [...list].sort((a,b) => (b.valore||0) - (a.valore||0));
+            else if (fOrdine === 'valoreAsc') list = [...list].sort((a,b) => (a.valore||0) - (b.valore||0));
+            else if (fOrdine === 'squadra') list = [...list].sort((a,b) => (a.squadra||'').localeCompare(b.squadra||'') || a.nome.localeCompare(b.nome));
+
+            return list;
+        }
+
+        function aggiornaSquadreFilter() {
+            const sel = document.getElementById('filterSquadra');
+            if (!sel) return;
+            const squadre = [...new Set(currentPlayersList.map(p => p.squadra || 'Svincolato'))].sort();
+            const current = sel.value;
+            sel.innerHTML = '<option value="">Tutte le squadre</option>' +
+                squadre.map(s => `<option value="${s}">${s}</option>`).join('');
+            sel.value = current;
+        }
+
+        function resetFiltri() {
+            document.getElementById('filterRuolo').value = '';
+            document.getElementById('filterSquadra').value = '';
+            document.getElementById('filterValoreMin').value = '0';
+            document.getElementById('filterOrdine').value = 'default';
+            renderPlayersList();
+        }
+
         function renderPlayersList() {
             const container = document.getElementById('playersListContainer');
             document.getElementById('playersCount').textContent = currentPlayersList.length;
 
+            aggiornaSquadreFilter();
+
+            const filtered = getFilteredPlayers();
+            const countSpan = document.getElementById('filterResultCount');
+            if (countSpan) {
+                countSpan.textContent = filtered.length < currentPlayersList.length
+                    ? `${filtered.length} di ${currentPlayersList.length} mostrati`
+                    : '';
+            }
+
             document.getElementById('manualPlayerSelect').innerHTML =
                 '<option value="">Seleziona giocatore...</option>' +
-                currentPlayersList.map(p =>
+                filtered.map(p =>
                     `<option value='${JSON.stringify(p)}'>${p.nome} (${p.ruolo})</option>`
                 ).join('');
 
             document.getElementById('discardPlayerSelect').innerHTML =
                 '<option value="">Seleziona giocatore...</option>' +
-                currentPlayersList.map(p =>
+                filtered.map(p =>
                     `<option value="${p.nome}">${p.nome} (${p.ruolo} - ${p.squadra})</option>`
                 ).join('');
 
-            if (currentPlayersList.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nessun giocatore nel mazzo</p>';
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nessun giocatore corrisponde ai filtri</p>';
                 return;
             }
 
-            container.innerHTML = currentPlayersList.map(p => `
+            container.innerHTML = filtered.map(p => `
                 <div class="player-item">
                     <div>
                         <strong>${p.nome}</strong>
                         <span class="club">${p.squadra}</span>
+                        ${p.valore ? `<span style="font-size:0.75rem;color:var(--text-secondary);margin-left:6px;">${p.valore} cr</span>` : ''}
                     </div>
                     <span class="role">${p.ruolo}</span>
                 </div>
@@ -3227,45 +2956,6 @@
 
         function refreshPlayersList() {
             socket.emit('getPlayers');
-            socket.emit('getDiscarded');
-        }
-
-        function renderDiscardedList() {
-            const container = document.getElementById('discardedListContainer');
-            if (!container) return;
-            const card = document.getElementById('discardedCard');
-            const countEl = document.getElementById('discardedCount');
-            if (countEl) countEl.textContent = currentDiscardedList.length;
-            if (card) card.style.display = currentDiscardedList.length > 0 ? '' : 'none';
-
-            if (currentDiscardedList.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">Nessun giocatore scartato</p>';
-                return;
-            }
-
-            container.innerHTML = currentDiscardedList.map(p => `
-                <div class="player-item">
-                    <div>
-                        <strong>${p.nome}</strong>
-                        <span class="club">${p.squadra}</span>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px;">
-                        <span class="role">${p.ruolo}</span>
-                        <button class="btn btn-success" style="padding:0.3rem 0.7rem;font-size:0.75rem;" onclick="recallSingleDiscarded('${p.nome.replace(/'/g, "\\'")}')">Richiama</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function recallAllDiscarded() {
-            if (currentDiscardedList.length === 0) { showAlert('error', 'Nessun giocatore scartato da richiamare!'); return; }
-            if (confirm(`Richiamare tutti i ${currentDiscardedList.length} giocatori scartati nel mazzo?`)) {
-                socket.emit('adminRiciclaInvenduti');
-            }
-        }
-
-        function recallSingleDiscarded(name) {
-            socket.emit('adminRichiamaSingoloScartato', name);
         }
 
         function discardPlayer() {
@@ -3288,7 +2978,24 @@
                 showAlert('error', 'Nessun giocatore nel mazzo!');
                 return;
             }
-            socket.emit('startRandom');
+            const fRuolo = document.getElementById('filterRuolo')?.value || '';
+            const fSquadra = document.getElementById('filterSquadra')?.value || '';
+            const fValoreMin = parseInt(document.getElementById('filterValoreMin')?.value) || 0;
+
+            if (fRuolo || fSquadra || fValoreMin > 0) {
+                const filtered = getFilteredPlayers();
+                if (filtered.length === 0) {
+                    showAlert('error', 'Nessun giocatore corrisponde ai filtri attivi! Rimuovi i filtri o modificali.');
+                    return;
+                }
+                socket.emit('startRandomFiltered', {
+                    ruolo: fRuolo,
+                    squadra: fSquadra,
+                    valoreMin: fValoreMin
+                });
+            } else {
+                socket.emit('startRandom');
+            }
         }
 
         function startManualAuction() {
@@ -3338,13 +3045,7 @@
         }
 
         function recycleUnsold() {
-            if (currentDiscardedList.length > 0) {
-                if (confirm(`Richiamare tutti i ${currentDiscardedList.length} giocatori scartati nel mazzo?`)) {
-                    socket.emit('adminRiciclaInvenduti');
-                }
-            } else {
-                socket.emit('adminRiciclaInvenduti');
-            }
+            socket.emit('adminRiciclaInvenduti');
         }
 
         function removePlayerFromTeam() {
@@ -3362,6 +3063,54 @@
             }
         }
 
+        function aggiornaSwapPlayersA() {
+            const teamName = document.getElementById('swapTeamA').value;
+            const sel = document.getElementById('swapPlayerA');
+            if (!teamName) { sel.innerHTML = '<option value="">Seleziona prima la squadra...</option>'; return; }
+            const players = currentSoldPlayers.filter(p =>
+                p.winner.toLowerCase().trim() === teamName.toLowerCase().trim()
+            );
+            if (players.length === 0) {
+                sel.innerHTML = '<option value="">Nessun giocatore in rosa</option>';
+            } else {
+                sel.innerHTML = '<option value="">Seleziona giocatore...</option>' +
+                    players.map(p => `<option value="${p.player}">${p.player} (${p.ruolo}) - ${p.price} cr</option>`).join('');
+            }
+        }
+
+        function aggiornaSwapPlayersB() {
+            const teamName = document.getElementById('swapTeamB').value;
+            const sel = document.getElementById('swapPlayerB');
+            if (!teamName) { sel.innerHTML = '<option value="">Seleziona prima la squadra...</option>'; return; }
+            const players = currentSoldPlayers.filter(p =>
+                p.winner.toLowerCase().trim() === teamName.toLowerCase().trim()
+            );
+            if (players.length === 0) {
+                sel.innerHTML = '<option value="">Nessun giocatore in rosa</option>';
+            } else {
+                sel.innerHTML = '<option value="">Seleziona giocatore...</option>' +
+                    players.map(p => `<option value="${p.player}">${p.player} (${p.ruolo}) - ${p.price} cr</option>`).join('');
+            }
+        }
+
+        function eseguiScambio() {
+            const teamA = document.getElementById('swapTeamA').value;
+            const teamB = document.getElementById('swapTeamB').value;
+            const playerA = document.getElementById('swapPlayerA').value;
+            const playerB = document.getElementById('swapPlayerB').value;
+
+            if (!teamA || !teamB || !playerA || !playerB) {
+                showAlert('error', 'Seleziona entrambe le squadre e i giocatori da scambiare');
+                return;
+            }
+            if (teamA === teamB) {
+                showAlert('error', 'Le due squadre devono essere diverse');
+                return;
+            }
+            if (!confirm(`Confermi lo scambio?\n\n${playerA} (${teamA}) ↔ ${playerB} (${teamB})\n\nI crediti delle squadre NON verranno modificati.`)) return;
+            socket.emit('adminSwapPlayers', { teamA, teamB, playerA, playerB });
+        }
+
         function updateTeamSelects() {
             const teamOptions = Object.keys(currentTeams).map(k =>
                 `<option value="${currentTeams[k].name}">${currentTeams[k].name}</option>`
@@ -3374,6 +3123,11 @@
                 '<option value="">Seleziona squadra...</option>' + teamOptions;
 
             document.getElementById('removePlayerTeam').innerHTML =
+                '<option value="">Seleziona squadra...</option>' + teamOptions;
+
+            document.getElementById('swapTeamA').innerHTML =
+                '<option value="">Seleziona squadra...</option>' + teamOptions;
+            document.getElementById('swapTeamB').innerHTML =
                 '<option value="">Seleziona squadra...</option>' + teamOptions;
         }
 
@@ -3480,13 +3234,19 @@
 
         function exportExcel() {
             window.location.href = `/export?room=${currentRoomCode}`;
-            showAlert('success', 'Download avviato...');
+            showAlert('success', 'Download Excel avviato...');
+        }
+
+        function exportSAV() {
+            if (!currentRoomCode) { showAlert('error', 'Nessuna stanza attiva.'); return; }
+            window.location.href = `/export-sav?room=${currentRoomCode}`;
+            showAlert('success', 'Download file SAV avviato...');
         }
 
         function exportCSV() {
             if (!currentRoomCode) { showAlert('error', 'Nessuna stanza attiva.'); return; }
             window.location.href = `/export-csv?room=${currentRoomCode}`;
-            showAlert('success', 'Download CSV avviato...');
+            showAlert('success', 'Download file CSV avviato...');
         }
 
         function renderSoldPlayers() {
@@ -3657,30 +3417,30 @@
             <div style="display:flex;align-items:flex-start;gap:1rem;margin-bottom:1rem;">
                 <span style="font-size:2rem;line-height:1;">⚠️</span>
                 <div>
-                    <h3 style="color:#f59e0b;margin:0 0 4px;" data-i18n="admin_warning_title">Ruoli non riconosciuti</h3>
+                    <h3 style="color:#f59e0b;margin:0 0 4px;">Ruoli non riconosciuti</h3>
                     <p id="_warningSubtitle" style="color:var(--text-secondary);margin:0;font-size:0.88rem;"></p>
                 </div>
             </div>
             <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:1rem;
-                      padding:0.75rem;background:rgba(245,158,11,0.07);border-radius:8px;border-left:3px solid #f59e0b;" data-i18n-html="admin_warning_desc">
+                      padding:0.75rem;background:rgba(245,158,11,0.07);border-radius:8px;border-left:3px solid #f59e0b;">
                 Questi giocatori hanno ruoli che il sistema Mantra non riconosce: durante l'asta il controllo del limite di reparto non funzionerà correttamente.
                 Seleziona il ruolo corretto e clicca <b>Salva correzioni</b>.
             </p>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;padding:0 0.25rem 0.5rem;
                         font-size:0.78rem;color:var(--text-secondary);font-weight:600;text-transform:uppercase;">
-                <span data-i18n="admin_warning_player">Giocatore</span><span data-i18n="admin_warning_current">Ruolo attuale</span><span data-i18n="admin_warning_fix">Correggi con</span>
+                <span>Giocatore</span><span>Ruolo attuale</span><span>Correggi con</span>
             </div>
             <div id="_warningList" style="overflow-y:auto;flex:1;"></div>
             <div style="display:flex;gap:1rem;justify-content:flex-end;flex-wrap:wrap;margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
                 <button onclick="_salvaCorrezioni()"
                         style="background:#22c55e;color:white;border:none;padding:0.75rem 1.5rem;
-                               border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;" data-i18n="admin_warning_save">
+                               border-radius:8px;cursor:pointer;font-weight:600;font-size:0.9rem;">
                     Salva correzioni
                 </button>
                 <button onclick="_chiudiWarning()"
                         style="background:transparent;color:var(--text-secondary);
                                border:1px solid var(--border);padding:0.75rem 1.5rem;
-                               border-radius:8px;cursor:pointer;font-size:0.9rem;" data-i18n="admin_warning_ignore">
+                               border-radius:8px;cursor:pointer;font-size:0.9rem;">
                     Ignora e continua
                 </button>
             </div>
