@@ -18,11 +18,9 @@ const io = new Server(server, {
 
 app.use(express.json());
 
-// Traccia le visite alle pagine HTML (esclude solo superadmin)
+// Traccia tutte le visite alle pagine HTML (non solo la homepage)
 app.use((req, res, next) => {
-  if (req.method === "GET" && /\.html$/i.test(req.path) && req.path.toLowerCase() !== "/superadmin.html") {
-    trackPageView();
-  }
+  if (req.method === "GET" && /\.html$/i.test(req.path)) trackPageView();
   next();
 });
 
@@ -45,53 +43,6 @@ const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 const xlsx = require("xlsx");
 const QRCode = require("qrcode");
-const nodemailer = require("nodemailer");
-
-/* ==========================================================================
-   EMAIL — Gmail transporter per notifiche
-   ========================================================================== */
-const GMAIL_USER = process.env.GMAIL_USER || "draftarena.official@gmail.com";
-const GMAIL_APP_PASSWORD = process.env.GMAIL_APP_PASSWORD || "";
-
-const emailTransporter = GMAIL_APP_PASSWORD
-  ? nodemailer.createTransport({
-      service: "gmail",
-      auth: { user: GMAIL_USER, pass: GMAIL_APP_PASSWORD },
-    })
-  : null;
-
-async function getContactEmail() {
-  if (!supabase) return GMAIL_USER;
-  try {
-    const { data } = await supabase
-      .from("platform_settings")
-      .select("value")
-      .eq("key", "contact_email")
-      .maybeSingle();
-    return (data && data.value) || GMAIL_USER;
-  } catch (e) {
-    return GMAIL_USER;
-  }
-}
-
-async function sendNotificationEmail(subject, htmlBody) {
-  if (!emailTransporter) {
-    console.warn("[EMAIL] Transporter non configurato (GMAIL_APP_PASSWORD mancante). Email non inviata:", subject);
-    return;
-  }
-  const to = await getContactEmail();
-  try {
-    await emailTransporter.sendMail({
-      from: `DraftARENA <${GMAIL_USER}>`,
-      to,
-      subject,
-      html: htmlBody,
-    });
-    console.log(`[EMAIL] Notifica inviata a ${to}: ${subject}`);
-  } catch (e) {
-    console.error("[EMAIL] Errore invio notifica:", e.message);
-  }
-}
 
 /* ==========================================================================
    SUPABASE CLIENT
@@ -203,8 +154,7 @@ function createRoomData(code, adminPin) {
     soldPlayers: [],
     discardedPlayers: [],
     claimedTeams: {},
-    CONFIG: JSON.parse(JSON.stringify(DEFAULT_CONFIG)),
-    auctionEnded: false
+    CONFIG: JSON.parse(JSON.stringify(DEFAULT_CONFIG))
   };
 }
 
@@ -287,7 +237,6 @@ function caricaFileLocale(room) {
     room.teams = data.teams || {};
     room.playersList = data.playersList || [];
     room.soldPlayers = data.soldPlayers || [];
-    room.discardedPlayers = data.discardedPlayers || [];
     if (data.settings) room.state.timerDuration = parseInt(data.settings.timerDuration) || 10;
     if (data.CONFIG) room.CONFIG = data.CONFIG;
     if (data.currentState && data.currentState.player) {
@@ -369,7 +318,7 @@ async function salvaSessioneDB(room) {
       highestBidder: room.state.highestBidder
     } : null;
     await supabase.from("auction_sessions")
-      .upsert({ room_code: rc, auction_name: an, config: room.CONFIG, timer_duration: room.state.timerDuration, current_state: currentState, auction_ended: room.auctionEnded || false, updated_at: new Date().toISOString() }, { onConflict: "room_code,auction_name" });
+      .upsert({ room_code: rc, auction_name: an, config: room.CONFIG, timer_duration: room.state.timerDuration, current_state: currentState, updated_at: new Date().toISOString() }, { onConflict: "room_code,auction_name" });
 
     // Cancella e reinserisci teams
     await supabase.from("teams").delete().eq("room_code", rc).eq("auction_name", an);
@@ -384,15 +333,9 @@ async function salvaSessioneDB(room) {
     await supabase.from("players_list").delete().eq("room_code", rc).eq("auction_name", an);
     if (room.playersList.length > 0) {
       const chunks = chunkArray(room.playersList.map(p => ({
-        room_code: rc, auction_name: an, nome: p.nome, ruolo: p.ruolo, squadra: p.squadra || "Svincolato", player_id: p.id || null, is_discarded: false
+        room_code: rc, auction_name: an, nome: p.nome, ruolo: p.ruolo, squadra: p.squadra || "Svincolato", player_id: p.id || null
       })), 500);
       for (const chunk of chunks) await supabase.from("players_list").insert(chunk);
-    }
-    if (room.discardedPlayers && room.discardedPlayers.length > 0) {
-      const dChunks = chunkArray(room.discardedPlayers.map(p => ({
-        room_code: rc, auction_name: an, nome: p.nome, ruolo: p.ruolo, squadra: p.squadra || "Svincolato", player_id: p.id || null, is_discarded: true
-      })), 500);
-      for (const ch of dChunks) await supabase.from("players_list").insert(ch);
     }
 
     // Cancella e reinserisci sold_players
@@ -403,6 +346,16 @@ async function salvaSessioneDB(room) {
         squadra: sp.squadra || "", winner: sp.winner, price: sp.price, reparto_assegnato: sp.repartoAssegnato, player_id: sp.id || null
       }));
       await supabase.from("sold_players").insert(soldRows);
+    }
+
+    // Cancella e reinserisci discarded_players
+    await supabase.from("discarded_players").delete().eq("room_code", rc).eq("auction_name", an);
+    const disc = room.discardedPlayers || [];
+    if (disc.length > 0) {
+      const discRows = disc.map(p => ({
+        room_code: rc, auction_name: an, nome: p.nome, ruolo: p.ruolo, squadra: p.squadra || "Svincolato"
+      }));
+      await supabase.from("discarded_players").insert(discRows);
     }
   } catch (e) {
     console.error(`[DB] Errore salvataggio stanza ${rc}:`, e.message);
@@ -425,7 +378,6 @@ async function caricaSessioneDB(room) {
     if (sessRes.data) {
       room.CONFIG = sessRes.data.config || JSON.parse(JSON.stringify(DEFAULT_CONFIG));
       room.state.timerDuration = sessRes.data.timer_duration || 10;
-      room.auctionEnded = !!sessRes.data.auction_ended;
       const cs = sessRes.data.current_state;
       if (cs && cs.player) {
         room.state.player = cs.player;
@@ -455,15 +407,28 @@ async function caricaSessioneDB(room) {
     }
 
     if (playersRes.data) {
-      room.playersList = playersRes.data.filter(p => !p.is_discarded).map(p => ({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, id: p.player_id || "" }));
-      room.discardedPlayers = playersRes.data.filter(p => p.is_discarded).map(p => ({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, id: p.player_id || "" }));
+      room.playersList = playersRes.data.map(p => ({ id: p.player_id || null, nome: p.nome, ruolo: p.ruolo, squadra: p.squadra }));
     }
 
     if (soldRes.data) {
       room.soldPlayers = soldRes.data.map(sp => ({
-        player: sp.player_name, ruolo: sp.ruolo, squadra: sp.squadra,
-        winner: sp.winner, price: sp.price, repartoAssegnato: sp.reparto_assegnato, id: sp.player_id || ""
+        id: sp.player_id || null, player: sp.player_name, ruolo: sp.ruolo, squadra: sp.squadra,
+        winner: sp.winner, price: sp.price, repartoAssegnato: sp.reparto_assegnato
       }));
+    }
+
+    // Carica discarded_players dal DB
+    const discRes = await supabase.from("discarded_players").select("*").eq("room_code", rc).eq("auction_name", an);
+    if (discRes.data) {
+      room.discardedPlayers = discRes.data.map(p => ({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra }));
+    } else {
+      room.discardedPlayers = [];
+    }
+
+    // Safety: rimuovi da playersList eventuali giocatori che risultano scartati
+    if (room.discardedPlayers.length > 0 && room.playersList.length > 0) {
+      const discNames = new Set(room.discardedPlayers.map(p => p.nome.toLowerCase()));
+      room.playersList = room.playersList.filter(p => !discNames.has(p.nome.toLowerCase()));
     }
 
     room.state.history = [];
@@ -496,6 +461,7 @@ function caricaDaFileSeLegacy(room) {
     room.teams = data.teams || {};
     room.playersList = data.playersList || [];
     room.soldPlayers = data.soldPlayers || [];
+    room.discardedPlayers = data.discardedPlayers || [];
     if (data.settings) room.state.timerDuration = parseInt(data.settings.timerDuration) || 10;
     if (data.CONFIG) room.CONFIG = data.CONFIG;
     room.state.player = null;
@@ -554,6 +520,13 @@ function isOffensivoPuro(ruoloStringa) {
 function eseguiLancioGiocatore(roomCode, p) {
   const room = rooms.get(roomCode);
   if (!room) return;
+  // Safety: non lanciare mai un giocatore scartato
+  const disc = room.discardedPlayers || [];
+  if (disc.length > 0 && disc.some(d => d.nome.toLowerCase() === p.nome.toLowerCase())) {
+    room.playersList = room.playersList.filter(item => item.nome.toLowerCase() !== p.nome.toLowerCase());
+    console.log(`[SAFETY] Giocatore scartato bloccato: ${p.nome}`);
+    return;
+  }
   room.state.player = p;
   room.state.currentPrice = 0;
   room.state.highestBidder = null;
@@ -600,9 +573,9 @@ function assegnaGiocatoreAVincitore(roomCode) {
   room.teams[winnerKey].slots[repartoScelto]++;
 
   room.soldPlayers.push({
-    player: p.nome, ruolo: p.ruolo, squadra: p.squadra,
+    id: p.id || null, player: p.nome, ruolo: p.ruolo, squadra: p.squadra,
     winner: room.teams[winnerKey].name, price,
-    repartoAssegnato: repartoScelto, id: p.id || ""
+    repartoAssegnato: repartoScelto
   });
 
   // Salva l'ultima asta per permettere revisione/riassegnazione
@@ -649,20 +622,10 @@ function tickRoom(roomCode) {
         }, 2000);
       }
     } else {
-      const p = room.state.player;
-      const playerName = p.nome;
+      const playerName = room.state.player.nome;
       io.to(roomCode).emit("auctionEnded", { winner: null, player: playerName, price: 0 });
-      // Sposta il giocatore non venduto nella lista scartati
-      if (!room.discardedPlayers) room.discardedPlayers = [];
-      if (!room.discardedPlayers.some(dp => dp.nome.toLowerCase() === p.nome.toLowerCase())) {
-        room.discardedPlayers.push({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, id: p.id || "" });
-      }
-      room.playersList = room.playersList.filter(item => item.nome !== p.nome);
       room.state.player = null;
       io.to(roomCode).emit("update", room.state);
-      io.to(roomCode).emit("playersList", room.playersList);
-      io.to(roomCode).emit("discardedList", room.discardedPlayers);
-      salvaSessioneDB(room);
       setTimeout(() => {
         const r = rooms.get(roomCode);
         if (r && !r.state.isPaused && r.autoAdvance) chiamaGiocatoreCasuale(roomCode);
@@ -718,12 +681,14 @@ app.get("/host", (req, res) => { trackPageView(); res.sendFile(path.join(__dirna
 app.get("/host.html", (req, res) => res.sendFile(path.join(__dirname, "public", "host.html")));
 app.get("/rose", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "rose.html")); });
 app.get("/rose.html", (req, res) => res.sendFile(path.join(__dirname, "public", "rose.html")));
-app.get("/superadmin", (req, res) => res.sendFile(path.join(__dirname, "public", "superadmin.html")));
+app.get("/superadmin", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "superadmin.html")); });
 app.get("/guida-admin", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "guida-admin.html")); });
 app.get("/guida-utenti", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "guida-utenti.html")); });
 app.get("/video", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "video.html")); });
 app.get("/feedback", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "feedback.html")); });
 app.get("/richiesta-codice", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "richiesta-codice.html")); });
+app.get("/lan", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "lan.html")); });
+app.get("/lan.html", (req, res) => res.sendFile(path.join(__dirname, "public", "lan.html")));
 
 /* ==========================================================================
    PLATFORM SETTINGS (pubblica lettura)
@@ -739,11 +704,6 @@ app.get("/api/platform-settings", async (req, res) => {
   } catch (e) {
     res.status(500).json({});
   }
-});
-
-app.get("/api/contact-email", async (req, res) => {
-  const email = await getContactEmail();
-  res.json({ email });
 });
 
 app.post("/api/superadmin/platform-settings", async (req, res) => {
@@ -765,161 +725,28 @@ app.post("/api/superadmin/platform-settings", async (req, res) => {
 });
 
 /* ==========================================================================
-   SITE TEXTS — testi modificabili del sito
-   ========================================================================== */
-app.get("/api/site-texts", async (req, res) => {
-  if (!supabase) return res.json({});
-  const page = String(req.query.page || "homepage");
-  try {
-    const { data, error } = await supabase
-      .from("site_texts")
-      .select("lang, key, value")
-      .eq("page", page);
-    if (error) throw error;
-    const result = {};
-    (data || []).forEach(row => {
-      if (!result[row.lang]) result[row.lang] = {};
-      result[row.lang][row.key] = row.value;
-    });
-    res.json(result);
-  } catch (e) {
-    res.status(500).json({});
-  }
-});
-
-app.get("/api/superadmin/site-texts", async (req, res) => {
-  if (!supabase) return res.json({ success: true, texts: {} });
-  const page = String(req.query.page || "homepage");
-  try {
-    const { data, error } = await supabase
-      .from("site_texts")
-      .select("lang, key, value, updated_at")
-      .eq("page", page);
-    if (error) throw error;
-    const result = {};
-    (data || []).forEach(row => {
-      if (!result[row.lang]) result[row.lang] = {};
-      result[row.lang][row.key] = { value: row.value, updated_at: row.updated_at };
-    });
-    res.json({ success: true, texts: result });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-app.post("/api/superadmin/site-texts", async (req, res) => {
-  const { password, page, lang, texts } = req.body;
-  if (password !== SUPERADMIN_PASSWORD) {
-    return res.status(401).json({ success: false, error: "Password errata." });
-  }
-  if (!supabase) return res.json({ success: true });
-  if (!page || !lang || !texts || typeof texts !== "object") {
-    return res.status(400).json({ success: false, error: "Parametri mancanti." });
-  }
-  try {
-    const rows = Object.entries(texts).map(([key, value]) => ({
-      page, lang, key, value: String(value), updated_at: new Date().toISOString()
-    }));
-    if (rows.length > 0) {
-      const { error } = await supabase
-        .from("site_texts")
-        .upsert(rows, { onConflict: "page,lang,key" });
-      if (error) throw error;
-    }
-    res.json({ success: true });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-app.post("/api/superadmin/site-texts/reset", async (req, res) => {
-  const { password, page, lang, key } = req.body;
-  if (password !== SUPERADMIN_PASSWORD) {
-    return res.status(401).json({ success: false, error: "Password errata." });
-  }
-  if (!supabase) return res.json({ success: true });
-  try {
-    let query = supabase.from("site_texts").delete().eq("page", page || "homepage");
-    if (lang) query = query.eq("lang", lang);
-    if (key) query = query.eq("key", key);
-    const { error } = await query;
-    if (error) throw error;
-    res.json({ success: true });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-/* ==========================================================================
    RICHIESTE CODICI
    ========================================================================== */
 app.post("/api/richiesta-codice", async (req, res) => {
   if (!supabase) return res.json({ success: true });
-  const { nome, cognome, email, nome_lega, num_squadre, piattaforma, telefono, come_trovato } = req.body;
+  const { nome, cognome, email, nome_lega, num_squadre, piattaforma, telefono, come_trovato, codice_assegnato } = req.body;
   if (!nome || !email || !nome_lega) {
     return res.status(400).json({ success: false, error: "Campi obbligatori mancanti." });
   }
   try {
-    // Verifica se esiste già una richiesta con questa email
-    const { data: existing } = await supabase
-      .from("code_requests")
-      .select("codice_assegnato")
-      .eq("email", String(email).trim().toLowerCase())
-      .maybeSingle();
-
-    let assignedCode = existing?.codice_assegnato || null;
-
-    // Se non esiste, genera un nuovo codice e registralo
-    if (!assignedCode) {
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let newCode = "DRAFT-";
-      for (let i = 0; i < 6; i++) newCode += chars[Math.floor(Math.random() * chars.length)];
-
-      // Inserisci il codice in access_codes (utile per creare stanze)
-      const { error: codeErr } = await supabase.from("access_codes").insert({
-        code: newCode,
-        type: "promo",
-        max_uses: null,
-        expires_at: null,
-        note: `Auto-generato per ${nome} ${cognome || ''} (${email})`,
-        is_active: true
-      });
-      if (codeErr) throw codeErr;
-
-      assignedCode = newCode;
-
-      // Salva la richiesta con il codice assegnato
-      const { error } = await supabase.from("code_requests").insert({
-        nome: String(nome).trim().slice(0, 80),
-        cognome: cognome ? String(cognome).trim().slice(0, 80) : null,
-        email: String(email).trim().slice(0, 200),
-        nome_lega: String(nome_lega).trim().slice(0, 200),
-        num_squadre: num_squadre ? parseInt(num_squadre) : null,
-        piattaforma: piattaforma ? String(piattaforma).trim().slice(0, 100) : null,
-        telefono: telefono ? String(telefono).trim().slice(0, 50) : null,
-        come_trovato: come_trovato ? String(come_trovato).trim().slice(0, 500) : null,
-        codice_assegnato: assignedCode
-      });
-      if (error) throw error;
-    }
-
-    // Invia notifica email alla casella di DraftARENA
-    const fullName = `${nome}${cognome ? ' ' + cognome : ''}`;
-    sendNotificationEmail(
-      `Nuova richiesta codice — ${fullName}`,
-      `<h2>Nuova richiesta codice di accesso</h2>
-      <table style="border-collapse:collapse;font-size:14px;font-family:sans-serif;">
-        <tr><td style="padding:4px 12px;color:#64748b;">Nome:</td><td style="padding:4px 12px;">${fullName}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Email:</td><td style="padding:4px 12px;">${email}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Lega:</td><td style="padding:4px 12px;">${nome_lega}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Squadre:</td><td style="padding:4px 12px;">${num_squadre || '—'}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Piattaforma:</td><td style="padding:4px 12px;">${piattaforma || '—'}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Come trovati:</td><td style="padding:4px 12px;">${come_trovato || '—'}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Codice assegnato:</td><td style="padding:4px 12px;font-weight:700;color:#2563eb;">${assignedCode}</td></tr>
-      </table>`
-    ).catch(() => {});
-
-    res.json({ success: true, code: assignedCode, alreadyExists: !!existing });
+    const { error } = await supabase.from("code_requests").insert({
+      nome: String(nome).trim().slice(0, 80),
+      cognome: cognome ? String(cognome).trim().slice(0, 80) : null,
+      email: String(email).trim().slice(0, 200),
+      nome_lega: String(nome_lega).trim().slice(0, 200),
+      num_squadre: num_squadre ? parseInt(num_squadre) : null,
+      piattaforma: piattaforma ? String(piattaforma).trim().slice(0, 100) : null,
+      telefono: telefono ? String(telefono).trim().slice(0, 50) : null,
+      come_trovato: come_trovato ? String(come_trovato).trim().slice(0, 500) : null,
+      codice_assegnato: codice_assegnato ? String(codice_assegnato).trim().toUpperCase() : null
+    });
+    if (error) throw error;
+    res.json({ success: true });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
@@ -1158,6 +985,54 @@ app.get("/qr", async (req, res) => {
 /* ==========================================================================
    UPLOAD EXCEL
    ========================================================================== */
+app.post("/upload/preview", upload.single("file"), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "Nessun file caricato" });
+  try {
+    const workbook = xlsx.readFile(req.file.path);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const matrix = xlsx.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+
+    let rigaIntestazione = -1, indexNome = -1, indexRuolo = -1;
+    for (let r = 0; r < matrix.length; r++) {
+      const row = matrix[r];
+      for (let c = 0; c < row.length; c++) {
+        const v = String(row[c]).toLowerCase().trim();
+        if (["nome", "calciatore", "giocatore", "rilancio"].includes(v)) indexNome = c;
+        if (["ruolo", "rm", "r", "ruolo mantra"].includes(v)) indexRuolo = c;
+      }
+      if (indexNome !== -1 && indexRuolo !== -1) { rigaIntestazione = r; break; }
+    }
+
+    if (rigaIntestazione === -1) {
+      return res.json({ found: false, headers: [], rigaIntestazione: -1 });
+    }
+
+    const headerRow = matrix[rigaIntestazione];
+    const headers = headerRow.map((h, i) => ({
+      index: i,
+      name: String(h || "").trim(),
+      sample: rigaIntestazione + 1 < matrix.length && matrix[rigaIntestazione + 1][i]
+        ? String(matrix[rigaIntestazione + 1][i]).trim() : ""
+    })).filter(h => h.name);
+
+    const autoValore = headers.find(h =>
+      ["valore", "quotazione", "prezzo", "qt", "costo"].includes(h.name.toLowerCase().trim())
+    );
+
+    return res.json({
+      found: true,
+      headers,
+      rigaIntestazione,
+      autoValoreIndex: autoValore ? autoValore.index : -1,
+      autoNomeIndex: indexNome,
+      autoRuoloIndex: indexRuolo
+    });
+  } catch (e) {
+    console.error("[SERVER] Errore preview Excel:", e);
+    res.status(500).json({ error: "Errore nella lettura del file Excel" });
+  }
+});
+
 app.post("/upload", upload.single("file"), async (req, res) => {
   const roomCode = String(req.query.room || "").toUpperCase().trim();
   const room = rooms.get(roomCode);
@@ -1165,6 +1040,9 @@ app.post("/upload", upload.single("file"), async (req, res) => {
   if (!req.file) return res.status(400).send("Nessun file caricato");
 
   const modeRiparazione = req.query.mode === "riparazione";
+  const modeAggiornaValori = req.query.mode === "aggiornavalori";
+  const colValoreOverride = req.query.colValore !== undefined && req.query.colValore !== ""
+    ? parseInt(req.query.colValore) : null;
 
   try {
     const workbook = xlsx.readFile(req.file.path);
@@ -1177,17 +1055,21 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       const row = matrix[r];
       for (let c = 0; c < row.length; c++) {
         const v = String(row[c]).toLowerCase().trim();
+        if (["id", "id giocatore", "codice", "code"].includes(v)) indexId = c;
         if (["nome", "calciatore", "giocatore", "rilancio"].includes(v)) indexNome = c;
         if (["ruolo", "rm", "r", "ruolo mantra"].includes(v)) indexRuolo = c;
         if (["squadra", "club", "team", "squadra di a"].includes(v)) indexSquadra = c;
         if (["valore", "quotazione", "prezzo", "qt", "costo"].includes(v)) indexPrezzo = c;
-        if (["id", "id giocatore", "idgiocatore", "codice", "code"].includes(v)) indexId = c;
       }
       if (indexNome !== -1 && indexRuolo !== -1) { rigaIntestazione = r; break; }
     }
 
     if (rigaIntestazione === -1) {
-      indexNome = 0; indexRuolo = 1; indexSquadra = 2; indexPrezzo = 3; rigaIntestazione = 0;
+      indexId = 0; indexNome = 1; indexRuolo = 2; indexSquadra = 3; indexPrezzo = 4; rigaIntestazione = 0;
+    }
+
+    if (colValoreOverride !== null) {
+      indexPrezzo = colValoreOverride;
     }
 
     const sogliaMinima = parseInt(req.query.soglia) || 0;
@@ -1201,27 +1083,101 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       const ruolo = row[indexRuolo] ? String(row[indexRuolo]).trim() : "";
       const squadra = indexSquadra !== -1 && row[indexSquadra] ? String(row[indexSquadra]).trim() : "Svincolato";
       const valoreEffettivo = indexPrezzo !== -1 && row[indexPrezzo] ? parseInt(row[indexPrezzo]) : 1;
-      const playerId = indexId !== -1 && row[indexId] ? String(row[indexId]).trim() : "";
       if (valoreEffettivo < sogliaMinima) continue;
-      if (nome && ruolo) fromFile.push({ nome, ruolo: ruolo.toUpperCase(), squadra, id: playerId });
+      if (nome && ruolo) fromFile.push({ id: indexId !== -1 && row[indexId] ? parseInt(row[indexId]) || null : null, nome, ruolo: ruolo.toUpperCase(), squadra, valore: valoreEffettivo });
     }
 
-    let alreadySold = 0, alreadyInList = 0;
+    let alreadySold = 0, alreadyInList = 0, alreadyDiscarded = 0, removedFromList = [];
+
+    // Set di nomi scartati (lowercase)
+    const discNames = new Set((room.discardedPlayers || []).map(p => p.nome.toLowerCase().trim()));
 
     if (modeRiparazione) {
       // Insiemi di nomi già presenti (lowercase per confronto case-insensitive)
       const soldNames = new Set(room.soldPlayers.map(p => p.player.toLowerCase().trim()));
       const listNames = new Set(room.playersList.map(p => p.nome.toLowerCase().trim()));
+      const fromFileNames = new Set(fromFile.map(p => p.nome.toLowerCase().trim()));
+
+      room.playersList = room.playersList.filter(p => {
+        const key = p.nome.toLowerCase().trim();
+        if (!fromFileNames.has(key) && !soldNames.has(key) && !discNames.has(key)) {
+          removedFromList.push(p.nome);
+          return false;
+        }
+        return true;
+      });
 
       for (const p of fromFile) {
         const key = p.nome.toLowerCase().trim();
         if (soldNames.has(key)) { alreadySold++; continue; }
         if (listNames.has(key)) { alreadyInList++; continue; }
+        if (discNames.has(key)) { alreadyDiscarded++; continue; }
         room.playersList.push(p);
         listNames.add(key); // evita duplicati all'interno dello stesso file
       }
+    } else if (modeAggiornaValori) {
+      // Modalità Aggiorna Valori: aggiorna i valori dei giocatori già presenti nel mazzo
+      // e aggiunge solo i nuovi giocatori non ancora presenti
+      const fileMap = new Map();
+      for (const p of fromFile) {
+        fileMap.set(p.nome.toLowerCase().trim(), p);
+      }
+
+      let valoriAggiornati = 0, nuoviAggiunti = 0;
+
+      // Aggiorna valori dei giocatori già nel mazzo
+      room.playersList.forEach(p => {
+        const key = p.nome.toLowerCase().trim();
+        if (fileMap.has(key)) {
+          const fp = fileMap.get(key);
+          if (fp.valore && fp.valore !== p.valore) {
+            p.valore = fp.valore;
+            valoriAggiornati++;
+          }
+        }
+      });
+
+      // Aggiungi nuovi giocatori non presenti nel mazzo
+      const listNames = new Set(room.playersList.map(p => p.nome.toLowerCase().trim()));
+      const soldNames = new Set(room.soldPlayers.map(p => p.player.toLowerCase().trim()));
+      for (const p of fromFile) {
+        const key = p.nome.toLowerCase().trim();
+        if (listNames.has(key)) continue;
+        if (soldNames.has(key)) { alreadySold++; continue; }
+        if (discNames.has(key)) { alreadyDiscarded++; continue; }
+        room.playersList.push(p);
+        listNames.add(key);
+        nuoviAggiunti++;
+      }
+
+      await salvaSessioneDB(room);
+      io.to(roomCode).emit("playersList", room.playersList);
+
+      const warnings = [];
+      room.playersList.forEach(p => {
+        const tokens = p.ruolo.split(/[\s,;\-]+/).map(t => t.trim()).filter(Boolean);
+        const unknown = tokens.filter(t => !MANTRA_MAP[t]);
+        if (unknown.length > 0) warnings.push({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, tokensIgnorati: unknown });
+      });
+
+      return res.json({
+        success: true,
+        count: room.playersList.length,
+        warnings,
+        aggiornavalori: { valoriAggiornati, nuoviAggiunti, giaPresenti: fromFile.length - nuoviAggiunti - alreadySold - alreadyDiscarded },
+        skippedSold: alreadySold
+      });
     } else {
-      room.playersList = fromFile;
+      // Non-repair: sostituisci tutta la lista, filtrando scartati e già venduti
+      const soldNamesNonRepair = new Set(room.soldPlayers.map(p => p.player.toLowerCase().trim()));
+      let alreadySoldNonRepair = 0;
+      room.playersList = fromFile.filter(p => {
+        const key = p.nome.toLowerCase().trim();
+        if (discNames.has(key)) { alreadyDiscarded++; return false; }
+        if (soldNamesNonRepair.has(key)) { alreadySoldNonRepair++; return false; }
+        return true;
+      });
+      alreadySold = alreadySoldNonRepair;
     }
 
     const warnings = [];
@@ -1233,12 +1189,12 @@ app.post("/upload", upload.single("file"), async (req, res) => {
 
     await salvaSessioneDB(room);
     io.to(roomCode).emit("playersList", room.playersList);
-    io.to(roomCode).emit("discardedList", room.discardedPlayers || []);
     res.json({
       success: true,
       count: room.playersList.length,
       warnings,
-      riparazione: modeRiparazione ? { alreadySold, alreadyInList, added: fromFile.length - alreadySold - alreadyInList } : null
+      riparazione: modeRiparazione ? { alreadySold, alreadyInList, added: fromFile.length - alreadySold - alreadyInList, removedFromList } : null,
+      skippedSold: modeRiparazione ? null : alreadySold
     });
   } catch (e) {
     console.error("[SERVER] Errore parsing Excel:", e);
@@ -1309,36 +1265,80 @@ app.get("/export", (req, res) => {
   }
 });
 
-// GET /export-csv?room=CODE → CSV con squadra,idgiocatore,prezzo separato da righe $,$,$
+// Export SAV — salvataggio completo sessione asta (riprendibile)
+app.get("/export-sav", (req, res) => {
+  const roomCode = String(req.query.room || "").toUpperCase().trim();
+  const room = rooms.get(roomCode);
+  if (!room) return res.status(400).send("Stanza non trovata");
+
+  try {
+    const sav = {
+      format: "DraftARENA-SAV",
+      version: 2,
+      savedAt: new Date().toISOString(),
+      roomCode,
+      auctionName: room.auctionName || "default",
+      config: room.CONFIG,
+      timerDuration: room.state.timerDuration,
+      teams: Object.entries(room.teams).map(([key, t]) => ({
+        key,
+        name: t.name,
+        budget: t.budget,
+        slots: t.slots
+      })),
+      soldPlayers: room.soldPlayers,
+      unsoldPlayers: room.playersList,
+      currentState: {
+        player: room.state.player,
+        currentPrice: room.state.currentPrice,
+        highestBidder: room.state.highestBidder,
+        time: room.state.time,
+        isPaused: room.state.isPaused,
+        history: room.state.history || []
+      }
+    };
+
+    const json = JSON.stringify(sav, null, 2);
+    res.setHeader("Content-Type", "application/octet-stream");
+    res.setHeader("Content-Disposition", `attachment; filename=asta_${roomCode}.sav`);
+    res.send(json);
+  } catch (e) {
+    console.error("[SERVER] Errore export SAV:", e);
+    res.status(500).send("Errore durante la generazione del file SAV.");
+  }
+});
+
+// Export CSV — rose per importazione Leghe Fantacalcio (formato singola colonna)
 app.get("/export-csv", (req, res) => {
   const roomCode = String(req.query.room || "").toUpperCase().trim();
   const room = rooms.get(roomCode);
-  if (!room) return res.status(404).send("Stanza non trovata.");
+  if (!room) return res.status(400).send("Stanza non trovata");
 
   try {
+    const lines = [];
     const teamKeys = Object.keys(room.teams);
-    let csv = "$,$,$\n";
 
-    for (const key of teamKeys) {
-      const squadra = room.teams[key];
+    teamKeys.forEach((k, idx) => {
+      const squadra = room.teams[k];
       const acquisti = room.soldPlayers.filter(p =>
         p.winner.toLowerCase().trim() === squadra.name.toLowerCase().trim()
       );
 
-      for (const sp of acquisti) {
-        const playerId = sp.id || "";
-        const prezzo = sp.price || 0;
-        csv += `${squadra.name},${playerId},${prezzo}\n`;
-      }
+      acquisti.forEach(p => {
+        const playerId = p.id || "";
+        const price = p.price || 0;
+        lines.push(`${squadra.name},${playerId},${price}`);
+      });
 
-      if (teamKeys.indexOf(key) < teamKeys.length - 1) {
-        csv += "$,$,$\n";
+      if (idx < teamKeys.length - 1) {
+        lines.push("$,$,$");
       }
-    }
+    });
 
+    const csv = lines.join("\n");
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
-    res.setHeader("Content-Disposition", `attachment; filename=asta_${roomCode}.csv`);
-    res.send(csv);
+    res.setHeader("Content-Disposition", `attachment; filename=rose_${roomCode}.csv`);
+    res.send("\uFEFF" + csv);
   } catch (e) {
     console.error("[SERVER] Errore export CSV:", e);
     res.status(500).send("Errore durante la generazione del file CSV.");
@@ -1406,255 +1406,55 @@ app.delete("/api/room/:code/backups/:id", async (req, res) => {
 });
 
 /* ==========================================================================
-   IMPORT DA STANZA PRECEDENTE (nuova stagione collegata)
-   ========================================================================== */
-
-// GET /api/legacy/:code/overview → verifica se la stanza vecchia esiste e restituisce un riepilogo
-app.get("/api/legacy/:code/overview", async (req, res) => {
-  const code = String(req.params.code).toUpperCase().trim();
-  if (LOCAL_MODE) return res.json({ success: false, error: "Non disponibile in LOCAL_MODE" });
-  try {
-    const dbRoom = await trovaStanzaDB(code);
-    if (!dbRoom) return res.json({ success: false, error: "Stanza non trovata." });
-
-    // Conta i backup storici
-    const { data: backups, error: bErr } = await supabase
-      .from("auction_backups")
-      .select("id, year, label, auction_name, exported_at")
-      .eq("room_code", code)
-      .order("year", { ascending: false });
-    if (bErr) throw bErr;
-
-    // Prova a caricare la sessione "default" per vedere se ci sono dati asta
-    const tmpRoom = createRoomData(code, dbRoom.admin_pin);
-    const loaded = await caricaSessioneDB(tmpRoom);
-
-    res.json({
-      success: true,
-      roomCode: code,
-      hasAuctionData: loaded && (tmpRoom.teams.length > 0 || Object.keys(tmpRoom.teams).length > 0 || tmpRoom.soldPlayers.length > 0),
-      teamCount: Object.keys(tmpRoom.teams).length,
-      soldCount: tmpRoom.soldPlayers.length,
-      playerListCount: tmpRoom.playersList.length,
-      backups: backups || [],
-      backupCount: (backups || []).length
-    });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-// GET /api/legacy/:code/export → scarica il backup JSON completo della sessione "default" della stanza vecchia
-app.get("/api/legacy/:code/export", async (req, res) => {
-  const code = String(req.params.code).toUpperCase().trim();
-  if (LOCAL_MODE) return res.status(400).json({ success: false, error: "Non disponibile in LOCAL_MODE" });
-  try {
-    const dbRoom = await trovaStanzaDB(code);
-    if (!dbRoom) return res.status(404).json({ success: false, error: "Stanza non trovata." });
-
-    const tmpRoom = createRoomData(code, dbRoom.admin_pin);
-    await caricaSessioneDB(tmpRoom);
-
-    const year = parseInt(req.query.year) || new Date().getFullYear();
-    const label = String(req.query.label || "").trim() || `Asta ${year}`;
-
-    const teamsArray = Object.entries(tmpRoom.teams).map(([key, t]) => ({
-      key, name: t.name, finalBudget: t.budget, slots: t.slots
-    }));
-
-    const backup = {
-      version: 1,
-      app: "DraftARENA",
-      year,
-      label,
-      exportedAt: new Date().toISOString(),
-      auctionName: tmpRoom.auctionName,
-      config: tmpRoom.CONFIG,
-      timerDuration: tmpRoom.state.timerDuration,
-      teams: teamsArray,
-      soldPlayers: tmpRoom.soldPlayers,
-      unsoldPlayers: tmpRoom.playersList
-    };
-
-    res.setHeader("Content-Type", "application/json");
-    res.setHeader("Content-Disposition", `attachment; filename=DraftARENA_backup_${code}_${year}.json`);
-    res.send(JSON.stringify(backup, null, 2));
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-// POST /api/legacy/:oldCode/import-albo → copia tutti i backup storici dalla stanza vecchia a quella corrente
-// Richiede x-admin-pin della stanza CORRENTE (in cui si sta importando)
-app.post("/api/legacy/:oldCode/import-albo", async (req, res) => {
-  const oldCode = String(req.params.oldCode).toUpperCase().trim();
-  const newCode = String(req.body.newCode || "").toUpperCase().trim();
-  if (!newCode) return res.status(400).json({ success: false, error: "Codice nuova stanza mancante." });
-
-  const room = rooms.get(newCode);
-  const pin = String(req.headers["x-admin-pin"] || "");
-  if (!room || String(room.adminPin) !== pin) {
-    return res.status(403).json({ success: false, error: "PIN admin non valido." });
-  }
-  if (LOCAL_MODE) return res.json({ success: true, copied: 0 });
-  if (oldCode === newCode) return res.status(400).json({ success: false, error: "La stanza di destinazione deve essere diversa da quella di origine." });
-
-  try {
-    const { data: oldBackups, error } = await supabase
-      .from("auction_backups")
-      .select("*")
-      .eq("room_code", oldCode);
-    if (error) throw error;
-    if (!oldBackups || oldBackups.length === 0) {
-      return res.json({ success: true, copied: 0, message: "Nessun backup storico nella stanza di origine." });
-    }
-
-    // Controlla quali backup esistono già nella stanza nuova (per anno+label) per evitare duplicati
-    const { data: existing } = await supabase
-      .from("auction_backups")
-      .select("year, label, auction_name")
-      .eq("room_code", newCode);
-    const existingKeys = new Set((existing || []).map(b => `${b.year}|${b.label}|${b.auction_name}`));
-
-    const toInsert = oldBackups
-      .filter(b => !existingKeys.has(`${b.year}|${b.label}|${b.auction_name}`))
-      .map(b => ({
-        room_code: newCode,
-        year: b.year,
-        auction_name: b.auction_name,
-        label: b.label,
-        backup_data: b.backup_data,
-        season_data: b.season_data,
-        exported_at: b.exported_at
-      }));
-
-    if (toInsert.length > 0) {
-      const { error: insErr } = await supabase.from("auction_backups").insert(toInsert);
-      if (insErr) throw insErr;
-    }
-
-    // Copia anche trophy_config e team_aliases se esistenti
-    const { data: trophyCfg } = await supabase
-      .from("trophy_config")
-      .select("competitions")
-      .eq("room_code", oldCode)
-      .maybeSingle();
-    if (trophyCfg && trophyCfg.competitions) {
-      await supabase.from("trophy_config")
-        .upsert({ room_code: newCode, competitions: trophyCfg.competitions, updated_at: new Date().toISOString() }, { onConflict: "room_code" });
-    }
-
-    const { data: oldAliases } = await supabase
-      .from("team_aliases")
-      .select("canonical_name, aliases")
-      .eq("room_code", oldCode);
-    if (oldAliases && oldAliases.length > 0) {
-      const aliasRows = oldAliases.map(a => ({
-        room_code: newCode,
-        canonical_name: a.canonical_name,
-        aliases: a.aliases
-      }));
-      await supabase.from("team_aliases").insert(aliasRows);
-    }
-
-    res.json({ success: true, copied: toInsert.length, skipped: oldBackups.length - toInsert.length });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-/* ==========================================================================
    ALBO D'ORO
    ========================================================================== */
 
 app.get("/albo", (req, res) => { trackPageView(); res.sendFile(path.join(__dirname, "public", "albo.html")); });
 app.get("/albo.html", (req, res) => res.sendFile(path.join(__dirname, "public", "albo.html")));
 
-// GET /api/lega/:code/albo  → tutte le stagioni con season_data (pubblica)
+// GET /api/lega/:code/albo  → tutte le stagioni (backup + manuali) unite (pubblica)
 app.get("/api/lega/:code/albo", async (req, res) => {
   const code = String(req.params.code).toUpperCase().trim();
   if (LOCAL_MODE) return res.json({ success: true, seasons: [] });
   try {
-    const { data, error } = await supabase
-      .from("auction_backups")
-      .select("id, year, label, auction_name, exported_at, backup_data, season_data")
-      .eq("room_code", code)
-      .order("year", { ascending: false });
-    if (error) throw error;
-    res.json({ success: true, seasons: data || [] });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
+    const [backupRes, manualRes] = await Promise.all([
+      supabase
+        .from("auction_backups")
+        .select("id, year, label, auction_name, exported_at, backup_data, season_data")
+        .eq("room_code", code)
+        .order("year", { ascending: false }),
+      supabase
+        .from("albo_storico")
+        .select("id, year, label, presidents, classifica, competizioni, notes, created_at, updated_at")
+        .eq("room_code", code)
+        .order("year", { ascending: false })
+    ]);
+    if (backupRes.error) throw backupRes.error;
+    if (manualRes.error) throw manualRes.error;
 
-// POST /api/room/:code/albo/stagione  → crea una stagione storica manuale (richiede x-admin-pin)
-app.post("/api/room/:code/albo/stagione", async (req, res) => {
-  const code = String(req.params.code).toUpperCase().trim();
-  const room = rooms.get(code);
-  const pin = String(req.headers["x-admin-pin"] || "");
-  if (!room || String(room.adminPin) !== pin) {
-    return res.status(403).json({ success: false, error: "PIN admin non valido." });
-  }
-  if (LOCAL_MODE) return res.json({ success: true, id: "local" });
-
-  const { year, label, classifica, competizioni } = req.body;
-  if (!year || !label) return res.status(400).json({ success: false, error: "Anno e nome stagione obbligatori." });
-  if (!Array.isArray(classifica) || classifica.length === 0) {
-    return res.status(400).json({ success: false, error: "Classifica non valida." });
-  }
-  const comps = Array.isArray(competizioni) ? competizioni : [];
-
-  try {
-    const teamsStub = classifica
-      .filter(c => c && c.nome && c.nome.trim())
-      .map(c => ({ name: String(c.nome).trim().slice(0, 80), presidente: String(c.presidente || "").trim().slice(0, 80) }));
-    const { data, error } = await supabase.from("auction_backups").insert({
-      room_code: code,
-      year: parseInt(year),
-      auction_name: "storico",
-      label: String(label).trim().slice(0, 120),
-      backup_data: { app: "DraftARENA", version: 1, teams: teamsStub },
+    const backupSeasons = (backupRes.data || []).map(s => ({
+      ...s,
+      source: "backup",
+      season_data: s.season_data || { classifica: [], competizioni: [] }
+    }));
+    const manualSeasons = (manualRes.data || []).map(s => ({
+      id: s.id,
+      year: s.year,
+      label: s.label,
+      auction_name: null,
+      exported_at: s.created_at,
+      backup_data: null,
       season_data: {
-        classifica: classifica.map((c, i) => ({
-          pos: i + 1,
-          nome: String(c.nome || "").trim().slice(0, 80),
-          presidente: c.presidente ? String(c.presidente).trim().slice(0, 80) : null,
-          punti: c.punti != null && c.punti !== "" ? Number(c.punti) : null,
-          trofeo: c.trofeo ? String(c.trofeo).trim().slice(0, 80) : null,
-          altro: c.altro ? String(c.altro).trim().slice(0, 120) : null
-        })).filter(c => c.nome),
-        competizioni: comps.map(c => ({
-          id: c.id || Date.now() + Math.random(),
-          emoji: c.emoji || "🏅",
-          nome: String(c.nome || "").trim().slice(0, 80),
-          vincitore: c.vincitore ? String(c.vincitore).trim().slice(0, 80) : null
-        })).filter(c => c.nome)
-      }
-    }).select("id").single();
-    if (error) throw error;
-    res.json({ success: true, id: data.id });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
+        classifica: s.classifica || [],
+        competizioni: s.competizioni || []
+      },
+      presidents: s.presidents || "",
+      notes: s.notes || "",
+      source: "manuale"
+    }));
 
-// DELETE /api/room/:code/albo/stagione/:id  → elimina una stagione storica manuale (richiede x-admin-pin)
-app.delete("/api/room/:code/albo/stagione/:id", async (req, res) => {
-  const code = String(req.params.code).toUpperCase().trim();
-  const room = rooms.get(code);
-  const pin = String(req.headers["x-admin-pin"] || "");
-  if (!room || String(room.adminPin) !== pin) {
-    return res.status(403).json({ success: false, error: "PIN admin non valido." });
-  }
-  if (LOCAL_MODE) return res.json({ success: true });
-  try {
-    const { error } = await supabase.from("auction_backups")
-      .delete()
-      .eq("id", req.params.id)
-      .eq("room_code", code)
-      .eq("auction_name", "storico");
-    if (error) throw error;
-    res.json({ success: true });
+    const all = [...backupSeasons, ...manualSeasons].sort((a, b) => b.year - a.year);
+    res.json({ success: true, seasons: all });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
@@ -1689,50 +1489,82 @@ app.patch("/api/room/:code/backups/:id/season", async (req, res) => {
 });
 
 /* ==========================================================================
-   TROPHY CONFIG & TEAM ALIASES (Classifica Trofei Generale)
+   ALBO STORICO MANUALE — CRUD (richiede x-admin-pin)
    ========================================================================== */
 
-// GET /api/lega/:code/trophy-config  → leggi config coppe (pubblico)
-app.get("/api/lega/:code/trophy-config", async (req, res) => {
+function verifyAdminPin(req, code) {
+  const room = rooms.get(code);
+  const pin = String(req.headers["x-admin-pin"] || "");
+  return room && String(room.adminPin) === pin;
+}
+
+// POST /api/room/:code/albo-storico  → crea stagione manuale
+app.post("/api/room/:code/albo-storico", async (req, res) => {
   const code = String(req.params.code).toUpperCase().trim();
-  if (LOCAL_MODE || !supabase) return res.json({ success: true, config: getDefaultTrophyConfig() });
+  if (!verifyAdminPin(req, code)) {
+    return res.status(403).json({ success: false, error: "PIN admin non valido." });
+  }
+  if (LOCAL_MODE) return res.json({ success: true, id: "local-mode" });
+
+  const { year, label, presidents, classifica, competizioni, notes } = req.body;
+  if (!year || isNaN(parseInt(year))) {
+    return res.status(400).json({ success: false, error: "Anno non valido." });
+  }
+  if (!Array.isArray(classifica) || !Array.isArray(competizioni)) {
+    return res.status(400).json({ success: false, error: "Dati stagione non validi." });
+  }
+
   try {
     const { data, error } = await supabase
-      .from("trophy_config")
-      .select("competitions")
-      .eq("room_code", code)
-      .maybeSingle();
+      .from("albo_storico")
+      .insert({
+        room_code: code,
+        year: parseInt(year),
+        label: String(label || "").slice(0, 200),
+        presidents: presidents ? String(presidents).slice(0, 500) : null,
+        classifica,
+        competizioni,
+        notes: notes ? String(notes).slice(0, 2000) : null
+      })
+      .select("id")
+      .single();
     if (error) throw error;
-    res.json({ success: true, config: (data && data.competitions) ? data.competitions : getDefaultTrophyConfig() });
+    res.json({ success: true, id: data.id });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
 });
 
-// PUT /api/room/:code/trophy-config  → salva config coppe (richiede x-admin-pin)
-app.put("/api/room/:code/trophy-config", async (req, res) => {
+// PUT /api/room/:code/albo-storico/:id  → modifica stagione manuale
+app.put("/api/room/:code/albo-storico/:id", async (req, res) => {
   const code = String(req.params.code).toUpperCase().trim();
-  const room = rooms.get(code);
-  const pin = String(req.headers["x-admin-pin"] || "");
-  if (!room || String(room.adminPin) !== pin) {
+  if (!verifyAdminPin(req, code)) {
     return res.status(403).json({ success: false, error: "PIN admin non valido." });
   }
-  if (LOCAL_MODE || !supabase) return res.json({ success: true });
-  const { competitions } = req.body;
-  if (!Array.isArray(competitions)) {
-    return res.status(400).json({ success: false, error: "Configurazione competizioni non valida." });
+  if (LOCAL_MODE) return res.json({ success: true });
+
+  const { year, label, presidents, classifica, competizioni, notes } = req.body;
+  if (!year || isNaN(parseInt(year))) {
+    return res.status(400).json({ success: false, error: "Anno non valido." });
   }
-  const clean = competitions.map(c => ({
-    id: String(c.id || "").trim().slice(0, 40),
-    name: String(c.name || "").trim().slice(0, 80),
-    emoji: String(c.emoji || "🏅").slice(0, 10),
-    points: parseInt(c.points) || 0,
-    priority: parseInt(c.priority) || 99
-  })).filter(c => c.name);
+  if (!Array.isArray(classifica) || !Array.isArray(competizioni)) {
+    return res.status(400).json({ success: false, error: "Dati stagione non validi." });
+  }
+
   try {
     const { error } = await supabase
-      .from("trophy_config")
-      .upsert({ room_code: code, competitions: clean, updated_at: new Date().toISOString() }, { onConflict: "room_code" });
+      .from("albo_storico")
+      .update({
+        year: parseInt(year),
+        label: String(label || "").slice(0, 200),
+        presidents: presidents ? String(presidents).slice(0, 500) : null,
+        classifica,
+        competizioni,
+        notes: notes ? String(notes).slice(0, 2000) : null,
+        updated_at: new Date().toISOString()
+      })
+      .eq("id", req.params.id)
+      .eq("room_code", code);
     if (error) throw error;
     res.json({ success: true });
   } catch (e) {
@@ -1740,65 +1572,26 @@ app.put("/api/room/:code/trophy-config", async (req, res) => {
   }
 });
 
-// GET /api/lega/:code/team-aliases  → leggi alias squadre (pubblico)
-app.get("/api/lega/:code/team-aliases", async (req, res) => {
+// DELETE /api/room/:code/albo-storico/:id  → elimina stagione manuale
+app.delete("/api/room/:code/albo-storico/:id", async (req, res) => {
   const code = String(req.params.code).toUpperCase().trim();
-  if (LOCAL_MODE || !supabase) return res.json({ success: true, aliases: [] });
-  try {
-    const { data, error } = await supabase
-      .from("team_aliases")
-      .select("id, canonical_name, aliases")
-      .eq("room_code", code)
-      .order("canonical_name", { ascending: true });
-    if (error) throw error;
-    res.json({ success: true, aliases: data || [] });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-// PUT /api/room/:code/team-aliases  → salva tutte le alias (richiede x-admin-pin)
-app.put("/api/room/:code/team-aliases", async (req, res) => {
-  const code = String(req.params.code).toUpperCase().trim();
-  const room = rooms.get(code);
-  const pin = String(req.headers["x-admin-pin"] || "");
-  if (!room || String(room.adminPin) !== pin) {
+  if (!verifyAdminPin(req, code)) {
     return res.status(403).json({ success: false, error: "PIN admin non valido." });
   }
-  if (LOCAL_MODE || !supabase) return res.json({ success: true });
-  const { aliases } = req.body;
-  if (!Array.isArray(aliases)) {
-    return res.status(400).json({ success: false, error: "Dati alias non validi." });
-  }
+  if (LOCAL_MODE) return res.json({ success: true });
+
   try {
-    // Delete existing, then insert fresh
-    await supabase.from("team_aliases").delete().eq("room_code", code);
-    const rows = aliases
-      .filter(a => a.canonical_name && String(a.canonical_name).trim())
-      .map(a => ({
-        room_code: code,
-        canonical_name: String(a.canonical_name).trim().slice(0, 80),
-        aliases: Array.isArray(a.aliases) ? a.aliases.map(x => String(x).trim().slice(0, 80)).filter(x => x) : [],
-        updated_at: new Date().toISOString()
-      }));
-    if (rows.length > 0) {
-      const { error } = await supabase.from("team_aliases").insert(rows);
-      if (error) throw error;
-    }
+    const { error } = await supabase
+      .from("albo_storico")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("room_code", code);
+    if (error) throw error;
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
   }
 });
-
-function getDefaultTrophyConfig() {
-  return [
-    { id: "campionato", name: "Campionato", emoji: "🏆", points: 100, priority: 1 },
-    { id: "champions",  name: "Champion's League", emoji: "⭐", points: 40, priority: 2 },
-    { id: "coppaitalia",name: "Coppa Italia", emoji: "🥈", points: 20, priority: 3 },
-    { id: "coppachiappe",name:"Coppa Chiappe", emoji: "🥿", points: 10, priority: 4 }
-  ];
-}
 
 /* ==========================================================================
    FEEDBACK & SUPPORTO
@@ -1846,39 +1639,6 @@ app.post("/api/feedback/invia", async (req, res) => {
       status: "pending"
     });
     if (error) throw error;
-
-    // Invia notifica email a chi gestisce la piattaforma
-    const tipoLabel = tipo === 'supporto' ? 'Richiesta di supporto' : 'Recensione';
-    sendNotificationEmail(
-      `${tipoLabel} da ${nome || 'Anonimo'}`,
-      `<h2>${tipoLabel}</h2>
-      <table style="border-collapse:collapse;font-size:14px;font-family:sans-serif;">
-        <tr><td style="padding:4px 12px;color:#64748b;">Tipo:</td><td style="padding:4px 12px;">${tipoLabel}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Nome:</td><td style="padding:4px 12px;">${nome || '—'}</td></tr>
-        <tr><td style="padding:4px 12px;color:#64748b;">Email:</td><td style="padding:4px 12px;">${email || '—'}</td></tr>
-        ${voto ? `<tr><td style="padding:4px 12px;color:#64748b;">Voto:</td><td style="padding:4px 12px;">${'★'.repeat(voto)}${'☆'.repeat(5-voto)}</td></tr>` : ''}
-        <tr><td style="padding:4px 12px;color:#64748b;">Visibilità:</td><td style="padding:4px 12px;">${visibilita || '—'}</td></tr>
-      </table>
-      <p style="margin-top:16px;padding:12px;background:#f8fafb;border-radius:8px;font-size:14px;line-height:1.6;">${String(messaggio).trim()}</p>`
-    ).catch(() => {});
-
-    // Invia email automatica di conferma a chi ha richiesto supporto
-    if (tipo === 'supporto' && email && emailTransporter) {
-      const contactEmail = await getContactEmail();
-      emailTransporter.sendMail({
-        from: `DraftARENA <${GMAIL_USER}>`,
-        to: email,
-        subject: 'Richiesta di supporto ricevuta — DraftARENA',
-        html: `<div style="font-family:sans-serif;max-width:560px;margin:0 auto;">
-          <h2 style="color:#0f172a;">Ciao${nome ? ' ' + nome : ''},</h2>
-          <p style="font-size:15px;line-height:1.6;color:#334155;">Abbiamo ricevuto la tua richiesta di supporto. Il nostro team la esaminerà e ti risponderà il prima possibile a questa email.</p>
-          <p style="font-size:13px;color:#64748b;margin-top:24px;padding:12px;background:#f8fafb;border-radius:8px;line-height:1.6;"><strong>Il tuo messaggio:</strong><br>${String(messaggio).trim()}</p>
-          <p style="font-size:14px;color:#334155;margin-top:24px;">Grazie per aver scritto a DraftARENA.</p>
-          <p style="font-size:12px;color:#94a3b8;margin-top:32px;border-top:1px solid #e2e8f0;padding-top:16px;">Questa è un'email automatica, non rispondere a questo messaggio. Per ulteriori richieste scrivi a ${contactEmail}.</p>
-        </div>`
-      }).catch((e) => console.error('[EMAIL] Errore invio conferma supporto:', e.message));
-    }
-
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ success: false, error: e.message });
@@ -1949,10 +1709,9 @@ io.on("connection", (socket) => {
     socket.emit("teamsUpdate", room.teams);
     socket.emit("updateSold", room.soldPlayers);
     socket.emit("playersList", room.playersList);
-    socket.emit("discardedList", room.discardedPlayers || []);
+    socket.emit("discardedCount", (room.discardedPlayers || []).length);
     socket.emit("configUpdate", { CONFIG: room.CONFIG, timerDuration: room.state.timerDuration });
     socket.emit("takenTeams", Object.keys(room.claimedTeams || {}));
-    socket.emit("auctionEndedState", !!room.auctionEnded);
   }
 
   socket.on("viewingLanding", () => {
@@ -2055,7 +1814,6 @@ io.on("connection", (socket) => {
   socket.on("bid", (data) => {
     const room = getRoom(); if (!room) return;
     const rc = socket.roomCode;
-    if (room.auctionEnded) { socket.emit("errorNotify", "⛔ Asta conclusa. Non è più possibile fare offerte."); return; }
     if (room.state.player === null || room.state.time <= 0 || room.state.isPaused) return;
 
     const teamKey = String(data.name).toLowerCase().trim();
@@ -2118,6 +1876,17 @@ io.on("connection", (socket) => {
     eseguiLancioGiocatore(socket.roomCode, room.playersList[Math.floor(Math.random() * room.playersList.length)]);
   });
 
+  socket.on("startRandomFiltered", (filters) => {
+    const room = getRoom(); if (!room || room.playersList.length === 0) return;
+    if (!requireAdmin()) return;
+    let pool = room.playersList;
+    if (filters.ruolo) pool = pool.filter(p => p.ruolo === filters.ruolo);
+    if (filters.squadra) pool = pool.filter(p => (p.squadra || '').toLowerCase() === filters.squadra.toLowerCase());
+    if (filters.valoreMin != null && filters.valoreMin > 0) pool = pool.filter(p => (p.valore || 0) >= filters.valoreMin);
+    if (pool.length === 0) { socket.emit("errorNotify", "Nessun giocatore corrisponde ai filtri selezionati!"); return; }
+    eseguiLancioGiocatore(socket.roomCode, pool[Math.floor(Math.random() * pool.length)]);
+  });
+
   socket.on("startPlayer", (p) => {
     const room = getRoom(); if (!room) return;
     if (!requireAdmin()) return;
@@ -2136,40 +1905,6 @@ io.on("connection", (socket) => {
     room.autoAdvance = status;
   });
 
-  // ─── TERMINA / RIPRENDI ASTA ──────────────────────────────────────────────
-
-  socket.on("adminEndAuction", async () => {
-    const room = getRoom(); if (!room) return;
-    if (!requireAdmin()) return;
-    room.auctionEnded = true;
-    room.state.isPaused = true;
-    if (room.state.player) {
-      room.playersList.unshift(room.state.player);
-      room.state.player = null;
-      room.state.currentPrice = 0;
-      room.state.highestBidder = null;
-      room.state.history = [];
-    }
-    const rc = socket.roomCode;
-    await salvaSessioneDB(room);
-    io.to(rc).emit("update", room.state);
-    io.to(rc).emit("playersList", room.playersList);
-    io.to(rc).emit("auctionEndedState", true);
-    socket.emit("errorNotify", "🏁 Asta conclusa! La stanza è ora in modalità riepilogo.");
-  });
-
-  socket.on("adminResumeAuction", async () => {
-    const room = getRoom(); if (!room) return;
-    if (!requireAdmin()) return;
-    room.auctionEnded = false;
-    room.state.isPaused = false;
-    const rc = socket.roomCode;
-    await salvaSessioneDB(room);
-    io.to(rc).emit("update", room.state);
-    io.to(rc).emit("auctionEndedState", false);
-    socket.emit("errorNotify", "▶️ Asta ripresa! È ora possibile continuare con le offerte.");
-  });
-
   // ─── GESTIONE LEGHE ──────────────────────────────────────────────────────
 
   socket.on("adminSwitchAuction", async (name) => {
@@ -2185,7 +1920,6 @@ io.on("connection", (socket) => {
     io.to(rc).emit("teamsUpdate", room.teams);
     io.to(rc).emit("updateSold", room.soldPlayers);
     io.to(rc).emit("playersList", room.playersList);
-    io.to(rc).emit("discardedList", room.discardedPlayers || []);
     socket.emit("auctionSwitchedSuccess", room.auctionName);
   });
 
@@ -2250,17 +1984,14 @@ io.on("connection", (socket) => {
   socket.on("adminScartaDalMazzo", async (playerName) => {
     const room = getRoom(); if (!room) return;
     if (!requireAdmin()) return;
-    if (!room.discardedPlayers) room.discardedPlayers = [];
-    const idx = room.playersList.findIndex(pl => pl.nome.toLowerCase() === playerName.toLowerCase().trim());
-    if (idx !== -1) {
-      const [removed] = room.playersList.splice(idx, 1);
-      if (!room.discardedPlayers.some(dp => dp.nome.toLowerCase() === removed.nome.toLowerCase())) {
-        room.discardedPlayers.push({ nome: removed.nome, ruolo: removed.ruolo, squadra: removed.squadra, id: removed.id || "" });
-      }
+    const found = room.playersList.find(pl => pl.nome.toLowerCase() === playerName.toLowerCase().trim());
+    room.playersList = room.playersList.filter(pl => pl.nome.toLowerCase() !== playerName.toLowerCase().trim());
+    if (found) {
+      if (!room.discardedPlayers) room.discardedPlayers = [];
+      room.discardedPlayers.push(found);
     }
-    const rc = socket.roomCode;
-    io.to(rc).emit("playersList", room.playersList);
-    io.to(rc).emit("discardedList", room.discardedPlayers);
+    io.to(socket.roomCode).emit("playersList", room.playersList);
+    io.to(socket.roomCode).emit("discardedCount", (room.discardedPlayers || []).length);
     await salvaSessioneDB(room);
   });
 
@@ -2287,7 +2018,7 @@ io.on("connection", (socket) => {
     if (!repartoScelto) { socket.emit("errorNotify", "Spazio esaurito nei ruoli!"); return; }
 
     room.playersList = room.playersList.filter(pl => pl.nome !== p.nome);
-    room.soldPlayers.push({ player: p.nome, ruolo: p.ruolo, squadra: p.squadra, winner: room.teams[nameKey].name, price, repartoAssegnato: repartoScelto });
+    room.soldPlayers.push({ id: p.id || null, player: p.nome, ruolo: p.ruolo, squadra: p.squadra, winner: room.teams[nameKey].name, price, repartoAssegnato: repartoScelto });
     room.teams[nameKey].budget -= price;
     room.teams[nameKey].slots[repartoScelto] = (room.teams[nameKey].slots[repartoScelto] || 0) + 1;
     room.state.player = null;
@@ -2319,7 +2050,7 @@ io.on("connection", (socket) => {
     if (!repartoScelto) { socket.emit("errorNotify", "Spazio esaurito nei ruoli!"); return; }
     const price = parseInt(prezzo) || 1;
     room.playersList = room.playersList.filter(pl => pl.nome !== player.nome);
-    room.soldPlayers.push({ player: player.nome, ruolo: player.ruolo, squadra: player.squadra, winner: room.teams[nameKey].name, price, repartoAssegnato: repartoScelto });
+    room.soldPlayers.push({ id: player.id || null, player: player.nome, ruolo: player.ruolo, squadra: player.squadra, winner: room.teams[nameKey].name, price, repartoAssegnato: repartoScelto });
     room.teams[nameKey].budget -= price;
     room.teams[nameKey].slots[repartoScelto] = (room.teams[nameKey].slots[repartoScelto] || 0) + 1;
     const rc2 = socket.roomCode;
@@ -2333,26 +2064,15 @@ io.on("connection", (socket) => {
   socket.on("adminRiciclaInvenduti", async () => {
     const room = getRoom(); if (!room) return;
     if (!requireAdmin()) return;
-    if (!room.discardedPlayers || room.discardedPlayers.length === 0) {
-      if (room.playersList.length === 0) {
-        socket.emit("errorNotify", "❌ Nessun giocatore svincolato nel mazzo!"); return;
-      }
-      socket.emit("errorNotify", "❌ Nessun giocatore scartato da richiamare!"); return;
-    }
-    // Richiama tutti i giocatori scartati nel mazzo principale
-    const scartati = room.discardedPlayers.splice(0);
-    for (const p of scartati) {
-      if (!room.playersList.some(pl => pl.nome.toLowerCase() === p.nome.toLowerCase())) {
-        room.playersList.push(p);
-      }
+    if (room.playersList.length === 0) {
+      socket.emit("errorNotify", "❌ Nessun giocatore svincolato nel mazzo!"); return;
     }
     room.state = { player: null, currentPrice: 0, highestBidder: null, time: room.state.timerDuration, timerDuration: room.state.timerDuration, isPaused: false, history: [] };
     const rc = socket.roomCode;
     io.to(rc).emit("update", room.state);
     io.to(rc).emit("playersList", room.playersList);
-    io.to(rc).emit("discardedList", room.discardedPlayers);
     await salvaSessioneDB(room);
-    socket.emit("errorNotify", `🔄 GIRO DI GARA! ${scartati.length} giocatori scartati richiamati. ${room.playersList.length} totali nel mazzo.`);
+    socket.emit("errorNotify", `🔄 GIRO DI GARA! ${room.playersList.length} giocatori nel mazzo.`);
   });
 
   socket.on("adminRemovePlayer", async (data) => {
@@ -2374,7 +2094,7 @@ io.on("connection", (socket) => {
     if (room.teams[nameKey].slots[rep] > 0) room.teams[nameKey].slots[rep]--;
 
     if (!room.playersList.some(pl => pl.nome.toLowerCase() === pVenduto.player.toLowerCase())) {
-      room.playersList.push({ nome: pVenduto.player, ruolo: pVenduto.ruolo, squadra: pVenduto.squadra });
+      room.playersList.push({ id: pVenduto.id || null, nome: pVenduto.player, ruolo: pVenduto.ruolo, squadra: pVenduto.squadra });
     }
     room.soldPlayers.splice(index, 1);
 
@@ -2387,33 +2107,60 @@ io.on("connection", (socket) => {
     socket.emit("errorNotify", `❌ Rimosso ${pVenduto.player}. Rimborso: ${crediti} cr`);
   });
 
+  // ─── SCAMBIO GIOCATORI TRA SQUADRE ─────────────────────────────────────────
+  socket.on("adminSwapPlayers", async (data) => {
+    const room = getRoom(); if (!room) return;
+    if (!requireAdmin()) return;
+
+    const teamAKey = String(data.teamA || "").toLowerCase().trim();
+    const teamBKey = String(data.teamB || "").toLowerCase().trim();
+    const playerAName = String(data.playerA || "").trim();
+    const playerBName = String(data.playerB || "").trim();
+
+    if (!room.teams[teamAKey] || !room.teams[teamBKey]) {
+      socket.emit("errorNotify", "❌ Squadra non trovata."); return;
+    }
+    if (teamAKey === teamBKey) {
+      socket.emit("errorNotify", "❌ Le due squadre devono essere diverse."); return;
+    }
+
+    const idxA = room.soldPlayers.findIndex(sp =>
+      sp.player.toLowerCase() === playerAName.toLowerCase() &&
+      sp.winner.toLowerCase().trim() === teamAKey
+    );
+    const idxB = room.soldPlayers.findIndex(sp =>
+      sp.player.toLowerCase() === playerBName.toLowerCase() &&
+      sp.winner.toLowerCase().trim() === teamBKey
+    );
+    if (idxA === -1) { socket.emit("errorNotify", `❌ ${playerAName} non trovato in ${room.teams[teamAKey].name}.`); return; }
+    if (idxB === -1) { socket.emit("errorNotify", `❌ ${playerBName} non trovato in ${room.teams[teamBKey].name}.`); return; }
+
+    const spA = room.soldPlayers[idxA];
+    const spB = room.soldPlayers[idxB];
+
+    // Aggiorna slot: rimuovi dal vecchio reparto, aggiungi al nuovo
+    if (room.teams[teamAKey].slots[spA.repartoAssegnato] > 0) room.teams[teamAKey].slots[spA.repartoAssegnato]--;
+    if (room.teams[teamBKey].slots[spB.repartoAssegnato] > 0) room.teams[teamBKey].slots[spB.repartoAssegnato]--;
+    room.teams[teamAKey].slots[spB.repartoAssegnato] = (room.teams[teamAKey].slots[spB.repartoAssegnato] || 0) + 1;
+    room.teams[teamBKey].slots[spA.repartoAssegnato] = (room.teams[teamBKey].slots[spA.repartoAssegnato] || 0) + 1;
+
+    // Scambia i vincitori mantenendo prezzo e reparto originali
+    spA.winner = room.teams[teamBKey].name;
+    spB.winner = room.teams[teamAKey].name;
+
+    // I budget NON si modificano: il prezzo di acquisto resta associato alla squadra originaria
+
+    const rc = socket.roomCode;
+    await salvaSessioneDB(room);
+    io.to(rc).emit("updateSold", room.soldPlayers);
+    io.to(rc).emit("updateTeams", room.teams);
+    io.to(rc).emit("teamsUpdate", room.teams);
+    socket.emit("errorNotify", `🔄 Scambio completato: ${spA.player} → ${room.teams[teamBKey].name}, ${spB.player} → ${room.teams[teamAKey].name}`);
+  });
+
   socket.on("getSoldPlayers", () => {
     const room = getRoom(); if (!room) return;
     socket.emit("updateSold", room.soldPlayers);
-  });
-
-  socket.on("getDiscarded", () => {
-    const room = getRoom(); if (!room) return;
-    socket.emit("discardedList", room.discardedPlayers || []);
-  });
-
-  socket.on("adminRichiamaSingoloScartato", async (playerName) => {
-    const room = getRoom(); if (!room) return;
-    if (!requireAdmin()) return;
-    if (!room.discardedPlayers || room.discardedPlayers.length === 0) {
-      socket.emit("errorNotify", "❌ Nessun giocatore scartato da richiamare!"); return;
-    }
-    const idx = room.discardedPlayers.findIndex(dp => dp.nome.toLowerCase() === playerName.toLowerCase().trim());
-    if (idx === -1) { socket.emit("errorNotify", "Giocatore non trovato tra gli scartati!"); return; }
-    const [p] = room.discardedPlayers.splice(idx, 1);
-    if (!room.playersList.some(pl => pl.nome.toLowerCase() === p.nome.toLowerCase())) {
-      room.playersList.push(p);
-    }
-    const rc = socket.roomCode;
-    io.to(rc).emit("playersList", room.playersList);
-    io.to(rc).emit("discardedList", room.discardedPlayers);
-    await salvaSessioneDB(room);
-    socket.emit("errorNotify", `✅ ${p.nome} richiamato nel mazzo!`);
   });
 
   // ─── CLAIM SQUADRA (phone) ───────────────────────────────────────────────
@@ -2427,8 +2174,14 @@ io.on("connection", (socket) => {
     }
     const current = room.claimedTeams[key];
     if (current && current !== socket.id) {
-      socket.emit("claimTeamResult", { success: false, error: "Squadra già selezionata da un altro partecipante." });
-      return;
+      // Se il socket che detiene la squadra non è più connesso, libera la squadra
+      const holder = io.sockets.sockets.get(current);
+      if (!holder || !holder.connected) {
+        delete room.claimedTeams[key];
+      } else {
+        socket.emit("claimTeamResult", { success: false, error: "Squadra già selezionata da un altro partecipante." });
+        return;
+      }
     }
     for (const k in room.claimedTeams) {
       if (room.claimedTeams[k] === socket.id) delete room.claimedTeams[k];
@@ -2504,7 +2257,7 @@ io.on("connection", (socket) => {
     room.teams[newWinnerKey].budget -= newPrice;
     room.teams[newWinnerKey].slots[repartoScelto] = (room.teams[newWinnerKey].slots[repartoScelto] || 0) + 1;
     room.soldPlayers.push({
-      player: p.nome, ruolo: p.ruolo, squadra: p.squadra,
+      id: p.id || null, player: p.nome, ruolo: p.ruolo, squadra: p.squadra,
       winner: room.teams[newWinnerKey].name, price: newPrice,
       repartoAssegnato: repartoScelto
     });
@@ -2617,6 +2370,7 @@ io.on("connection", (socket) => {
 
       // Reset stato asta
       room.soldPlayers = [];
+      room.discardedPlayers = [];
       room.playersList = b.unsoldPlayers || [];
       room.state.player = null;
       room.state.currentPrice = 0;
@@ -2626,71 +2380,19 @@ io.on("connection", (socket) => {
 
       const rc = socket.roomCode;
       await salvaSessioneDB(room);
+      // Pulisci la tabella discarded_players per questa sessione
+      try { await supabase.from("discarded_players").delete().eq("room_code", rc).eq("auction_name", room.auctionName); } catch(e) {}
       io.to(rc).emit("updateTeams", room.teams);
       io.to(rc).emit("teamsUpdate", room.teams);
       io.to(rc).emit("updateSold", room.soldPlayers);
       io.to(rc).emit("playersList", room.playersList);
+      io.to(rc).emit("discardedCount", (room.discardedPlayers || []).length);
       io.to(rc).emit("update", room.state);
       io.to(rc).emit("configUpdate", { CONFIG: room.CONFIG, timerDuration: room.state.timerDuration });
       socket.emit("backupImportSuccess", { label: b.label || b.auctionName, year: b.year });
       socket.emit("errorNotify", `✅ Backup "${b.label || b.year}" caricato! ${Object.keys(room.teams).length} squadre pronte.`);
     } catch (e) {
       socket.emit("errorNotify", "❌ Errore lettura backup: " + e.message);
-    }
-  });
-
-  socket.on("adminImportBackupFull", async (backupData) => {
-    const room = getRoom(); if (!room) return;
-    if (!requireAdmin()) return;
-
-    try {
-      const b = typeof backupData === "string" ? JSON.parse(backupData) : backupData;
-      if (!b.version || b.app !== "DraftARENA") {
-        socket.emit("errorNotify", "❌ File di backup non valido."); return;
-      }
-
-      // Ripristina config e timer
-      if (b.config) room.CONFIG = b.config;
-      if (b.timerDuration) room.state.timerDuration = b.timerDuration;
-
-      // Ricrea le squadre con budget finale e slots dal backup
-      room.teams = {};
-      if (b.teams && Array.isArray(b.teams)) {
-        b.teams.forEach(t => {
-          const key = String(t.name).toLowerCase().trim();
-          room.teams[key] = {
-            name: t.name,
-            budget: t.finalBudget != null ? t.finalBudget : room.CONFIG.STARTING_BUDGET,
-            slots: t.slots ? { ...t.slots } : { P: 0, D: 0, C: 0, A: 0 }
-          };
-        });
-      }
-
-      // Ripristina giocatori venduti esattamente come nel backup
-      room.soldPlayers = Array.isArray(b.soldPlayers) ? b.soldPlayers : [];
-
-      // Ripristina giocatori svincolati come lista disponibile
-      room.playersList = Array.isArray(b.unsoldPlayers) ? b.unsoldPlayers : [];
-
-      // Stato asta: conclusa, nessun giocatore in corso, in pausa
-      room.state.player = null;
-      room.state.currentPrice = 0;
-      room.state.highestBidder = null;
-      room.state.time = room.state.timerDuration;
-      room.state.isPaused = true;
-
-      const rc = socket.roomCode;
-      await salvaSessioneDB(room);
-      io.to(rc).emit("updateTeams", room.teams);
-      io.to(rc).emit("teamsUpdate", room.teams);
-      io.to(rc).emit("updateSold", room.soldPlayers);
-      io.to(rc).emit("playersList", room.playersList);
-      io.to(rc).emit("update", room.state);
-      io.to(rc).emit("configUpdate", { CONFIG: room.CONFIG, timerDuration: room.state.timerDuration });
-      socket.emit("backupImportSuccess", { label: b.label || b.auctionName, year: b.year });
-      socket.emit("errorNotify", `✅ Asta completa "${b.label || b.year}" ripristinata! ${Object.keys(room.teams).length} squadre, ${room.soldPlayers.length} giocatori venduti.`);
-    } catch (e) {
-      socket.emit("errorNotify", "❌ Errore ripristino asta: " + e.message);
     }
   });
 
@@ -2769,6 +2471,7 @@ io.on("connection", (socket) => {
     io.to(rc).emit("teamsUpdate", room.teams);
     io.to(rc).emit("updateSold", room.soldPlayers);
     io.to(rc).emit("playersList", room.playersList);
+    io.to(rc).emit("discardedCount", (room.discardedPlayers || []).length);
   });
 
   socket.on("reset", async () => {
@@ -2777,126 +2480,17 @@ io.on("connection", (socket) => {
     const rc = socket.roomCode;
     room.state = { player: null, currentPrice: 0, highestBidder: null, time: 10, timerDuration: room.state.timerDuration, isPaused: false, history: [] };
     room.soldPlayers = [];
+    room.discardedPlayers = [];
     room.teams = {};
     await salvaSessioneDB(room);
+    // Pulisci anche la tabella discarded_players per questa sessione
+    try { await supabase.from("discarded_players").delete().eq("room_code", rc).eq("auction_name", room.auctionName); } catch(e) {}
     io.to(rc).emit("update", room.state);
     io.to(rc).emit("updateSold", room.soldPlayers);
     io.to(rc).emit("updateTeams", room.teams);
     io.to(rc).emit("teamsUpdate", room.teams);
+    io.to(rc).emit("discardedCount", 0);
   });
-});
-
-/* ==========================================================================
-   VIDEO GALLERY — API
-   ========================================================================== */
-const videoUpload = multer({
-  dest: "uploads/videos/",
-  limits: { fileSize: 200 * 1024 * 1024 },
-  fileFilter: (req, file, cb) => {
-    const allowed = /\.(mp4|webm|ogg|mov|avi|mkv)$/i;
-    if (allowed.test(path.extname(file.originalname))) cb(null, true);
-    else cb(new Error("Formato video non supportato. Usa mp4, webm, ogg, mov, avi o mkv."));
-  }
-});
-
-app.get("/api/videos", async (req, res) => {
-  if (!supabase) return res.json({ success: true, videos: [] });
-  try {
-    const { data, error } = await supabase
-      .from("videos")
-      .select("*")
-      .order("sort_order", { ascending: true });
-    if (error) throw error;
-    res.json({ success: true, videos: data || [] });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-app.post("/api/superadmin/videos/youtube", async (req, res) => {
-  const { password, title, url, sortOrder } = req.body;
-  if (password !== SUPERADMIN_PASSWORD) {
-    return res.status(401).json({ success: false, error: "Password errata." });
-  }
-  if (!title || !url) {
-    return res.status(400).json({ success: false, error: "Titolo e URL sono obbligatori." });
-  }
-  if (!supabase) return res.json({ success: true });
-  try {
-    const { data, error } = await supabase
-      .from("videos")
-      .insert({
-        title: String(title).trim().slice(0, 200),
-        type: "youtube",
-        url: String(url).trim().slice(0, 500),
-        sort_order: parseInt(sortOrder) || 0
-      })
-      .select()
-      .single();
-    if (error) throw error;
-    res.json({ success: true, video: data });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-app.post("/api/superadmin/videos/upload", videoUpload.single("video"), async (req, res) => {
-  const password = req.headers["x-sa-password"] || "";
-  if (password !== SUPERADMIN_PASSWORD) {
-    if (req.file) fs.unlink(req.file.path, () => {});
-    return res.status(401).json({ success: false, error: "Password errata." });
-  }
-  if (!req.file) return res.status(400).json({ success: false, error: "Nessun file caricato." });
-  const title = req.body.title || req.file.originalname.replace(/\.[^.]+$/, "");
-  const sortOrder = parseInt(req.body.sortOrder) || 0;
-  if (!supabase) {
-    fs.unlink(req.file.path, () => {});
-    return res.json({ success: true });
-  }
-  try {
-    const ext = path.extname(req.file.originalname) || ".mp4";
-    const newFilename = `video_${Date.now()}${ext}`;
-    const newPath = path.join(__dirname, "..", "public", "videos", newFilename);
-    if (!fs.existsSync(path.dirname(newPath))) fs.mkdirSync(path.dirname(newPath), { recursive: true });
-    fs.renameSync(req.file.path, newPath);
-
-    const { data, error } = await supabase
-      .from("videos")
-      .insert({
-        title: String(title).trim().slice(0, 200),
-        type: "file",
-        url: `/videos/${newFilename}`,
-        sort_order: sortOrder
-      })
-      .select()
-      .single();
-    if (error) throw error;
-    res.json({ success: true, video: data });
-  } catch (e) {
-    if (req.file && fs.existsSync(req.file.path)) fs.unlink(req.file.path, () => {});
-    res.status(500).json({ success: false, error: e.message });
-  }
-});
-
-app.delete("/api/superadmin/videos/:id", async (req, res) => {
-  const password = req.headers["x-sa-password"] || "";
-  if (password !== SUPERADMIN_PASSWORD) {
-    return res.status(401).json({ success: false, error: "Password errata." });
-  }
-  const { id } = req.params;
-  if (!supabase) return res.json({ success: true });
-  try {
-    const { data: video } = await supabase.from("videos").select("type, url").eq("id", id).maybeSingle();
-    const { error } = await supabase.from("videos").delete().eq("id", id);
-    if (error) throw error;
-    if (video && video.type === "file" && video.url && video.url.startsWith("/videos/")) {
-      const filePath = path.join(__dirname, "..", "public", video.url);
-      if (fs.existsSync(filePath)) fs.unlink(filePath, () => {});
-    }
-    res.json({ success: true });
-  } catch (e) {
-    res.status(500).json({ success: false, error: e.message });
-  }
 });
 
 /* ==========================================================================
