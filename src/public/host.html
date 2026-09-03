@@ -23,12 +23,13 @@
 
     /* ── Layout: auction center, teams right, QR below ── */
     .host-body { flex: 1; display: flex; gap: 8px; min-height: 0; }
-    .auction-center { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6px 10px; min-height: 0; max-width: calc(100% - 320px); }
-    .teams-sidebar { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; overflow-y: auto; padding: 6px 8px; background: rgba(11,19,43,0.4); border: 1px solid rgba(16,185,129,0.12); border-radius: 8px; }
-    .teams-sidebar::-webkit-scrollbar { width: 4px; }
-    .teams-sidebar::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 2px; }
-    .teams-sidebar-title { font-family: 'Urbanist', sans-serif; font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; padding: 4px 0; text-align: center; flex-shrink: 0; }
+    .auction-center { flex: 3; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6px 10px; min-height: 0; }
+    .teams-sidebar { flex: 1; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background: rgba(11,19,43,0.4); border: 1px solid rgba(16,185,129,0.12); border-radius: 8px; overflow: hidden; }
+    .teams-sidebar-title { font-family: 'Urbanist', sans-serif; font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; padding: 4px 0 6px 0; text-align: center; flex-shrink: 0; border-bottom: 1px solid rgba(56,189,248,0.1); }
 
+    #teams-grid { overflow-y: auto; flex: 1; min-height: 0; }
+    #teams-grid::-webkit-scrollbar { width: 4px; }
+    #teams-grid::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 2px; }
     .team-mini { background: #050914; border: 1px solid rgba(16, 185, 129, 0.12); border-radius: 6px; padding: 6px 10px; display: flex; flex-direction: column; gap: 3px; }
     .team-mini-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
     .team-mini-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
@@ -61,7 +62,7 @@
     @media (max-width: 900px) {
       html, body { overflow: auto; height: auto; }
       .host-body { flex-direction: column; }
-      .teams-sidebar { width: 100%; max-height: 35vh; }
+      .teams-sidebar { width: 100%; max-height: 40vh; }
     }
 
     /* ── Mobile (≤ 600px) ─────────────────────────────────────── */
