@@ -13,39 +13,38 @@
   <link rel="apple-touch-icon" href="/DraftARENAico.png">
   <style>
     html, body { height: 100%; overflow: hidden; }
-    body { font-family: 'Arial', sans-serif; background: radial-gradient(circle at center, #0b132b 0%, #050914 100%); color: #fff; padding: 10px; margin: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
-    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 8px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid rgba(16, 185, 129, 0.2); flex-shrink: 0; }
+    body { font-family: 'Arial', sans-serif; background: radial-gradient(circle at center, #0b132b 0%, #050914 100%); color: #fff; padding: 8px; margin: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+    .regia-nav { background: rgba(11, 19, 43, 0.8); backdrop-filter: blur(10px); padding: 6px 14px; border-radius: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; border: 1px solid rgba(16, 185, 129, 0.2); flex-shrink: 0; }
     .regia-nav span { color: #94a3b8; font-family: 'Urbanist', sans-serif; font-size: 14px; font-weight: bold; }
-    .btn-admin-link { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; text-decoration: none; padding: 7px 13px; font-weight: bold; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; transition: all 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); white-space: nowrap; }
+    .btn-admin-link { background: linear-gradient(135deg, #10b981 0%, #047857 100%); color: white; text-decoration: none; padding: 6px 13px; font-weight: bold; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; transition: all 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.2); white-space: nowrap; }
     .btn-admin-link:hover { box-shadow: 0 0 15px #10b981; }
-    .mazzo-counter-tv { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4); padding: 5px 12px; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; font-weight: bold; color: #38bdf8; text-shadow: 0 0 8px rgba(56,189,248,0.3); white-space: nowrap; }
+    .mazzo-counter-tv { background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.4); padding: 4px 12px; border-radius: 6px; font-family: 'Urbanist', sans-serif; font-size: 13px; font-weight: bold; color: #38bdf8; text-shadow: 0 0 8px rgba(56,189,248,0.3); white-space: nowrap; }
     .mazzo-counter-tv span { color: #ffffff; font-weight: 800; }
 
-    /* ── Layout: auction center, teams right, QR below ── */
+    /* ── Layout: auction left, teams+QR right ── */
     .host-body { flex: 1; display: flex; gap: 8px; min-height: 0; }
-    .auction-center { flex: 3; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6px 10px; min-height: 0; }
-    .teams-sidebar { flex: 1; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; padding: 10px 12px; background: rgba(11,19,43,0.4); border: 1px solid rgba(16,185,129,0.12); border-radius: 8px; overflow: hidden; }
-    .teams-sidebar-title { font-family: 'Urbanist', sans-serif; font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; padding: 4px 0 6px 0; text-align: center; flex-shrink: 0; border-bottom: 1px solid rgba(56,189,248,0.1); }
+    .auction-center { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 6px 10px; min-height: 0; }
+    .right-panel { width: 460px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; min-height: 0; }
+    .teams-box { flex: 1; display: flex; flex-direction: column; background: rgba(11,19,43,0.4); border: 1px solid rgba(16,185,129,0.12); border-radius: 8px; padding: 8px 10px; min-height: 0; }
+    .teams-box-title { font-family: 'Urbanist', sans-serif; font-size: 12px; font-weight: 700; color: #38bdf8; text-transform: uppercase; letter-spacing: 1px; padding: 0 0 6px 0; text-align: center; flex-shrink: 0; border-bottom: 1px solid rgba(56,189,248,0.1); }
+    #teams-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; flex: 1; min-height: 0; align-content: start; }
 
-    #teams-grid { overflow-y: auto; flex: 1; min-height: 0; }
-    #teams-grid::-webkit-scrollbar { width: 4px; }
-    #teams-grid::-webkit-scrollbar-thumb { background: rgba(16,185,129,0.3); border-radius: 2px; }
-    .team-mini { background: #050914; border: 1px solid rgba(16, 185, 129, 0.12); border-radius: 6px; padding: 6px 10px; display: flex; flex-direction: column; gap: 3px; }
-    .team-mini-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
-    .team-mini-info { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
-    .team-mini-name { color: #ffcc00; font-weight: bold; font-size: 13px; font-family: 'Urbanist', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .team-mini-budget { color: #10b981; font-weight: bold; font-size: 14px; white-space: nowrap; }
-    .team-mini-slots { display: flex; gap: 4px; flex-wrap: wrap; font-size: 10px; font-family: 'Urbanist', sans-serif; }
-    .slot-pill { padding: 1px 6px; border-radius: 4px; font-weight: 700; }
+    .team-mini { background: #050914; border: 1px solid rgba(16, 185, 129, 0.12); border-radius: 6px; padding: 5px 8px; display: flex; flex-direction: column; gap: 2px; }
+    .team-mini-row { display: flex; align-items: center; justify-content: space-between; gap: 4px; }
+    .team-mini-info { display: flex; flex-direction: column; gap: 0; min-width: 0; }
+    .team-mini-name { color: #ffcc00; font-weight: bold; font-size: 12px; font-family: 'Urbanist', sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .team-mini-budget { color: #10b981; font-weight: bold; font-size: 13px; white-space: nowrap; }
+    .team-mini-slots { display: flex; gap: 3px; flex-wrap: wrap; font-size: 9px; font-family: 'Urbanist', sans-serif; }
+    .slot-pill { padding: 1px 5px; border-radius: 3px; font-weight: 700; }
     .slot-pill.por { background: rgba(56,189,248,0.15); color: #38bdf8; border: 1px solid rgba(56,189,248,0.2); }
     .slot-pill.def { background: rgba(16,185,129,0.15); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
     .slot-pill.cen { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
     .slot-pill.att { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
     .slot-pill.full { opacity: 0.4; }
-    .team-mini-players { color: #94a3b8; font-size: 10px; white-space: nowrap; }
+    .team-mini-players { color: #94a3b8; font-size: 9px; white-space: nowrap; }
 
-    .qr-bar { display: flex; align-items: center; justify-content: center; gap: 12px; flex-shrink: 0; padding: 6px 14px; background: rgba(11, 19, 43, 0.6); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.1); margin-top: 6px; }
-    #time { font-family: 'Urbanist', sans-serif; font-size: clamp(3rem, 10vw, 7em); color: #ef4444; font-weight: 800; margin: 4px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; line-height: 1; }
+    .qr-box { flex-shrink: 0; display: flex; align-items: center; justify-content: center; gap: 10px; padding: 6px 14px; background: rgba(11, 19, 43, 0.6); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.1); }
+    #time { font-family: 'Urbanist', sans-serif; font-size: clamp(3rem, 9vw, 7em); color: #ef4444; font-weight: 800; margin: 4px 0; text-shadow: 0 0 30px rgba(239,68,68,0.5); transition: color 0.2s; line-height: 1; }
     #player { font-family: 'Urbanist', sans-serif; font-size: clamp(1.5rem, 5vw, 4em); margin: 4px 0; color: #ffffff; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; line-height: 1.1; }
     #info-giocatore { font-size: clamp(0.8rem, 2vw, 1.5em); color: #10b981; margin-bottom: 12px; font-family: 'Urbanist', sans-serif; font-weight: bold; }
     #bid { font-family: 'Urbanist', sans-serif; font-size: clamp(2rem, 7vw, 4.5em); color: #10b981; font-weight: 800; text-shadow: 0 0 25px rgba(16, 185, 129, 0.4); line-height: 1; }
@@ -62,17 +61,20 @@
     @media (max-width: 900px) {
       html, body { overflow: auto; height: auto; }
       .host-body { flex-direction: column; }
-      .teams-sidebar { width: 100%; max-height: 40vh; }
+      .right-panel { width: 100%; }
+      .teams-box { max-height: 50vh; }
+      #teams-grid { grid-template-columns: 1fr 1fr; }
     }
 
     /* ── Mobile (≤ 600px) ─────────────────────────────────────── */
     @media (max-width: 600px) {
-      body { padding: 8px; }
-      .regia-nav { padding: 8px 10px; gap: 6px; }
+      body { padding: 6px; }
+      .regia-nav { padding: 6px 10px; gap: 6px; }
       .nav-hub-btn { font-size: 12px !important; padding: 5px 10px !important; }
       .btn-admin-link { display: none; }
       .mazzo-counter-tv { font-size: 11px; padding: 4px 9px; }
       .auction-center { padding: 6px; }
+      #teams-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -124,7 +126,7 @@
 </div>
 
 <div class="host-body">
-  <!-- CENTER: Auction -->
+  <!-- LEFT: Auction -->
   <div class="auction-center">
     <div id="auction-ended-overlay" style="display:none;flex:1;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:20px;width:100%;box-sizing:border-box;">
       <div style="max-width:600px;">
@@ -155,19 +157,19 @@
     </div>
   </div>
 
-  <!-- RIGHT: Teams sidebar -->
-  <div class="teams-sidebar">
-    <div class="teams-sidebar-title">Squadre</div>
-    <div id="teams-grid" style="display:flex;flex-direction:column;gap:4px;"></div>
-  </div>
-</div>
-
-<!-- BELOW: QR -->
-<div class="qr-bar">
-  <img id="qr-connect" src="" alt="QR" style="background:white;padding:4px;display:none;width:60px;height:60px;border-radius:4px;">
-  <div>
-    <p style="font-size:10px;color:#64748b;margin:0;" data-i18n="host_phone_wifi">Indirizzo Wi-Fi:</p>
-    <b id="link-connect" style="color:#10b981;font-size:11px;word-break:break-all;">IP...</b>
+  <!-- RIGHT: Teams (2x2 grid) + QR below -->
+  <div class="right-panel">
+    <div class="teams-box">
+      <div class="teams-box-title">Squadre</div>
+      <div id="teams-grid"></div>
+    </div>
+    <div class="qr-box">
+      <img id="qr-connect" src="" alt="QR" style="background:white;padding:3px;display:none;width:50px;height:50px;border-radius:4px;">
+      <div>
+        <p style="font-size:10px;color:#64748b;margin:0;" data-i18n="host_phone_wifi">Indirizzo Wi-Fi:</p>
+        <b id="link-connect" style="color:#10b981;font-size:11px;word-break:break-all;">IP...</b>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -391,7 +393,7 @@
     const maxTotal = maxP + maxD + maxC + maxA;
     const keys = Object.keys(allTeams);
     if (keys.length === 0) {
-      container.innerHTML = '<p style="color:#64748b;text-align:center;" data-i18n="host_no_teams">Nessuna fantasquadra registrata...</p>';
+      container.innerHTML = '<p style="color:#64748b;text-align:center;grid-column:span 2;" data-i18n="host_no_teams">Nessuna fantasquadra registrata...</p>';
       return;
     }
     const missingLabel = I18N.lang() === 'en' ? 'missing' : 'mancano';
