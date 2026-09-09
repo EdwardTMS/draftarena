@@ -1368,7 +1368,11 @@ window.I18N = (function () {
         phone_bought: '🏅 HAI ACQUISTATO',
         phone_bought_by: 'acquistato da',
         phone_for: 'per',
-        phone_unsold: 'rimane INVENDUTO'
+        phone_unsold: 'rimane INVENDUTO',
+        phone_btn_svincolati: '🗑️ Svincolati',
+        phone_auction_ended_title: 'ASTA CONCLUSA',
+        phone_auction_ended_desc: "L'asta è terminata. Puoi vedere le rose finali qui sotto.",
+        phone_auction_ended_btn: '📋 VEDI LE ROSE'
       },
       en: {
         phone_ios_install: 'Install DraftArena',
@@ -1408,7 +1412,11 @@ window.I18N = (function () {
         phone_bought: '🏅 YOU BOUGHT',
         phone_bought_by: 'bought by',
         phone_for: 'for',
-        phone_unsold: 'remains UNSOLD'
+        phone_unsold: 'remains UNSOLD',
+        phone_btn_svincolati: '🗑️ Released',
+        phone_auction_ended_title: 'AUCTION ENDED',
+        phone_auction_ended_desc: 'The auction is over. You can see the final rosters below.',
+        phone_auction_ended_btn: '📋 VIEW ROSTERS'
       }
     }
   };
