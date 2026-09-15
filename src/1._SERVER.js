@@ -122,10 +122,14 @@ const DEFAULT_CONFIG = {
 };
 
 const MANTRA_MAP = {
-  "P": "P", "POR": "P",
-  "DC": "D", "DD": "D", "DS": "D", "B": "D",
-  "M": "C", "C": "C", "E": "C", "T": "C", "W": "C",
-  "A": "A", "PC": "A"
+  // Portieri
+  "P": "P", "POR": "P", "G": "P", "GK": "P", "PT": "P",
+  // Difensori (Mantra + Classici)
+  "D": "D", "DIF": "D", "DEF": "D", "DC": "D", "DD": "D", "DS": "D", "B": "D",
+  // Centrocampisti (Mantra + Classici)
+  "C": "C", "CEN": "C", "M": "C", "MID": "C", "E": "C", "T": "C", "W": "C",
+  // Attaccanti (Mantra + Classici)
+  "A": "A", "ATT": "A", "FWD": "A", "PC": "A", "ST": "A"
 };
 
 const ROOM_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -544,7 +548,7 @@ function ottieniMacroReparti(ruoloStringa) {
 function isOffensivoPuro(ruoloStringa) {
   if (!ruoloStringa) return false;
   const ruoliSingoli = ruoloStringa.toUpperCase().split(/[\s,;\-]+/).map(r => r.trim());
-  const ruoliOffensivi = ["T", "W", "A", "PC"];
+  const ruoliOffensivi = ["T", "W", "A", "PC", "ATT", "FWD", "ST"];
   return ruoliSingoli.every(r => ruoliOffensivi.includes(r));
 }
 
@@ -1303,10 +1307,23 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     await salvaSessioneDB(room);
     io.to(roomCode).emit("playersList", room.playersList);
     io.to(roomCode).emit("discardedList", room.discardedPlayers || []);
+    // Rileva tipo lista: classica vs mantra
+    const RUOLI_CLASSICI = new Set(["P", "D", "C", "A", "POR", "DIF", "CEN", "ATT", "G", "GK", "PT", "DEF", "MID", "FWD", "ST"]);
+    const RUOLI_MANTRA_SPECIFICI = new Set(["DC", "DD", "DS", "B", "M", "E", "T", "W", "PC"]);
+    let classicCount = 0, mantraCount = 0;
+    fromFile.forEach(p => {
+      const tokens = p.ruolo.split(/[\s,;\-]+/).map(t => t.trim().toUpperCase()).filter(Boolean);
+      if (tokens.some(t => RUOLI_MANTRA_SPECIFICI.has(t))) mantraCount++;
+      else if (tokens.some(t => RUOLI_CLASSICI.has(t))) classicCount++;
+    });
+    const listType = mantraCount > classicCount ? "mantra" : "classic";
+
     res.json({
       success: true,
       count: room.playersList.length,
       warnings,
+      listType,
+      listTypeDetail: { classic: classicCount, mantra: mantraCount },
       riparazione: modeRiparazione ? { alreadySold, alreadyInList, added: fromFile.length - alreadySold - alreadyInList } : null
     });
   } catch (e) {
