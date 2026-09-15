@@ -3318,10 +3318,22 @@
                         `⏭️ <strong>${r.alreadyInList}</strong> già presenti nel mazzo (saltati)<br>` +
                         `📦 Totale giocatori nel mazzo: <strong>${data.count}</strong>`;
                 }
+                if (data.listType) {
+                    const isMantra = data.listType === 'mantra';
+                    const tipoLabel = isMantra ? 'MANTRA' : 'CLASSICA';
+                    const icona = isMantra ? '🌀' : '⚽';
+                    const colore = isMantra ? '#38bdf8' : '#10b981';
+                    const dettagli = data.listTypeDetail || {};
+                    const msg = `${icona} Lista rilevata come: <strong style="color:${colore};">${tipoLabel}</strong> ` +
+                        `(giocatori con ruoli classici: ${dettagli.classic||0}, con ruoli specifici Mantra: ${dettagli.mantra||0}). ` +
+                        `Totale caricati: <strong>${data.count}</strong>. ` +
+                        `Corretto? Se non lo è, ricarica il file giusto — la lista precedente è stata sostituita.`;
+                    showAlert('info', msg, 6000);
+                }
                 if (data.warnings && data.warnings.length > 0) {
                     _mostraWarningRuoli(data.warnings, data.count);
                 } else if (!riparazione || !data.riparazione) {
-                    showAlert('success', `${data.count} giocatori caricati con successo!`);
+                    if (!data.listType) showAlert('success', `${data.count} giocatori caricati con successo!`);
                 }
             })
             .catch(() => showAlert('error', 'Errore nel caricamento del file'));
@@ -3333,10 +3345,13 @@
 
         function _mostraWarningRuoli(warnings, count) {
             _pendingWarnings = warnings;
-            const RUOLI_VALIDI = ['P','POR','DC','DD','DS','B','M','C','E','T','W','A','PC',
+            const RUOLI_VALIDI = ['P','POR','G','GK','PT',
+                                  'D','DIF','DEF','DC','DD','DS','B',
+                                  'C','CEN','MID','M','E','T','W',
+                                  'A','ATT','FWD','PC','ST',
                                   'C;T','C;W','E;W','M;C','T;A','W;A','W;T'];
             document.getElementById('_warningSubtitle').textContent =
-                `${count} giocatori caricati · ${warnings.length} con ruoli non riconosciuti dal sistema Mantra`;
+                `${count} giocatori caricati · ${warnings.length} con ruoli non riconosciuti`;
             document.getElementById('_warningList').innerHTML = warnings.map((w, i) => `
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.75rem;align-items:center;
                             padding:0.75rem;background:rgba(245,158,11,0.08);border-radius:8px;
@@ -3762,30 +3777,31 @@
         // UTILITY FUNCTIONS
         // ============================================================
 
-        function showAlert(type, message) {
+        function showAlert(type, message, duration) {
             const alertEl = document.getElementById(`alert${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            const ms = duration || 4000;
             if (!alertEl) {
-                showToast(message);
+                showToast(message, ms);
                 return;
             }
 
             document.querySelectorAll('.alert').forEach(a => a.classList.remove('show'));
-            alertEl.textContent = message;
+            alertEl.innerHTML = message;
             alertEl.classList.add('show');
 
             setTimeout(() => {
                 alertEl.classList.remove('show');
-            }, 4000);
+            }, ms);
         }
 
-        function showToast(message) {
+        function showToast(message, duration) {
             const toast = document.getElementById('toast');
-            document.getElementById('toastMessage').textContent = message;
+            document.getElementById('toastMessage').innerHTML = message;
             toast.classList.add('show');
 
             setTimeout(() => {
                 toast.classList.remove('show');
-            }, 3000);
+            }, duration || 3000);
         }
 
         // ============================================================
@@ -3913,7 +3929,7 @@
             </div>
             <p style="color:var(--text-secondary);font-size:0.88rem;margin-bottom:1rem;
                       padding:0.75rem;background:rgba(245,158,11,0.07);border-radius:8px;border-left:3px solid #f59e0b;" data-i18n-html="admin_warning_desc">
-                Questi giocatori hanno ruoli che il sistema Mantra non riconosce: durante l'asta il controllo del limite di reparto non funzionerà correttamente.
+                Questi giocatori hanno ruoli che il sistema non riconosce: durante l'asta il controllo del limite di reparto non funzionerà correttamente.
                 Seleziona il ruolo corretto e clicca <b>Salva correzioni</b>.
             </p>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;padding:0 0.25rem 0.5rem;
