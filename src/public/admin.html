@@ -1542,7 +1542,25 @@
         </div>
 
         <div class="card">
-            <h3 class="card-title" data-i18n="admin_config_rules_title">Regole Mantra</h3>
+            <h3 class="card-title">Modalità Asta</h3>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label style="display:block;margin-bottom:0.5rem;font-weight:600;">Tipo di asta</label>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input type="radio" name="auctionType" value="mantra" id="auctionTypeMantra" checked style="width:18px;height:18px;">
+                        <span>🌀 Mantra</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:0.5rem;cursor:pointer;">
+                        <input type="radio" name="auctionType" value="classic" id="auctionTypeClassic" style="width:18px;height:18px;">
+                        <span>⚽ Classic</span>
+                    </label>
+                </div>
+                <p style="color:var(--text-secondary);font-size:12px;margin-top:0.5rem;">In modalità Classic, i ruoli W e T contano come attaccanti. In Mantra contano come centrocampisti. Seleziona prima di caricare la lista.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 class="card-title" data-i18n="admin_config_rules_title">Regole Asta</h3>
             <div class="grid-2">
                 <div class="form-group">
                     <label data-i18n="admin_config_budget_label">Budget Iniziale (crediti)</label>
@@ -2044,6 +2062,9 @@
                 document.getElementById('configStartingBudget').value = c.STARTING_BUDGET || 500;
                 document.getElementById('configMaxTotalPlayers').value = c.MAX_TOTAL_PLAYERS || 25;
                 document.getElementById('configMaxOffensive').value = c.MAX_OFFENSIVE_PLAYERS || 6;
+                const at = c.AUCTION_TYPE || 'mantra';
+                document.getElementById('auctionTypeMantra').checked = (at === 'mantra');
+                document.getElementById('auctionTypeClassic').checked = (at === 'classic');
                 if (c.LIMITS) {
                     document.getElementById('configLimitP').value = c.LIMITS.P || 3;
                     document.getElementById('configLimitD').value = c.LIMITS.D || 10;
@@ -3324,11 +3345,22 @@
                     const icona = isMantra ? '🌀' : '⚽';
                     const colore = isMantra ? '#38bdf8' : '#10b981';
                     const dettagli = data.listTypeDetail || {};
-                    const msg = `${icona} Lista rilevata come: <strong style="color:${colore};">${tipoLabel}</strong> ` +
-                        `(giocatori con ruoli classici: ${dettagli.classic||0}, con ruoli specifici Mantra: ${dettagli.mantra||0}). ` +
-                        `Totale caricati: <strong>${data.count}</strong>. ` +
-                        `Corretto? Se non lo è, ricarica il file giusto — la lista precedente è stata sostituita.`;
-                    showAlert('info', msg, 6000);
+                    const auctionType = data.auctionType || 'mantra';
+                    const typeLabel = auctionType === 'classic' ? 'CLASSIC' : 'MANTRA';
+                    let msg = `${icona} Lista rilevata come: <strong style="color:${colore};">${tipoLabel}</strong> ` +
+                        `(ruoli classici: ${dettagli.classic||0}, ruoli Mantra: ${dettagli.mantra||0}). ` +
+                        `Totale: <strong>${data.count}</strong>. ` +
+                        `Modalità asta attuale: <strong>${typeLabel}</strong>.`;
+                    if (data.usedClassicColumn) {
+                        msg += ` <span style="color:#10b981;">Colonna "Ruolo Classic" usata.</span>`;
+                    }
+                    if (auctionType === 'classic' && !data.usedClassicColumn) {
+                        msg += ` <span style="color:#f59e0b;">⚠️ Nessuna colonna "Ruolo Classic" trovata nel file — i ruoli Mantra sono stati caricati ma contati come Classic.</span>`;
+                    }
+                    if (auctionType === 'mantra' && !isMantra) {
+                        msg += ` <span style="color:#f59e0b;">⚠️ La lista sembra Classic ma l'asta è impostata su Mantra. Seleziona "Classic" nelle impostazioni se necessario.</span>`;
+                    }
+                    showAlert('info', msg, 7000);
                 }
                 if (data.warnings && data.warnings.length > 0) {
                     _mostraWarningRuoli(data.warnings, data.count);
@@ -3727,6 +3759,7 @@
         function saveAllConfig() {
             const config = {
                 timerDuration: parseInt(document.getElementById('configTimerDuration').value),
+                auctionType: document.querySelector('input[name="auctionType"]:checked')?.value || 'mantra',
                 startingBudget: parseInt(document.getElementById('configStartingBudget').value),
                 maxTotalPlayers: parseInt(document.getElementById('configMaxTotalPlayers').value),
                 maxOffensivePlayers: parseInt(document.getElementById('configMaxOffensive').value),
