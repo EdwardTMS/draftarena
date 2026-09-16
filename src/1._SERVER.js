@@ -115,6 +115,7 @@ const supabase = (SUPABASE_URL && SUPABASE_KEY) ? createClient(SUPABASE_URL, SUP
    CONFIGURAZIONE GLOBALE
    ========================================================================== */
 const DEFAULT_CONFIG = {
+  AUCTION_TYPE: "mantra",
   STARTING_BUDGET: 500,
   MAX_TOTAL_PLAYERS: 25,
   MAX_OFFENSIVE_PLAYERS: 6,
@@ -131,6 +132,19 @@ const MANTRA_MAP = {
   // Attaccanti (Mantra + Classici)
   "A": "A", "ATT": "A", "FWD": "A", "PC": "A", "ST": "A"
 };
+
+// In Classic mode, W and T are attackers, not midfielders
+const CLASSIC_MAP = {
+  "P": "P", "POR": "P", "G": "P", "GK": "P", "PT": "P",
+  "D": "D", "DIF": "D", "DEF": "D", "DC": "D", "DD": "D", "DS": "D", "B": "D",
+  "C": "C", "CEN": "C", "M": "C", "MID": "C", "E": "C",
+  "A": "A", "ATT": "A", "FWD": "A", "PC": "A", "ST": "A",
+  "W": "A", "T": "A"
+};
+
+function getRoleMap(auctionType) {
+  return auctionType === "classic" ? CLASSIC_MAP : MANTRA_MAP;
+}
 
 const ROOM_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -534,22 +548,26 @@ async function trovaStanzaDB(code) {
 /* ==========================================================================
    UTILITÀ MANTRA
    ========================================================================== */
-function ottieniMacroReparti(ruoloStringa) {
+function ottieniMacroReparti(ruoloStringa, auctionType) {
   if (!ruoloStringa) return ["D"];
+  const roleMap = getRoleMap(auctionType);
   const ruoliSingoli = ruoloStringa.toUpperCase().split(/[\s,;\-]+/);
   const repartiUnici = new Set();
   ruoliSingoli.forEach(r => {
-    const reparto = MANTRA_MAP[r.trim()];
+    const reparto = roleMap[r.trim()];
     if (reparto) repartiUnici.add(reparto);
   });
   return Array.from(repartiUnici);
 }
 
-function isOffensivoPuro(ruoloStringa) {
+function isOffensivoPuro(ruoloStringa, auctionType) {
   if (!ruoloStringa) return false;
+  const roleMap = getRoleMap(auctionType);
   const ruoliSingoli = ruoloStringa.toUpperCase().split(/[\s,;\-]+/).map(r => r.trim());
-  const ruoliOffensivi = ["T", "W", "A", "PC", "ATT", "FWD", "ST"];
-  return ruoliSingoli.every(r => ruoliOffensivi.includes(r));
+  return ruoliSingoli.every(r => {
+    const reparto = roleMap[r];
+    return reparto === "A";
+  });
 }
 
 /* ==========================================================================
@@ -589,7 +607,7 @@ function assegnaGiocatoreAVincitore(roomCode) {
   const price = room.state.currentPrice;
   const history = [...(room.state.history || [])];
 
-  const repartiPossibili = ottieniMacroReparti(p.ruolo);
+  const repartiPossibili = ottieniMacroReparti(p.ruolo, room.CONFIG.AUCTION_TYPE);
   let repartoScelto = repartiPossibili[0];
   for (let i = 0; i < repartiPossibili.length; i++) {
     const rep = repartiPossibili[i];
@@ -1185,13 +1203,14 @@ app.post("/preview-columns", upload.single("file"), async (req, res) => {
 
     // Trova la riga di intestazione (prime 5 righe)
     let headerRow = -1;
-    const detected = { nome: -1, ruolo: -1, squadra: -1, valore: -1, id: -1 };
+    const detected = { nome: -1, ruolo: -1, ruoloClassic: -1, squadra: -1, valore: -1, id: -1 };
     for (let r = 0; r < Math.min(5, matrix.length); r++) {
       const row = matrix[r];
       for (let c = 0; c < row.length; c++) {
         const v = String(row[c]).toLowerCase().trim();
         if (["nome", "calciatore", "giocatore", "rilancio"].includes(v) && detected.nome === -1) detected.nome = c;
         if (["ruolo", "rm", "r", "ruolo mantra"].includes(v) && detected.ruolo === -1) detected.ruolo = c;
+        if (["rc", "ruolo classic", "ruolo classico", "r.classic", "r classic"].includes(v) && detected.ruoloClassic === -1) detected.ruoloClassic = c;
         if (["squadra", "club", "team", "squadra di a"].includes(v) && detected.squadra === -1) detected.squadra = c;
         if (["valore", "quotazione", "prezzo", "qt", "costo"].includes(v) && detected.valore === -1) detected.valore = c;
         if (["id", "id giocatore", "idgiocatore", "codice", "code"].includes(v) && detected.id === -1) detected.id = c;
@@ -1238,7 +1257,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
     const matrix = xlsx.utils.sheet_to_json(sheet, { header: 1, defval: "" });
 
-    let rigaIntestazione = -1, indexNome = -1, indexRuolo = -1, indexSquadra = -1, indexPrezzo = -1, indexId = -1;
+    let rigaIntestazione = -1, indexNome = -1, indexRuolo = -1, indexRuoloClassic = -1, indexSquadra = -1, indexPrezzo = -1, indexId = -1;
 
     for (let r = 0; r < matrix.length; r++) {
       const row = matrix[r];
@@ -1246,6 +1265,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         const v = String(row[c]).toLowerCase().trim();
         if (["nome", "calciatore", "giocatore", "rilancio"].includes(v)) indexNome = c;
         if (["ruolo", "rm", "r", "ruolo mantra"].includes(v)) indexRuolo = c;
+        if (["rc", "ruolo classic", "ruolo classico", "r.classic", "r classic"].includes(v)) indexRuoloClassic = c;
         if (["squadra", "club", "team", "squadra di a"].includes(v)) indexSquadra = c;
         if (["valore", "quotazione", "prezzo", "qt", "costo"].includes(v)) indexPrezzo = c;
         if (["id", "id giocatore", "idgiocatore", "codice", "code"].includes(v)) indexId = c;
@@ -1256,6 +1276,11 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     if (rigaIntestazione === -1) {
       indexNome = 0; indexRuolo = 1; indexSquadra = 2; indexPrezzo = 3; rigaIntestazione = 0;
     }
+
+    // In modalita classic, usa la colonna "Ruolo Classic" se esiste
+    const auctionType = room.CONFIG.AUCTION_TYPE || "mantra";
+    const useClassicColumn = auctionType === "classic" && indexRuoloClassic !== -1;
+    const effectiveRuoloIndex = useClassicColumn ? indexRuoloClassic : indexRuolo;
 
     // Override manuale della colonna valore (da query string)
     const manualValueCol = req.query.valueCol !== undefined ? parseInt(req.query.valueCol) : null;
@@ -1271,7 +1296,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       const row = matrix[r];
       if (!row || row.length === 0) continue;
       const nome = row[indexNome] ? String(row[indexNome]).trim() : "";
-      const ruolo = row[indexRuolo] ? String(row[indexRuolo]).trim() : "";
+      const ruolo = row[effectiveRuoloIndex] ? String(row[effectiveRuoloIndex]).trim() : "";
       const squadra = indexSquadra !== -1 && row[indexSquadra] ? String(row[indexSquadra]).trim() : "Svincolato";
       const valoreEffettivo = indexPrezzo !== -1 && row[indexPrezzo] ? parseInt(row[indexPrezzo]) : 1;
       const playerId = indexId !== -1 && row[indexId] ? String(row[indexId]).trim() : "";
@@ -1298,9 +1323,10 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     }
 
     const warnings = [];
+    const roleMap = getRoleMap(auctionType);
     room.playersList.forEach(p => {
       const tokens = p.ruolo.split(/[\s,;\-]+/).map(t => t.trim()).filter(Boolean);
-      const unknown = tokens.filter(t => !MANTRA_MAP[t]);
+      const unknown = tokens.filter(t => !roleMap[t]);
       if (unknown.length > 0) warnings.push({ nome: p.nome, ruolo: p.ruolo, squadra: p.squadra, tokensIgnorati: unknown });
     });
 
@@ -1324,6 +1350,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       warnings,
       listType,
       listTypeDetail: { classic: classicCount, mantra: mantraCount },
+      auctionType,
+      usedClassicColumn,
       riparazione: modeRiparazione ? { alreadySold, alreadyInList, added: fromFile.length - alreadySold - alreadyInList } : null
     });
   } catch (e) {
@@ -2176,16 +2204,16 @@ io.on("connection", (socket) => {
       socket.emit("errorNotify", `❌ Devi conservare 1 credito per i restanti giocatori. Max: ${max} cr.`); return;
     }
 
-    if (isOffensivoPuro(room.state.player.ruolo)) {
+    if (isOffensivoPuro(room.state.player.ruolo, room.CONFIG.AUCTION_TYPE)) {
       const offensiviComprati = room.soldPlayers.filter(p =>
-        p.winner.toLowerCase() === teamKey && isOffensivoPuro(p.ruolo)
+        p.winner.toLowerCase() === teamKey && isOffensivoPuro(p.ruolo, room.CONFIG.AUCTION_TYPE)
       ).length;
       if (offensiviComprati >= room.CONFIG.MAX_OFFENSIVE_PLAYERS) {
         socket.emit("errorNotify", `❌ Max ${room.CONFIG.MAX_OFFENSIVE_PLAYERS} offensivi puri.`); return;
       }
     }
 
-    const repartiPossibili = ottieniMacroReparti(room.state.player.ruolo);
+    const repartiPossibili = ottieniMacroReparti(room.state.player.ruolo, room.CONFIG.AUCTION_TYPE);
     const haSpazio = repartiPossibili.some(rep =>
       room.CONFIG.LIMITS[rep] === 0 || (room.teams[teamKey].slots[rep] || 0) < room.CONFIG.LIMITS[rep]
     );
@@ -2407,7 +2435,7 @@ io.on("connection", (socket) => {
     const totali = Object.values(room.teams[nameKey].slots).reduce((a, b) => a + b, 0);
     if (totali >= room.CONFIG.MAX_TOTAL_PLAYERS) { socket.emit("errorNotify", "Rosa piena!"); return; }
 
-    const repartiPossibili = ottieniMacroReparti(p.ruolo);
+    const repartiPossibili = ottieniMacroReparti(p.ruolo, room.CONFIG.AUCTION_TYPE);
     let repartoScelto = null;
     for (let i = 0; i < repartiPossibili.length; i++) {
       const rep = repartiPossibili[i];
@@ -2439,7 +2467,7 @@ io.on("connection", (socket) => {
     if (!room.teams[nameKey]) { socket.emit("errorNotify", "Squadra non valida!"); return; }
     const totali = Object.values(room.teams[nameKey].slots).reduce((a, b) => a + b, 0);
     if (totali >= room.CONFIG.MAX_TOTAL_PLAYERS) { socket.emit("errorNotify", "Rosa piena!"); return; }
-    const repartiPossibili = ottieniMacroReparti(player.ruolo);
+    const repartiPossibili = ottieniMacroReparti(player.ruolo, room.CONFIG.AUCTION_TYPE);
     let repartoScelto = null;
     for (let i = 0; i < repartiPossibili.length; i++) {
       const rep = repartiPossibili[i];
@@ -2712,6 +2740,10 @@ io.on("connection", (socket) => {
 
     const td = num(config.timerDuration);
     if (td !== undefined && td >= 1) { room.state.timerDuration = td; if (!room.state.player) room.state.time = td; }
+
+    if (config.auctionType && ["mantra", "classic"].includes(config.auctionType)) {
+      room.CONFIG.AUCTION_TYPE = config.auctionType;
+    }
 
     const sb = num(config.startingBudget); if (sb !== undefined && sb > 0) room.CONFIG.STARTING_BUDGET = sb;
     const mt = num(config.maxTotalPlayers); if (mt !== undefined && mt > 0) room.CONFIG.MAX_TOTAL_PLAYERS = mt;
