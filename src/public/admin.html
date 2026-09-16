@@ -1385,6 +1385,10 @@
                     <select id="forceAssignTeam">
                         <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
                     </select>
+                    <label style="display:flex;align-items:center;gap:0.4rem;margin-top:0.5rem;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
+                        <input type="checkbox" id="forceAssignLockTeam" style="width:16px;height:16px;">
+                        <span>🔒 Mantieni squadra per i prossimi giocatori (il prezzo si reinserisce ogni volta)</span>
+                    </label>
                 </div>
                 <div class="form-group">
                     <label data-i18n="admin_ops_force_price">Prezzo di Vendita</label>
@@ -1414,6 +1418,10 @@
                     <select id="manualAssignTeam">
                         <option value="" data-i18n="admin_select_team">Seleziona squadra...</option>
                     </select>
+                    <label style="display:flex;align-items:center;gap:0.4rem;margin-top:0.5rem;cursor:pointer;font-size:0.82rem;color:var(--text-secondary);">
+                        <input type="checkbox" id="manualAssignLockTeam" style="width:16px;height:16px;">
+                        <span>🔒 Mantieni squadra per le prossime assegnazioni (il prezzo si reinserisce ogni volta)</span>
+                    </label>
                 </div>
                 <div class="form-group">
                     <label data-i18n="admin_ops_manual_price">Prezzo di Vendita (cr)</label>
@@ -3715,7 +3723,10 @@
             socket.emit('adminManualAssign', { player, squadra, prezzo });
             document.getElementById('manualAssignPlayerDisplay').value = '';
             document.getElementById('manualAssignPlayerData').value = '';
-            document.getElementById('manualAssignTeam').value = '';
+            const lock = document.getElementById('manualAssignLockTeam');
+            if (!lock || !lock.checked) {
+                document.getElementById('manualAssignTeam').value = '';
+            }
             document.getElementById('manualAssignPrice').value = 1;
             showAlert('success', `${player.nome} assegnato a ${squadra} per ${prezzo} cr`);
         }
